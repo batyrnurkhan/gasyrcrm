@@ -1,0 +1,8 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+{% csrf_token %}
+<h2>Your 6-Digit Code</h2>
+<p>Your code: {{ login_code }}</p>
+<a href="{% url 'home' %}">Back to Home</a>
+{% endblock %}
