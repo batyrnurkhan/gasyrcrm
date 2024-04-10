@@ -1,15 +1,17 @@
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
+import logging
 
-class PhoneAuthenticationBackend(ModelBackend):
+logger = logging.getLogger(__name__)
+class CustomUserAuthenticationBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
-        UserModel = get_user_model()
-        if username is None:
-            username = kwargs.get(UserModel.USERNAME_FIELD)
+        CustomUser = get_user_model()
         try:
-            user = UserModel._default_manager.get_by_natural_key(username)
-            if user.check_password(password) and self.user_can_authenticate(user):
+            user = CustomUser.objects.get(phone_number=username)
+            if user.check_password(password):
                 return user
-        except UserModel.DoesNotExist:
-            UserModel().set_password(password)
-        return None
+            else:
+                logger.info("Password check failed for user: %s", username)
+        except CustomUser.DoesNotExist:
+            logger.info("User does not exist: %s", username)
+            return None
