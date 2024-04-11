@@ -26,5 +26,15 @@
             </div>
         </div>
     </div>
-    {% include "core/components/footer.html" %}
+    {% csrf_token %}
+
+<h2>Welcome to the Home Page</h2>
+<p>This is your home page. Navigate through the site from here.</p>
+
+{% if request.user.role == "Teacher" or request.user.is_superuser %}
+HI TEQACHER/ADMIN
+    <a href="{% url 'users:grant_access' %}">Give Access</a>
+
+{% endif %}
+
 {% endblock %}

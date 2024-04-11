@@ -1,0 +1,15 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+    <h2>{{ course.course_name }}</h2>
+    <p>{{ course.mini_description }}</p>
+    <!-- Other course details... -->
+
+    <h3>Modules</h3>
+    <ul>
+        {% for module in course.modules.all %}
+            <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
+{% endblock %}

@@ -21,3 +21,6 @@ class CustomUserAuthenticationForm(AuthenticationForm):
         del self.fields['username']
         # Add or modify fields as necessary
         self.fields['phone_number'] = forms.CharField(label="Phone Number", required=True)
+
+class AccessCodeForm(forms.Form):
+    login_code = forms.CharField(max_length=10, label="Login Code", help_text="Enter the user's login code to grant access.", required=True)

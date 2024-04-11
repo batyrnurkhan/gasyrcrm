@@ -1,6 +1,19 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Grant Access</h2>
 <form method="post">
     {% csrf_token %}
-    <label for="login_code">Enter Student's Login Code:</label>
-    <input type="text" name="login_code" required>
-    <button type="submit">Grant Access</button>
+    {{ form.as_p }}
+    <button type="submit" name="grant_access">Grant Access</button>
 </form>
+
+{% if user_info %}
+    <h3>User Information:</h3>
+    <p><strong>Full Name:</strong> {{ user_info.full_name }}</p>
+    <p><strong>Phone Number:</strong> {{ user_info.phone_number }}</p>
+    <p><strong>City:</strong> {{ user_info.user_city }}</p>
+    <p><strong>Has Access:</strong> {{ user_info.has_access|yesno:"Yes,No" }}</p>
+{% endif %}
+
+{% endblock %}
