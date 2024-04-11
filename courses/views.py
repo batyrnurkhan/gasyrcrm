@@ -1,11 +1,13 @@
-from django.shortcuts import render, redirect
+from django.http import HttpResponseBadRequest
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 
-from .forms import CourseForm, ModuleForm, LessonForm, CourseFormStep2, CourseFormStep1
+from .forms import CourseForm, ModuleForm, LessonForm, CourseFormStep2, CourseFormStep1, TestForm, QuestionForm, \
+    AnswerForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 
-from .models import Module, Lesson, Course
+from .models import Module, Lesson, Course, Test
 
 
 def create_course_step1(request):
@@ -98,3 +100,56 @@ class LessonCreateView(CreateView):
         # Redirect back to the module detail page
         return reverse_lazy('courses:module_detail', kwargs={'pk': self.kwargs['module_id']})
 
+from django.contrib.contenttypes.models import ContentType
+
+def create_test(request, module_id=None, lesson_id=None):
+    if request.method == 'POST':
+        test_form = TestForm(request.POST)
+        question_form = QuestionForm(request.POST)
+        answer_form = AnswerForm(request.POST)
+        if test_form.is_valid() and question_form.is_valid() and answer_form.is_valid():
+            test = test_form.save(commit=False)
+            if module_id:
+                parent_object = get_object_or_404(Module, pk=module_id)
+                test.content_type = ContentType.objects.get_for_model(Module)
+                test.object_id = parent_object.pk
+            elif lesson_id:
+                parent_object = get_object_or_404(Lesson, pk=lesson_id)
+                test.content_type = ContentType.objects.get_for_model(Lesson)
+                test.object_id = parent_object.pk
+            else:
+                return HttpResponseBadRequest("A module_id or lesson_id must be provided.")
+            test.save()
+            return redirect('courses:test_detail', pk=test.pk)
+    else:
+        test_form = TestForm()
+        question_form = QuestionForm()
+        answer_form = AnswerForm()
+    return render(request, 'courses/create_test.html', {
+        'test_form': test_form,
+        'question_form': question_form,
+        'answer_form': answer_form,
+    })
+class TestDetailView(DetailView):
+    model = Test
+    template_name = 'test_detail.html'
+    context_object_name = 'test'
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        test_form = TestForm(request.POST, instance=self.object)
+        if test_form.is_valid():
+            test_form.save()
+            return redirect(self.object.get_absolute_url())  # Implement get_absolute_url method in Test model
+        # Handle question and answer forms similarly
+        return self.render_to_response(self.get_context_data(form=test_form))
+
+class LessonDetailView(DetailView):
+    model = Lesson
+    context_object_name = 'lesson'
+    template_name = 'courses/lesson_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Additional context data can be added here if needed
+        return context

@@ -1,0 +1,78 @@
+<!-- create_test.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <form method="post" id="testForm">
+        {% csrf_token %}
+        <h2>Create New Test</h2>
+        {{ test_form.as_p }}
+        <div id="questionsContainer">
+            <!-- Initial Question Placeholder -->
+        </div>
+        <button type="button" id="add-question">Add Question</button>
+        <button type="submit">Save Test</button>
+    </form>
+
+<script type="text/template" id="checkboxAnswerTemplate">
+    <div class="answer">
+        <input type="text" name="answers_TEXT[]" placeholder="Answer text" />
+        <input type="checkbox" name="correct_answers_CHECKBOX[]" value="ANSWER_INDEX"> Correct
+    </div>
+</script>
+
+<script type="text/template" id="radioAnswerTemplate">
+    <div class="answer">
+        <input type="text" name="answers_TEXT[]" placeholder="Answer text" />
+        <input type="radio" name="correct_answer_RADIO" value="ANSWER_INDEX"> Correct
+    </div>
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    $('#add-question').click(function() {
+        addQuestionWithInitialAnswers();
+    });
+});
+
+function addQuestionWithInitialAnswers() {
+    let questionCount = $('#questionsContainer .question').length;
+    let questionDiv = $('<div>', { class: 'question' });
+    questionDiv.append(`<textarea name="questions[${questionCount}][text]" placeholder="Question text"></textarea>`);
+    questionDiv.append(`
+        <select name="questions[${questionCount}][type]" class="question-type">
+            <option value="SC">Single Choice</option>
+            <option value="MC">Multiple Choice</option>
+        </select>
+    `);
+    let answersDiv = $('<div>', { class: 'answers' });
+    questionDiv.append(answersDiv);
+
+    for (let i = 0; i < 4; i++) {
+        addAnswer(answersDiv, questionCount, i);
+    }
+
+    let addAnswerButton = $('<button>', { type: 'button', text: 'Add Answer' }).click(function() {
+        let answerIndex = $(this).prev('.answers').children().length;
+        addAnswer($(this).prev('.answers'), questionCount, answerIndex);
+    });
+    questionDiv.append(addAnswerButton);
+
+    $('#questionsContainer').append(questionDiv);
+}
+
+function addAnswer(answersDiv, questionIndex, answerIndex) {
+    let answerInput = $(`<input type="text" name="questions[${questionIndex}][answers][${answerIndex}][text]" placeholder="Answer text">`);
+    let correctInput = $(`<input type="checkbox" name="questions[${questionIndex}][answers][${answerIndex}][is_correct]" value="1"> Correct`);
+
+    answersDiv.append(answerInput);
+    answersDiv.append(correctInput);
+}
+</script>
+</body>
+</html>

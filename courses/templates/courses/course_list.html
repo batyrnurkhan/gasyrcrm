@@ -5,7 +5,7 @@
 <ul>
     {% for course in courses %}
     <li>
-        <a href="{% url 'courses:detail' pk=course.pk %}">{{ course.course_name }}</a>
+        <a href="{% url 'courses:course_detail' pk=course.pk %}">{{ course.course_name }}</a>
     </li>
     {% endfor %}
 </ul>

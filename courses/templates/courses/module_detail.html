@@ -7,10 +7,17 @@
     <!-- Link to create a new lesson for this module -->
     <a href="{% url 'courses:lesson_create' module_id=module.pk %}">+ Add Lesson</a>
 
+    <!-- Link to create a new test for this module -->
+<a href="{% url 'courses:module_test_create' module_id=module.pk %}">+ Create Test</a>
+
     <h3>Lessons</h3>
     <ul>
         {% for lesson in module.lessons.all %}
-            <li>{{ lesson.lesson_name }}</li>
+            <li>
+                {{ lesson.lesson_name }}
+                <!-- Link to lesson detail page -->
+                <a href="{% url 'courses:lesson_detail' pk=lesson.pk %}">View Details</a>
+            </li>
             <!-- Optionally, add details or links for each lesson -->
         {% endfor %}
     </ul>
