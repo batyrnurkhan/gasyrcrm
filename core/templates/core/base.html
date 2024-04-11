@@ -5,7 +5,7 @@
     <title>My App</title>
     <link href="{% static "core/css/output.css" %}" rel="stylesheet">
 </head>
-<body>
+<body class="{% block body-classes %}{% endblock %}">
     {% block content %}
     {% csrf_token %}
     {% endblock %}
