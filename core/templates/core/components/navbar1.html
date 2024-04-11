@@ -1,0 +1,32 @@
+{% load static %}
+<div class="fixed w-full bg-white">
+    <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
+        <div class="mr-auto">
+            <img src="{% static 'core/images/logo.png' %}" alt="">
+        </div>
+        <ul class="flex flex-row items-center text-xl">
+            <li class="text-black-main tracking-widest hover:underline">
+                <a href="tel:8 777 123 12 12">
+                    <img class="inline h-full max-h-3.5" src="{% static "core/icons/phone-fill.svg" %}" alt="">
+                    8 777 123 12 12
+                </a>
+            </li>
+            <li class="text-black-main ml-10 max-h-7">
+                <a href="#">
+                    <img class="inline h-full" src="{% static "core/icons/instagram.svg" %}" alt="">
+                </a>
+            </li>
+            <li class="text-black-main ml-1 max-h-7">
+                <a href="#">
+                    <img class="inline h-full" src="{% static "core/icons/telegram.svg" %}" alt="">
+                </a>
+            </li>
+            <li class="text-black-main ml-1 max-h-7">
+                <a href="#">
+                    <img class="inline h-full" src="{% static "core/icons/whatsapp.svg" %}" alt="">
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<div style="height: 75px;"></div>

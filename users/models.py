@@ -3,6 +3,7 @@ import re
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
         if not phone_number:
@@ -22,6 +23,7 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(phone_number, password, **extra_fields)
 
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
         ('Anonymous', 'Anonymous'),
@@ -31,8 +33,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=22, unique=True)
-    user_city = models.CharField(max_length=100, choices=[(city, city) for city in ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe', 'Taraz', 'Pavlodar', 'Oskemen', 'Semey', 'Atyrau']])
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, blank=True, null=True, default='Anonymous') # Add role field
+    user_city = models.CharField(max_length=100, choices=[(city, city) for city in
+                                                          ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe',
+                                                           'Taraz', 'Pavlodar', 'Oskemen', 'Semey', 'Atyrau']])
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, blank=True, null=True,
+                            default='Anonymous')  # Add role field
     login_code = models.CharField(max_length=7, blank=True, null=True)  # New field for the login code
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

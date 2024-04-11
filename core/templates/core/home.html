@@ -1,13 +1,12 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block content %}
-    {% csrf_token %}
-
-<h2>Welcome to the Home Page</h2>
-<p>This is your home page. Navigate through the site from here.</p>
-
-{% if request.user.role == "Teacher" or request.user.is_superuser %}
-HI TEQACHER/ADMIN
-{% endif %}
-
+    {% include 'core/components/navbar1.html' %}
+    <div class="container bg-no-repeat bg-top h-screen mx-auto font-[Qanelas] font-semibold"
+         style="background-image: url('{% static 'core/images/background.png' %}'); background-size: 100%">
+        <div class="border rounded border-accent-red text-center">
+            <h1 class="text-6xl">Добро пожаловать <br/>в сообщество GasyrFoundation</h1>
+        </div>
+    </div>
 {% endblock %}
