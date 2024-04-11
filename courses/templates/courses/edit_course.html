@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Edit Course</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>
+
+<!-- Delete Course Form -->
+<form action="{% url 'courses:course_delete' course.id %}" method="post" style="margin-top: 20px;">
+    {% csrf_token %}
+    <!-- Confirmation Dialogue Example -->
+    <button type="button" onclick="confirmDelete()">Delete Course</button>
+</form>
+
+<script>
+    function confirmDelete() {
+        if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
+            // Submit the form programmatically if the user confirms
+            event.target.form.submit();
+        }
+    }
+</script>
+
+{% endblock %}
