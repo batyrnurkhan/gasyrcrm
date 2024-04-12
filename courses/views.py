@@ -102,34 +102,40 @@ class LessonCreateView(CreateView):
 
 from django.contrib.contenttypes.models import ContentType
 
-def create_test(request, module_id=None, lesson_id=None):
-    if request.method == 'POST':
-        test_form = TestForm(request.POST)
-        question_form = QuestionForm(request.POST)
-        answer_form = AnswerForm(request.POST)
-        if test_form.is_valid() and question_form.is_valid() and answer_form.is_valid():
-            test = test_form.save(commit=False)
-            if module_id:
-                parent_object = get_object_or_404(Module, pk=module_id)
-                test.content_type = ContentType.objects.get_for_model(Module)
-                test.object_id = parent_object.pk
-            elif lesson_id:
-                parent_object = get_object_or_404(Lesson, pk=lesson_id)
-                test.content_type = ContentType.objects.get_for_model(Lesson)
-                test.object_id = parent_object.pk
-            else:
-                return HttpResponseBadRequest("A module_id or lesson_id must be provided.")
-            test.save()
-            return redirect('courses:test_detail', pk=test.pk)
-    else:
-        test_form = TestForm()
-        question_form = QuestionForm()
-        answer_form = AnswerForm()
-    return render(request, 'courses/create_test.html', {
-        'test_form': test_form,
-        'question_form': question_form,
-        'answer_form': answer_form,
-    })
+# def create_test(request, module_id=None, lesson_id=None):
+#     if request.method == 'POST':
+#         test_form = TestForm(request.POST)
+#         question_form = QuestionForm(request.POST)
+#         answer_form = AnswerForm(request.POST)
+#         if test_form.is_valid() and question_form.is_valid() and answer_form.is_valid():
+#             test = test_form.save(commit=False)
+#             # Determine whether a Module or Lesson is the parent object
+#             if module_id:
+#                 parent_object = get_object_or_404(Module, pk=module_id)
+#             elif lesson_id:
+#                 parent_object = get_object_or_404(Lesson, pk=lesson_id)
+#             else:
+#                 return HttpResponseBadRequest("A module_id or lesson_id must be provided.")
+#
+#             # Set content_type and object_id for the Test instance
+#             test.content_type = ContentType.objects.get_for_model(parent_object.__class__)
+#             test.object_id = parent_object.pk
+#             test.save()
+#
+#             # Now handle the creation of questions and answers here as needed
+#
+#             return redirect('courses:test_detail', pk=test.pk)
+#     else:
+#         test_form = TestForm()
+#         question_form = QuestionForm()
+#         answer_form = AnswerForm()
+#
+#     return render(request, 'courses/create_or_edit_test.html', {
+#         'test_form': test_form,
+#         'question_form': question_form,
+#         'answer_form': answer_form,
+#     })
+
 class TestDetailView(DetailView):
     model = Test
     template_name = 'test_detail.html'
@@ -153,3 +159,53 @@ class LessonDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         # Additional context data can be added here if needed
         return context
+
+
+# In your views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.contenttypes.models import ContentType
+from django.http import HttpResponse, HttpResponseBadRequest
+from .models import Test, Question, Answer, Course, Module, Lesson
+from django.views.decorators.csrf import csrf_exempt
+
+
+def create_or_edit_test(request, parent_type, parent_id):
+    parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
+    if not parent_model:
+        return HttpResponseBadRequest("Invalid parent type specified.")
+    parent_object = get_object_or_404(parent_model, pk=parent_id)
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        # Retrieve or create the Test instance
+        content_type = ContentType.objects.get_for_model(parent_object)
+        test, created = Test.objects.get_or_create(
+            content_type=content_type, object_id=parent_id,
+            defaults={'title': title}
+        )
+        test.title = title  # Update the title if the test already exists
+        test.save()
+
+        # Iterate over questions
+        for i in range(int(request.POST.get('question_count', 0))):
+            question_text = request.POST.get(f'questions[{i}][text]', '')
+            if question_text:
+                question, _ = Question.objects.get_or_create(test=test, text=question_text)
+
+                # Iterate over answers for each question
+                for j in range(4):  # Assuming 4 answers per question
+                    answer_text = request.POST.get(f'questions[{i}][answers][{j}][text]', '')
+                    is_correct = request.POST.get(f'questions[{i}][answers][{j}][is_correct]', '') == 'on'
+                    if answer_text:
+                        Answer.objects.update_or_create(
+                            question=question, text=answer_text,
+                            defaults={'is_correct': is_correct}
+                        )
+        return redirect('courses:list')  # Adjust this to your actual success URL
+
+    # Handling GET request
+    else:
+        return render(request, 'courses/create_or_edit_test.html', {
+            'parent_type': parent_type,
+            'parent_id': parent_id
+        })

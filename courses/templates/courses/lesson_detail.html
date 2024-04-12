@@ -5,5 +5,5 @@
     <!-- Lesson details... -->
 
     <!-- Link to create a new test for this lesson -->
-<a href="{% url 'courses:lesson_test_create' lesson_id=lesson.pk %}">+ Create Test</a>
+<a href="{% url 'courses:create_edit_test' parent_type='lesson' parent_id=lesson.pk %}">+ Create Test</a>
 {% endblock %}

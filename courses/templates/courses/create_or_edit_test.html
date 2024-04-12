@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create/Edit Test</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<form method="post" action="">
+    {% csrf_token %}
+    <label for="title">Test Title:</label>
+    <input type="text" id="title" name="title" required><br><br>
+    <div id="questionsContainer"></div>
+    <button type="button" id="addQuestion">Add Question</button>
+    <input type="hidden" name="question_count" id="questionCount" value="0">
+    <br><br>
+    <input type="submit" value="Submit Test">
+</form>
+
+<script>
+$(document).ready(function() {
+    let questionCount = 0;
+    $('#addQuestion').click(function(e) {
+        e.preventDefault();
+        let questionHTML = `
+            <div class="question" data-index="${questionCount}">
+                <label>Question:</label>
+                <input type="text" name="questions[${questionCount}][text]" required>
+                <div class="answers">`;
+
+        for (let i = 0; i < 4; i++) {
+            questionHTML += `
+                    <div class="answer" data-index="${i}">
+                        <label>Answer ${i + 1}:</label>
+                        <input type="text" name="questions[${questionCount}][answers][${i}][text]" required>
+                        <label>Correct:</label>
+                        <input type="checkbox" name="questions[${questionCount}][answers][${i}][is_correct]">
+                    </div>`;
+        }
+
+        questionHTML += `</div></div>`;
+        $('#questionsContainer').append(questionHTML);
+        questionCount++;
+        $('#questionCount').val(questionCount);
+    });
+});
+</script>
+</body>
+</html>
+``

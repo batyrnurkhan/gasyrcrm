@@ -3,7 +3,7 @@
 from django.urls import path
 from .views import (
     CourseListView, CourseDetailView, ModuleCreateView, LessonCreateView,
-    ModuleDetailView, LessonDetailView, create_test, TestDetailView, create_course_step1, create_course_step2
+    ModuleDetailView, LessonDetailView, TestDetailView, create_course_step1, create_course_step2, create_or_edit_test
 )
 
 app_name = 'courses'
@@ -18,7 +18,7 @@ urlpatterns = [
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
     path('lesson/<int:pk>/', LessonDetailView.as_view(), name='lesson_detail'),
     # Separate paths for module and lesson test creation
-    path('module/<int:module_id>/test/create/', create_test, name='module_test_create'),
-    path('lesson/<int:lesson_id>/test/create/', create_test, name='lesson_test_create'),
     path('test/<int:pk>/', TestDetailView.as_view(), name='test_detail'),
+    path('<str:parent_type>/<int:parent_id>/test/', create_or_edit_test, name='create_edit_test'),
+
 ]

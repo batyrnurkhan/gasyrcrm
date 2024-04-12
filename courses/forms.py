@@ -35,7 +35,8 @@ class LessonLiteratureForm(forms.ModelForm):
 class TestForm(forms.ModelForm):
     class Meta:
         model = Test
-        fields = ['title']
+        fields = ['title']  # Include other relevant fields
+
 
 class QuestionForm(forms.ModelForm):
     class Meta:

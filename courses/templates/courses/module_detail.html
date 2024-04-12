@@ -8,7 +8,7 @@
     <a href="{% url 'courses:lesson_create' module_id=module.pk %}">+ Add Lesson</a>
 
     <!-- Link to create a new test for this module -->
-<a href="{% url 'courses:module_test_create' module_id=module.pk %}">+ Create Test</a>
+<a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">+ Create Test</a>
 
     <h3>Lessons</h3>
     <ul>

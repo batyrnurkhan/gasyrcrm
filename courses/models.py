@@ -11,14 +11,6 @@ class Test(models.Model):
     content_object = GenericForeignKey()
     title = models.CharField(max_length=100)
 
-    def clean(self):
-        # Validate that Test is associated with an object
-        if not self.content_object:
-            raise ValidationError('A Test must be associated with either a Module or a Lesson.')
-
-    def save(self, *args, **kwargs):
-        self.full_clean()  # Call the clean method before saving
-        super().save(*args, **kwargs)
     def __str__(self):
         return self.title
 
@@ -91,3 +83,5 @@ class LessonLiterature(models.Model):
 
     def __str__(self):
         return self.literature_name
+
+
