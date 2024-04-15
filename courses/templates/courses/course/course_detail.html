@@ -11,5 +11,20 @@
             <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
         {% endfor %}
     </ul>
+
+    {% if can_add_students %}
+        <a href="{% url 'courses:add_students' pk=course.pk %}" class="btn btn-primary">Add Students</a>
+    {% endif %}
+
     <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
+
+    <!-- List of students enrolled in the course -->
+    <h3>Enrolled Students</h3>
+    <ul>
+        {% for student in students %}
+            <li>{{ student.full_name }}</li>
+        {% empty %}
+            <li>No students added yet.</li>
+        {% endfor %}
+    </ul>
 {% endblock %}

@@ -1,11 +1,13 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
 
-from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm
+from users.models import CustomUser
+from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm
 from .models import Course, Module, Lesson, Test, Question, Answer
 
 
@@ -47,11 +49,18 @@ class CourseListView(ListView):
     template_name = 'courses/course/course_list.html'
 
 
+
 class CourseDetailView(DetailView):
     model = Course
-    context_object_name = 'course'
     template_name = 'courses/course/course_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['is_user_enrolled'] = self.object.is_user_enrolled(user)
+        context['can_add_students'] = user.is_superuser or user.role == 'Teacher'
+        context['students'] = self.object.users.filter(role='Student')
+        return context
 
 class ModuleDetailView(DetailView):
     model = Module
@@ -172,5 +181,63 @@ class ModuleCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        # Redirect back to the course detail view
         return reverse_lazy('courses:course_detail', kwargs={'pk': self.kwargs['course_id']})
+
+class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = 'courses/course/add_students.html'
+    form_class = AddStudentForm
+    success_url = reverse_lazy('courses:add_students')  # Make sure this URL is correctly configured
+
+    def test_func(self):
+        user = self.request.user
+        return user.is_superuser or user.role == 'Teacher'
+
+    def get(self, request, *args, **kwargs):
+        # This ensures that the GET method can also handle adding a student if 'add_student_phone' is in the query.
+        if 'add_student_phone' in request.GET:
+            phone_number = request.GET.get('add_student_phone')
+            return self.add_student_to_course(self.kwargs['pk'], phone_number)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def add_student_to_course(request, course_id, student_id):
+        course = get_object_or_404(Course, pk=course_id)
+        student = get_object_or_404(CustomUser, pk=student_id, role='Student')
+        course.users.add(student)
+        return redirect('courses:course_detail', pk=course_id)
+
+    def form_valid(self, form):
+        # When the form is valid, process the search and update the context with the results
+        search_query = form.cleaned_data['search_query']
+        students = CustomUser.objects.filter(full_name__icontains=search_query, role='Student')
+        context = self.get_context_data(form=form, students=students)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course_id = self.kwargs.get('pk')
+        course = get_object_or_404(Course, pk=course_id)
+        context['course'] = course
+
+        # Initialize the form in context data for re-rendering the page on GET requests.
+        context['form'] = AddStudentForm(self.request.GET or None)
+
+        if 'search_query' in self.request.GET:
+            search_query = self.request.GET['search_query']
+            context['students'] = CustomUser.objects.filter(role='Student', full_name__icontains=search_query)
+        else:
+            context['students'] = []
+
+        return context
+
+def add_student_to_course(request, course_id, student_id):
+    course = get_object_or_404(Course, pk=course_id)
+    student = get_object_or_404(CustomUser, pk=student_id)
+    course.users.add(student)  # Assuming 'users' is the ManyToMany field relating courses to students
+    return redirect('courses:course_detail', pk=course_id)

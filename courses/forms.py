@@ -1,6 +1,6 @@
 from django import forms
 from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer
-
+from users.models import CustomUser
 
 class CourseForm(forms.ModelForm):
     class Meta:
@@ -47,3 +47,10 @@ class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         fields = ['text', 'is_correct']
+
+class AddStudentForm(forms.Form):
+    search_query = forms.CharField(label='Search by name or phone number', max_length=100)
+
+    def clean_search_query(self):
+        # Clean and return the search query, maybe trim whitespaces
+        return self.cleaned_data['search_query'].strip()

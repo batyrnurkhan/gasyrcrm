@@ -1,9 +1,11 @@
 {% extends 'core/base.html' %}
 
+{% load course_tags %}
+
 {% block content %}
 <h2>Courses List</h2>
 
-{% if user.is_superuser or user.is_teacher %}
+{% if user.is_superuser or user.role == 'Teacher' %}
     <p><a href="{% url 'courses:create_course_step1' %}" class="btn btn-primary">Create Course</a></p>
 {% endif %}
 
@@ -11,6 +13,9 @@
     {% for course in courses %}
     <li>
         <a href="{% url 'courses:course_detail' pk=course.pk %}">{{ course.course_name }}</a>
+        {% if not course|is_user_enrolled:user %}
+            <p>Доступен к покупке</p>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

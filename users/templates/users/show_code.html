@@ -4,4 +4,7 @@
 {% csrf_token %}
 <h2>Your 6-Digit Code</h2>
 <p>Your code: {{ login_code }}</p>
+{% if not request.user.has_access %}
+    <p>Администратор еще не подтвердил ваш аккаунт.</p>
+{% endif %}
 {% endblock %}
