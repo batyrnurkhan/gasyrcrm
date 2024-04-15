@@ -1,0 +1,17 @@
+<!-- users/profile.html -->
+{% extends "core/base.html" %}
+{% block content %}
+<h1>User Profile</h1>
+<div>
+    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
+    <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+    <p><strong>City:</strong> {{ user.user_city }}</p>
+    <p><strong>Role:</strong> {{ user.role }}</p>
+    <p><strong>Login Code:</strong> {{ user.login_code }}</p>
+    {% if user.profile_picture %}
+    <p><img src="{{ user.profile_picture.url }}" alt="Profile Picture" height="100"></p>
+    {% else %}
+    <p>No profile picture uploaded.</p>
+    {% endif %}
+</div>
+{% endblock %}

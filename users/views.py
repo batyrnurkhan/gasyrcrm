@@ -107,3 +107,12 @@ class GrantAccessView(View):
             except CustomUser.DoesNotExist:
                 form.add_error('login_code', 'No user found with this login code.')
         return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user  # pass the current user to the context
+        return context
