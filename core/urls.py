@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from core.views import HomePageView
+from core.views import HomePageView, WelcomePageView
 
 app_name = 'core'
 
@@ -29,7 +29,8 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
 
-    path('', HomePageView.as_view(), name='home'),
+    path('', WelcomePageView.as_view(), name='welcome'),
+    path('home/', HomePageView.as_view(), name='home'),
 
 ]
 if settings.DEBUG:
