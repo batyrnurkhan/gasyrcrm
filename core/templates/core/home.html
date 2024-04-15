@@ -27,7 +27,8 @@
         </div>
     </div>
     {% csrf_token %}
-
+    {% include 'core/components/footer.html' %}
+{% comment %}
 <h2>Welcome to the Home Page</h2>
 <p>This is your home page. Navigate through the site from here.</p>
 
@@ -36,5 +37,6 @@ HI TEQACHER/ADMIN
     <a href="{% url 'users:grant_access' %}">Give Access</a>
 
 {% endif %}
+{% endcomment %}
 
 {% endblock %}

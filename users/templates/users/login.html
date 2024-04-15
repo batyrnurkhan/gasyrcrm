@@ -4,18 +4,49 @@
 {% block content %}
 
     {% include 'core/components/navbar-light-transparent.html' %}
-    <div class="container content mx-auto relative">
-        <div class="absolute top-0 bottom-0 right-32">
-            <div class="block bg-white rounded-lg text-center">
-                <h2>Login</h2>
-                <form method="post" action="{% url 'users:login' %}">
+    <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-top"
+         style="background-image: url('{% static "core/images/stars.png" %}')"></div>
+    <div class="container content mx-auto relative font-[Qanelas]">
+        <div class="absolute left-24 top-0 -bottom-5 -z-10">
+            <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
+        </div>
+        <div class="absolute bg-white rounded-lg bottom-36 left-36 py-6 px-8 text-center">
+            <h2 class="text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
+            <p class="text-sm text-black-main font-medium">Основатель школы</p>
+        </div>
+        <div class="absolute top-16 bottom-0 right-32">
+            <div class="bg-light-gray rounded-lg text-center px-7 pb-11 pt-12">
+                <h2 class="font-bold text-2xl mb-5 text-black-main">Вход на платформу</h2>
+                <form class="mb-7" method="post" action="{% url 'users:login' %}">
                     {% csrf_token %}
-                    <input type="text" name="phone_number" id="id_phone_number" required><br><br>
-
-                    <input type="password" name="password" id="id_password" required><br><br>
-
-                    <button type="submit">Login</button>
+                    <div class="relative mb-1.5">
+                        <input class="pl-14 py-6 border rounded-lg placeholder:text-black-main placeholder:text-lg" style="width: 340px"
+                               type="text" name="phone_number"
+                               id="id_phone_number" value="+7 (___) ___ __ __" required>
+                        <div class="absolute top-7 left-2 pl-3
+                                    flex items-center
+                                    pointer-events-none">
+                            <img src="{% static "core/icons/kz.png" %}" alt="">
+                        </div>
+                    </div>
+                    <input class="pl-4 py-6 border rounded-lg placeholder:text-black-main placeholder:text-base" style="width: 340px"
+                           type="password" name="password" id="id_password" placeholder="Введите ваш пароль" required><br><br>
+                    <button class="bg-accent-red rounded-lg py-6 font-semibold text-white" style="width: 340px; letter-spacing: 0.01rem" type="submit">Войти на платформу</button>
                 </form>
+                <div>
+                    <h4 class="text-black-main font-semibold text-lg mb-2.5">Войти через соц. сети</h4>
+                    <div>
+                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
+                        </a>
+                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
+                        </a>
+                    </div>
+                    <a class="text-black-main font-light underline" href="#">
+                        Проблемы со входом?
+                    </a>
+                </div>
             </div>
         </div>
     </div>
