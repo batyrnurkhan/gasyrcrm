@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Courses List</h2>
+
+{% if user.is_superuser or user.is_teacher %}
+    <p><a href="{% url 'courses:create_course_step1' %}" class="btn btn-primary">Create Course</a></p>
+{% endif %}
+
+<ul>
+    {% for course in courses %}
+    <li>
+        <a href="{% url 'courses:course_detail' pk=course.pk %}">{{ course.course_name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -37,8 +37,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
                                                           ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe',
                                                            'Taraz', 'Pavlodar', 'Oskemen', 'Semey', 'Atyrau']])
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, blank=True, null=True,
-                            default='Anonymous')  # Add role field
-    login_code = models.CharField(max_length=7, blank=True, null=True)  # New field for the login code
+                            default='Anonymous')
+    login_code = models.CharField(max_length=7, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     has_access = models.BooleanField(default=False)

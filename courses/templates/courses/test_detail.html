@@ -1,0 +1,9 @@
+<!-- test_detail.html -->
+<form method="post">
+    {% csrf_token %}
+    <h2>Edit Test</h2>
+    {{ test_form.as_p }}
+    <button type="submit">Save Test</button>
+</form>
+
+<!-- Add sections for questions and answers similarly -->

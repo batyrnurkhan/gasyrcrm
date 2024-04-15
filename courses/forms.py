@@ -1,5 +1,6 @@
 from django import forms
-from .models import Course, Module, Lesson, LessonLiterature
+from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer
+
 
 class CourseForm(forms.ModelForm):
     class Meta:
@@ -19,14 +20,30 @@ class CourseFormStep2(forms.ModelForm):
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
-        fields = ['module_name', 'module_test']
+        fields = ['module_name']
 
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson
-        fields = ['lesson_name', 'video_link', 'lesson_test']
+        fields = ['lesson_name', 'video_link']
 
 class LessonLiteratureForm(forms.ModelForm):
     class Meta:
         model = LessonLiterature
         fields = ['literature_name', 'literature_type', 'file']
+
+class TestForm(forms.ModelForm):
+    class Meta:
+        model = Test
+        fields = ['title']  # Include other relevant fields
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = ['text', 'question_type']
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text', 'is_correct']
