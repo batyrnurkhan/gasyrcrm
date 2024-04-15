@@ -124,19 +124,41 @@ class CreateOrEditTestView(View):
         test.title = title
         test.save()
 
-        for i in range(int(request.POST.get('question_count', 0))):
-            question_text = request.POST.get(f'questions[{i}][text]', '')
-            if question_text:
-                question, _ = Question.objects.get_or_create(test=test, text=question_text)
+        # Handling existing questions
+        existing_question_ids = [int(q_id) for q_id in request.POST.getlist('question_ids', [])]
+        if not created:
+            # Delete any questions not included in the current submission
+            test.questions.exclude(id__in=existing_question_ids).delete()
 
-                for j in range(4):
+        for i in range(int(request.POST.get('question_count', 0))):
+            question_id = request.POST.get(f'questions[{i}][id]', None)
+            question_text = request.POST.get(f'questions[{i}][text]', '')
+            question_type = request.POST.get(f'questions[{i}][type]', 'SC')
+
+            if question_text:
+                if question_id:
+                    question = Question.objects.get(id=int(question_id))
+                    question.text = question_text
+                    question.question_type = question_type
+                    question.save()
+                else:
+                    question = Question.objects.create(test=test, text=question_text, question_type=question_type)
+
+                # Update answers
+                for j in range(4):  # assuming there are always four answers
+                    answer_id = request.POST.get(f'questions[{i}][answers][{j}][id]', None)
                     answer_text = request.POST.get(f'questions[{i}][answers][{j}][text]', '')
                     is_correct = request.POST.get(f'questions[{i}][answers][{j}][is_correct]', '') == 'on'
+
                     if answer_text:
-                        Answer.objects.update_or_create(
-                            question=question, text=answer_text,
-                            defaults={'is_correct': is_correct}
-                        )
+                        if answer_id:
+                            answer = Answer.objects.get(id=int(answer_id))
+                            answer.text = answer_text
+                            answer.is_correct = is_correct
+                            answer.save()
+                        else:
+                            Answer.objects.create(question=question, text=answer_text, is_correct=is_correct)
+
         return redirect('courses:list')
 
 

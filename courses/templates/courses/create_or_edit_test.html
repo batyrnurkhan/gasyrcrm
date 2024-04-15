@@ -16,6 +16,11 @@
                 <div class="question">
                     <label>Question:</label>
                     <input type="text" name="questions[{{ forloop.counter0 }}][text]" required value="{{ question.text }}">
+                    <label>Question Type:</label>
+                    <select name="questions[{{ forloop.counter0 }}][type]">
+                        <option value="SC" {% if question.question_type == 'SC' %}selected{% endif %}>Single Choice</option>
+                        <option value="MC" {% if question.question_type == 'MC' %}selected{% endif %}>Multiple Choice</option>
+                    </select>
                     <div class="answers">
                         {% for answer in question.answers.all %}
                             <div class="answer">
@@ -34,7 +39,7 @@
     {% if test_exists %}
         <input type="hidden" name="question_count" id="questionCount" value="{{ test.questions.count }}">
     {% else %}
-        <input type="hidden" name="question_count" id="questionCount" value="0">
+<input type="hidden" name="questions[{{ forloop.counter0 }}][id]" value="{{ question.id }}">
     {% endif %}
     <br><br>
     {% if test_exists %}
@@ -50,21 +55,26 @@ $(document).ready(function() {
 
     $('#addQuestion').click(function(e) {
         e.preventDefault();
-        const questionHTML = `
-            <div class="question" data-index="${questionCount}">
-                <label>Question:</label>
-                <input type="text" name="questions[${questionCount}][text]" required>
-                <div class="answers">` +
-            Array.from({ length: 4 }, (_, i) => `
-                <div class="answer" data-index="${i}">
-                    <label>Answer ${i + 1}:</label>
-                    <input type="text" name="questions[${questionCount}][answers][${i}][text]" required>
-                    <label>Correct:</label>
-                    <input type="checkbox" name="questions[${questionCount}][answers][${i}][is_correct]">
-                </div>
-            `).join('') + `
-                </div>
-            </div>`;
+        let questionHTML = `
+    <div class="question" data-index="${questionCount}">
+        <label>Question:</label>
+        <input type="text" name="questions[${questionCount}][text]" required>
+        <label>Question Type:</label>
+        <select name="questions[${questionCount}][type]">
+            <option value="SC">Single Choice</option>
+            <option value="MC">Multiple Choice</option>
+        </select>
+        <div class="answers">` +
+    Array.from({ length: 4 }, (_, i) => `
+        <div class="answer" data-index="${i}">
+            <label>Answer ${i + 1}:</label>
+            <input type="text" name="questions[${questionCount}][answers][${i}][text]" required>
+            <label>Correct:</label>
+            <input type="checkbox" name="questions[${questionCount}][answers][${i}][is_correct]">
+        </div>
+    `).join('') + `
+        </div>
+    </div>`;
 
         $('#questionsContainer').append(questionHTML);
         $('html, body').animate({ scrollTop: $(`div[data-index="${questionCount}"]`).offset().top }, 'slow');
