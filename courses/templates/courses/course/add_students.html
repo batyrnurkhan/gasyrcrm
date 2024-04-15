@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Add Students to Course</h2>
+<form method="get" action="{% url 'courses:add_students' pk=course.pk %}">
+    {{ form.as_p }}
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+{% if students %}
+    <ul>
+    {% for student in students %}
+    <li>
+        {{ student.full_name }} - <a href="{% url 'courses:add_student_to_course' course_id=course.pk student_id=student.id %}">Add to Course</a>
+    </li>
+{% empty %}
+    <li>No students found.</li>
+{% endfor %}
+
+</ul>
+{% else %}
+    <p>No search performed yet or no results found.</p>
+{% endif %}
+
+{% if can_add_students %}
+    <a href="{% url 'courses:add_students' pk=course.pk %}" class="btn btn-primary">Add More Students</a>
+{% endif %}
+{% endblock %}

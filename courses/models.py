@@ -55,6 +55,7 @@ class Course(models.Model):
     def __str__(self):
         return self.course_name
 
+
 class Module(models.Model):
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
     module_name = models.CharField(max_length=50)

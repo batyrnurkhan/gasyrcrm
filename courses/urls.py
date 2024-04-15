@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (
     CourseListView, CourseDetailView, LessonCreateView,
     ModuleDetailView, LessonDetailView,
-    CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView
+    CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
+    add_student_to_course
 )
 
 app_name = 'courses'
@@ -18,4 +19,7 @@ urlpatterns = [
     path('lesson/<int:pk>/', LessonDetailView.as_view(), name='lesson_detail'),
     #path('test/<int:pk>/', TestDetailView.as_view(), name='test_detail'),
     path('<str:parent_type>/<int:parent_id>/test/', CreateOrEditTestView.as_view(), name='create_edit_test'),
+    path('course/<int:pk>/add-students/', AddStudentsView.as_view(), name='add_students'),
+    path('<int:course_id>/add-student/<int:student_id>/', add_student_to_course, name='add_student_to_course'),
+
 ]

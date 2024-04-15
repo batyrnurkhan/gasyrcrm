@@ -27,12 +27,17 @@ class SignUpView(View):
         phone_number = request.POST.get('phone_number')
         user_city = request.POST.get('user_city')
         password = request.POST.get('password')
+
         CustomUser = get_user_model()
-        CustomUser.objects.create_user(
+        login_code = generate_unique_code()  # Generate the login code here
+
+        # Create the user instance with all necessary data
+        user = CustomUser.objects.create_user(
             phone_number=phone_number,
             password=password,
             full_name=full_name,
-            user_city=user_city
+            user_city=user_city,
+            login_code=login_code  # Set login code for the user instance
         )
         return redirect('users:login')
 
@@ -40,7 +45,8 @@ class ShowCodeView(LoginRequiredMixin, TemplateView):
     template_name = 'users/show_code.html'
 
     def get(self, request, *args, **kwargs):
-        if request.user.is_superuser or request.user.role == 'Teacher':
+        # Redirect teachers and superusers directly to the home page
+        if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
             return redirect('home')
         return super().get(request, *args, **kwargs)
 
@@ -60,18 +66,16 @@ class LoginView(View):
         form = self.form_class(request, data=request.POST)
         if form.is_valid():
             raw_phone_number = form.cleaned_data.get('phone_number')
-            formatted_phone_number = re.sub(r'\D', '', raw_phone_number)
+            formatted_phone_number = re.sub(r'\D', '', raw_phone_number)  # Strip non-numeric characters
             password = form.cleaned_data.get('password')
             user = authenticate(request, username=formatted_phone_number, password=password)
-            if user:
-                if not user.login_code:
-                    user.login_code = generate_unique_code()
-                    user.save()
+
+            if user is not None:
                 login(request, user)
-                if user.role in ['Teacher', 'Superuser'] or user.has_access:
-                    return redirect('home')  # Adjust this to your home page's name
+                if user.has_access or user.role in ['Teacher', 'Superuser']:
+                    return redirect('home')  # Redirect to a home page or dashboard suitable for privileged users
                 else:
-                    return HttpResponseRedirect(reverse('users:show_code'))
+                    return redirect('users:show_code')  # Redirect to the page where users can see their access code
             else:
                 form.add_error(None, "Phone number or password is incorrect.")
         return render(request, 'users/login.html', {'form': form})
@@ -103,3 +107,12 @@ class GrantAccessView(View):
             except CustomUser.DoesNotExist:
                 form.add_error('login_code', 'No user found with this login code.')
         return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
+
+
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user  # pass the current user to the context
+        return context
