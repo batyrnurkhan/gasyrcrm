@@ -9,37 +9,65 @@
 <form method="post" action="">
     {% csrf_token %}
     <label for="title">Test Title:</label>
-    <input type="text" id="title" name="title" required><br><br>
-    <div id="questionsContainer"></div>
+    <input type="text" id="title" name="title" required value="{% if test_exists %}{{ test.title }}{% else %}{% endif %}"><br><br>
+    <div id="questionsContainer">
+        {% if test_exists %}
+            {% for question in test.questions.all %}
+                <div class="question">
+                    <label>Question:</label>
+                    <input type="text" name="questions[{{ forloop.counter0 }}][text]" required value="{{ question.text }}">
+                    <div class="answers">
+                        {% for answer in question.answers.all %}
+                            <div class="answer">
+                                <label>Answer:</label>
+                                <input type="text" name="questions[{{ forloop.parentloop.counter0 }}][answers][{{ forloop.counter0 }}][text]" required value="{{ answer.text }}">
+                                <label>Correct:</label>
+                                <input type="checkbox" name="questions[{{ forloop.parentloop.counter0 }}][answers][{{ forloop.counter0 }}][is_correct]" {% if answer.is_correct %}checked{% endif %}>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
     <button type="button" id="addQuestion">Add Question</button>
-    <input type="hidden" name="question_count" id="questionCount" value="0">
+    {% if test_exists %}
+        <input type="hidden" name="question_count" id="questionCount" value="{{ test.questions.count }}">
+    {% else %}
+        <input type="hidden" name="question_count" id="questionCount" value="0">
+    {% endif %}
     <br><br>
-    <input type="submit" value="Submit Test">
+    {% if test_exists %}
+        <input type="submit" value="Edit Test">
+    {% else %}
+        <input type="submit" value="Create Test">
+    {% endif %}
 </form>
 
 <script>
 $(document).ready(function() {
-    let questionCount = 0;
+    let questionCount = {{ test.questions.count|default_if_none:"0" }};
+
     $('#addQuestion').click(function(e) {
         e.preventDefault();
-        let questionHTML = `
+        const questionHTML = `
             <div class="question" data-index="${questionCount}">
                 <label>Question:</label>
                 <input type="text" name="questions[${questionCount}][text]" required>
-                <div class="answers">`;
+                <div class="answers">` +
+            Array.from({ length: 4 }, (_, i) => `
+                <div class="answer" data-index="${i}">
+                    <label>Answer ${i + 1}:</label>
+                    <input type="text" name="questions[${questionCount}][answers][${i}][text]" required>
+                    <label>Correct:</label>
+                    <input type="checkbox" name="questions[${questionCount}][answers][${i}][is_correct]">
+                </div>
+            `).join('') + `
+                </div>
+            </div>`;
 
-        for (let i = 0; i < 4; i++) {
-            questionHTML += `
-                    <div class="answer" data-index="${i}">
-                        <label>Answer ${i + 1}:</label>
-                        <input type="text" name="questions[${questionCount}][answers][${i}][text]" required>
-                        <label>Correct:</label>
-                        <input type="checkbox" name="questions[${questionCount}][answers][${i}][is_correct]">
-                    </div>`;
-        }
-
-        questionHTML += `</div></div>`;
         $('#questionsContainer').append(questionHTML);
+        $('html, body').animate({ scrollTop: $(`div[data-index="${questionCount}"]`).offset().top }, 'slow');
         questionCount++;
         $('#questionCount').val(questionCount);
     });
@@ -47,4 +75,3 @@ $(document).ready(function() {
 </script>
 </body>
 </html>
-``
