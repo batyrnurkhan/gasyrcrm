@@ -1,0 +1,19 @@
+<!-- _course_list_partial.html -->
+{% for data in course_data %}
+    <div>
+        <a href="{% url 'courses:course_detail' pk=data.course.pk %}">{{ data.course.course_name }}</a>
+        {% if data.enrolled %}
+            {% if data.completion == 0 %}
+                <p>Начать прохождение</p>
+            {% elif data.completion == 100 %}
+                <p>Вы прошли курс</p>
+            {% else %}
+                <p>Completion: {{ data.completion|floatformat:2 }}%</p>
+            {% endif %}
+        {% else %}
+            <p>Доступен к покупке</p>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No courses available.</p>
+{% endfor %}
