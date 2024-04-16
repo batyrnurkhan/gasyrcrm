@@ -11,6 +11,9 @@ class Test(models.Model):
     content_object = GenericForeignKey()
     title = models.CharField(max_length=100)
 
+    def is_submitted_by_user(self, user):
+        return self.test_submissions.filter(user=user).exists()
+
     def __str__(self):
         return self.title
 
@@ -56,6 +59,21 @@ class Course(models.Model):
         """Check if a given user is enrolled in this course."""
         return self.users.filter(pk=user.pk).exists()
 
+    def calculate_completion_percentage(self, user):
+        total_tests = Test.objects.filter(
+            content_type=ContentType.objects.get_for_model(Course),
+            object_id=self.pk
+        ).count()
+        submitted_tests_count = Test.objects.filter(
+            content_type=ContentType.objects.get_for_model(Course),
+            object_id=self.pk,
+            test_submissions__user=user
+        ).distinct().count()
+
+        if total_tests == 0:
+            return 0  # Avoid division by zero
+        return (submitted_tests_count / total_tests) * 100
+
     def __str__(self):
         return self.course_name
 
@@ -90,3 +108,13 @@ class LessonLiterature(models.Model):
         return self.literature_name
 
 
+class TestSubmission(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='test_submissions')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='test_submissions')
+    submission_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['test', 'user']  # Ensure each user submits each test only once
+
+    def __str__(self):
+        return f"{self.user} - {self.test}"

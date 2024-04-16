@@ -59,17 +59,27 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def post(self, request, *args, **kwargs):
         data_type = request.POST.get('data_type', 'all')
-        if data_type == 'mine':
-            queryset = self.request.user.courses.all()
-        elif data_type == 'ended':
-            queryset = self.request.user.courses.filter(ended=True)  # Adjust this condition based on your model's logic
-        else:
-            queryset = Course.objects.all()
+        user = self.request.user
 
-        context = {'courses': queryset}
+        if data_type == 'mine':
+            courses = user.courses.all()
+        elif data_type == 'ended':
+            # Fetch only those courses where the user is enrolled and the completion percentage is 100%
+            courses = user.courses.all()
+            courses = [course for course in courses if course.calculate_completion_percentage(user) == 100]
+        else:
+            courses = Course.objects.all()
+
+        for course in courses:
+            course.completion_percentage = course.calculate_completion_percentage(user)
+
+        context = {'courses': courses}
         html = render_to_string('courses/_course_list_partial.html', context, request=request)
         return JsonResponse({'html': html})
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 
 class CourseDetailView(DetailView):

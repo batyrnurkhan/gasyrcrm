@@ -31,26 +31,29 @@
 
 <script>
     function fetchCourses(dataType) {
-        const url = "{% url 'courses:course_list' %}";
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: `data_type=${dataType}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('courseList').innerHTML = data.html;
-        })
-        .catch(error => console.error('Error:', error));
-    }
+    const url = "{% url 'courses:course_list' %}";
+    const data = {
+        'data_type': dataType,
+        'csrfmiddlewaretoken': '{{ csrf_token }}'
+    };
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('courseList').innerHTML = data.html;
+    })
+    .catch(error => console.error('Error:', error));
+}
 
     document.getElementById('allCourses').addEventListener('click', () => fetchCourses('all'));
     document.getElementById('myCourses').addEventListener('click', () => fetchCourses('mine'));
-    document.getElementById('endedCourses').addEventListener('click', () => fetchCourses('ended'));
+document.getElementById('endedCourses').addEventListener('click', () => fetchCourses('ended'));
 </script>
 
 {% endblock %}
