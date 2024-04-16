@@ -1,17 +1,30 @@
-<!-- users/profile.html -->
-{% extends "core/base.html" %}
+{% extends 'core/base.html' %}
 {% block content %}
-<h1>User Profile</h1>
-<div>
-    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
-    <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
-    <p><strong>City:</strong> {{ user.user_city }}</p>
-    <p><strong>Role:</strong> {{ user.role }}</p>
-    <p><strong>Login Code:</strong> {{ user.login_code }}</p>
-    {% if user.profile_picture %}
-    <p><img src="{{ user.profile_picture.url }}" alt="Profile Picture" height="100"></p>
-    {% else %}
-    <p>No profile picture uploaded.</p>
-    {% endif %}
-</div>
+
+<h1>Edit Profile</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div>
+        <label for="id_full_name">Full Name:</label>
+        <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default_if_none:'' }}" required>
+    </div>
+    <div>
+        <label for="id_phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="id_phone_number" value="{{ form.phone_number.value|default_if_none:'' }}" required>
+    </div>
+    <div>
+        <label for="id_email">Email (optional):</label>
+        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}">
+    </div>
+    <div>
+        <label for="id_user_city">City:</label>
+        {{ form.user_city }}
+    </div>
+    <div>
+        <label for="id_profile_picture">Profile Picture:</label>
+        <input type="file" name="profile_picture" id="id_profile_picture">
+    </div>
+    <button type="submit">Save Changes</button>
+</form>
+
 {% endblock %}

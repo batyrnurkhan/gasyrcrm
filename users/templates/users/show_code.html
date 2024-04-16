@@ -4,7 +4,29 @@
 {% csrf_token %}
 <h2>Your 6-Digit Code</h2>
 <p>Your code: {{ login_code }}</p>
-{% if not request.user.has_access %}
-    <p>Администратор еще не подтвердил ваш аккаунт.</p>
-{% endif %}
+
+<button id="checkAccessBtn">Мой аккаунт подтвердили</button>
+<p id="accessMessage" style="display:none;"></p>
+
+<script>
+document.getElementById('checkAccessBtn').addEventListener('click', function() {
+    fetch("{% url 'users:check-access' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.has_access) {
+            window.location.href = data.url;
+        } else {
+            document.getElementById('accessMessage').style.display = 'block';
+            document.getElementById('accessMessage').innerText = data.message;
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
 {% endblock %}

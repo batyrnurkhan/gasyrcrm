@@ -1,13 +1,15 @@
 import random
 import re
 import logging
+
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, View
-from users.forms import CustomUserAuthenticationForm, AccessCodeForm
+from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm
 
 logger = logging.getLogger(__name__)
 def generate_unique_code():
@@ -109,10 +111,26 @@ class GrantAccessView(View):
         return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, View):
+    form_class = ProfileUpdateForm
     template_name = 'users/profile.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['user'] = self.request.user  # pass the current user to the context
-        return context
+    def get(self, request):
+        form = self.form_class(instance=request.user, user=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES, instance=request.user, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
+        return render(request, self.template_name, {'form': form})
+
+
+class CheckAccessView(LoginRequiredMixin, View):
+    def post(self, request):
+        if request.user.has_access:
+            return JsonResponse({'has_access': True, 'url': reverse('home')})
+        else:
+            return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})

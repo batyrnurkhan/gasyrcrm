@@ -2,6 +2,7 @@ import re
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
+from django.core.validators import EmailValidator
 
 
 class CustomUserManager(BaseUserManager):
@@ -43,6 +44,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     has_access = models.BooleanField(default=False)
+    email = models.EmailField(max_length=255, unique=True, validators=[EmailValidator()], null=True, blank=True)
 
     objects = CustomUserManager()
 
