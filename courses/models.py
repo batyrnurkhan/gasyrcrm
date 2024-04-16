@@ -52,6 +52,10 @@ class Course(models.Model):
     users = models.ManyToManyField(CustomUser, related_name='courses', blank=True)
     created_by = models.ForeignKey(CustomUser, related_name='created_courses', on_delete=models.CASCADE)
 
+    def is_user_enrolled(self, user):
+        """Check if a given user is enrolled in this course."""
+        return self.users.filter(pk=user.pk).exists()
+
     def __str__(self):
         return self.course_name
 

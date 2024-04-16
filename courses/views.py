@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, View
 from django.views.generic.edit import CreateView, FormView
@@ -43,10 +44,41 @@ class CreateCourseStep2View(View):
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 
-class CourseListView(ListView):
+class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Course
-    context_object_name = 'courses'
     template_name = 'courses/course/course_list.html'
+    context_object_name = 'courses'
+
+    def test_func(self):
+        # Ensures that the user is a Student, Teacher, or Superuser
+        return self.request.user.is_superuser or \
+            self.request.user.role in ['Student', 'Teacher']
+
+    def get_queryset(self):
+        # Return all courses by default
+        return Course.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Initially, display all courses
+        context['my_courses'] = False
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Check for an AJAX request
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            data_type = request.POST.get('data_type', 'all')
+            if data_type == 'mine':
+                courses = Course.objects.filter(users=request.user)
+            else:
+                courses = Course.objects.all()
+            context = {'courses': courses, 'my_courses': data_type == 'mine'}
+
+            # Render your course list part of the template with updated context
+            courses_html = render_to_string('courses/_course_list_partial.html', context, request)
+            return JsonResponse({'courses_html': courses_html})
+        else:
+            return HttpResponseBadRequest("This endpoint only supports AJAX requests.")
 
 
 
@@ -57,10 +89,14 @@ class CourseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context['is_user_enrolled'] = self.object.is_user_enrolled(user)
+        if hasattr(self.object, 'is_user_enrolled'):
+            context['is_user_enrolled'] = self.object.is_user_enrolled(user)
+        else:
+            context['is_user_enrolled'] = False
         context['can_add_students'] = user.is_superuser or user.role == 'Teacher'
         context['students'] = self.object.users.filter(role='Student')
         return context
+
 
 class ModuleDetailView(DetailView):
     model = Module

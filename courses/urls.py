@@ -9,7 +9,7 @@ from .views import (
 app_name = 'courses'
 
 urlpatterns = [
-    path('list/', CourseListView.as_view(), name='list'),
+    path('', CourseListView.as_view(), name='course_list'),
     path('<int:pk>/', CourseDetailView.as_view(), name='course_detail'),
     path('create/step1/', CreateCourseStep1View.as_view(), name='create_course_step1'),
     path('create/step2/', CreateCourseStep2View.as_view(), name='create_course_step2'),
