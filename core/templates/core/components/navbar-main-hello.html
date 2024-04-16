@@ -1,0 +1,67 @@
+{% load static %}
+<div class="fixed w-full bg-white shadow-xl z-10">
+    <div class="border-b-2 border-gray">
+        <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
+            <div class="py-4 pr-10 border-r-2 border-gray">
+                <a href="{% url "welcome" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
+            </div>
+            <div class="mr-auto pl-11">
+                <h2 class="text-xl text-black-main font-semibold">Привет, {{ user.full_name }}!</h2>
+                <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
+            </div>
+            <div class="border-l-2 border-gray py-3 pl-5 flex flex-row items-center">
+                <img class="w-full max-w-14" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
+                <div class="ml-3.5 mr-8 h-fit">
+                    <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
+                    <p class="m-0">{{ user.role }}</p>
+                </div>
+                <div class="relative ease-in" x-data="{ open: false }">
+                    <img class="cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
+                         src="{% static "core/icons/user-arrow.svg" %}">
+                    <div id="dropdownMenu"
+                         class="absolute top-11 -right-2 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
+                        <a href="#" class="text-blue-ielts font-bold block px-4 py-2">
+                            <img class="inline mr-3" src="{% static "core/icons/edit-fill-blue-ielts.svg" %}" alt="">
+                            Редактировать профиль
+                        </a>
+                        <a href="#" class="text-accent-red font-bold block px-4 py-2">
+                            <img class="inline mr-3" src="{% static "core/icons/close-fill-accent-red.svg" %}" alt="">
+                            Выйти из аккаунта
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <nav class="flex flex-row justify-center">
+        <a class="block font-bold px-2 py-5 mx-4 active-link" href="">Все курсы<div class="link-block"></div></a>
+        <a class="block font-bold px-2 py-5 mx-4" href="">Мои курсы</a>
+        <a class="block font-bold px-2 py-5 mx-4" href="">Пройденные</a>
+    </nav>
+</div>
+<div style="height: 140px;"></div>
+
+
+<script>
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        var dropdownButton = document.getElementById("dropdownButton");
+        if (dropdownMenu.classList.contains("hidden")) {
+            dropdownMenu.classList.remove("hidden");
+            dropdownButton.classList.add("-rotate-90");
+        } else {
+            dropdownMenu.classList.add("hidden");
+            dropdownButton.classList.remove("-rotate-90");
+        }
+    }
+
+    // Close the dropdown if the click is outside of it
+    window.onclick = function (event) {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        if (!dropdownMenu.contains(event.target) && event.target.id !== "dropdownButton") {
+            dropdownMenu.classList.add("hidden");
+            dropdownButton.classList.remove("-rotate-90");
+        }
+    }
+</script>

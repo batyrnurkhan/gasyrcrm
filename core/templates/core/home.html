@@ -1,34 +1,59 @@
 {% extends "core/base.html" %}
 {% load static %}
 
+{% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
-    {% include 'core/components/navbar1.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center"
-         style="background-image: url('{% static 'core/images/background.png' %}'); background-size: 100%">
-        <div class="border rounded-lg border-accent-red text-center inline-block py-16 px-12 mt-14 mb-64 bg-white">
-            <h1 class="text-black-main font-semibold" style="font-size: 64px; line-height: 76.8px">
-                Добро пожаловать <br/>в сообщество <span style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
-            </h1>
-            <p class="text-base text-black-main mb-10" style="letter-spacing: 0.01rem">
-                Платформа по подготовке в зарубежные ВУЗы от Gasyr Foundation School
-            </p>
-            <div class="flex flex-row items-center justify-center">
-                <a class="bg-accent-red rounded-lg p-6 text-white mr-2.5" href="{% url 'users:login' %}">
-                    Войти на платформу
-                    <img class="inline ml-14" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}" alt=""/>
-                </a>
-                <div class="border border-gray border-2 rounded-lg p-2.5 pl-5 flex flex-row items-center">
-                    <p class="mr-8">Впервые у нас?</p>
-                    <a class="border border-accent-red border-2 rounded-lg py-4 px-12 text-accent-red block font-semibold" href="{% url 'users:signup' %}">
-                        Регистрация
-                    </a>
+    {% include 'core/components/navbar-main-hello.html' %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
+        {% if user.is_authenticated %}
+            <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
+            <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-row mb-12"
+                 style="background-image: url('{% static "core/images/gasyr-red-row.png" %}')">
+                <div class="p-3 text-start mr-auto">
+                    <h4 class="text-2xl font-semibold">Вы остановились!</h4>
+                    <h2 class="text-[32px] font-bold mb-[20px]">Курс по SAT:MATH для начинающих</h2>
+                    <a class="inline-block text-white font-semibold py-5 px-16 border-white border-2 rounded-lg"
+                       href="#">Продолжить курс</a>
+                </div>
+                <div class="relative h-full">
+                    <svg class="w-[182px] h-[182px] m-auto z-0" viewBox="0 0 100 100">
+                        <!-- Background circle -->
+                        <circle
+                                class="text-gray-200 stroke-white"
+                                stroke-width="10"
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                fill="transparent"
+                        ></circle>
+                        <!-- Progress circle -->
+                        <circle
+                                class="text-indigo-500 progress-ring__circle stroke-math"
+                                stroke-width="10"
+                                stroke-linecap="round"
+                                cx="50"
+                                cy="50"
+                                r="40"
+                                fill="transparent"
+                                stroke-dasharray="251.2"
+                                transform="rotate(90, 50, 50)"
+                                stroke-dashoffset="calc(251.2 - (251.2 * 70) / 100)"
+                        ></circle>
+                    </svg>
+                    <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">100%</h2>
                 </div>
             </div>
+            <h1 class="text-[42px] font-bold mb-3">Все курсы</h1>
+        {% endif %}
+        <div class="grid grid-cols-2 gap-5 mb-10">
+            {% include 'core/components/course-card-start.html' %}
+            {% include 'core/components/course-card-payed.html' %}
+            {% include 'core/components/course-card-progress.html' %}
+            {% include 'core/components/course-card-completed.html' %}
         </div>
     </div>
     {% csrf_token %}
-    {% include 'core/components/footer.html' %}
-{% comment %}
+    {% comment %}
 <h2>Welcome to the Home Page</h2>
 <p>This is your home page. Navigate through the site from here.</p>
 

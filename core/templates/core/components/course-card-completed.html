@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="block bg-white rounded-lg p-8 text-start">
+    <div class="block bg-cover h-36 w-full p-3 mb-6 rounded-lg"
+         style="background-image: url({% static "core/images/course-default-bg.png" %})">
+        <div class="float-left bg-cover w-8 h-8 rounded-full border-2 border-white"
+             style="background-image: url({% static "core/images/anonymous-user-image.png" %})"></div>
+    </div>
+    <div class="flex flex-row">
+        <p class="text-gray font-semibold">Онлайн-курс</p>
+        <img class="mx-1.5" src="{% static "core/icons/gray-point.svg" %}" alt="">
+        <p class="text-gray font-semibold">Ms. Salt and Nult</p>
+    </div>
+    <div>
+        <h2 class="text-2xl font-semibold mb-3">Курс по SAT:MATH для начинающих</h2>
+        <p class="font-light text-sm mb-7">Не следует, однако забывать, что реализация намеченных плановых заданий
+            обеспечивает широкому кругу </p>
+            <a class="inline-block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
+               href="#">Ознакомиться с результатами</a>
+            <div class="inline-block ml-6 text-black-main opacity-60 p-3 rounded-lg font-semibold">
+                Вы закончили этот курс!
+            </div>
+    </div>
+</div>
