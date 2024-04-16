@@ -1,54 +1,56 @@
 {% extends 'core/base.html' %}
 {% block content %}
 <style>
-    #toggleCourses {
-        background-color: #4CAF50; /* Green background */
-        color: white; /* White text */
-        padding: 10px 20px; /* Some padding */
-        border: none; /* No border */
-        border-radius: 5px; /* Rounded corners */
-        cursor: pointer; /* Pointer cursor on hover */
-        margin-bottom: 20px; /* Bottom margin */
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 5px;
     }
     #courseList {
-        border: 1px solid #ddd; /* Light grey border */
-        padding: 10px; /* Padding */
-        border-radius: 5px; /* Rounded corners */
-        background-color: #f9f9f9; /* Light grey background */
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
     }
     h1 {
-        color: #333; /* Dark grey color for the heading */
+        color: #333;
     }
 </style>
 
 <h1>Courses</h1>
-<button id="toggleCourses">My Courses</button>
+<button id="allCourses">All Courses</button>
+<button id="myCourses">My Courses</button>
+<button id="endedCourses">Ended Courses</button>
 <div id="courseList">
     {% include 'courses/_course_list_partial.html' %}
 </div>
 
 <script>
-document.getElementById('toggleCourses').addEventListener('click', function() {
-    const url = "{% url 'courses:course_list' %}";
-    const data = {
-        'data_type': this.textContent.includes('My') ? 'mine' : 'all',
-        'csrfmiddlewaretoken': '{{ csrf_token }}'
-    };
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest', // Important: Indicate this is an AJAX request
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('courseList').innerHTML = data.courses_html;
-        this.textContent = this.textContent.includes('My') ? 'All Courses' : 'My Courses';
-    })
-    .catch(error => console.error('Error:', error));
-});
+    function fetchCourses(dataType) {
+        const url = "{% url 'courses:course_list' %}";
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `data_type=${dataType}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('courseList').innerHTML = data.html;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    document.getElementById('allCourses').addEventListener('click', () => fetchCourses('all'));
+    document.getElementById('myCourses').addEventListener('click', () => fetchCourses('mine'));
+    document.getElementById('endedCourses').addEventListener('click', () => fetchCourses('ended'));
 </script>
 
 {% endblock %}

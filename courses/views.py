@@ -50,35 +50,25 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'courses'
 
     def test_func(self):
-        # Ensures that the user is a Student, Teacher, or Superuser
-        return self.request.user.is_superuser or \
-            self.request.user.role in ['Student', 'Teacher']
+        # Only allow Student, Teacher, or Superuser
+        return self.request.user.is_superuser or self.request.user.role in ['Student', 'Teacher']
 
     def get_queryset(self):
-        # Return all courses by default
+        # The initial queryset will show all courses
         return Course.objects.all()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Initially, display all courses
-        context['my_courses'] = False
-        return context
-
     def post(self, request, *args, **kwargs):
-        # Check for an AJAX request
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            data_type = request.POST.get('data_type', 'all')
-            if data_type == 'mine':
-                courses = Course.objects.filter(users=request.user)
-            else:
-                courses = Course.objects.all()
-            context = {'courses': courses, 'my_courses': data_type == 'mine'}
-
-            # Render your course list part of the template with updated context
-            courses_html = render_to_string('courses/_course_list_partial.html', context, request)
-            return JsonResponse({'courses_html': courses_html})
+        data_type = request.POST.get('data_type', 'all')
+        if data_type == 'mine':
+            queryset = self.request.user.courses.all()
+        elif data_type == 'ended':
+            queryset = self.request.user.courses.filter(ended=True)  # Adjust this condition based on your model's logic
         else:
-            return HttpResponseBadRequest("This endpoint only supports AJAX requests.")
+            queryset = Course.objects.all()
+
+        context = {'courses': queryset}
+        html = render_to_string('courses/_course_list_partial.html', context, request=request)
+        return JsonResponse({'html': html})
 
 
 
