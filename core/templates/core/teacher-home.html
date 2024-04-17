@@ -1,0 +1,40 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main-without-links.html' %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main">
+        <div class="relative py-10">
+            <div class="min-h-60 bg-cover bg-center rounded-lg py-[52px] px-[54px] text-white flex flex-row items-center"
+                 style="background-image: url('{% static "core/images/course-create.png" %}')">
+                <img class="h-full" src="{% static "core/images/gasyr-white-emblem.png" %}" alt="">
+                <div class="ml-[106px] text-white">
+                    <h2 class="text-[56px] font-semibold leading-[68.49px] mb-5">Хотите загрузить<br/> свой курс?</h2>
+                    <a class="px-16 py-[26px] border border-white rounded-lg inline-block" href="#">Создать новый курс</a>
+                </div>
+            </div>
+            <img class="absolute -inset-y-2 right-0 h-full" src="{% static "core/images/cats/course-create.png" %}" alt="">
+        </div>
+
+        <h1 class="text-[42px] font-bold mb-3">Мои курсы</h1>
+        <div class="grid grid-cols-2 gap-5 mb-10">
+            {% for course in courses %}
+                {% include 'core/components/course-card-edit.html' with course=course %}
+            {% endfor %}
+
+        </div>
+    </div>
+    {% csrf_token %}
+    {% comment %}
+<h2>Welcome to the Home Page</h2>
+<p>This is your home page. Navigate through the site from here.</p>
+
+{% if request.user.role == "Teacher" or request.user.is_superuser %}
+HI TEQACHER/ADMIN
+    <a href="{% url 'users:grant_access' %}">Give Access</a>
+
+{% endif %}
+{% endcomment %}
+
+{% endblock %}

@@ -1,11 +1,15 @@
 {% load static %}
-<div class="fixed w-full bg-white shadow-xl">
-    <div class="border-b-2">
-        <nav class="container py-2 items-center mx-auto flex font-[Qanelas] border-gray" style="height: 75px;">
-            <div class="py-4 pr-10 border-r-2">
-                <a href="{% url "welcome" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
+<div class="fixed w-full bg-white shadow-lg z-10">
+    <div class="border-b-2 border-gray">
+        <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
+            <div class="py-4 pr-10 border-r-2 border-gray">
+                <a href="{% url "home" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
             </div>
             <div class="mr-auto pl-11">
+                {% if request.path == "/home/" or request.path == "/my-courses/" or request.path == "/completed-courses/" %}
+                    <h2 class="text-xl text-black-main font-semibold">Привет, {{ user.full_name }}!</h2>
+                    <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
+                {% endif %}
             </div>
             <div class="border-l-2 border-gray py-3 pl-5 flex flex-row items-center">
                 <img class="w-full max-w-14" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
@@ -17,7 +21,7 @@
                     <img class="cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
                          src="{% static "core/icons/user-arrow.svg" %}">
                     <div id="dropdownMenu"
-                         class="absolute top-11 -right-2 mt-2 py-2 w-72 bg-white rounded hidden border-2">
+                         class="absolute top-11 -right-2 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
                         <a href="#" class="text-blue-ielts font-bold block px-4 py-2">
                             <img class="inline mr-3" src="{% static "core/icons/edit-fill-blue-ielts.svg" %}" alt="">
                             Редактировать профиль
@@ -32,9 +36,21 @@
         </nav>
     </div>
     <nav class="flex flex-row justify-center">
-        <a class="block font-bold px-2 py-5 mx-4 active-link" href="">Все курсы<div class="link-block"></div></a>
-        <a class="block font-bold px-2 py-5 mx-4" href="">Мои курсы</a>
-        <a class="block font-bold px-2 py-5 mx-4" href="">Пройденные</a>
+        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/home/" %}active-link{% endif %}"
+           href="{% url 'home' %}">
+            Все курсы
+            {% if request.path == "/home/" %}<div class="link-block"></div>{% endif %}
+        </a>
+        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/my-courses/" %}active-link{% endif %}"
+           href="{% url 'my-courses' %}">
+            Мои курсы
+            {% if request.path == "/my-courses/" %}<div class="link-block"></div>{% endif %}
+        </a>
+        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/completed-courses/" %}active-link{% endif %}"
+           href="{% url 'completed-courses' %}">
+            Пройденные
+            {% if request.path == "/completed-courses/" %}<div class="link-block"></div>{% endif %}
+        </a>
     </nav>
 </div>
 <div style="height: 140px;"></div>
@@ -57,6 +73,7 @@
     // Close the dropdown if the click is outside of it
     window.onclick = function (event) {
         var dropdownMenu = document.getElementById("dropdownMenu");
+        var dropdownButton = document.getElementById("dropdownButton");
         if (!dropdownMenu.contains(event.target) && event.target.id !== "dropdownButton") {
             dropdownMenu.classList.add("hidden");
             dropdownButton.classList.remove("-rotate-90");
