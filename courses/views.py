@@ -1,15 +1,18 @@
+import traceback
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm
-from .models import Course, Module, Lesson, Test, Question, Answer
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission
 
 
 class CreateCourseStep1View(View):
@@ -43,6 +46,7 @@ class CreateCourseStep2View(View):
             return redirect('courses:course_detail', pk=course.pk)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
+from django.db.models import Prefetch
 
 class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Course
@@ -50,37 +54,37 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'courses'
 
     def test_func(self):
-        # Only allow Student, Teacher, or Superuser
         return self.request.user.is_superuser or self.request.user.role in ['Student', 'Teacher']
 
     def get_queryset(self):
-        # The initial queryset will show all courses
-        return Course.objects.all()
+        user = self.request.user
+        queryset = Course.objects.all()
+
+        # Prefetch related modules and lessons to avoid N+1 queries
+        queryset = queryset.prefetch_related(
+            Prefetch('modules', queryset=Module.objects.prefetch_related('lessons'))
+        )
+
+        return queryset
 
     def post(self, request, *args, **kwargs):
         data_type = request.POST.get('data_type', 'all')
         user = self.request.user
 
         if data_type == 'mine':
-            courses = user.courses.all()
+            courses = user.courses.prefetch_related('modules__lessons')
         elif data_type == 'ended':
-            # Fetch only those courses where the user is enrolled and the completion percentage is 100%
-            courses = user.courses.all()
-            courses = [course for course in courses if course.calculate_completion_percentage(user) == 100]
+            courses = user.courses.prefetch_related('modules__lessons')
+            courses = [course for course in courses if course.calculate_completion_percentage(user) >= 100]
         else:
-            courses = Course.objects.all()
+            courses = self.get_queryset()
 
         for course in courses:
             course.completion_percentage = course.calculate_completion_percentage(user)
 
-        context = {'courses': courses}
+        context = {'course_data': [{'course': course, 'enrolled': True, 'completion': course.completion_percentage} for course in courses]}
         html = render_to_string('courses/_course_list_partial.html', context, request=request)
         return JsonResponse({'html': html})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
 
 class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
@@ -89,20 +93,32 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        course = self.get_object()
         user = self.request.user
-        if hasattr(self.object, 'is_user_enrolled'):
-            context['is_user_enrolled'] = self.object.is_user_enrolled(user)
-        else:
-            context['is_user_enrolled'] = False
-        context['can_add_students'] = user.is_superuser or user.role == 'Teacher'
-        context['students'] = self.object.users.filter(role='Student')
+
+        # Getting content type for Course
+        course_type = ContentType.objects.get_for_model(course)
+        test = Test.objects.filter(content_type=course_type, object_id=course.id).first()
+
+        is_creator_or_superuser = user.is_superuser or course.created_by == user
+        is_teacher = user.role == 'Teacher'
+        is_enrolled = course.is_user_enrolled(user)
+
+        context.update({
+            'course': course,
+            'test': test,
+            'test_exists': test is not None,
+            'creator_full_name': course.created_by.full_name,
+            'creator_profile_picture': course.created_by.profile_picture.url if course.created_by.profile_picture else None,
+            'can_modify_course': is_creator_or_superuser or is_teacher,
+            'students': course.users.filter(role='Student').all() if is_creator_or_superuser or is_teacher else [],
+            'is_enrolled': is_enrolled,
+            'show_modules': is_enrolled or is_creator_or_superuser or is_teacher,
+        })
+
         return context
 
 
-class ModuleDetailView(DetailView):
-    model = Module
-    context_object_name = 'module'
-    template_name = 'courses/module/module_detail.html'
 
 
 class LessonCreateView(CreateView):
@@ -117,52 +133,64 @@ class LessonCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('courses:module_detail', kwargs={'pk': self.kwargs['module_id']})
 
+class ModuleDetailView(LoginRequiredMixin, DetailView):
+    model = Module
+    template_name = 'courses/module/module_detail.html'
 
-# class TestDetailView(DetailView):
-#     model = Test
-#     context_object_name = 'test'
-#     template_name = 'test_detail.html'
-#
-#     def post(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         test_form = TestForm(request.POST, instance=self.object)
-#         if test_form.is_valid():
-#             test_form.save()
-#             return redirect(self.object.get_absolute_url())
-#         return self.render_to_response(self.get_context_data(form=test_form))
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        module = self.get_object()
+        test = module.tests.first()
+
+        context['test'] = test
+        context['test_exists'] = test is not None
+        context['is_creator_or_superuser'] = user.is_superuser or user == module.course.created_by
+        context['is_enrolled'] = module.course.users.filter(id=user.id).exists()
+
+        return context
 
 
 class LessonDetailView(DetailView):
     model = Lesson
-    context_object_name = 'lesson'
     template_name = 'courses/lesson_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = self.get_object()
+        user = self.request.user
+        test = lesson.tests.first()
+
+        context['test'] = test
+        context['is_creator_or_superuser'] = user == lesson.module.course.created_by or user.is_superuser
+        context['is_enrolled'] = lesson.module.course.users.filter(id=user.id).exists()
+
+        return context
+
+
+from django.contrib import messages
+from django.db import transaction
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CreateOrEditTestView(View):
     def get(self, request, parent_type, parent_id):
         parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
-        if not parent_model:
-            return HttpResponseBadRequest("Invalid parent type specified.")
         parent_object = get_object_or_404(parent_model, pk=parent_id)
-
         content_type = ContentType.objects.get_for_model(parent_object)
         test = Test.objects.filter(content_type=content_type, object_id=parent_id).first()
-
-        return render(request, 'courses/create_or_edit_test.html', {
-            'parent_type': parent_type,
-            'parent_id': parent_id,
-            'test': test,
-            'test_exists': test is not None
-        })
+        return render(request, 'courses/create_or_edit_test.html', {'test': test, 'parent_object': parent_object, 'test_exists': test is not None})
 
     def post(self, request, parent_type, parent_id):
         parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
-        if not parent_model:
-            return HttpResponseBadRequest("Invalid parent type specified.")
         parent_object = get_object_or_404(parent_model, pk=parent_id)
-
         title = request.POST.get('title')
         content_type = ContentType.objects.get_for_model(parent_object)
+
         test, created = Test.objects.get_or_create(
             content_type=content_type, object_id=parent_id,
             defaults={'title': title}
@@ -170,42 +198,38 @@ class CreateOrEditTestView(View):
         test.title = title
         test.save()
 
-        # Handling existing questions
-        existing_question_ids = [int(q_id) for q_id in request.POST.getlist('question_ids', [])]
-        if not created:
-            # Delete any questions not included in the current submission
-            test.questions.exclude(id__in=existing_question_ids).delete()
-
-        for i in range(int(request.POST.get('question_count', 0))):
+        question_count = int(request.POST.get('question_count', 0))
+        for i in range(question_count):
             question_id = request.POST.get(f'questions[{i}][id]', None)
             question_text = request.POST.get(f'questions[{i}][text]', '')
             question_type = request.POST.get(f'questions[{i}][type]', 'SC')
 
             if question_text:
-                if question_id:
-                    question = Question.objects.get(id=int(question_id))
-                    question.text = question_text
-                    question.question_type = question_type
-                    question.save()
-                else:
-                    question = Question.objects.create(test=test, text=question_text, question_type=question_type)
+                question, _ = Question.objects.update_or_create(
+                    id=question_id,
+                    defaults={'test': test, 'text': question_text, 'question_type': question_type}
+                )
 
-                # Update answers
-                for j in range(4):  # assuming there are always four answers
+                for j in range(4):
                     answer_id = request.POST.get(f'questions[{i}][answers][{j}][id]', None)
                     answer_text = request.POST.get(f'questions[{i}][answers][{j}][text]', '')
-                    is_correct = request.POST.get(f'questions[{i}][answers][{j}][is_correct]', '') == 'on'
+                    is_correct = f'questions[{i}][answers][{j}][is_correct]' in request.POST
 
                     if answer_text:
-                        if answer_id:
-                            answer = Answer.objects.get(id=int(answer_id))
-                            answer.text = answer_text
-                            answer.is_correct = is_correct
-                            answer.save()
-                        else:
-                            Answer.objects.create(question=question, text=answer_text, is_correct=is_correct)
+                        Answer.objects.update_or_create(
+                            id=answer_id,
+                            defaults={'question': question, 'text': answer_text, 'is_correct': is_correct}
+                        )
 
-        return redirect('courses:list')
+        if isinstance(parent_object, Course):
+            redirect_url = reverse('courses:course_detail', kwargs={'pk': parent_object.pk})
+        elif isinstance(parent_object, Module):
+            redirect_url = reverse('courses:module_detail',
+                                   kwargs={'pk': parent_object.pk})  # Assuming you have a view for module details
+        elif hasattr(parent_object, 'module'):  # Likely a Lesson
+            redirect_url = reverse('courses:module_detail', kwargs={'pk': parent_object.module.pk})
+
+        return redirect(redirect_url)  # Simplified redirection handling
 
 
 class ModuleCreateView(CreateView):
@@ -278,3 +302,42 @@ def add_student_to_course(request, course_id, student_id):
     student = get_object_or_404(CustomUser, pk=student_id)
     course.users.add(student)  # Assuming 'users' is the ManyToMany field relating courses to students
     return redirect('courses:course_detail', pk=course_id)
+
+
+from django.forms import modelformset_factory
+
+
+class TakeTestView(LoginRequiredMixin, View):
+    template_name = 'courses/take_test.html'
+
+    def get(self, request, test_id):
+        test = get_object_or_404(Test, pk=test_id)
+        questions = test.questions.prefetch_related('answers').all()
+        return render(request, self.template_name, {'test': test, 'questions': questions})
+
+    def post(self, request, test_id):
+        test = get_object_or_404(Test, pk=test_id)
+        score = 0
+        total_questions = test.questions.count()
+
+        for question in test.questions.all():
+            selected_answer_ids = request.POST.getlist(f'answer_{question.id}')
+            correct_answers = question.answers.filter(is_correct=True).values_list('id', flat=True)
+
+            if question.question_type == 'SC' and int(selected_answer_ids[0]) in correct_answers:
+                score += 1
+            elif question.question_type == 'MC' and all(
+                    int(ans_id) in correct_answers for ans_id in selected_answer_ids) and len(
+                    selected_answer_ids) == len(correct_answers):
+                score += 1
+
+        score_percentage = (score / total_questions) * 100 if total_questions else 0
+        TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
+        return redirect('courses:test_result', score=score_percentage)
+
+
+
+
+
+def test_result_view(request, score):
+    return render(request, 'courses/test_result.html', {'score': score})

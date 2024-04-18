@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h2>Take Test: {{ test.title }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {% for question in questions %}
+    <div>
+        <h4>{{ question.text }}</h4>
+        {% for answer in question.answers.all %}
+            <label>
+                {% if question.question_type == 'MC' %}
+                    <input type="checkbox" name="answer_{{ question.id }}" value="{{ answer.id }}">
+                {% else %}
+                    <input type="radio" name="answer_{{ question.id }}" value="{{ answer.id }}">
+                {% endif %}
+                {{ answer.text }}
+            </label><br>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit">Submit Answers</button>
+</form>
+{% endblock %}

@@ -2,8 +2,18 @@
 
 {% block content %}
     <h2>Lesson: {{ lesson.lesson_name }}</h2>
-    <!-- Lesson details... -->
 
-    <!-- Link to create a new test for this lesson -->
-<a href="{% url 'courses:create_edit_test' parent_type='lesson' parent_id=lesson.pk %}">+ Create Test</a>
+    <!-- Conditionally display Take Test or Create/Edit Test buttons -->
+    {% if test %}
+        {% if is_enrolled or is_creator_or_superuser %}
+            <a href="{% url 'courses:take_test' test_id=test.pk %}">Take Test</a>
+        {% endif %}
+        {% if is_creator_or_superuser %}
+            <a href="{% url 'courses:create_edit_test' parent_type='lesson' parent_id=lesson.pk %}">Edit Test</a>
+        {% endif %}
+    {% else %}
+        {% if is_creator_or_superuser %}
+            <a href="{% url 'courses:create_edit_test' parent_type='lesson' parent_id=lesson.pk %}">+ Create Test</a>
+        {% endif %}
+    {% endif %}
 {% endblock %}
