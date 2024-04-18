@@ -82,8 +82,9 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         return context
 
 
-class CourseDetailView(DetailView):
+class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
+    login_url = "/users/login/"
     template_name = 'courses/course/course_detail.html'
 
     def get_context_data(self, **kwargs):

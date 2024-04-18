@@ -1,30 +1,51 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
+{% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
-    <h2>{{ course.course_name }}</h2>
-    <p>{{ course.mini_description }}</p>
-    <!-- Other course details... -->
+    {% include "core/components/navbar-main-without-links.html" %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        <h1 class="text-[42px] font-bold mb-3">Редактирование курса</h1>
+        <div class="bg-white p-14 rounded-lg mb-5">
+            <h2 class="text-[32px] font-semibold">Добавить ученика по ID</h2>
+            <label class="relative">
+                <input class="w-full py-6 px-8 border border-gray placeholder-black-main rounded-lg" type="text"
+                       placeholder="Введите ID ученика">
+                <img class="absolute inset-y-0 right-6" src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
+            </label>
+        </div>
+        <div class="bg-no-repeat bg-cover bg-center py-[60px] rounded-xl flex flex-col items-center mb-5"
+             style="background-image: url('{% static "core/images/gasyr-accent-red-background.png" %}')">
+            <h2 class="text-white text-2xl font-bold mb-[30px] uppercase tracking-widest">Предпросмотр карточки</h2>
+            <div class="max-w-[650px] mb-[51px]">
+                {% include "core/components/course-card-start.html" with course=course %}
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-accent-red text-center text-xl font-semibold *:w-[391px] *:bg-white *:py-[26px] *:rounded-lg">
+                <a href="#">Изменить информацию о курсе</a>
+                <a href="#">Редактировать финальный тест</a>
+                <a href="#">Редактировать модули</a>
+                <a href="#">Поменять видео-поздравление</a>
+            </div>
+        </div>
+        <div class="bg-white p-14 rounded-lg mb-5">
 
-    <h3>Modules</h3>
-    <ul>
-        {% for module in course.modules.all %}
-            <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
-        {% endfor %}
-    </ul>
+        </div>
+        <!-- Other course details... -->
 
-    {% if can_add_students %}
-        <a href="{% url 'courses:add_students' pk=course.pk %}" class="btn btn-primary">Add Students</a>
-    {% endif %}
+        {% if can_add_students %}
+            <a href="{% url 'courses:add_students' pk=course.pk %}" class="btn btn-primary">Add Students</a>
+        {% endif %}
 
-    <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
+        <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
 
-    <!-- List of students enrolled in the course -->
-    <h3>Enrolled Students</h3>
-    <ul>
-        {% for student in students %}
-            <li>{{ student.full_name }}</li>
-        {% empty %}
-            <li>No students added yet.</li>
-        {% endfor %}
-    </ul>
+        <!-- List of students enrolled in the course -->
+        <h3>Enrolled Students</h3>
+        <ul>
+            {% for student in students %}
+                <li>{{ student.full_name }}</li>
+            {% empty %}
+                <li>No students added yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

@@ -17,7 +17,7 @@
         <div class="absolute top-16 bottom-0 right-32">
             <div class="bg-light-gray rounded-lg text-center px-7 pb-11 pt-12">
                 <h2 class="font-bold text-2xl mb-5 text-black-main">Вход на платформу</h2>
-                <form class="mb-7" method="post" action="{% url 'users:login' %}">
+                <form class="mb-7" method="post">
                     {% csrf_token %}
                     <div class="relative mb-1.5">
                         <input class="pl-14 py-6 border rounded-lg placeholder:text-black-main placeholder:text-lg" style="width: 340px"
