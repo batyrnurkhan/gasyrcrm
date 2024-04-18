@@ -11,7 +11,7 @@
                 <img class="h-full" src="{% static "core/images/gasyr-white-emblem.png" %}" alt="">
                 <div class="ml-[106px] text-white">
                     <h2 class="text-[56px] font-semibold leading-[68.49px] mb-5">Хотите загрузить<br/> свой курс?</h2>
-                    <a class="px-16 py-[26px] border border-white rounded-lg inline-block" href="#">Создать новый курс</a>
+                    <a class="px-16 py-[26px] border border-white rounded-lg inline-block" href="{% url "courses:create_course_step1" %}">Создать новый курс</a>
                 </div>
             </div>
             <img class="absolute -inset-y-2 right-0 h-full" src="{% static "core/images/cats/course-create.png" %}" alt="">
