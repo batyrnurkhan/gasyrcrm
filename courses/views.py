@@ -93,14 +93,20 @@ class CourseDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = self.get_object()
-
         user = self.request.user
+
+        # Getting content type for Course
+        course_type = ContentType.objects.get_for_model(course)
+        test = Test.objects.filter(content_type=course_type, object_id=course.id).first()
+
         is_creator_or_superuser = user.is_superuser or course.created_by == user
         is_teacher = user.role == 'Teacher'
         is_enrolled = course.is_user_enrolled(user)
 
         context.update({
             'course': course,
+            'test': test,
+            'test_exists': test is not None,
             'creator_full_name': course.created_by.full_name,
             'creator_profile_picture': course.created_by.profile_picture.url if course.created_by.profile_picture else None,
             'can_modify_course': is_creator_or_superuser or is_teacher,
@@ -110,7 +116,6 @@ class CourseDetailView(DetailView):
         })
 
         return context
-
 
 
 
@@ -133,15 +138,13 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        module = self.get_object()
         user = self.request.user
-        test = module.tests.first()  # Assumes `module.tests` is a related name from a ForeignKey in the Test model.
+        module = self.get_object()
+        test = module.tests.first()
 
         context['test'] = test
-        context['test_exists'] = test is not None  # Explicitly stating test existence for clarity in template
+        context['test_exists'] = test is not None
         context['is_creator_or_superuser'] = user.is_superuser or user == module.course.created_by
-        context['is_teacher'] = user.groups.filter(
-            name='Teachers').exists()  # Add this if 'is_teacher' is a requirement
         context['is_enrolled'] = module.course.users.filter(id=user.id).exists()
 
         return context

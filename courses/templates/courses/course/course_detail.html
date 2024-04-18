@@ -26,6 +26,15 @@
         </ul>
     {% endif %}
 
+    <!-- Test management links -->
+    {% if can_modify_course %}
+        {% if test_exists %}
+            <a href="{% url 'courses:create_edit_test' parent_type='course' parent_id=course.pk %}">Edit Test</a>
+        {% else %}
+            <a href="{% url 'courses:create_edit_test' parent_type='course' parent_id=course.pk %}">+ Create Test</a>
+        {% endif %}
+    {% endif %}
+
     <!-- Show "Add Module" button and enrolled students list if the user has the right to modify the course -->
     {% if can_modify_course %}
         <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
