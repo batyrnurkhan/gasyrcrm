@@ -4,6 +4,11 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from users.models import CustomUser
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Test(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -11,23 +16,17 @@ class Test(models.Model):
     content_object = GenericForeignKey()
     title = models.CharField(max_length=100)
 
-    def is_submitted_by_user(self, user):
-        return self.test_submissions.filter(user=user).exists()
-
     def __str__(self):
         return self.title
 
 class Question(models.Model):
     test = models.ForeignKey(Test, related_name='questions', on_delete=models.CASCADE)
     text = models.TextField()
-    QUESTION_TYPES = [
-        ('SC', 'Single Choice'),
-        ('MC', 'Multiple Choice'),
-    ]
-    question_type = models.CharField(max_length=2, choices=QUESTION_TYPES, default='SC')
+    question_type = models.CharField(max_length=2, choices=[('SC', 'Single Choice'), ('MC', 'Multiple Choice')], default='SC')
 
     def __str__(self):
         return self.text
+
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
@@ -56,22 +55,24 @@ class Course(models.Model):
     created_by = models.ForeignKey(CustomUser, related_name='created_courses', on_delete=models.CASCADE)
 
     def is_user_enrolled(self, user):
-        """Check if a given user is enrolled in this course."""
         return self.users.filter(pk=user.pk).exists()
 
     def calculate_completion_percentage(self, user):
+        """Calculate what percentage of the course the user has completed based on tests."""
         total_tests = Test.objects.filter(
             content_type=ContentType.objects.get_for_model(Course),
             object_id=self.pk
         ).count()
-        submitted_tests_count = Test.objects.filter(
-            content_type=ContentType.objects.get_for_model(Course),
-            object_id=self.pk,
-            test_submissions__user=user
-        ).distinct().count()
 
         if total_tests == 0:
             return 0  # Avoid division by zero
+
+        submitted_tests_count = Test.objects.filter(
+            content_type=ContentType.objects.get_for_model(Course),
+            object_id=self.pk,
+            test_submissions__user=user  # Assumes existence of a TestSubmission model relating users to tests
+        ).distinct().count()
+
         return (submitted_tests_count / total_tests) * 100
 
     def __str__(self):
@@ -81,6 +82,7 @@ class Course(models.Model):
 class Module(models.Model):
     course = models.ForeignKey(Course, related_name='modules', on_delete=models.CASCADE)
     module_name = models.CharField(max_length=50)
+    tests = GenericRelation(Test)
 
     def __str__(self):
         return self.module_name
@@ -89,6 +91,7 @@ class Lesson(models.Model):
     module = models.ForeignKey(Module, related_name='lessons', on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=24)
     video_link = models.CharField(max_length=200)
+    tests = GenericRelation(Test)  # This allows the reverse relation using 'tests'
 
     def __str__(self):
         return self.lesson_name
@@ -107,14 +110,13 @@ class LessonLiterature(models.Model):
     def __str__(self):
         return self.literature_name
 
+from django.conf import settings
 
 class TestSubmission(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_submissions')
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='test_submissions')
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='test_submissions')
-    submission_time = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ['test', 'user']  # Ensure each user submits each test only once
+    score = models.FloatField(default=0.0)
+    completed = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} - {self.test}"
+        return f"{self.user} - {self.test.title} - Score: {self.score}"

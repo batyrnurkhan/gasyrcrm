@@ -3,28 +3,39 @@
 {% block content %}
     <h2>{{ course.course_name }}</h2>
     <p>{{ course.mini_description }}</p>
-    <!-- Other course details... -->
+    <!-- Display course creator's information -->
+    <div>
+        <h3>Created by: {{ creator_full_name }}</h3>
+        {% if creator_profile_picture %}
+            <img src="{{ creator_profile_picture }}" alt="Creator's Profile Picture" style="width:100px; height:auto;">
+        {% endif %}
+    </div>
 
-    <h3>Modules</h3>
-    <ul>
-        {% for module in course.modules.all %}
-            <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
-        {% endfor %}
-    </ul>
-
-    {% if can_add_students %}
-        <a href="{% url 'courses:add_students' pk=course.pk %}" class="btn btn-primary">Add Students</a>
+    <!-- Show big description if the user is not enrolled -->
+    {% if not is_enrolled %}
+        <p>{{ course.big_description }}</p>
     {% endif %}
 
-    <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
+    <!-- Show modules if the user is enrolled or has the right to modify the course -->
+    {% if show_modules %}
+        <h3>Modules</h3>
+        <ul>
+            {% for module in course.modules.all %}
+                <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
-    <!-- List of students enrolled in the course -->
-    <h3>Enrolled Students</h3>
-    <ul>
-        {% for student in students %}
-            <li>{{ student.full_name }}</li>
-        {% empty %}
-            <li>No students added yet.</li>
-        {% endfor %}
-    </ul>
+    <!-- Show "Add Module" button and enrolled students list if the user has the right to modify the course -->
+    {% if can_modify_course %}
+        <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
+        <h3>Enrolled Students</h3>
+        <ul>
+            {% for student in students %}
+                <li>{{ student.full_name }}</li>
+            {% empty %}
+                <li>No students added yet.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}
