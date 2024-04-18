@@ -238,7 +238,7 @@ class ModuleCreateView(CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('courses:course_detail', kwargs={'pk': self.kwargs['course_id']})
+        return reverse_lazy('courses:course_detail_edit', kwargs={'pk': self.kwargs['course_id']})
 
 class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = 'courses/course/add_students.html'

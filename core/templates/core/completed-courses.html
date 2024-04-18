@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main.html' %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
+        <h1 class="text-[42px] font-bold mb-3">Пройденные курсы</h1>
+        {% if False %}
+            <div class="grid grid-cols-2 gap-5 mb-10">
+                {% include 'core/components/course-card-start.html' %}
+                {% include 'core/components/course-card-payed.html' %}
+                {% include 'core/components/course-card-progress.html' %}
+                {% include 'core/components/course-card-completed.html' %}
+                {% include 'core/components/course-card-edit.html' %}
+                {% include 'core/components/course-card-continue-create.html' %}
+            </div>
+        {% else %}
+            <div class="w-full text-center bg-white pb-32 pt-6">
+                <img class="mx-auto mb-6" src="{% static "core/images/cats/no-completed-courses.png" %}" alt="">
+                <h4 class="text-2xl font-semibold">Пройденных курсов, все еще нет :(</h4>
+            </div>
+        {% endif %}
+    </div>
+    {% csrf_token %}
+    {% comment %}
+<h2>Welcome to the Home Page</h2>
+<p>This is your home page. Navigate through the site from here.</p>
+
+{% if request.user.role == "Teacher" or request.user.is_superuser %}
+HI TEQACHER/ADMIN
+    <a href="{% url 'users:grant_access' %}">Give Access</a>
+
+{% endif %}
+{% endcomment %}
+
+{% endblock %}

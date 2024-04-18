@@ -3,60 +3,73 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: 'Qanelas';
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: url('/static/core/fonts/QanelasLight.otf') format('woff2');
-  }
-  @font-face {
-    font-family: 'Qanelas';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('/static/core/fonts/QanelasRegular.otf') format('woff2');
-  }
-  @font-face {
-    font-family: 'Qanelas';
-    font-style: normal;
-    font-weight: 500;
-    font-display: swap;
-    src: url('/static/core/fonts/QanelasMedium.otf') format('woff2');
-  }
-  @font-face {
-    font-family: 'Qanelas';
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: url('/static/core/fonts/QanelasSemibold.otf') format('woff2');
-  }
-  @font-face {
-    font-family: 'Qanelas';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url('/static/core/fonts/QanelasBold.otf') format('woff2');
-  }
+    @font-face {
+        font-family: 'Qanelas';
+        font-style: normal;
+        font-weight: 300;
+        font-display: swap;
+        src: url('/static/core/fonts/QanelasLight.otf') format('woff2');
+    }
+    @font-face {
+        font-family: 'Qanelas';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/static/core/fonts/QanelasRegular.otf') format('woff2');
+    }
+    @font-face {
+        font-family: 'Qanelas';
+        font-style: normal;
+        font-weight: 500;
+        font-display: swap;
+        src: url('/static/core/fonts/QanelasMedium.otf') format('woff2');
+    }
+    @font-face {
+        font-family: 'Qanelas';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: url('/static/core/fonts/QanelasSemibold.otf') format('woff2');
+    }
+    @font-face {
+        font-family: 'Qanelas';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: url('/static/core/fonts/QanelasBold.otf') format('woff2');
+    }
 }
+
 @layer components {
-  .content {
-    min-height: calc(100vh - 203px)
-  }
+    .content {
+        min-height: calc(100vh - 203px)
+    }
 
-  .active-link {
-    position: relative;
-    color: theme(colors.accent-red);
-  }
+    .active-link {
+        position: relative;
+        color: theme(colors.accent-red);
+    }
 
-  .link-block {
-    display: block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    min-height: 5px;
-    border-radius: 5px 5px 0 0;
-    background-color: theme(colors.accent-red);
-  }
+    .link-block {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        min-height: 5px;
+        border-radius: 5px 5px 0 0;
+        background-color: theme(colors.accent-red);
+    }
+
+    .accordion-red {
+        @apply peer-checked:hidden
+    }
+
+    .accordion-gray {
+        @apply peer-checked:block
+    }
+
+    .peer-active-max-h-full {
+        @apply peer-checked:max-h-full
+    }
 }

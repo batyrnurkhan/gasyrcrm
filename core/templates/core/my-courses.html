@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main.html' %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
+        <h1 class="text-[42px] font-bold mb-3">Мои курсы</h1>
+        <div class="grid grid-cols-2 gap-5 mb-10">
+            {% for course in courses %}
+                {% include 'core/components/course-card-start.html' with course=course %}
+            {% endfor %}
+        </div>
+    </div>
+    {% csrf_token %}
+    {% comment %}
+<h2>Welcome to the Home Page</h2>
+<p>This is your home page. Navigate through the site from here.</p>
+
+{% if request.user.role == "Teacher" or request.user.is_superuser %}
+HI TEQACHER/ADMIN
+    <a href="{% url 'users:grant_access' %}">Give Access</a>
+
+{% endif %}
+{% endcomment %}
+
+{% endblock %}

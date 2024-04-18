@@ -1,13 +1,15 @@
 {% load static %}
-<div class="fixed w-full bg-white shadow-xl z-10">
+<div class="fixed w-full bg-white shadow-lg z-10">
     <div class="border-b-2 border-gray">
         <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
             <div class="py-4 pr-10 border-r-2 border-gray">
-                <a href="{% url "welcome" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
+                <a href="{% url "home" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
             </div>
             <div class="mr-auto pl-11">
-                <h2 class="text-xl text-black-main font-semibold">Привет, {{ user.full_name }}!</h2>
-                <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
+                {% if request.path == "/home/" or request.path == "/my-courses/" or request.path == "/completed-courses/" %}
+                    <h2 class="text-xl text-black-main font-semibold">Привет, {{ user.full_name }}!</h2>
+                    <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
+                {% endif %}
             </div>
             <div class="border-l-2 border-gray py-3 pl-5 flex flex-row items-center">
                 <img class="w-full max-w-14" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
@@ -33,13 +35,8 @@
             </div>
         </nav>
     </div>
-    <nav class="flex flex-row justify-center">
-        <a class="block font-bold px-2 py-5 mx-4 active-link" href="">Все курсы<div class="link-block"></div></a>
-        <a class="block font-bold px-2 py-5 mx-4" href="">Мои курсы</a>
-        <a class="block font-bold px-2 py-5 mx-4" href="">Пройденные</a>
-    </nav>
 </div>
-<div style="height: 140px;"></div>
+<div style="height: 75px;"></div>
 
 
 <script>
@@ -59,6 +56,7 @@
     // Close the dropdown if the click is outside of it
     window.onclick = function (event) {
         var dropdownMenu = document.getElementById("dropdownMenu");
+        var dropdownButton = document.getElementById("dropdownButton");
         if (!dropdownMenu.contains(event.target) && event.target.id !== "dropdownButton") {
             dropdownMenu.classList.add("hidden");
             dropdownButton.classList.remove("-rotate-90");

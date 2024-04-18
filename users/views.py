@@ -12,6 +12,8 @@ from django.views.generic import TemplateView, View
 from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm
 
 logger = logging.getLogger(__name__)
+
+
 def generate_unique_code():
     CustomUser = get_user_model()
 
@@ -19,6 +21,7 @@ def generate_unique_code():
         potential_code = "{:03d}-{:03d}".format(random.randint(0, 999), random.randint(0, 999))
         if not CustomUser.objects.filter(login_code=potential_code).exists():
             return potential_code
+
 
 class SignUpView(View):
     def get(self, request):
@@ -43,6 +46,7 @@ class SignUpView(View):
         )
         return redirect('users:login')
 
+
 class ShowCodeView(LoginRequiredMixin, TemplateView):
     template_name = 'users/show_code.html'
 
@@ -56,6 +60,7 @@ class ShowCodeView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['login_code'] = self.request.user.login_code
         return context
+
 
 class LoginView(View):
     form_class = CustomUserAuthenticationForm
@@ -81,6 +86,7 @@ class LoginView(View):
             else:
                 form.add_error(None, "Phone number or password is incorrect.")
         return render(request, 'users/login.html', {'form': form})
+
 
 class GrantAccessView(View):
     form_class = AccessCodeForm

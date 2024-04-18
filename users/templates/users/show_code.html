@@ -1,32 +1,73 @@
 {% extends "core/base.html" %}
+{% load static %}
 
+{% block body-classes %}bg-accent-red{% endblock %}
 {% block content %}
-{% csrf_token %}
-<h2>Your 6-Digit Code</h2>
-<p>Your code: {{ login_code }}</p>
+    {% include "core/components/navbar-light-transparent.html" %}
+    <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-center"
+         style="background-image: url('{% static "core/images/background-light.png" %}')"></div>
+    <div class="absolute bottom-40 right-6 rounded-lg w-[389px] py-5 px-6 bg-white text-black-main hidden z-10"
+         id="accessMessage">
+        <div class="relative text-left">
+            <img src="{% static "core/images/cats/wait.png" %}" alt="">
+            <h4 class="text-lg font-semibold">Ваш аккаунт еще не подтвердили</h4>
+            <p class="font-light">Ожидайте ответ менеджера или ментора</p>
+            <div class="absolute top-0 right-0 cursor-pointer" onclick="closeMessage()"><img
+                    src="{% static "core/icons/exit-black-main.svg" %}" alt=""></div>
+        </div>
+    </div>
+    <div class="container content mx-auto relative font-[Qanelas] text-center text-white">
+        <h2 class="text-[93px] font-bold leading-[102.3px] mb-6">Регистрация<br/> прошла успешно!</h2>
+        <p class="text-2xl font-light mb-8">Сообщите этот код своему ментору или менеджеру</p>
+        <div class="flex flex-row text-accent-red font-bold text-[123px] justify-center gap-[8px] mb-14">
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.0 }}</div>
+            </div>
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.1 }}</div>
+            </div>
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.2 }}</div>
+            </div>
+            <div class="text-white opacity-50 my-[30px]">{{ login_code.3 }}</div>
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.4 }}</div>
+            </div>
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.5 }}</div>
+            </div>
+            <div class="border-2 border-white rounded-lg p-1.5">
+                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.6 }}</div>
+            </div>
+        </div>
+        <button id="checkAccessBtn" class="inline-block border border-white text-white text-xl px-11 py-7 rounded-lg">
+            Мой аккаунт подтвердили
+        </button>
+    </div>
+    {% include "core/components/footer.html" %}
 
-<button id="checkAccessBtn">Мой аккаунт подтвердили</button>
-<p id="accessMessage" style="display:none;"></p>
-
-<script>
-document.getElementById('checkAccessBtn').addEventListener('click', function() {
-    fetch("{% url 'users:check-access' %}", {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}',
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.has_access) {
-            window.location.href = data.url;
-        } else {
-            document.getElementById('accessMessage').style.display = 'block';
-            document.getElementById('accessMessage').innerText = data.message;
+    <script>
+        function closeMessage() {
+            document.getElementById('accessMessage').classList.add("hidden");
         }
-    })
-    .catch(error => console.error('Error:', error));
-});
-</script>
+
+        document.getElementById('checkAccessBtn').addEventListener('click', function () {
+            fetch("{% url 'users:check-access' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.has_access) {
+                        window.location.href = data.url;
+                    } else {
+                        document.getElementById('accessMessage').classList.remove("hidden");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
 {% endblock %}
