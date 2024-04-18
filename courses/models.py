@@ -20,13 +20,28 @@ class Test(models.Model):
         return self.title
 
 class Question(models.Model):
-    test = models.ForeignKey(Test, related_name='questions', on_delete=models.CASCADE)
-    text = models.TextField()
-    question_type = models.CharField(max_length=2, choices=[('SC', 'Single Choice'), ('MC', 'Multiple Choice')], default='SC')
+    TYPE_CHOICES = [
+        ('SC', 'Single Choice'),
+        ('MC', 'Multiple Choice'),
+        ('IMG', 'Image Based'),
+        ('AUD', 'Audio Based')
+    ]
+
+    test = models.ForeignKey('Test', related_name='questions', on_delete=models.CASCADE)
+    text = models.TextField(blank=True, null=True)  # Allow blank for non-text questions
+    question_type = models.CharField(max_length=3, choices=TYPE_CHOICES, default='SC')
+    image = models.ImageField(upload_to='question_images/', blank=True, null=True)
+    audio = models.FileField(upload_to='question_audio/', blank=True, null=True)
+
+    def clean(self):
+        # Validate based on question_type
+        if self.question_type == 'IMG' and not self.image:
+            raise ValidationError(_('Image file is required for image-based questions.'))
+        if self.question_type == 'AUD' and not self.audio:
+            raise ValidationError(_('Audio file is required for audio-based questions.'))
 
     def __str__(self):
-        return self.text
-
+        return self.text if self.text else f"Question ID: {self.id} - {self.get_question_type_display()}"
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
@@ -53,7 +68,7 @@ class Course(models.Model):
     full_description = models.TextField()
     users = models.ManyToManyField(CustomUser, related_name='courses', blank=True)
     created_by = models.ForeignKey(CustomUser, related_name='created_courses', on_delete=models.CASCADE)
-
+    ##publish true false
     def is_user_enrolled(self, user):
         return self.users.filter(pk=user.pk).exists()
 

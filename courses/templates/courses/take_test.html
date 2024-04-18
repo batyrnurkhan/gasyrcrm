@@ -6,7 +6,16 @@
     {% csrf_token %}
     {% for question in questions %}
     <div>
-        <h4>{{ question.text }}</h4>
+        <h4>{{ question.text|default_if_none:"Media Question" }}</h4>
+        {% if question.question_type == 'IMG' and question.image %}
+    <img src="{{ question.image.url }}" alt="Question Image" style="max-width: 100%;">
+
+        {% elif question.question_type == 'AUD' and question.audio %}
+            <audio controls>
+                <source src="{{ question.audio.url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        {% endif %}
         {% for answer in question.answers.all %}
             <label>
                 {% if question.question_type == 'MC' %}

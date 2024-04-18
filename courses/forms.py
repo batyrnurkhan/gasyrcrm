@@ -39,9 +39,12 @@ class TestForm(forms.ModelForm):
 
 
 class QuestionForm(forms.ModelForm):
+    image = forms.ImageField(required=False)
+    audio = forms.FileField(required=False)
+
     class Meta:
         model = Question
-        fields = ['text', 'question_type']
+        fields = ['text', 'question_type', 'image', 'audio']
 
 class AnswerForm(forms.ModelForm):
     class Meta:
