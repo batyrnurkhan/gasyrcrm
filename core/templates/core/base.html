@@ -6,8 +6,9 @@
     <link href="{% static "core/css/output.css" %}" rel="stylesheet">
 </head>
 <body class="{% block body-classes %}{% endblock %}">
-    {% block content %}
+{% block content %}
     {% csrf_token %}
-    {% endblock %}
+{% endblock %}
+{% include "core/components/cookies.html" %}
 </body>
 </html>

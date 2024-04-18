@@ -3,7 +3,7 @@ import re
 import logging
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
@@ -80,7 +80,8 @@ class LoginView(View):
             if user is not None:
                 login(request, user)
                 if user.has_access or user.role in ['Teacher', 'Superuser']:
-                    return redirect('home')  # Redirect to a home page or dashboard suitable for privileged users
+                    redirect_url = request.GET.get("next", "/home/")
+                    return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users
                 else:
                     return redirect('users:show_code')  # Redirect to the page where users can see their access code
             else:
@@ -140,3 +141,8 @@ class CheckAccessView(LoginRequiredMixin, View):
             return JsonResponse({'has_access': True, 'url': reverse('home')})
         else:
             return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
+
+
+def log_out(request):
+    logout(request)
+    return redirect("users:login")

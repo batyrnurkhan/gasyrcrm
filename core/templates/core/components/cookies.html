@@ -1,0 +1,55 @@
+{% load static %}
+<div id="consent-popup" class="fixed bottom-10 opacity-0 w-full ease-linear transition-opacity">
+    <div class="
+        relative container p-2.5 mx-auto flex flex-row items-center
+        bg-gradient-to-r from-[#DA9A39] to-[#E2A344]
+        text-white rounded-lg font-semibold
+    ">
+        <img class="absolute left-3 bottom-0" src="{% static 'core/images/cats/cookie.png' %}" alt="">
+        <div class="ml-[214px] text-2xl mr-auto h-full">Мы используем cookies для вашего удобного пользования</div>
+        <a class="inline-block py-[26px] px-16 border border-white rounded-lg text-xl" id="accept" href="#">Окей</a>
+    </div>
+</div>
+<script>
+    const cookieStorage = {
+        getItem: (item) => {
+            const cookies = document.cookie
+                .split(';')
+                .map(cookie => cookie.split('='))
+                .reduce((acc, [key, value]) => ({...acc, [key.trim()]: value}), {});
+            return cookies[item];
+        },
+        setItem: (item, value) => {
+            document.cookie = `${item}=${value};`
+        }
+    }
+
+    const storageType = cookieStorage;
+    const consentPropertyName = 'gasyr_consent';
+    const shouldShowPopup = () => !storageType.getItem(consentPropertyName);
+    const saveToStorage = () => storageType.setItem(consentPropertyName, true);
+
+    window.onload = () => {
+
+        const acceptFn = event => {
+            saveToStorage(storageType);
+            consentPopup.classList.add("opacity-0");
+            consentPopup.classList.remove('opacity-100');
+            setTimeout(() => {
+                consentPopup.classList.add('hidden');
+            }, 500)
+        }
+        const consentPopup = document.getElementById('consent-popup');
+        const acceptBtn = document.getElementById('accept');
+        acceptBtn.addEventListener('click', acceptFn);
+
+        if (shouldShowPopup(storageType)) {
+            setTimeout(() => {
+                consentPopup.classList.remove("opacity-0");
+                consentPopup.classList.add('opacity-100');
+            }, 2000);
+        } else {
+            consentPopup.classList.add('hidden');
+        }
+    };
+</script>

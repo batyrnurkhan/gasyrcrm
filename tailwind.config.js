@@ -8,7 +8,8 @@ npx tailwindcss -i .\core\static\core\css\input.css -o .\core\static\core\css\ou
 module.exports = {
     content: [
         "./core/**/*.{html,js}",
-        "./users/**/*.{html,js}"
+        "./users/**/*.{html,js}",
+        "./courses/**/*.{html,js}",
     ],
     theme: {
         extend: {},

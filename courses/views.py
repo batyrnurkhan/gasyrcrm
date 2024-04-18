@@ -86,8 +86,9 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         html = render_to_string('courses/_course_list_partial.html', context, request=request)
         return JsonResponse({'html': html})
 
-class CourseDetailView(DetailView):
+class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
+    login_url = "/users/login/"
     template_name = 'courses/course/course_detail.html'
 
     def get_context_data(self, **kwargs):
