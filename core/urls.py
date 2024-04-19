@@ -34,6 +34,6 @@ urlpatterns = [
     path('my-courses/', MyCoursesPageView.as_view(), name='my-courses'),
     path('completed-courses/', CompletedCoursesPageView.as_view(), name='completed-courses'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

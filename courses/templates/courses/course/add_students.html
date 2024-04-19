@@ -7,18 +7,36 @@
     <button type="submit">Search</button>
 </form>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const loginCodeInput = document.querySelector('#id_login_code');
+
+    loginCodeInput.addEventListener('input', function () {
+        let value = loginCodeInput.value.replace(/[^0-9]/g, '');
+        if (value.length > 3) {
+            value = value.substring(0, 3) + '-' + value.substring(3);
+        }
+        loginCodeInput.value = value;
+    });
+});
+</script>
+
 <hr>
 {% if students %}
     <ul>
     {% for student in students %}
-    <li>
-        {{ student.full_name }} - <a href="{% url 'courses:add_student_to_course' course_id=course.pk student_id=student.id %}">Add to Course</a>
-    </li>
-{% empty %}
-    <li>No students found.</li>
-{% endfor %}
-
-</ul>
+        <li>
+            {{ student.full_name }}
+            {% if student.enrolled %}
+                - <a href="{% url 'courses:remove_student_from_course' course_id=course.pk student_id=student.id %}">Remove from Course</a>
+            {% else %}
+                - <a href="{% url 'courses:add_student_to_course' course_id=course.pk student_id=student.id %}">Add to Course</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No students found.</li>
+    {% endfor %}
+    </ul>
 {% else %}
     <p>No search performed yet or no results found.</p>
 {% endif %}

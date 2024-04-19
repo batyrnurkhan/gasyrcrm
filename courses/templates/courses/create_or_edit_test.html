@@ -6,7 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<form method="post" action="" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="title">Test Title:</label>
     <input type="text" id="title" name="title" required value="{% if test_exists %}{{ test.title }}{% endif %}"><br><br>
