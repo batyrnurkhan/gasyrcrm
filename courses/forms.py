@@ -7,6 +7,7 @@ class CourseForm(forms.ModelForm):
         widget=forms.RadioSelect,
         choices=Course.DIFFICULTY_CHOICES,
     )
+    course_picture = forms.ImageField(required=False)
 
     class Meta:
         model = Course

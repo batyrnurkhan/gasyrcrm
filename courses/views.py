@@ -33,7 +33,7 @@ class EditCourseView(View):
     def post(self, request, *args, **kwargs):
         form = CourseForm(request.POST, request.FILES)
         course = Course.objects.get(id=self.kwargs["pk"])
-
+        print(form.is_valid())
         if form.is_valid():
             course.course_name = form.cleaned_data["course_name"]
             course.mini_description = form.cleaned_data["mini_description"]

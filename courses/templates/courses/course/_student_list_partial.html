@@ -1,14 +1,22 @@
 <!-- courses/_search_results_partial.html -->
 {% load static %}
 {% for student in students %}
-    <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
-        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/anonymous-user-image.png' %}{% endif %}">
+    <div class="relative w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
+        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="
+
+
+                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/anonymous-user-image.png' %}{% endif %}">
         <p class="w-[30%]">{{ student.full_name }}</p>
         <p class="w-[20%]">{{ student.phone_number }}</p>
         <p class="w-[15%]">12.12.2024</p>
         <p class="w-[12%]">{{ student.login_code }}</p>
         <!-- Button to enroll student -->
-        <button onclick="enrollStudent({{ student.id }}, {{ course.id }});" class="text-blue-ielts underline">Подтвердить</button>
+
+        <button onclick="enrollStudent({{ student.id }}, {{ course.id }});"
+                class="absolute inset-y-2 right-2 text-center
+                    rounded-lg bg-accent-red text-white text-lg font-semibold
+                    inline-block w-[189px] h-full-4" type="submit">Подтвердить
+        </button>
     </div>
 {% empty %}
     <div class="bg-white p-[50px] rounded-lg text-center">

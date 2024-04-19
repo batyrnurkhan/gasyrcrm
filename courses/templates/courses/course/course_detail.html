@@ -7,18 +7,30 @@
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
         <h1 class="text-[42px] font-bold mb-3">Редактирование курса</h1>
         <div class="bg-white p-14 rounded-lg mb-5">
-    <form id="searchForm" method="get" action="{% url 'courses:search_students' %}">
-        <input type="text" name="login_code" id="id_login_code" class="form-control" placeholder="Добавить ученика по ID" required>
-        <button type="submit" class="search-button">Search</button>
-    </form>
-                <div id="searchResults" class="mt-4"></div>
+            <h2 class="text-[32px] font-semibold">Добавить ученика по ID</h2>
+            <form id="searchForm" method="get" action="{% url 'courses:search_students' %}">
+                <div class="relative mb-3">
+                    <input type="text" name="login_code" id="id_login_code"
+                           class="peer w-full placeholder-black-main py-6 px-8 border border-gray rounded-lg"
+                           placeholder="Добавить ученика по ID" required>
+                    <img class="absolute inset-y-1/2 -translate-y-1/2 right-6 peer-focus-hidden border-transparent focus:border-transparent focus:ring-0"
+                         src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
+                    <button class="absolute inset-y-2 right-2 text-center
+                    rounded-lg bg-accent-red text-white text-lg font-semibold
+                    hidden w-[189px] h-full-4 peer-focus-inline-block peer-valid-inline-block z-10" type="submit">Поиск
+                    </button>
+                </div>
+            </form>
+            <div id="searchResults" class="flex flex-col gap-3">
 
-</div>
+            </div>
+
+        </div>
         <div class="bg-no-repeat bg-cover bg-center py-[60px] rounded-xl flex flex-col items-center mb-5"
              style="background-image: url('{% static "core/images/gasyr-accent-red-background.png" %}')">
             <h2 class="text-white text-2xl font-bold mb-[30px] uppercase tracking-widest">Предпросмотр карточки</h2>
@@ -33,85 +45,88 @@
             </div>
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">
-    <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
-    <div class="flex flex-col gap-3">
-        {% for student in students %}
-            <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
-                <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}">
-                <p class="w-[30%]">{{ student.full_name }}</p>
-                <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
-                <p class="w-[15%]">12.12.2024</p>
-                <p class="w-[12%]">{{ student.login_code }}</p>
-                <a href="#" class="text-blue-ielts underline">Результаты</a>
-            </div>
-        {% empty %}
-            <div class="bg-white p-[50px] rounded-lg text-center">
-                <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
-                <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
-            </div>
-        {% endfor %}
-    </div>
-</div>
-    </div>
-<script>
-$(document).ready(function() {
-    $('#searchForm').submit(function(event) {
-        event.preventDefault(); // Prevent the form from submitting through the browser.
-        var formData = $(this).serialize(); // Serialize the form data.
+            <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
+            <div class="flex flex-col gap-3">
+                {% for student in students %}
+                    <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
+                        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="
 
-        $.ajax({
-            url: "{% url 'courses:search_students' %}",
-            type: 'get',
-            data: formData,
-            success: function(data) {
-                // Update the search results div with new HTML from the server
-                $('#searchResults').html(data);
-            },
-            error: function() {
-                alert('Error loading search results.');
-            }
+
+                                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}">
+                        <p class="w-[30%]">{{ student.full_name }}</p>
+                        <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
+                        <p class="w-[15%]">12.12.2024</p>
+                        <p class="w-[12%]">{{ student.login_code }}</p>
+                        <a href="#" class="text-blue-ielts underline">Результаты</a>
+                    </div>
+                {% empty %}
+                    <div class="bg-white p-[50px] rounded-lg text-center">
+                        <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
+                        <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#searchForm').submit(function (event) {
+                event.preventDefault(); // Prevent the form from submitting through the browser.
+                var formData = $(this).serialize(); // Serialize the form data.
+
+                $.ajax({
+                    url: "{% url 'courses:search_students' %}",
+                    type: 'get',
+                    data: formData,
+                    success: function (data) {
+                        // Update the search results div with new HTML from the server
+                        $('#searchResults').html(data);
+                    },
+                    error: function () {
+                        alert('Error loading search results.');
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+    </script>
 
-<script>
-    function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
+            return cookieValue;
         }
-    }
-    return cookieValue;
-}
 
-function enrollStudent(studentId, courseId) {
+        function enrollStudent(studentId, courseId) {
             console.log("Student ID:", studentId, "Course ID:", courseId);  // This will show the values in the browser console
 
-    const csrftoken = getCookie('csrftoken');  // Get the CSRF token from the cookie
+            const csrftoken = getCookie('csrftoken');  // Get the CSRF token from the cookie
 
-    fetch(`/${courseId}/add-student/${studentId}/`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken  // Include CSRF token in the request header
+            fetch(`/${courseId}/add-student/${studentId}/`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken  // Include CSRF token in the request header
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('Error adding student:', error);
+                    alert('Failed to add student');
+                });
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-    })
-    .catch(error => {
-        console.error('Error adding student:', error);
-        alert('Failed to add student');
-    });
-}
 
-</script>
+    </script>
 {% endblock %}

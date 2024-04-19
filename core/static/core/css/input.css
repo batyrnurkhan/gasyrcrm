@@ -73,6 +73,22 @@
         @apply peer-checked:max-h-full
     }
 
+    .h-full-4 {
+        height: calc(100%-1rem);
+    }
+
+    .peer-focus-hidden {
+        @apply peer-focus:hidden
+    }
+
+    .peer-focus-inline-block {
+        @apply peer-focus:inline-block
+    }
+
+    .peer-valid-inline-block {
+        @apply peer-valid:inline-block
+    }
+
     .my-container .container__items {
         display: flex;
         align-items: center;
