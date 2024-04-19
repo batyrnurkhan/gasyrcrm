@@ -72,4 +72,49 @@
     .peer-active-max-h-full {
         @apply peer-checked:max-h-full
     }
+
+    .my-container .container__items {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: 0 20px;
+
+        width: 100%;
+        height: 100%;
+    }
+
+    .my-container .container__items input {
+        display: none;
+    }
+
+    .my-container .container__items label {
+        width: 20%;
+        aspect-ratio: 1;
+        cursor: pointer;
+    }
+
+    .my-container .container__items label .star-stroke {
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        background: #CDCDCD;
+        clip-path: circle(50% at 50% 50%);
+    }
+
+    .my-container .container__items label .star-stroke .star-fill {
+        width: 80%;
+        aspect-ratio: 1;
+        background: white;
+        clip-path: circle(50% at 50% 50%);
+    }
+
+    .my-container .container__items input:hover ~ label .star-stroke, .container .container__items input:checked ~ label .star-stroke {
+        background: theme(colors.accent-red);
+    }
+
+    .my-container .container__items input:checked ~ label .star-stroke .star-fill {
+        background: theme(colors.accent-red);
+    }
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My App</title>
+    <title>{% block title %}{% endblock %}</title>
     <link href="{% static "core/css/output.css" %}" rel="stylesheet">
 </head>
 <body class="{% block body-classes %}{% endblock %}">

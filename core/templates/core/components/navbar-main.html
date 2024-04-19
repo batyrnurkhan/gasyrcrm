@@ -1,9 +1,9 @@
 {% load static %}
 <div class="fixed w-full bg-white shadow-lg z-10">
     <div class="border-b-2 border-gray">
-        <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
-            <div class="py-4 pr-10 border-r-2 border-gray">
-                <a href="{% url "home" %}"><img src="{% static 'core/images/logo.png' %}" alt=""></a>
+        <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 90px;">
+            <div class="py-[19px] pr-10 border-r-2 border-gray">
+                <a href="{% url "home" %}"><img class="h-[53px]" src="{% static 'core/images/logo.png' %}" alt=""></a>
             </div>
             <div class="mr-auto pl-11">
                 {% if request.path == "/home/" or request.path == "/my-courses/" or request.path == "/completed-courses/" %}
@@ -11,7 +11,7 @@
                     <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
                 {% endif %}
             </div>
-            <div class="border-l-2 border-gray py-3 pl-5 flex flex-row items-center">
+            <div class="border-l-2 border-gray py-4 pl-5 flex flex-row items-center">
                 <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
                 <div class="ml-3.5 mr-8 h-fit">
                     <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
@@ -53,7 +53,7 @@
         </a>
     </nav>
 </div>
-<div style="height: 140px;"></div>
+<div style="height: 155px;"></div>
 
 
 <script>

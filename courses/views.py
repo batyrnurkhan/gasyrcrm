@@ -11,8 +11,46 @@ from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView
 
 from users.models import CustomUser
-from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm
+from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission
+
+
+class CourseDelete(DetailView):
+    model = Course
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class EditCourseView(View):
+
+    def get(self, request, *args, **kwargs):
+        form = CourseForm()
+        course = Course.objects.get(pk=self.kwargs["pk"])
+        return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
+
+    def post(self, request, *args, **kwargs):
+        form = CourseForm(request.POST, request.FILES)
+        course = Course.objects.get(id=self.kwargs["pk"])
+        print(form.data["course_name"])
+        print(form.data["mini_description"])
+        print(form.data["course_picture"])
+        print(form.data["big_description"])
+        print(form.data["course_time"])
+        print(form.data["course_difficulty"])
+        print(form.data["full_description"])
+        print(form.is_valid())
+        if form.is_valid():
+            course.course_name = form.cleaned_data["course_name"]
+            course.mini_description = form.cleaned_data["mini_description"]
+            if form.cleaned_data["course_picture"]:
+                course.course_picture = form.cleaned_data["course_picture"]
+            course.big_description = form.cleaned_data["big_description"]
+            course.course_time = form.cleaned_data["course_time"]
+            course.course_difficulty = form.cleaned_data["course_difficulty"]
+            course.full_description = form.cleaned_data["full_description"]
+            return redirect('courses:course_detail_edit')
+        return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
 
 
 class CreateCourseStep1View(View):
@@ -46,7 +84,9 @@ class CreateCourseStep2View(View):
             return redirect('courses:course_detail', pk=course.pk)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
+
 from django.db.models import Prefetch
+
 
 class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Course
@@ -82,13 +122,15 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         for course in courses:
             course.completion_percentage = course.calculate_completion_percentage(user)
 
-        context = {'course_data': [{'course': course, 'enrolled': True, 'completion': course.completion_percentage} for course in courses]}
+        context = {
+            'course_data': [{'course': course, 'enrolled': True, 'completion': course.completion_percentage} for course
+                            in courses]}
         html = render_to_string('courses/_course_list_partial.html', context, request=request)
         return JsonResponse({'html': html})
 
+
 class CourseDetailView(LoginRequiredMixin, DetailView):
     model = Course
-    login_url = "/users/login/"
     template_name = 'courses/course/course_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -119,8 +161,6 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-
-
 class LessonCreateView(CreateView):
     model = Lesson
     form_class = LessonForm
@@ -132,6 +172,7 @@ class LessonCreateView(CreateView):
 
     def get_success_url(self):
         return reverse_lazy('courses:module_detail', kwargs={'pk': self.kwargs['module_id']})
+
 
 class ModuleDetailView(LoginRequiredMixin, DetailView):
     model = Module
@@ -183,7 +224,8 @@ class CreateOrEditTestView(View):
         parent_object = get_object_or_404(parent_model, pk=parent_id)
         content_type = ContentType.objects.get_for_model(parent_object)
         test = Test.objects.filter(content_type=content_type, object_id=parent_id).first()
-        return render(request, 'courses/create_or_edit_test.html', {'test': test, 'parent_object': parent_object, 'test_exists': test is not None})
+        return render(request, 'courses/create_or_edit_test.html',
+                      {'test': test, 'parent_object': parent_object, 'test_exists': test is not None})
 
     def post(self, request, parent_type, parent_id):
         parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
@@ -244,6 +286,7 @@ class ModuleCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('courses:course_detail_edit', kwargs={'pk': self.kwargs['course_id']})
 
+
 class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = 'courses/course/add_students.html'
     form_class = AddStudentForm
@@ -297,6 +340,7 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
         return context
 
+
 def add_student_to_course(request, course_id, student_id):
     course = get_object_or_404(Course, pk=course_id)
     student = get_object_or_404(CustomUser, pk=student_id)
@@ -328,15 +372,12 @@ class TakeTestView(LoginRequiredMixin, View):
                 score += 1
             elif question.question_type == 'MC' and all(
                     int(ans_id) in correct_answers for ans_id in selected_answer_ids) and len(
-                    selected_answer_ids) == len(correct_answers):
+                selected_answer_ids) == len(correct_answers):
                 score += 1
 
         score_percentage = (score / total_questions) * 100 if total_questions else 0
         TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
         return redirect('courses:test_result', score=score_percentage)
-
-
-
 
 
 def test_result_view(request, score):

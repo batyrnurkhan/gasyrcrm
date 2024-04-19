@@ -3,6 +3,11 @@ from .models import Course, Module, Lesson, LessonLiterature, Test, Question, An
 from users.models import CustomUser
 
 class CourseForm(forms.ModelForm):
+    course_difficulty = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=Course.DIFFICULTY_CHOICES,
+    )
+
     class Meta:
         model = Course
         fields = ['course_name', 'mini_description', 'course_picture', 'big_description', 'course_time', 'course_difficulty', 'full_description']

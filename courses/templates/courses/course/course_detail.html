@@ -2,6 +2,7 @@
 {% load static %}
 {% load course_tags %}
 
+{% block title %}{{ course.course_name }}{% endblock %}
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
@@ -22,7 +23,7 @@
                 {% include "core/components/course-card-start.html" with course=course %}
             </div>
             <div class="grid grid-cols-2 gap-3 text-accent-red text-center text-xl font-semibold *:w-[391px] *:bg-white *:py-[26px] *:rounded-lg">
-                <a href="#">Изменить информацию о курсе</a>
+                <a href="{% url 'courses:course_detail_edit_about' pk=course.id %}">Изменить информацию о курсе</a>
                 <a href="#">Редактировать финальный тест</a>
                 <a href="#">Редактировать модули</a>
                 <a href="#">Поменять видео-поздравление</a>

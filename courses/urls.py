@@ -3,7 +3,7 @@ from .views import (
     CourseListView, CourseDetailView, LessonCreateView,
     ModuleDetailView, LessonDetailView,
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
-    add_student_to_course, TakeTestView, test_result_view,
+    add_student_to_course, TakeTestView, test_result_view, EditCourseView, CourseDelete,
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -14,6 +14,8 @@ urlpatterns = [
     path('', CourseListView.as_view(), name='course_list'),
     path('<int:pk>/', CoursePageView.as_view(), name='course_detail'),
     path('edit/<int:pk>/', CourseDetailView.as_view(), name='course_detail_edit'),
+    path('edit/<int:pk>/about/', EditCourseView.as_view(), name='course_detail_edit_about'),
+    path('delete/<int:pk>/', CourseDelete.as_view(), name='course_delete'),
     path('create/step1/', CreateCourseStep1View.as_view(), name='create_course_step1'),
     path('create/step2/', CreateCourseStep2View.as_view(), name='create_course_step2'),
     path('<int:course_id>/module/create/', ModuleCreateView.as_view(), name='module_create'),

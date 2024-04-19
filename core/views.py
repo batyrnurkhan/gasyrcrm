@@ -5,7 +5,6 @@ from courses.models import Course, Module, Lesson
 
 
 class HomePageView(LoginRequiredMixin, TemplateView):
-    login_url = "/users/login/"
 
     def get_template_names(self):
         if self.request.user.role == "Teacher":
@@ -25,7 +24,6 @@ class HomePageView(LoginRequiredMixin, TemplateView):
 
 
 class MyCoursesPageView(LoginRequiredMixin, TemplateView):
-    login_url = "/users/login/"
     template_name = 'core/my-courses.html'
 
     def get_context_data(self, **kwargs):
@@ -37,12 +35,10 @@ class MyCoursesPageView(LoginRequiredMixin, TemplateView):
 
 
 class CompletedCoursesPageView(LoginRequiredMixin, TemplateView):
-    login_url = "/users/login/"
     template_name = 'core/completed-courses.html'
 
 
 class CoursePageView(LoginRequiredMixin, DetailView):
-    login_url = "/users/login/"
     model = Course
     template_name = 'core/course_detail.html'
 
