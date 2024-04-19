@@ -49,6 +49,8 @@ class EditCourseView(View):
             return redirect('courses:course_detail_edit', pk=course.id)
 
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
+
+
 class CreateCourseStep1View(View):
     def get(self, request, *args, **kwargs):
         form = CourseFormStep1()
@@ -179,8 +181,14 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
         module = self.get_object()
         test = module.tests.first()
-
+        course = module.course
+        print(course.modules.all())
+        print(course.modules.all()[0].id)
+        module_index_gen = (i for i, v in enumerate(course.modules.all()) if v.id == module.id)
+        module_index = next(module_index_gen) + 1
         context['test'] = test
+        context['module_index'] = module_index
+        context['course'] = course
         context['test_exists'] = test is not None
         context['is_creator_or_superuser'] = user.is_superuser or user == module.course.created_by
         context['is_enrolled'] = module.course.users.filter(id=user.id).exists()
@@ -325,6 +333,7 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
             return self.render_to_response(context)
         return super().form_valid(form)
 
+
 def add_student_to_course(request, course_id, student_id):
     if request.method == 'GET':
         course = get_object_or_404(Course, pk=course_id)
@@ -334,6 +343,7 @@ def add_student_to_course(request, course_id, student_id):
     else:
         return HttpResponseBadRequest("Invalid method")
 
+
 def search_students(request):
     form = AddStudentForm(request.GET)
     if form.is_valid():
@@ -342,6 +352,7 @@ def search_students(request):
         return HttpResponse(html)
     else:
         return HttpResponseBadRequest('Invalid data', status=400)
+
 
 from django.forms import modelformset_factory
 
@@ -376,8 +387,6 @@ class TakeTestView(LoginRequiredMixin, View):
                 selected_correct = set(selected_answer_ids).intersection(correct_answers)
                 if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
                     score += 1
-
-
 
         score_percentage = (score / total_questions) * 100 if total_questions else 0
         TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)

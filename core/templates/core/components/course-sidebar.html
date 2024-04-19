@@ -1,0 +1,47 @@
+{% load static %}
+<div class="h-side w-[25%] flex flex-col pt-[60px] pb-5 bg-white">
+    {% for module in course.modules.all %}
+        <div class="relative overflow-hidden">
+            <input {% if module_id == module.id %}checked{% endif %} type="checkbox"
+                   class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
+            <div class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
+                <img class="inline-block mr-3"
+                     src="{% static "core/icons/folder-fill-accent-red.svg" %}" alt="">
+                <span class="mr-auto">Модуль {{ forloop.counter }}</span>
+            </div>
+            <img class="absolute right-6 top-0 accordion-red block h-[24px]"
+                 src="{% static "core/icons/arrow-right-button-accent-red.svg" %}" alt="">
+            <img class="absolute right-6 top-0 accordion-gray hidden h-[24px]"
+                 src="{% static "core/icons/arrow-down-button-gray.svg" %}" alt="">
+            <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px]">
+                <div class="px-6 py-3">
+                    {% for lesson in module.lessons.all %}
+                        <div class="relative overflow-hidden">
+                            <input checked type="checkbox"
+                                   class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
+                            <p class="font-bold">{{ lesson.lesson_name }}</p>
+                            <ul class="overflow-hidden transition-all peer-active-max-h-full
+                            max-h-0 ml-8 list-disc list-outside">
+                                <li class="marker:w-2">{{ lesson.lesson_name }}</li>
+                                {% if lesson.tests.count > 0 %}
+                                    <li>Тестирование</li>
+                                {% endif %}
+                                {% if lesson.literatures.count > 0 %}
+                                    <li>Литература</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                    {% for test in module.tests.all %}
+                        <div class="relative overflow-hidden">
+                            <input checked type="checkbox"
+                                   class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
+                            <p class="font-bold">{{ test.title }}</p>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

@@ -40,7 +40,7 @@
             <div class="grid grid-cols-2 gap-3 text-accent-red text-center text-xl font-semibold *:w-[391px] *:bg-white *:py-[26px] *:rounded-lg">
                 <a href="{% url 'courses:course_detail_edit_about' pk=course.id %}">Изменить информацию о курсе</a>
                 <a href="#">Редактировать финальный тест</a>
-                <a href="#">Редактировать модули</a>
+                <a href="{% url 'courses:module_detail' pk=course.modules.all.0.id %}">Редактировать модули</a>
                 <a href="#">Поменять видео-поздравление</a>
             </div>
         </div>
@@ -50,8 +50,6 @@
                 {% for student in students %}
                     <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
                         <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="
-
-
                                 {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}">
                         <p class="w-[30%]">{{ student.full_name }}</p>
                         <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>

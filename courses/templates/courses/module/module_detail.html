@@ -1,30 +1,136 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
-    <h2>Module: {{ module.module_name }}</h2>
-    <!-- Module details... -->
+    {% include "core/components/navbar-main-without-links.html" %}
 
-    {% if is_creator_or_superuser or is_teacher %}
-        <a href="{% url 'courses:lesson_create' module_id=module.pk %}">+ Add Lesson</a>
-    {% endif %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    {% if test_exists %}
-        {% if is_creator_or_superuser %}
-            <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">Edit Test</a>
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        <h2 class="text-[42px] font-bold">Модули и уроки</h2>
+
+        <div class="rounded-lg shadow-lg flex flex-row overflow-hidden">
+            {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
+            <div class="w-[75%] p-10 overflow-y-auto h-side">
+                <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
+                <form>
+                    <div class="w-full mb-6">
+                        <label class="">
+                            <span class="float-left mb-2 font-semibold">Введите название модуля</span>
+                            <small class="float-right opacity-50">Макс: 50 симв</small>
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                                   name="lesson_name" placeholder="Пример: Основы математики"
+                                   value="{{ module.module_name }}">
+                        </label>
+                    </div>
+                </form>
+                {% for lesson in module.lessons.all %}
+                    <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
+                        <h2 class="text-xl font-semibold text-accent-red">Урок {{ forloop.counter }}</h2>
+                        <form>
+                            <div class="w-full mb-6">
+                                <label class="">
+                                    <span class="float-left mb-2 font-semibold">Введите название урока</span>
+                                    <small class="float-right opacity-50">Макс: 24 симв</small>
+                                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                                           name="lesson_name" placeholder="Пример: Основы математики"
+                                           value="{{ lesson.lesson_name }}">
+                                </label>
+                            </div>
+                            <div class="w-full mb-6">
+                                <label class="">
+                                    <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
+                                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                                           name="video_link" placeholder="Пример: Основы математики"
+                                           value="{{ lesson.video_link }}">
+                                </label>
+                            </div>
+                            <div class="w-full mb-6">
+                                <div class="w-full mb-2 font-semibold">Тестирование</div>
+                                <a class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg"
+                                   href="{% url 'courses:create_edit_test' parent_type='lesson' parent_id=lesson.id %}">
+                                    <img class="inline-block mr-[23px]"
+                                         src="{% static 'core/icons/table-view.svg' %}" alt="">
+                                    Добавить тест после урока
+                                </a>
+                            </div>
+                            <div class="w-full mb-6">
+                                <div class="w-full mb-2 font-semibold">Литература</div>
+                                <div class="mb-2 font-semibold">
+                                    {% for literature in lesson.literatures.all %}
+                                        <div class="border border-gray flex flex-row p-4 rounded-lg mb-1">
+                                            {% if literature.literature_type == "Video" %}
+                                                <img class="inline-block mr-[21px]"
+                                                     src="{% static 'core/icons/file-accent-red-fill-Video.svg' %}"
+                                                     alt="">
+                                            {% elif literature.literature_type == "Audio" %}
+                                                <img class="inline-block mr-[21px]"
+                                                     src="{% static 'core/icons/file-accent-red-fill-Audio.svg' %}"
+                                                     alt="">
+                                            {% elif literature.literature_type == "Book" %}
+                                                <img class="inline-block mr-[21px]"
+                                                     src="{% static 'core/icons/file-accent-red-fill-Book.svg' %}"
+                                                     alt="">
+                                            {% elif literature.literature_type == "Text" %}
+                                                <img class="inline-block mr-[21px]"
+                                                     src="{% static 'core/icons/file-accent-red-fill-Text.svg' %}"
+                                                     alt="">
+                                            {% endif %}
+                                            <p class="underline mr-auto">{{ literature.literature_name }}</p>
+                                            <img class="cursor-pointer"
+                                                 src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <label class="">
+                                    <input id="input-file" class="hidden" type="file"
+                                           name="{{ form.course_picture.name }}"
+                                           value="/media/{{ course.course_picture }}">
+                                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                                        <img class="inline-block align-middle mr-[23px]"
+                                             src="{% static 'core/icons/upload-2-fill.svg' %}"
+                                             alt="">
+                                        <span id="input-file-text" type="text"
+                                              class="text-[#5E8BFF] underline font-semibold">
+                                            Загрузить файлы
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+
+        </div>
+        <h2>Module: {{ module.module_name }}</h2>
+        <!-- Module details... -->
+
+        {% if is_creator_or_superuser or is_teacher %}
+            <a href="{% url 'courses:lesson_create' module_id=module.pk %}">+ Add Lesson</a>
         {% endif %}
-        <a href="{% url 'courses:take_test' test_id=test.pk %}">Take Test</a>
-    {% else %}
-        {% if is_creator_or_superuser %}
-            <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">+ Create Test</a>
-        {% endif %}
-    {% endif %}
 
-    <h3>Lessons</h3>
-    <ul>
-        {% for lesson in module.lessons.all %}
-            <li>{{ lesson.lesson_name }}
-                <a href="{% url 'courses:lesson_detail' pk=lesson.pk %}">View Details</a>
-            </li>
-        {% endfor %}
-    </ul>
+        {% if test_exists %}
+            {% if is_creator_or_superuser %}
+                <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">Edit Test</a>
+            {% endif %}
+            <a href="{% url 'courses:take_test' test_id=test.pk %}">Take Test</a>
+        {% else %}
+            {% if is_creator_or_superuser %}
+                <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">+ Create
+                    Test</a>
+            {% endif %}
+        {% endif %}
+
+        <h3>Lessons</h3>
+        <ul>
+            {% for lesson in module.lessons.all %}
+                <li>{{ lesson.lesson_name }}
+                    <a href="{% url 'courses:lesson_detail' pk=lesson.pk %}">View Details</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

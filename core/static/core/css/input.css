@@ -74,7 +74,11 @@
     }
 
     .h-full-4 {
-        height: calc(100%-1rem);
+        height: calc(100% - 1rem);
+    }
+
+    .h-side {
+        height: calc(100vh - 390px);
     }
 
     .peer-focus-hidden {
