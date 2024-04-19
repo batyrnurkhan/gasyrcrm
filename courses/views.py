@@ -33,27 +33,22 @@ class EditCourseView(View):
     def post(self, request, *args, **kwargs):
         form = CourseForm(request.POST, request.FILES)
         course = Course.objects.get(id=self.kwargs["pk"])
-        print(form.data["course_name"])
-        print(form.data["mini_description"])
-        print(form.data["course_picture"])
-        print(form.data["big_description"])
-        print(form.data["course_time"])
-        print(form.data["course_difficulty"])
-        print(form.data["full_description"])
-        print(form.is_valid())
+
         if form.is_valid():
             course.course_name = form.cleaned_data["course_name"]
             course.mini_description = form.cleaned_data["mini_description"]
-            if form.cleaned_data["course_picture"]:
-                course.course_picture = form.cleaned_data["course_picture"]
             course.big_description = form.cleaned_data["big_description"]
             course.course_time = form.cleaned_data["course_time"]
             course.course_difficulty = form.cleaned_data["course_difficulty"]
             course.full_description = form.cleaned_data["full_description"]
-            return redirect('courses:course_detail_edit')
+
+            if 'course_picture' in request.FILES:
+                course.course_picture = form.cleaned_data["course_picture"]
+
+            course.save()
+            return redirect('courses:course_detail_edit', pk=course.id)
+
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
-
-
 class CreateCourseStep1View(View):
     def get(self, request, *args, **kwargs):
         form = CourseFormStep1()
@@ -331,10 +326,13 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         return super().form_valid(form)
 
 def add_student_to_course(request, course_id, student_id):
-    course = get_object_or_404(Course, pk=course_id)
-    student = get_object_or_404(CustomUser, pk=student_id)
-    course.users.add(student)  # Assuming 'users' is the ManyToMany field relating courses to students
-    return redirect('courses:course_detail', pk=course_id)
+    if request.method == 'GET':
+        course = get_object_or_404(Course, pk=course_id)
+        student = get_object_or_404(CustomUser, pk=student_id)
+        course.users.add(student)
+        return JsonResponse({"message": "Student added successfully"}, status=200)
+    else:
+        return HttpResponseBadRequest("Invalid method")
 
 def search_students(request):
     form = AddStudentForm(request.GET)

@@ -6,6 +6,7 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
@@ -63,7 +64,7 @@ $(document).ready(function() {
             type: 'get',
             data: formData,
             success: function(data) {
-                // Update only the search results div
+                // Update the search results div with new HTML from the server
                 $('#searchResults').html(data);
             },
             error: function() {
@@ -72,5 +73,45 @@ $(document).ready(function() {
         });
     });
 });
+</script>
+
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function enrollStudent(studentId, courseId) {
+            console.log("Student ID:", studentId, "Course ID:", courseId);  // This will show the values in the browser console
+
+    const csrftoken = getCookie('csrftoken');  // Get the CSRF token from the cookie
+
+    fetch(`/${courseId}/add-student/${studentId}/`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken  // Include CSRF token in the request header
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+    })
+    .catch(error => {
+        console.error('Error adding student:', error);
+        alert('Failed to add student');
+    });
+}
+
 </script>
 {% endblock %}
