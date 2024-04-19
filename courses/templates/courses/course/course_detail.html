@@ -1,5 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% load course_tags %}
 
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
@@ -7,7 +8,7 @@
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
         <h1 class="text-[42px] font-bold mb-3">Редактирование курса</h1>
         <div class="bg-white p-14 rounded-lg mb-5">
-            <h2 class="text-[32px] font-semibold">Добавить ученика по ID</h2>
+            <h2 class="text-[32px] font-semibold pb-[13px]">Добавить ученика по ID</h2>
             <label class="relative">
                 <input class="w-full py-6 px-8 border border-gray placeholder-black-main rounded-lg" type="text"
                        placeholder="Введите ID ученика">
@@ -27,47 +28,30 @@
                 <a href="#">Поменять видео-поздравление</a>
             </div>
         </div>
-        <div class="bg-white p-14 rounded-lg mb-5">
-
-        </div>
-        <!-- Other course details... -->
-
-        <!-- Show big description if the user is not enrolled -->
-        {% if not is_enrolled %}
-            <p>{{ course.big_description }}</p>
-        {% endif %}
-
-        <!-- Show modules if the user is enrolled or has the right to modify the course -->
-        {% if show_modules %}
-            <h3>Modules</h3>
-            <ul>
-                {% for module in course.modules.all %}
-                    <li><a href="{% url 'courses:module_detail' pk=module.pk %}">{{ module.module_name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-
-        <!-- Test management links -->
-        {% if can_modify_course %}
-            {% if test_exists %}
-                <a href="{% url 'courses:create_edit_test' parent_type='course' parent_id=course.pk %}">Edit Test</a>
-            {% else %}
-                <a href="{% url 'courses:create_edit_test' parent_type='course' parent_id=course.pk %}">+ Create
-                    Test</a>
-            {% endif %}
-        {% endif %}
-
-        <!-- Show "Add Module" button and enrolled students list if the user has the right to modify the course -->
-        {% if can_modify_course %}
-            <a href="{% url 'courses:module_create' course_id=course.pk %}">+ Add Module</a>
-            <h3>Enrolled Students</h3>
-            <ul>
+        <div class="bg-white p-14 rounded-lg mb-36">
+            <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
+            <label class="relative">
+                <input class="w-full py-6 px-8 border border-gray text-xl placeholder-black-main rounded-lg mb-3" type="text"
+                       placeholder="Введите ID ученика">
+                <img class="absolute inset-y-0 right-6" src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
+            </label>
+            <div class="flex flex-col gap-3">
                 {% for student in students %}
-                    <li>{{ student.full_name }}</li>
+                    <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
+                        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="{% if student.profile_picture %}/{{ student.profile_picture }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}">
+                        <p class="w-[30%]">{{ student.full_name }}</p>
+                        <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
+                        <p class="w-[15%]">12.12.2024</p>
+                        <p class="w-[12%]">{{ student.login_code }}</p>
+                        <a href="#" class="text-blue-ielts underline">Результаты</a>
+                    </div>
                 {% empty %}
-                    <li>No students added yet.</li>
+                    <div class="bg-white p-[50px] rounded-lg text-center">
+                        <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
+                        <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
+                    </div>
                 {% endfor %}
-            </ul>
-        {% endif %}
+            </div>
+        </div>
     </div>
 {% endblock %}
