@@ -54,19 +54,41 @@ class AnswerForm(forms.ModelForm):
 from django.core.validators import RegexValidator
 
 
+# class AddStudentForm(forms.Form):
+#     search_query = forms.CharField(
+#         label='Search by name',
+#         max_length=100,
+#         required=False,
+#         help_text='Enter the full name of the student.'
+#     )
+#     phone_number = forms.CharField(
+#         label='Search by phone number',
+#         max_length=15,
+#         required=False,
+#         help_text='Enter the phone number of the student.'
+#     )
+#     login_code = forms.CharField(
+#         label='Search by login code',
+#         max_length=7,
+#         required=False,
+#         help_text='Enter the login code of the student.'
+#     )
+#
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         search_query = cleaned_data.get('search_query')
+#         phone_number = cleaned_data.get('phone_number')
+#         login_code = cleaned_data.get('login_code')
+#
+#         if not any([search_query, phone_number, login_code]):
+#             raise forms.ValidationError("Please provide at least one search criteria.")
+#
+#         if sum([bool(search_query), bool(phone_number), bool(login_code)]) > 1:
+#             raise forms.ValidationError("Please search by only one criterion at a time.")
+#
+#         return cleaned_data
+
 class AddStudentForm(forms.Form):
-    search_query = forms.CharField(
-        label='Search by name',
-        max_length=100,
-        required=False,
-        help_text='Enter the full name of the student.'
-    )
-    phone_number = forms.CharField(
-        label='Search by phone number',
-        max_length=15,
-        required=False,
-        help_text='Enter the phone number of the student.'
-    )
     login_code = forms.CharField(
         label='Search by login code',
         max_length=7,
@@ -76,14 +98,9 @@ class AddStudentForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        search_query = cleaned_data.get('search_query')
-        phone_number = cleaned_data.get('phone_number')
         login_code = cleaned_data.get('login_code')
 
-        if not any([search_query, phone_number, login_code]):
-            raise forms.ValidationError("Please provide at least one search criteria.")
-
-        if sum([bool(search_query), bool(phone_number), bool(login_code)]) > 1:
-            raise forms.ValidationError("Please search by only one criterion at a time.")
+        if not login_code:
+            raise forms.ValidationError("Please provide the login code.")
 
         return cleaned_data

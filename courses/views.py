@@ -258,15 +258,15 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
         context['course'] = get_object_or_404(Course, pk=course_id)
         context['form'] = AddStudentForm(self.request.GET or None)
 
-        search_query = self.request.GET.get('search_query', '')
-        phone_number = self.request.GET.get('phone_number', '')
+        # search_query = self.request.GET.get('search_query', '')
+        # phone_number = self.request.GET.get('phone_number', '')
         login_code = self.request.GET.get('login_code', '')
 
-        if search_query:
-            context['students'] = CustomUser.objects.filter(role='Student', full_name__icontains=search_query)
-        elif phone_number:
-            context['students'] = CustomUser.objects.filter(role='Student', phone_number=phone_number)
-        elif login_code:
+        # if search_query:
+        #     context['students'] = CustomUser.objects.filter(role='Student', full_name__icontains=search_query)
+        # elif phone_number:
+        #     context['students'] = CustomUser.objects.filter(role='Student', phone_number=phone_number)
+        if login_code:
             context['students'] = CustomUser.objects.filter(role='Student', login_code=login_code)
         else:
             context['students'] = []
