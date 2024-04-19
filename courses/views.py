@@ -1,9 +1,10 @@
+import json
 import traceback
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
@@ -11,7 +12,8 @@ from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView
 
 from users.models import CustomUser
-from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm
+from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, AnswerForm, \
+    QuestionForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission
 
 
@@ -188,39 +190,36 @@ class CreateOrEditTestView(View):
     def post(self, request, parent_type, parent_id):
         parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
         parent_object = get_object_or_404(parent_model, pk=parent_id)
-        title = request.POST.get('title')
         content_type = ContentType.objects.get_for_model(parent_object)
 
-        test, created = Test.objects.get_or_create(
-            content_type=content_type, object_id=parent_id,
-            defaults={'title': title}
-        )
-        test.title = title
-        test.save()
+        form = TestForm(request.POST, request.FILES)
+        if form.is_valid():
+            test = form.save(commit=False)
+            test.content_object = parent_object
+            test.save()
 
-        question_count = int(request.POST.get('question_count', 0))
-        for i in range(question_count):
-            question_id = request.POST.get(f'questions[{i}][id]', None)
-            question_text = request.POST.get(f'questions[{i}][text]', '')
-            question_type = request.POST.get(f'questions[{i}][type]', 'SC')
+            questions_data = json.loads(request.POST.get('questions_data', '[]'))
+            for question_data in questions_data:
+                question_id = question_data.get('id')
+                question_form = QuestionForm(question_data, request.FILES or None)
+                if question_form.is_valid():
+                    question = question_form.save(commit=False)
+                    if question_id:
+                        question.id = question_id
+                    question.test = test
+                    question.full_clean()  # This will trigger your custom validation in the model's clean method
+                    question.save()
 
-            if question_text:
-                question, _ = Question.objects.update_or_create(
-                    id=question_id,
-                    defaults={'test': test, 'text': question_text, 'question_type': question_type}
-                )
-
-                for j in range(4):
-                    answer_id = request.POST.get(f'questions[{i}][answers][{j}][id]', None)
-                    answer_text = request.POST.get(f'questions[{i}][answers][{j}][text]', '')
-                    is_correct = f'questions[{i}][answers][{j}][is_correct]' in request.POST
-
-                    if answer_text:
-                        Answer.objects.update_or_create(
-                            id=answer_id,
-                            defaults={'question': question, 'text': answer_text, 'is_correct': is_correct}
-                        )
-
+                    answers_data = question_data.get('answers', [])
+                    for answer_data in answers_data:
+                        answer_id = answer_data.get('id')
+                        answer_form = AnswerForm(answer_data)
+                        if answer_form.is_valid():
+                            answer = answer_form.save(commit=False)
+                            if answer_id:
+                                answer.id = answer_id
+                            answer.question = question
+                            answer.save()
         if isinstance(parent_object, Course):
             redirect_url = reverse('courses:course_detail', kwargs={'pk': parent_object.pk})
         elif isinstance(parent_object, Module):
@@ -229,7 +228,7 @@ class CreateOrEditTestView(View):
         elif hasattr(parent_object, 'module'):  # Likely a Lesson
             redirect_url = reverse('courses:module_detail', kwargs={'pk': parent_object.module.pk})
 
-        return redirect(redirect_url)  # Simplified redirection handling
+        return redirect(redirect_url)
 
 
 class ModuleCreateView(CreateView):
@@ -247,55 +246,47 @@ class ModuleCreateView(CreateView):
 class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = 'courses/course/add_students.html'
     form_class = AddStudentForm
-    success_url = reverse_lazy('courses:add_students')  # Make sure this URL is correctly configured
+    success_url = reverse_lazy('courses:add_students')
 
     def test_func(self):
         user = self.request.user
         return user.is_superuser or user.role == 'Teacher'
 
-    def get(self, request, *args, **kwargs):
-        # This ensures that the GET method can also handle adding a student if 'add_student_phone' is in the query.
-        if 'add_student_phone' in request.GET:
-            phone_number = request.GET.get('add_student_phone')
-            return self.add_student_to_course(self.kwargs['pk'], phone_number)
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def add_student_to_course(request, course_id, student_id):
-        course = get_object_or_404(Course, pk=course_id)
-        student = get_object_or_404(CustomUser, pk=student_id, role='Student')
-        course.users.add(student)
-        return redirect('courses:course_detail', pk=course_id)
-
-    def form_valid(self, form):
-        # When the form is valid, process the search and update the context with the results
-        search_query = form.cleaned_data['search_query']
-        students = CustomUser.objects.filter(full_name__icontains=search_query, role='Student')
-        context = self.get_context_data(form=form, students=students)
-        return self.render_to_response(context)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course_id = self.kwargs.get('pk')
-        course = get_object_or_404(Course, pk=course_id)
-        context['course'] = course
-
-        # Initialize the form in context data for re-rendering the page on GET requests.
+        context['course'] = get_object_or_404(Course, pk=course_id)
         context['form'] = AddStudentForm(self.request.GET or None)
 
-        if 'search_query' in self.request.GET:
-            search_query = self.request.GET['search_query']
+        search_query = self.request.GET.get('search_query', '')
+        phone_number = self.request.GET.get('phone_number', '')
+        login_code = self.request.GET.get('login_code', '')
+
+        if search_query:
             context['students'] = CustomUser.objects.filter(role='Student', full_name__icontains=search_query)
+        elif phone_number:
+            context['students'] = CustomUser.objects.filter(role='Student', phone_number=phone_number)
+        elif login_code:
+            context['students'] = CustomUser.objects.filter(role='Student', login_code=login_code)
         else:
             context['students'] = []
 
         return context
+
+    def add_student_to_course(self, course_id, phone_number):
+        course = get_object_or_404(Course, pk=course_id)
+        student = get_object_or_404(CustomUser, phone_number=phone_number, role='Student')
+        course.users.add(student)
+        return HttpResponseRedirect(reverse_lazy('courses:course_detail', kwargs={'pk': course_id}))
+
+    def form_valid(self, form):
+        # Assuming the form is used to add students by name search
+        search_query = form.cleaned_data.get('search_query')
+        if search_query:
+            students = CustomUser.objects.filter(full_name__icontains=search_query, role='Student')
+            context = self.get_context_data(form=form, students=students)
+            return self.render_to_response(context)
+        return super().form_valid(form)
 
 def add_student_to_course(request, course_id, student_id):
     course = get_object_or_404(Course, pk=course_id)
@@ -319,17 +310,26 @@ class TakeTestView(LoginRequiredMixin, View):
         test = get_object_or_404(Test, pk=test_id)
         score = 0
         total_questions = test.questions.count()
+        questions = test.questions.all()
+        for question in questions:
+            selected_answer_ids = list(map(int, request.POST.getlist(f'answer_{question.id}')))
+            correct_answers = list(question.answers.filter(is_correct=True).values_list('id', flat=True))
 
-        for question in test.questions.all():
-            selected_answer_ids = request.POST.getlist(f'answer_{question.id}')
-            correct_answers = question.answers.filter(is_correct=True).values_list('id', flat=True)
+            if not selected_answer_ids:
+                continue
 
-            if question.question_type == 'SC' and int(selected_answer_ids[0]) in correct_answers:
-                score += 1
-            elif question.question_type == 'MC' and all(
-                    int(ans_id) in correct_answers for ans_id in selected_answer_ids) and len(
-                    selected_answer_ids) == len(correct_answers):
-                score += 1
+            # Handling Single and Multiple Choice
+            if question.question_type in ['SC', 'MC']:
+                selected_correct = set(selected_answer_ids).intersection(correct_answers)
+                if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
+                    score += 1
+
+            elif question.question_type in ['IMG', 'AUD']:
+                selected_correct = set(selected_answer_ids).intersection(correct_answers)
+                if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
+                    score += 1
+
+
 
         score_percentage = (score / total_questions) * 100 if total_questions else 0
         TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)

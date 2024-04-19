@@ -26,4 +26,4 @@ urlpatterns = [
 
     path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
