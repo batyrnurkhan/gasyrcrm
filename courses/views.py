@@ -294,6 +294,14 @@ def add_student_to_course(request, course_id, student_id):
     course.users.add(student)  # Assuming 'users' is the ManyToMany field relating courses to students
     return redirect('courses:course_detail', pk=course_id)
 
+def search_students(request):
+    form = AddStudentForm(request.GET)
+    if form.is_valid():
+        students = CustomUser.objects.filter(login_code=form.cleaned_data['login_code'])
+        html = render_to_string('courses/course/_student_list_partial.html', {'students': students}, request=request)
+        return HttpResponse(html)
+    else:
+        return HttpResponseBadRequest('Invalid data', status=400)
 
 from django.forms import modelformset_factory
 

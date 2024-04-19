@@ -5,16 +5,16 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
         <h1 class="text-[42px] font-bold mb-3">Редактирование курса</h1>
         <div class="bg-white p-14 rounded-lg mb-5">
-            <h2 class="text-[32px] font-semibold pb-[13px]">Добавить ученика по ID</h2>
-            <label class="relative">
-                <input class="w-full py-6 px-8 border border-gray placeholder-black-main rounded-lg" type="text"
-                       placeholder="Введите ID ученика">
-                <img class="absolute inset-y-0 right-6" src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
-            </label>
-        </div>
+    <form id="searchForm" method="get" action="{% url 'courses:search_students' %}">
+        <input type="text" name="login_code" id="id_login_code" class="form-control" placeholder="Добавить ученика по ID" required>
+        <button type="submit" class="search-button">Search</button>
+    </form>
+</div>
         <div class="bg-no-repeat bg-cover bg-center py-[60px] rounded-xl flex flex-col items-center mb-5"
              style="background-image: url('{% static "core/images/gasyr-accent-red-background.png" %}')">
             <h2 class="text-white text-2xl font-bold mb-[30px] uppercase tracking-widest">Предпросмотр карточки</h2>
@@ -30,11 +30,7 @@
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">
             <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
-            <label class="relative">
-                <input class="w-full py-6 px-8 border border-gray text-xl placeholder-black-main rounded-lg mb-3" type="text"
-                       placeholder="Введите ID ученика">
-                <img class="absolute inset-y-0 right-6" src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
-            </label>
+            <!-- Previously filled search results here -->
             <div class="flex flex-col gap-3">
                 {% for student in students %}
                     <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
@@ -54,4 +50,26 @@
             </div>
         </div>
     </div>
+<script>
+    $(document).ready(function() {
+        $('#searchForm').submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser.
+            var formData = $(this).serialize(); // Serialize the form data.
+
+            $.ajax({
+                url: "{% url 'courses:search_students' %}",
+                type: 'get',
+                data: formData,
+                success: function(data) {
+                    // Assuming 'data' is the HTML of the student list
+                    $('.flex.flex-col.gap-3').html(data);
+                },
+                error: function() {
+                    alert('Error loading students.');
+                }
+            });
+        });
+    });
+</script>
+
 {% endblock %}
