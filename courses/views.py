@@ -1,5 +1,7 @@
+import json
 import traceback
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
@@ -12,8 +14,8 @@ from django.views.generic.edit import CreateView, FormView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
-    AnswerForm, QuestionForm
-from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission
+    AnswerForm, QuestionForm, RatingForm
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, Rating
 
 
 class CourseDelete(DetailView):
@@ -386,3 +388,31 @@ class TakeTestView(LoginRequiredMixin, View):
 
 def test_result_view(request, score):
     return render(request, 'courses/test_result.html', {'score': score})
+
+@login_required
+def list_students(request, course_id):
+    course = get_object_or_404(Course, pk=course_id)
+    if request.user.role != 'Teacher':
+        return redirect('some_error_page')
+    students = course.users.filter(role='Student')
+    return render(request, 'courses/diary/list_students.html', {'students': students, 'course': course})
+
+@login_required
+def rate_student(request, course_id, student_id):
+    course = get_object_or_404(Course, id=course_id)
+    student = get_object_or_404(CustomUser, id=student_id)
+    if request.user.role != 'Teacher' or not course.is_user_enrolled(student):
+        return redirect('some_error_page')
+
+    if request.method == 'POST':
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            rating, created = Rating.objects.update_or_create(
+                course=course, student=student, teacher=request.user,
+                defaults={'rating': form.cleaned_data['rating']}
+            )
+            return redirect('courses:list_students', course_id=course.id)
+    else:
+        form = RatingForm()
+
+    return render(request, 'courses/diary/rate_student.html', {'form': form, 'course': course, 'student': student})

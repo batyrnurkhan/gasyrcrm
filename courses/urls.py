@@ -3,7 +3,8 @@ from .views import (
     CourseListView, CourseDetailView, LessonCreateView,
     ModuleDetailView, LessonDetailView,
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
-    add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete
+    add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete, list_students,
+    rate_student
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -29,4 +30,7 @@ urlpatterns = [
 
     path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),
+
+    path('<int:course_id>/students/', list_students, name='list_students'),
+    path('course/<int:course_id>/rate/<int:student_id>/', rate_student, name='rate_student'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

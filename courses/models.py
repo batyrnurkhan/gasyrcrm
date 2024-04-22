@@ -135,3 +135,16 @@ class TestSubmission(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.test.title} - Score: {self.score}"
+
+
+class Rating(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='ratings')
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='received_ratings')
+    teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='given_ratings')
+    rating = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])  # Assuming a rating scale of 1-5
+
+    class Meta:
+        unique_together = ['course', 'student', 'teacher']  # Prevent duplicate ratings
+
+    def __str__(self):
+        return f"{self.rating}/5 by {self.teacher.full_name} for {self.student.full_name} in {self.course.course_name}"
