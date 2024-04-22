@@ -1,0 +1,33 @@
+{% load static %}
+<div class="fixed bottom-6 right-6 w-[389px] white-block py-5 px-6 text-black-main hidden z-10"
+     id="accessMessage">
+    <div class="relative text-left">
+        <img id="message-cat" src="{% static "core/images/cats/wait.png" %}" alt="">
+        <h4 id="message-title" class="text-lg font-semibold"></h4>
+        <p id="message-text" class="font-light"></p>
+        <div class="absolute top-0 right-0 cursor-pointer" onclick="closeMessage()"><img
+                src="{% static "core/icons/exit-black-main.svg" %}" alt=""></div>
+    </div>
+</div>
+<script>
+    {% if messages %}
+        const messagesOnLoad = () => {
+            const types = {
+                "error": "ошибка",
+                "success": "",
+                "warning": "",
+                "info": "",
+            }
+            {% for message in messages %}
+                const type = types["{{ message.tags }}"]
+                document.getElementById('message-cat').src = "{% static 'core/images/cats/student-sit.png' %}"
+                document.getElementById('message-title').innerText = `Системное уведомление ${type}`
+                document.getElementById('message-text').innerText = "{{ message }}"
+                document.getElementById('accessMessage').classList.remove("hidden");
+            {% endfor %}
+        }
+    {% endif %}
+    function closeMessage() {
+        document.getElementById('accessMessage').classList.add("hidden");
+    }
+</script>

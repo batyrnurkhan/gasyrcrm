@@ -12,7 +12,11 @@
                 {% endif %}
             </div>
             <div class="border-l-2 border-gray py-4 pl-5 flex flex-row items-center">
-                <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
+                <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% if user.profile_picture %}
+                                /{{ user.profile_picture }}
+                                {% else %}
+                                {% static "core/images/default-user.svg" %}
+                            {% endif %}" alt="">
                 <div class="ml-3.5 mr-8 h-fit">
                     <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
                     <p class="m-0">{{ user.role }}</p>
@@ -22,7 +26,7 @@
                          src="{% static "core/icons/user-arrow.svg" %}">
                     <div id="dropdownMenu"
                          class="absolute top-11 -right-2 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
-                        <a href="#" class="text-blue-ielts font-bold block px-4 py-2">
+                        <a href="{% url 'users:profile' %}" class="text-blue-ielts font-bold block px-4 py-2">
                             <img class="inline mr-3" src="{% static "core/icons/edit-fill-blue-ielts.svg" %}" alt="">
                             Редактировать профиль
                         </a>

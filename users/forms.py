@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 import re
 
+from django.core.exceptions import ValidationError
+
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
@@ -25,7 +28,12 @@ class CustomUserAuthenticationForm(AuthenticationForm):
 class AccessCodeForm(forms.Form):
     login_code = forms.CharField(max_length=10, label="Login Code", help_text="Enter the user's login code to grant access.", required=True)
 
+class PasswordChangeForm(forms.Form):
+    class Meta:
+        fields = ['old_password', 'new_password', 're_old_password', 're_new_password']
+
 class ProfileUpdateForm(forms.ModelForm):
+    profile_picture = forms.ImageField(required=False)
     class Meta:
         model = get_user_model()
         fields = ['full_name', 'phone_number', 'user_city', 'profile_picture', 'email']
