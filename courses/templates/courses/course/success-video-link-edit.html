@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+
+        {% include 'core/components/success-video-link.html' with course=course %}
+        <a href="{% url 'courses:course_detail_edit' pk=course.id %}"
+           class="block border border-accent-red text-accent-red text-xl
+           font-semibold mx-auto py-[23px] w-[391px] rounded-lg text-center">
+            Сохранить изменения
+        </a>
+    </div>
+{% endblock %}

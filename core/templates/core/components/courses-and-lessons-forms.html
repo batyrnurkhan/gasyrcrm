@@ -1,0 +1,28 @@
+{% load static %}
+<div class="rounded-lg shadow-lg flex flex-row overflow-hidden mb-[50px]">
+    {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
+    <div class="w-[75%] p-10 overflow-y-auto h-side">
+        <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="w-full mb-6">
+                <label class="">
+                    <span class="float-left mb-2 font-semibold">Введите название модуля</span>
+                    <small class="float-right opacity-50">Макс: 50 симв</small>
+                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                           name="lesson_name" placeholder="Пример: Основы математики"
+                           value="{{ module.module_name }}">
+                </label>
+            </div>
+        </form>
+        {% for lesson in module.lessons.all %}
+            {% include "core/components/lesson-form.html" with counter=forloop.counter lesson=lesson %}
+        {% endfor %}
+        <a href="#" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
+            <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить модуль
+        </a>
+        <a href="#" class="block text-center border border-accent-red rounded-lg font-semibold text-accent-red py-5">
+            <img class="inline-block pr-[23px]" src="{% static 'core/icons/pencil-fill-accent-red.svg' %}" alt="">Добавить тестирование по модулю
+        </a>
+    </div>
+</div>

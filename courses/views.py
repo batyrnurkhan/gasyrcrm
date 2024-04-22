@@ -1,7 +1,6 @@
 import json
 import traceback
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
@@ -9,13 +8,15 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, Http
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
-    AnswerForm, QuestionForm, RatingForm
-from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, Rating
+    AnswerForm, QuestionForm
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
 
 
 class CourseDelete(DetailView):
@@ -35,7 +36,7 @@ class EditCourseView(View):
     def post(self, request, *args, **kwargs):
         form = CourseForm(request.POST, request.FILES)
         course = Course.objects.get(id=self.kwargs["pk"])
-
+        print(form.is_valid())
         if form.is_valid():
             course.course_name = form.cleaned_data["course_name"]
             course.mini_description = form.cleaned_data["mini_description"]
@@ -51,6 +52,8 @@ class EditCourseView(View):
             return redirect('courses:course_detail_edit', pk=course.id)
 
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
+
+
 class CreateCourseStep1View(View):
     def get(self, request, *args, **kwargs):
         form = CourseFormStep1()
@@ -79,7 +82,7 @@ class CreateCourseStep2View(View):
             course.created_by = request.user
             course.save()
             del request.session['course_step1_data']
-            return redirect('courses:course_detail', pk=course.pk)
+            return redirect('courses:module_create', pk=course.pk)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 
@@ -181,8 +184,12 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
         user = self.request.user
         module = self.get_object()
         test = module.tests.first()
-
+        course = module.course
+        module_index_gen = (i for i, v in enumerate(course.modules.all()) if v.id == module.id)
+        module_index = next(module_index_gen) + 1
         context['test'] = test
+        context['module_index'] = module_index
+        context['course'] = course
         context['test_exists'] = test is not None
         context['is_creator_or_superuser'] = user.is_superuser or user == module.course.created_by
         context['is_enrolled'] = module.course.users.filter(id=user.id).exists()
@@ -327,6 +334,7 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
             return self.render_to_response(context)
         return super().form_valid(form)
 
+
 def add_student_to_course(request, course_id, student_id):
     if request.method == 'GET':
         course = get_object_or_404(Course, pk=course_id)
@@ -336,6 +344,7 @@ def add_student_to_course(request, course_id, student_id):
     else:
         return HttpResponseBadRequest("Invalid method")
 
+
 def search_students(request):
     form = AddStudentForm(request.GET)
     if form.is_valid():
@@ -344,6 +353,7 @@ def search_students(request):
         return HttpResponse(html)
     else:
         return HttpResponseBadRequest('Invalid data', status=400)
+
 
 from django.forms import modelformset_factory
 
@@ -379,8 +389,6 @@ class TakeTestView(LoginRequiredMixin, View):
                 if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
                     score += 1
 
-
-
         score_percentage = (score / total_questions) * 100 if total_questions else 0
         TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
         return redirect('courses:test_result', score=score_percentage)
@@ -389,30 +397,37 @@ class TakeTestView(LoginRequiredMixin, View):
 def test_result_view(request, score):
     return render(request, 'courses/test_result.html', {'score': score})
 
-@login_required
-def list_students(request, course_id):
-    course = get_object_or_404(Course, pk=course_id)
-    if request.user.role != 'Teacher':
-        return redirect('some_error_page')
-    students = course.users.filter(role='Student')
-    return render(request, 'courses/diary/list_students.html', {'students': students, 'course': course})
 
-@login_required
-def rate_student(request, course_id, student_id):
-    course = get_object_or_404(Course, id=course_id)
-    student = get_object_or_404(CustomUser, id=student_id)
-    if request.user.role != 'Teacher' or not course.is_user_enrolled(student):
-        return redirect('some_error_page')
+class CourseFinalTestView(DetailView):
+    model = Course
+    template_name = 'courses/course/final-test-edit.html'
 
-    if request.method == 'POST':
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            rating, created = Rating.objects.update_or_create(
-                course=course, student=student, teacher=request.user,
-                defaults={'rating': form.cleaned_data['rating']}
-            )
-            return redirect('courses:list_students', course_id=course.id)
-    else:
-        form = RatingForm()
 
-    return render(request, 'courses/diary/rate_student.html', {'form': form, 'course': course, 'student': student})
+class SuccessVideoLinkEditView(DetailView):
+    model = Course
+    template_name = 'courses/course/success-video-link-edit.html'
+
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_literature(request):
+    try:
+        # Convert body data from bytes to a string, then to a dictionary
+        print(request.body.decode('utf-8'))
+        data = json.loads(request.body.decode('utf-8'))
+        literature_id = data.get('id')
+
+        # Fetch the literature instance
+        literature = LessonLiterature.objects.get(id=literature_id)
+
+        # Delete the instance
+        literature.delete()
+
+        # Return a success response
+        return JsonResponse({'message': 'Literature deleted successfully'}, status=200)
+    except LessonLiterature.DoesNotExist:
+        # Return an error response if the literature does not exist
+        return JsonResponse({'error': 'Literature not found'}, status=404)
+    except Exception as e:
+        # Return an error response for any other exceptions
+        return JsonResponse({'error': str(e)}, status=500)

@@ -1,30 +1,23 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
-    <h2>Module: {{ module.module_name }}</h2>
-    <!-- Module details... -->
+    {% include "core/components/navbar-main-without-links.html" %}
 
-    {% if is_creator_or_superuser or is_teacher %}
-        <a href="{% url 'courses:lesson_create' module_id=module.pk %}">+ Add Lesson</a>
-    {% endif %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    {% if test_exists %}
-        {% if is_creator_or_superuser %}
-            <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">Edit Test</a>
-        {% endif %}
-        <a href="{% url 'courses:take_test' test_id=test.pk %}">Take Test</a>
-    {% else %}
-        {% if is_creator_or_superuser %}
-            <a href="{% url 'courses:create_edit_test' parent_type='module' parent_id=module.pk %}">+ Create Test</a>
-        {% endif %}
-    {% endif %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        <form method="post" action="">
+            <h2 class="text-[42px] font-bold">Модули и уроки</h2>
 
-    <h3>Lessons</h3>
-    <ul>
-        {% for lesson in module.lessons.all %}
-            <li>{{ lesson.lesson_name }}
-                <a href="{% url 'courses:lesson_detail' pk=lesson.pk %}">View Details</a>
-            </li>
-        {% endfor %}
-    </ul>
+            {% include 'core/components/courses-and-lessons-forms.html' with course=course module_index=module_index module=module %}
+            <button id="confirmButton" class="block border border-accent-red text-accent-red text-xl
+        font-semibold mx-auto py-[23px] w-[391px] rounded-lg">
+                Сохранить изменения
+            </button>
+            <a href="{% url 'courses:final_test_creation' pk=course.id %}">next step</a>
+        </form>
+    </div>
 {% endblock %}
