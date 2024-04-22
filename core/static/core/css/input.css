@@ -81,6 +81,10 @@
         height: calc(100vh - 390px);
     }
 
+    .h-block {
+        height: calc(100vh - 300px);
+    }
+
     .peer-focus-hidden {
         @apply peer-focus:hidden
     }

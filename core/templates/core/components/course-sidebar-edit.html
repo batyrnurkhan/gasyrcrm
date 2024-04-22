@@ -1,27 +1,31 @@
 {% load static %}
-<div class="h-side w-[25%] flex flex-col pt-[60px] pb-5 bg-white">
-    {% for module in course.modules.all %}
-        <div class="relative overflow-hidden mb-4">
-
-            {% if module_id == module.id %}
-                <div class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
-                    <img class="inline-block mr-3"
-                         src="{% static "core/icons/folder-fill-accent-red.svg" %}" alt="">
-                    <span class="mr-auto">Модуль {{ forloop.counter }}</span>
-                </div>
-                <img class="absolute right-6 top-0 block h-[24px]"
-                     src="{% static "core/icons/arrow-right-button-accent-red.svg" %}" alt="">
-            {% else %}
-                <a href="{% url 'courses:module_detail' pk=module.id %}">
-                    <div class="bg-white rounded-lg text-start font-bold px-6">
+<div class="h-side w-[25%] flex flex-col pt-[60px] p-5 bg-white">
+    <div class="mb-auto">
+        {% for module in course.modules.all %}
+            <div class="relative overflow-hidden mb-4">
+                {% if module_id == module.id %}
+                    <div class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
                         <img class="inline-block mr-3"
-                             src="{% static "core/icons/folder-fill-black-main.svg" %}" alt="">
+                             src="{% static "core/icons/folder-fill-accent-red.svg" %}" alt="">
                         <span class="mr-auto">Модуль {{ forloop.counter }}</span>
                     </div>
-                    <img class="absolute right-6 top-0 block h-[24px] -rotate-90"
-                         src="{% static "core/icons/arrow-down-button-gray.svg" %}" alt="">
-                </a>
-            {% endif %}
-        </div>
-    {% endfor %}
+                    <img class="absolute right-6 top-0 block h-[24px]"
+                         src="{% static "core/icons/arrow-right-button-accent-red.svg" %}" alt="">
+                {% else %}
+                    <a href="{% url 'courses:module_detail' pk=module.id %}">
+                        <div class="bg-white rounded-lg text-start font-bold px-6">
+                            <img class="inline-block mr-3"
+                                 src="{% static "core/icons/folder-fill-black-main.svg" %}" alt="">
+                            <span class="mr-auto">Модуль {{ forloop.counter }}</span>
+                        </div>
+                        <img class="absolute right-6 top-0 block h-[24px] -rotate-90"
+                             src="{% static "core/icons/arrow-down-button-gray.svg" %}" alt="">
+                    </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <a href="#" class="text-center border border-accent-red rounded-lg font-semibold text-accent-red py-5">
+        <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="">Добавить модуль
+    </a>
 </div>

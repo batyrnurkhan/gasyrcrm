@@ -1,0 +1,16 @@
+{% load static %}
+<div class="rounded-lg shadow-lg bg-white mb-[50px] h-block overflow-y-auto">
+    <div class="px-[230px] pt-[76px] text-center">
+        <h2 class="text-[32px] font-bold mb-[30px]">Осталось только поздравить ваших будущих выпускников</h2>
+        <img class="inline-block mb-[53px]" src="{% static 'core/images/cats/success.png' %}" alt="">
+        <p class="text-lg mb-[70px]">
+            Осталось проверить результаты ваших будущих учеников, давайте подготовим финальное тестирование
+        </p>
+        <label class="text-center">
+            <span class="mb-2 font-semibold">Загрузите сюда видео-поздравление с Vimeo</span>
+            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-[100px]" type="text"
+                   name="lesson_name" placeholder="Пример: Основы математики"
+                   value="{{ course.course_success_video }}">
+        </label>
+    </div>
+</div>

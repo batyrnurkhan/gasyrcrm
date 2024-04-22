@@ -3,7 +3,8 @@ from .views import (
     CourseListView, CourseDetailView, LessonCreateView,
     ModuleDetailView, LessonDetailView,
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
-    add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete
+    add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
+    delete_literature, CourseFinalTestView, SuccessVideoLinkEditView
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -21,11 +22,14 @@ urlpatterns = [
     path('<int:course_id>/module/create/', ModuleCreateView.as_view(), name='module_create'),
     path('<int:module_id>/lesson/create/', LessonCreateView.as_view(), name='lesson_create'),
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
+    path('<int:pk>/final_test/edit', CourseFinalTestView.as_view(), name='final_test_creation'),
+    path('<int:pk>/success_video/edit', SuccessVideoLinkEditView.as_view(), name='success_video_edit'),
     path('lesson/<int:pk>/', LessonDetailView.as_view(), name='lesson_detail'),
     path('<str:parent_type>/<int:parent_id>/test/', CreateOrEditTestView.as_view(), name='create_edit_test'),
     path('course/<int:pk>/add-students/', AddStudentsView.as_view(), name='add_students'),
     path('<int:course_id>/add-student/<int:student_id>/', add_student_to_course, name='add_student_to_course'),
     path('course/search-students/', search_students, name='search_students'),
+    path('literature/delete/', delete_literature, name='literature_delete'),
 
     path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),

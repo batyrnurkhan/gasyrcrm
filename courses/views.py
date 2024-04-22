@@ -1,3 +1,4 @@
+import json
 import traceback
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,13 +8,15 @@ from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, Http
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic.edit import CreateView, FormView, UpdateView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
     AnswerForm, QuestionForm
-from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
 
 
 class CourseDelete(DetailView):
@@ -79,7 +82,7 @@ class CreateCourseStep2View(View):
             course.created_by = request.user
             course.save()
             del request.session['course_step1_data']
-            return redirect('courses:course_detail', pk=course.pk)
+            return redirect('courses:module_create', pk=course.pk)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 
@@ -182,8 +185,6 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
         module = self.get_object()
         test = module.tests.first()
         course = module.course
-        print(course.modules.all())
-        print(course.modules.all()[0].id)
         module_index_gen = (i for i, v in enumerate(course.modules.all()) if v.id == module.id)
         module_index = next(module_index_gen) + 1
         context['test'] = test
@@ -395,3 +396,38 @@ class TakeTestView(LoginRequiredMixin, View):
 
 def test_result_view(request, score):
     return render(request, 'courses/test_result.html', {'score': score})
+
+
+class CourseFinalTestView(DetailView):
+    model = Course
+    template_name = 'courses/course/final-test-edit.html'
+
+
+class SuccessVideoLinkEditView(DetailView):
+    model = Course
+    template_name = 'courses/course/success-video-link-edit.html'
+
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_literature(request):
+    try:
+        # Convert body data from bytes to a string, then to a dictionary
+        print(request.body.decode('utf-8'))
+        data = json.loads(request.body.decode('utf-8'))
+        literature_id = data.get('id')
+
+        # Fetch the literature instance
+        literature = LessonLiterature.objects.get(id=literature_id)
+
+        # Delete the instance
+        literature.delete()
+
+        # Return a success response
+        return JsonResponse({'message': 'Literature deleted successfully'}, status=200)
+    except LessonLiterature.DoesNotExist:
+        # Return an error response if the literature does not exist
+        return JsonResponse({'error': 'Literature not found'}, status=404)
+    except Exception as e:
+        # Return an error response for any other exceptions
+        return JsonResponse({'error': str(e)}, status=500)
