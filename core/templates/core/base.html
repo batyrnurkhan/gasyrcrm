@@ -10,5 +10,14 @@
     {% csrf_token %}
 {% endblock %}
 {% include "core/components/cookies.html" %}
+{% include "core/components/message.html" %}
+<script>
+    window.onload = () => {
+        cookiesOnLoad()
+        {% if messages %}
+        messagesOnLoad()
+        {% endif %}
+    }
+</script>
 </body>
 </html>

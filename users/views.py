@@ -3,13 +3,14 @@ import re
 import logging
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, get_user_model, logout
+from django.contrib.auth import authenticate, login, get_user_model, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, View
-from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm
+from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm, PasswordChangeForm
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,28 @@ class ProfileView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')
             return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
+        messages.error(request, 'Form is invalid')
         return render(request, self.template_name, {'form': form})
+
+
+@login_required
+def change_password(request):
+    form = PasswordChangeForm(request.POST)
+    if form.is_valid():
+        old_password = form.cleaned_data.get('old_password')
+        new_password = form.cleaned_data.get('new_password')
+        user = request.user
+        print(old_password, new_password, user.full_name)
+        if user.check_password(old_password):
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Your password was successfully updated!')
+        else:
+            messages.error(request, "Wrong password")
+    else:
+        messages.error(request, form.errors)
+    return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
 
 
 class CheckAccessView(LoginRequiredMixin, View):

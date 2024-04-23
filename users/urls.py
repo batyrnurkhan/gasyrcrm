@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import SignUpView, ShowCodeView, LoginView, GrantAccessView, ProfileView, CheckAccessView, log_out
+from .views import SignUpView, ShowCodeView, LoginView, GrantAccessView, ProfileView, CheckAccessView, log_out, \
+    change_password
 
 app_name = 'users'
 
@@ -11,5 +12,6 @@ urlpatterns = [
     path('grant-access/', GrantAccessView.as_view(), name='grant_access'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('check-access/', CheckAccessView.as_view(), name='check-access'),
+    path('change-password/', change_password, name='change-password'),
 
 ]

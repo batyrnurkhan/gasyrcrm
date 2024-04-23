@@ -41,6 +41,10 @@
 }
 
 @layer components {
+    .white-block {
+        @apply bg-white rounded-lg shadow-lg
+    }
+
     .content {
         min-height: calc(100vh - 203px)
     }

@@ -29,8 +29,7 @@
     const shouldShowPopup = () => !storageType.getItem(consentPropertyName);
     const saveToStorage = () => storageType.setItem(consentPropertyName, true);
 
-    window.onload = () => {
-
+    const cookiesOnLoad = () => {
         const acceptFn = event => {
             saveToStorage(storageType);
             consentPopup.classList.add("opacity-0");

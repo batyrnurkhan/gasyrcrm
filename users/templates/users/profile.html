@@ -1,30 +1,216 @@
 {% extends 'core/base.html' %}
+{% load static %}
+{% block title %}{{ user.full_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
 
-<h1>Edit Profile</h1>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div>
-        <label for="id_full_name">Full Name:</label>
-        <input type="text" name="full_name" id="id_full_name" value="{{ form.full_name.value|default_if_none:'' }}" required>
+
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        <div class="white-block p-10">
+            <form id="change_profile" class="w-full" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="flex flex-row gap-5">
+                    <div class="w-1/4 text-center">
+                        <img class="mx-auto mb-5 w-[210px] h-[210px] object-cover rounded-full"
+                             src="{% if user.profile_picture %}
+                                /{{ user.profile_picture }}
+                                {% else %}
+                                {% static "core/images/default-user.svg" %}
+                            {% endif %}"
+                             alt="" id="user_img">
+                        <label>
+                            <input id="input-file" class="hidden" type="file"
+                                   name="profile_picture">
+                            <img class="inline align-middle" src="{% static 'core/icons/upload-2-fill.svg' %}"
+                                 alt="">
+                            <span id="input-file-text" type="text"
+                                  class="text-[#5E8BFF] font-semibold">
+                            Загрузить фото
+                        </span>
+                        </label>
+                    </div>
+                    <div class="w-1/4">
+                        <label class="">
+                            <p class="mb-2.5 font-bold uppercase">Имя и фамилия</p>
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="text"
+                                   name="full_name" placeholder="Пример: Курс по Hello World"
+                                   value="{{ form.full_name.value|default_if_none:'' }}" required>
+                        </label>
+                        <p class="mb-2.5 font-bold uppercase">Город</p>
+                        <div class="relative mb-5">
+                            <label class="">
+                                <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg
+                        placeholder:text-text-base appearance-none" name="user_city" id="id_user_city" required>
+                                    <option {% if form.user_city.value == "Astana" %}selected{% endif %} value="Astana">
+                                        Astana
+                                    </option>
+                                    <option {% if form.user_city.value == "Almaty" %}selected{% endif %} value="Almaty">
+                                        Almaty
+                                    </option>
+                                    <option {% if form.user_city.value == "Shymkent" %}selected{% endif %}
+                                            value="Shymkent">
+                                        Shymkent
+                                    </option>
+                                    <option {% if form.user_city.value == "Karaganda" %}selected{% endif %}
+                                            value="Karaganda">
+                                        Karaganda
+                                    </option>
+                                    <option {% if form.user_city.value == "Aktobe" %}selected{% endif %} value="Aktobe">
+                                        Aktobe
+                                    </option>
+                                    <option {% if form.user_city.value == "Taraz" %}selected{% endif %} value="Taraz">
+                                        Taraz
+                                    </option>
+                                    <option {% if form.user_city.value == "Pavlodar" %}selected{% endif %}
+                                            value="Pavlodar">
+                                        Pavlodar
+                                    </option>
+                                    <option {% if form.user_city.value == "Oskemen" %}selected{% endif %}
+                                            value="Oskemen">
+                                        Oskemen
+                                    </option>
+                                    <option {% if form.user_city.value == "Semey" %}selected{% endif %} value="Semey">
+                                        Semey
+                                    </option>
+                                    <option {% if form.user_city.value == "Atyrau" %}selected{% endif %} value="Atyrau">
+                                        Atyrau
+                                    </option>
+                                </select>
+                                <div class="absolute inset-y-0 left-1 pl-3
+                                    flex items-center
+                                    pointer-events-none">
+                                    <img src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="w-1/4">
+                        <p class="mb-2.5 font-bold uppercase">Номер телефона</p>
+                        <div class="relative mb-5">
+                            <label class="">
+                                <input type="text" name="phone_number"
+                                       id="id_phone_number" required
+                                       value="{{ form.phone_number.value|default_if_none:'+7 (___) ___ __ __' }}"
+                                       class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg">
+                                <div class="absolute inset-y-0 left-2 pl-3
+                                    flex items-center
+                                    pointer-events-none">
+                                    <img src="{% static "core/icons/kz.png" %}" alt="">
+                                </div>
+                            </label>
+                        </div>
+                        <label class="">
+                            <p class="mb-2.5 font-bold uppercase">Электронная почта</p>
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="email"
+                                   name="email" placeholder="Добавьте свою эл. почту"
+                                   value="{{ form.email.value|default_if_none:'' }}">
+                        </label>
+                    </div>
+                </div>
+            </form>
+            <form id="change_password" action="{% url 'users:change-password' %}" class="w-full"
+                  method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="flex flex-row gap-5">
+                    <div class="w-1/4"></div>
+                    <div class="w-1/4">
+                        <label class="">
+                            <p class="mb-2.5 font-bold uppercase">Изменить пароль</p>
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
+                                   name="old_password" id="old_password" placeholder="Старый пароль" required>
+                        </label>
+                        <label class="">
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
+                                   name="re_old_password" id="re_old_password" placeholder="Повторите старый пароль" required>
+                        </label>
+                    </div>
+                    <div class="w-1/4">
+                        <label class="">
+                            <div class="mb-2.5 font-bold uppercase opacity-0 h-[24px]"></div>
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
+                                   name="new_password" id="new_password" placeholder="Новый пароль" required>
+                        </label>
+                        <label class="">
+                            <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
+                                   name="re_new_password" id="re_new_password" placeholder="Повторите новый пароль"
+                                   required>
+                        </label>
+                    </div>
+                </div>
+            </form>
+            <div class="flex flex-row gap-5">
+                <div class="w-1/4"></div>
+                <div class="w-1/4">
+                    <button onclick="check_form()"
+                            class="bg-accent-red rounded-lg text-white font-semibold px-10 py-5">Поменять пароль
+                    </button>
+                </div>
+                <div class="w-1/4">
+                    <button type="submit" form="change_profile"
+                            class="float-right border border-accent-red rounded-lg text-accent-red font-semibold px-10 py-5">
+                        Сохранить изменения
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="id_phone_number">Phone Number:</label>
-        <input type="text" name="phone_number" id="id_phone_number" value="{{ form.phone_number.value|default_if_none:'' }}" required>
-    </div>
-    <div>
-        <label for="id_email">Email (optional):</label>
-        <input type="email" name="email" id="id_email" value="{{ form.email.value|default_if_none:'' }}">
-    </div>
-    <div>
-        <label for="id_user_city">City:</label>
-        {{ form.user_city }}
-    </div>
-    <div>
-        <label for="id_profile_picture">Profile Picture:</label>
-        <input type="file" name="profile_picture" id="id_profile_picture">
-    </div>
-    <button type="submit">Save Changes</button>
-</form>
+    <script>
+        document.getElementById('input-file').onchange = function (event) {
+            let file = event.target.files[0];
+            document.getElementById('input-file-text').innerHTML = file.name;
+            var url = URL.createObjectURL(this.files[0]);
+            document.getElementById('user_img').src = url;
+        };
+
+        document.getElementById('id_phone_number').addEventListener('input', function (e) {
+            formatPhoneNumber(e);
+        });
+
+        function formatPhoneNumber(e) {
+            var input = e.target.value.replace(/[^\d]/g, ''); // Remove all non-numeric characters
+
+            // Ensure the input starts with '7' (the country code for Kazakhstan)
+            if (!input.startsWith('7')) {
+                input = '7' + input;
+            }
+
+            // Limit the length to 11 digits (including the country code '7')
+            input = input.substring(0, 11);
+
+            var formattedInput = '+7 ('; // Start with the country code and opening parenthesis
+
+            // Remove the country code ('7') and then format the rest
+            input = input.substring(1); // Remove the '7' to start formatting
+
+            // Dynamically add formatting based on the current length of the input
+            for (var i = 0; i < input.length; i++) {
+                if (i === 3) {
+                    formattedInput += ') '; // Close the parenthesis after the area code
+                } else if (i === 6 || i === 8) {
+                    formattedInput += ' - '; // Add dashes after the 6th and 8th digits
+                }
+                formattedInput += input[i];
+            }
+
+            // Update the input field with the dynamically formatted value
+            e.target.value = formattedInput;
+        }
+
+        function check_form() {
+            let old_password = document.getElementById("old_password")
+            let re_old_password = document.getElementById("re_old_password")
+            let new_password = document.getElementById("new_password")
+            let re_new_password = document.getElementById("re_new_password")
+            if (old_password.value !== re_old_password.value || new_password.value !== re_new_password.value) {
+                document.getElementById('message-cat').src = "{% static 'core/images/cats/wait.png' %}"
+                document.getElementById('message-title').innerText = "Пароли не совпадают"
+                document.getElementById('message-text').innerText = "Убедитесь в правильности написания паролей"
+                document.getElementById('accessMessage').classList.remove("hidden");
+            } else {
+                document.getElementById("change_password").submit()
+            }
+        }
+    </script>
 
 {% endblock %}

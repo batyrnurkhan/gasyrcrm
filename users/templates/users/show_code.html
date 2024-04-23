@@ -6,16 +6,6 @@
     {% include "core/components/navbar-light-transparent.html" %}
     <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-center"
          style="background-image: url('{% static "core/images/background-light.png" %}')"></div>
-    <div class="absolute bottom-40 right-6 rounded-lg w-[389px] py-5 px-6 bg-white text-black-main hidden z-10"
-         id="accessMessage">
-        <div class="relative text-left">
-            <img src="{% static "core/images/cats/wait.png" %}" alt="">
-            <h4 class="text-lg font-semibold">Ваш аккаунт еще не подтвердили</h4>
-            <p class="font-light">Ожидайте ответ менеджера или ментора</p>
-            <div class="absolute top-0 right-0 cursor-pointer" onclick="closeMessage()"><img
-                    src="{% static "core/icons/exit-black-main.svg" %}" alt=""></div>
-        </div>
-    </div>
     <div class="container content mx-auto relative font-[Qanelas] text-center text-white">
         <h2 class="text-[93px] font-bold leading-[102.3px] mb-6">Регистрация<br/> прошла успешно!</h2>
         <p class="text-2xl font-light mb-8">Сообщите этот код своему ментору или менеджеру</p>
@@ -47,9 +37,6 @@
     {% include "core/components/footer.html" %}
 
     <script>
-        function closeMessage() {
-            document.getElementById('accessMessage').classList.add("hidden");
-        }
 
         document.getElementById('checkAccessBtn').addEventListener('click', function () {
             fetch("{% url 'users:check-access' %}", {
@@ -64,6 +51,9 @@
                     if (data.has_access) {
                         window.location.href = data.url;
                     } else {
+                        document.getElementById('message-cat').src = "{% static 'core/images/cats/wait.png' %}"
+                        document.getElementById('message-title').innerText = "Ваш аккаунт еще не подтвердили"
+                        document.getElementById('message-text').innerText = "Ожидайте ответ менеджера или ментора"
                         document.getElementById('accessMessage').classList.remove("hidden");
                     }
                 })
