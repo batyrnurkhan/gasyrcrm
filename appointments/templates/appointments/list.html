@@ -1,0 +1,8 @@
+<!-- appointments/templates/appointments/list.html -->
+{% for appointment in appointments %}
+    <p>{{ appointment.date }} from {{ appointment.start_time }} to {{ appointment.end_time }}
+        {% if not appointment.is_booked %}
+            <a href="{% url 'appointments:book_appointment' appointment.id %}">Book</a>
+        {% endif %}
+    </p>
+{% endfor %}

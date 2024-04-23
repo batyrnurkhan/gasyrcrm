@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer
+from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer, Rating
 from users.models import CustomUser
 
 class CourseForm(forms.ModelForm):
@@ -110,3 +110,9 @@ class AddStudentForm(forms.Form):
             raise forms.ValidationError("Please provide the login code.")
 
         return cleaned_data
+
+
+class RatingForm(forms.ModelForm):
+    class Meta:
+        model = Rating
+        fields = ['rating']

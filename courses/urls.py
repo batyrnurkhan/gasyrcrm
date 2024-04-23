@@ -4,7 +4,7 @@ from .views import (
     ModuleDetailView, LessonDetailView,
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
-    delete_literature, CourseFinalTestView, SuccessVideoLinkEditView
+    delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -33,4 +33,8 @@ urlpatterns = [
 
     path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),
+
+    path('course/<int:course_id>/module/', ModuleDetailView.as_view(), name='module_detail'),
+    path('module/<int:module_id>/bulk-create-lessons/', bulk_create_lessons, name='bulk_create_lessons'),
+    path('module/<int:module_id>/update-module-and-lessons/', bulk_create_lessons, name='update_module_and_lessons'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

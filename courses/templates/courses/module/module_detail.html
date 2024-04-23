@@ -18,9 +18,9 @@
 {#                Сохранить изменения#}
 {#            </button>#}
             <a href="{% url 'courses:course_detail_edit' pk=course.id %}" type="submit" class="block text-center border border-accent-red text-accent-red text-xl
-                font-semibold mx-auto py-[23px] w-[391px] rounded-lg">
-                Сохранить изменения
-            </a>
+    font-semibold mx-auto py-[23px] w-[391px] rounded-lg" id="confirmButton">
+    Сохранить изменения
+</a>
         </form>
     </div>
 {% endblock %}

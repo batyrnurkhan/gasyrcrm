@@ -1,28 +1,115 @@
 {% load static %}
 <div class="white-block flex flex-row overflow-hidden mb-[50px]">
-    {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
-    <div class="w-[75%] p-10 overflow-y-auto h-side">
-        <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="w-full mb-6">
-                <label class="">
-                    <span class="float-left mb-2 font-semibold">Введите название модуля</span>
-                    <small class="float-right opacity-50">Макс: 50 симв</small>
-                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                           name="lesson_name" placeholder="Пример: Основы математики"
-                           value="{{ module.module_name }}">
-                </label>
+    <script>
+        var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a global variable for later use
+    </script>
+    <div class="rounded-lg shadow-lg flex flex-row overflow-hidden mb-[50px]">
+        {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
+        <div class="w-[75%] p-10 overflow-y-auto h-side">
+            <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Введите название модуля</span>
+                        <small class="float-right opacity-50">Макс: 50 симв</small>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="module_name" placeholder="Пример: Основы математики"
+                               value="{{ module.module_name }}">
+                    </label>
+                </div>
+            </form>
+            <div id="lesson-container">
+                <!-- Dynamic lesson forms will be appended here -->
+                {% for lesson in module.lessons.all %}
+                {% include "core/components/lesson-form.html" with counter=forloop.counter lesson=lesson %}
+                {% endfor %}
             </div>
-        </form>
-        {% for lesson in module.lessons.all %}
-            {% include "core/components/lesson-form.html" with counter=forloop.counter lesson=lesson %}
-        {% endfor %}
-        <a href="#" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
-            <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить модуль
-        </a>
-        <a href="#" class="block text-center border border-accent-red rounded-lg font-semibold text-accent-red py-5">
-            <img class="inline-block pr-[23px]" src="{% static 'core/icons/pencil-fill-accent-red.svg' %}" alt="">Добавить тестирование по модулю
-        </a>
+
+            <a href="#" id="add-lesson-button" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
+                <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить урок
+            </a>
+        </div>
+        <div id="lesson-form-template" style="display:none;">
+            <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
+                <h2 class="text-xl font-semibold text-accent-red">Урок</h2>
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Введите название урока</span>
+                        <small class="float-right opacity-50">Макс: 24 симв</small>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="lesson_name[]" placeholder="Пример: Основы математики">
+                    </label>
+                </div>
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="video_link[]" placeholder="Ссылка на видео">
+                    </label>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    var addButton = document.getElementById('add-lesson-button');
+    var confirmButton = document.getElementById('confirmButton');
+    var csrfToken = '{{ csrf_token }}';
+    console.log('Confirm button:', confirmButton);
+
+    if(addButton) {
+        addButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            var container = document.getElementById('lesson-container');
+            var template = document.getElementById('lesson-form-template').innerHTML;
+            var counter = container.children.length + 1;
+            var newFormHtml = template.replace(/Урок/g, `Урок ${counter}`);
+            container.insertAdjacentHTML('beforeend', newFormHtml);
+        });
+    }
+
+    if(confirmButton) {
+        confirmButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            var lessonNames = document.querySelectorAll('[name="lesson_name[]"]');
+            var videoLinks = document.querySelectorAll('[name="video_link[]"]');
+            var formData = new FormData();
+
+            lessonNames.forEach((element, index) => {
+                formData.append('lesson_names[]', element.value);
+                formData.append('video_links[]', videoLinks[index].value);
+            });
+
+            fetch("{% url 'courses:bulk_create_lessons' module.id %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+        'X-CSRFToken': csrfToken,
+    },
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Server responded with status ' + response.status);
+    }
+    return response.json();
+})
+.then(data => {
+    if (data.status === 'success') {
+        console.log('Success:', data);
+        alert('All changes saved successfully!');
+    } else if (data.status === 'error') {
+        console.error('Validation errors:', data.errors);
+        alert('There were errors with the data submitted. Check the console for more information.');
+    }
+})
+.catch(error => {
+    console.error('Failed to save lessons:', error);
+    alert('Failed to save lessons. Check console for more information.');
+});
+        });
+    }
+});
+</script>

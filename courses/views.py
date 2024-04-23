@@ -4,7 +4,8 @@ import traceback
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
-from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect, \
+    HttpResponseNotAllowed, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
@@ -50,6 +51,17 @@ class EditCourseView(View):
 
             course.save()
             return redirect('courses:course_detail_edit', pk=course.id)
+
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            module_form = ModuleForm(request.POST, request.FILES)
+            if module_form.is_valid():
+                new_module = module_form.save(commit=False)
+                new_module.course_id = self.kwargs["pk"]
+                new_module.save()
+                return JsonResponse({'module_id': new_module.id, 'module_name': new_module.name}, status=200)
+            else:
+                return JsonResponse({'error': module_form.errors}, status=400)
+
 
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
 
@@ -181,19 +193,22 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
         module = self.get_object()
+        if module is None:
+            raise Http404("Module not found")
+        user = self.request.user
         test = module.tests.first()
         course = module.course
         module_index_gen = (i for i, v in enumerate(course.modules.all()) if v.id == module.id)
-        module_index = next(module_index_gen) + 1
-        context['test'] = test
-        context['module_index'] = module_index
-        context['course'] = course
-        context['test_exists'] = test is not None
-        context['is_creator_or_superuser'] = user.is_superuser or user == module.course.created_by
-        context['is_enrolled'] = module.course.users.filter(id=user.id).exists()
-
+        module_index = next(module_index_gen, 0) + 1  # default to 0 if not found
+        context.update({
+            'test': test,
+            'module_index': module_index,
+            'course': course,
+            'test_exists': test is not None,
+            'is_creator_or_superuser': user.is_superuser or user == module.course.created_by,
+            'is_enrolled': module.course.users.filter(id=user.id).exists(),
+        })
         return context
 
 
@@ -282,11 +297,22 @@ class ModuleCreateView(CreateView):
     template_name = 'courses/module/module_form.html'
 
     def form_valid(self, form):
-        form.instance.course_id = self.kwargs['course_id']
-        return super().form_valid(form)
+        self.object = form.save(commit=False)
+        self.object.course_id = self.kwargs['course_id']
+        self.object.save()
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Return JSON response if this is an AJAX request
+            return JsonResponse({
+                'module_id': self.object.id,
+                'module_name': self.object.module_name  # Corrected field name here
+            }, status=200)
+        else:
+            # Perform a redirect on successful save
+            return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse_lazy('courses:course_detail_edit', kwargs={'pk': self.kwargs['course_id']})
+        # Redirect to the detail view of the newly created module
+        return reverse_lazy('courses:module_detail', kwargs={'pk': self.object.id})
 
 
 class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
@@ -431,3 +457,61 @@ def delete_literature(request):
     except Exception as e:
         # Return an error response for any other exceptions
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_http_methods(["POST"])
+def bulk_create_lessons(request, module_id):
+    module = get_object_or_404(Module, pk=module_id)
+    lessons_data = list(zip(request.POST.getlist('lesson_names[]'), request.POST.getlist('video_links[]')))
+    lessons_data = [data for data in lessons_data if all(data)]  # Filter out empty pairs
+
+    if not lessons_data:
+        return JsonResponse({'status': 'error', 'errors': 'No data provided.'}, status=400)
+
+    created_lessons = []
+    errors = []
+
+    for lesson_name, video_link in lessons_data:
+        form = LessonForm(data={'lesson_name': lesson_name, 'video_link': video_link})
+        if form.is_valid():
+            lesson = form.save(commit=False)
+            lesson.module = module
+            lesson.save()
+            created_lessons.append(lesson)
+        else:
+            errors.append(form.errors)
+
+    if errors:
+        return JsonResponse({'status': 'error', 'errors': errors}, status=400)
+
+    return JsonResponse({'status': 'success', 'message': f'{len(created_lessons)} lessons created successfully'})
+
+@require_http_methods(["POST"])
+def update_module_and_lessons(request, module_id):
+    module = get_object_or_404(Module, pk=module_id)
+    module_form = ModuleForm(request.POST, instance=module)
+    if module_form.is_valid():
+        module_form.save()
+    else:
+        return JsonResponse({'status': 'error', 'errors': module_form.errors}, status=400)
+
+    lessons_data = list(zip(request.POST.getlist('lesson_names[]'), request.POST.getlist('video_links[]')))
+    updated_lessons = []
+    errors = []
+
+    for lesson_name, video_link in lessons_data:
+        # Optionally include lesson IDs if updating existing lessons
+        lesson_id = request.POST.get('lesson_id[]')  # Update accordingly if you have lesson IDs passed
+        lesson = Lesson.objects.get(id=lesson_id) if lesson_id else Lesson(module=module)
+        form = LessonForm(data={'lesson_name': lesson_name, 'video_link': video_link}, instance=lesson)
+
+        if form.is_valid():
+            form.save()
+            updated_lessons.append(lesson)
+        else:
+            errors.extend(form.errors)
+
+    if errors:
+        return JsonResponse({'status': 'error', 'errors': errors}, status=400)
+
+    return JsonResponse({'status': 'success', 'message': f'{len(updated_lessons)} lessons updated/created successfully, module updated'})
