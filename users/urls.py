@@ -12,6 +12,6 @@ urlpatterns = [
     path('grant-access/', GrantAccessView.as_view(), name='grant_access'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('check-access/', CheckAccessView.as_view(), name='check-access'),
-    path('change-password/', change_password, name='change-password'),
+    path('change-password/', change_password, name='change_password'),
 
 ]

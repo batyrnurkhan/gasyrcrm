@@ -1,3 +1,4 @@
+{% load course_tags %}
 <!-- courses/_search_results_partial.html -->
 {% load static %}
 {% for student in students %}
@@ -7,12 +8,12 @@
 
                 {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/anonymous-user-image.png' %}{% endif %}">
         <p class="w-[30%]">{{ student.full_name }}</p>
-        <p class="w-[20%]">{{ student.phone_number }}</p>
+        <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
         <p class="w-[15%]">12.12.2024</p>
         <p class="w-[12%]">{{ student.login_code }}</p>
         <!-- Button to enroll student -->
 
-        <button onclick="enrollStudent({{ student.id }}, {{ course.id }});"
+        <button onclick="enrollStudent({{ student.id }});"
                 class="absolute inset-y-2 right-2 text-center
                     rounded-lg bg-accent-red text-white text-lg font-semibold
                     inline-block w-[189px] h-full-4" type="submit">Подтвердить

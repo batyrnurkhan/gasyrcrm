@@ -82,7 +82,7 @@ class CreateCourseStep2View(View):
             course.created_by = request.user
             course.save()
             del request.session['course_step1_data']
-            return redirect('courses:module_create', pk=course.pk)
+            return redirect('courses:module_create', course_id=course.id)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 

@@ -109,7 +109,7 @@
                     </div>
                 </div>
             </form>
-            <form id="change_password" action="{% url 'users:change-password' %}" class="w-full"
+            <form id="change_password" action="{% url 'users:change_password' %}" class="w-full"
                   method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="flex flex-row gap-5">

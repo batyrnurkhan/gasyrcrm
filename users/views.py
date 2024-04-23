@@ -144,14 +144,13 @@ def change_password(request):
         old_password = form.cleaned_data.get('old_password')
         new_password = form.cleaned_data.get('new_password')
         user = request.user
-        print(old_password, new_password, user.full_name)
         if user.check_password(old_password):
             user.set_password(new_password)
             user.save()
             update_session_auth_hash(request, user)  # Important!
-            messages.success(request, 'Your password was successfully updated!')
+            messages.success(request, 'Ваш пароль был успешно обновлен!')
         else:
-            messages.error(request, "Wrong password")
+            messages.error(request, "Неправильный пароль")
     else:
         messages.error(request, form.errors)
     return redirect('users:profile')  # Redirect to the same profile page or a confirmation page

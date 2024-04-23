@@ -29,8 +29,20 @@ class AccessCodeForm(forms.Form):
     login_code = forms.CharField(max_length=10, label="Login Code", help_text="Enter the user's login code to grant access.", required=True)
 
 class PasswordChangeForm(forms.Form):
-    class Meta:
-        fields = ['old_password', 'new_password', 're_old_password', 're_new_password']
+    old_password = forms.CharField(widget=forms.PasswordInput)
+    re_old_password = forms.CharField(widget=forms.PasswordInput)
+    new_password = forms.CharField(widget=forms.PasswordInput)
+    re_new_password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        re_new_password = cleaned_data.get('re_new_password')
+
+        if new_password and re_new_password:
+            if new_password != re_new_password:
+                raise ValidationError("The new passwords must match.")
+
 
 class ProfileUpdateForm(forms.ModelForm):
     profile_picture = forms.ImageField(required=False)

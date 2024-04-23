@@ -40,7 +40,11 @@
             <div class="grid grid-cols-2 gap-3 text-accent-red text-center text-xl font-semibold *:w-[391px] *:bg-white *:py-[26px] *:rounded-lg">
                 <a href="{% url 'courses:course_detail_edit_about' pk=course.id %}">Изменить информацию о курсе</a>
                 <a href="{% url 'courses:final_test_creation' pk=course.id %}">Редактировать финальный тест</a>
-                <a href="{% url 'courses:module_detail' pk=course.modules.all.0.id %}">Редактировать модули</a>
+                {% if course.modules.count > 0 %}
+                    <a href="{% url 'courses:module_detail' pk=course.modules.all.0.id %}">Редактировать модули</a>
+                {% else %}
+                    <a href="{% url 'courses:module_create' course_id=course.id %}">Добавить модули</a>
+                {% endif %}
                 <a href="{% url 'courses:success_video_edit' pk=course.id %}">Поменять видео-поздравление</a>
             </div>
         </div>
@@ -49,8 +53,12 @@
             <div class="flex flex-col gap-3">
                 {% for student in students %}
                     <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
-                        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="
-                                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}">
+                        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6"
+                             src="{% if student.profile_picture %}
+                                /{{ student.profile_picture.url }}
+                                {% else %}
+                                {% static "core/images/anonymous-user-image.png" %}
+                                {% endif %}">
                         <p class="w-[30%]">{{ student.full_name }}</p>
                         <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
                         <p class="w-[15%]">12.12.2024</p>
@@ -104,12 +112,12 @@
             return cookieValue;
         }
 
-        function enrollStudent(studentId, courseId) {
-            console.log("Student ID:", studentId, "Course ID:", courseId);  // This will show the values in the browser console
+        function enrollStudent(studentId) {
+            console.log("Student ID:", studentId, "Course ID:", {{ course.id }});  // This will show the values in the browser console
 
             const csrftoken = getCookie('csrftoken');  // Get the CSRF token from the cookie
 
-            fetch(`/${courseId}/add-student/${studentId}/`, {
+            fetch(`/courses/{{ course.id }}/add-student/${studentId}/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,11 +126,17 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message);
+                    document.getElementById('message-cat').src = "{% static 'core/images/cats/student-sit.png' %}"
+                    document.getElementById('message-title').innerText = "Ученик добавлен"
+                    document.getElementById('message-text').innerText = "Вы можете наблюдать за ним, во вкладке “Ученики”"
+                    document.getElementById('accessMessage').classList.remove("hidden");
                 })
                 .catch(error => {
                     console.error('Error adding student:', error);
-                    alert('Failed to add student');
+                    document.getElementById('message-cat').src = "{% static 'core/images/cats/student-sit.png' %}"
+                    document.getElementById('message-title').innerText = "Ошибка добавления студента"
+                    document.getElementById('message-text').innerText = "Убедитесь что это студент (учителей добавлять нельзя)"
+                    document.getElementById('accessMessage').classList.remove("hidden");
                 });
         }
 
