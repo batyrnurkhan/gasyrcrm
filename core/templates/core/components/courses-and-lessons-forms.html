@@ -1,56 +1,58 @@
 {% load static %}
 <div class="white-block flex flex-row overflow-hidden mb-[50px]">
-
-<script>
-  var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a global variable for later use
-</script>
-<div class="rounded-lg shadow-lg flex flex-row overflow-hidden mb-[50px]">
-    {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
-    <div class="w-[75%] p-10 overflow-y-auto h-side">
-        <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
-        <form method="post">
-            {% csrf_token %}
-            <div class="w-full mb-6">
-                <label class="">
-                    <span class="float-left mb-2 font-semibold">Введите название модуля</span>
-                    <small class="float-right opacity-50">Макс: 50 симв</small>
-                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                           name="lesson_name" placeholder="Пример: Основы математики"
-                           value="{{ module.module_name }}">
-                </label>
-            </div>
-        </form>
-        <div id="lesson-container">
-            <!-- Dynamic lesson forms will be appended here -->
-            {% for lesson in module.lessons.all %}
+    <script>
+        var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a global variable for later use
+    </script>
+    <div class="rounded-lg shadow-lg flex flex-row overflow-hidden mb-[50px]">
+        {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
+        <div class="w-[75%] p-10 overflow-y-auto h-side">
+            <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Введите название модуля</span>
+                        <small class="float-right opacity-50">Макс: 50 симв</small>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="module_name" placeholder="Пример: Основы математики"
+                               value="{{ module.module_name }}">
+                    </label>
+                </div>
+            </form>
+            <div id="lesson-container">
+                <!-- Dynamic lesson forms will be appended here -->
+                {% for lesson in module.lessons.all %}
                 {% include "core/components/lesson-form.html" with counter=forloop.counter lesson=lesson %}
-            {% endfor %}
-        </div>
-        <a href="#" id="add-lesson-button" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
-            <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить урок
-        </a>
-<div id="lesson-form-template" style="display:none;">
-    <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
-        <h2 class="text-xl font-semibold text-accent-red">Урок</h2>
-        <div>
-            <div class="w-full mb-6">
-                <label>
-                    <span class="float-left mb-2 font-semibold">Введите название урока</span>
-                    <small class="float-right opacity-50">Макс: 24 симв</small>
-                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                           name="lesson_name[]" placeholder="Пример: Основы математики">
-                </label>
+                {% endfor %}
             </div>
-            <div class="w-full mb-6">
-                <label>
-                    <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
-                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                           name="video_link[]" placeholder="Ссылка на видео">
-                </label>
+
+            <a href="#" id="add-lesson-button" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
+                <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить урок
+            </a>
+        </div>
+        <div id="lesson-form-template" style="display:none;">
+            <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
+                <h2 class="text-xl font-semibold text-accent-red">Урок</h2>
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Введите название урока</span>
+                        <small class="float-right opacity-50">Макс: 24 симв</small>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="lesson_name[]" placeholder="Пример: Основы математики">
+                    </label>
+                </div>
+                <div class="w-full mb-6">
+                    <label>
+                        <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
+                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                               name="video_link[]" placeholder="Ссылка на видео">
+                    </label>
+                </div>
             </div>
         </div>
     </div>
-</div></div></div></div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
     var addButton = document.getElementById('add-lesson-button');
