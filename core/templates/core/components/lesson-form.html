@@ -1,6 +1,6 @@
 {% load static %}
 <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
-    <h2 class="text-xl font-semibold text-accent-red">Урок {{ counter }}</h2>
+    <h2 class="text-xl font-semibold text-accent-red">Урок <span class="lesson_counter"></span></h2>
     <form method="post">
         {% csrf_token %}
         <div class="w-full mb-6">

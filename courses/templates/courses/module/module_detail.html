@@ -12,7 +12,7 @@
         <form method="post">
             <h2 class="text-[42px] font-bold">Модули и уроки</h2>
 
-            {% include 'core/components/courses-and-lessons-forms.html' with course=course module_index=module_index module=module %}
+            {% include 'core/components/courses-and-lessons-forms.html' with course=course %}
 {#            <button type="submit" class="block border border-accent-red text-accent-red text-xl#}
 {#        font-semibold mx-auto py-[23px] w-[391px] rounded-lg">#}
 {#                Сохранить изменения#}
@@ -23,4 +23,9 @@
 </a>
         </form>
     </div>
+{% endblock %}
+
+
+{% block onload_script %}
+    getAllModules();
 {% endblock %}

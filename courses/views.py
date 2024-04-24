@@ -13,11 +13,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
     AnswerForm, QuestionForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
+from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer
 
 
 class CourseDelete(DetailView):
@@ -61,7 +65,6 @@ class EditCourseView(View):
                 return JsonResponse({'module_id': new_module.id, 'module_name': new_module.name}, status=200)
             else:
                 return JsonResponse({'error': module_form.errors}, status=400)
-
 
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
 
@@ -291,6 +294,60 @@ class CreateOrEditTestView(View):
         return redirect(redirect_url)
 
 
+class CourseModulesView(APIView):
+    def get(self, request, course_id):
+        course = Course.objects.filter(id=course_id).first()
+        if course:
+            serializer = CourseSerializer(course)
+            return Response(serializer.data)
+        return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, course_id):
+        serializer = CourseSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ModuleCreateViewAPI(APIView):
+    def post(self, request, course_id):
+        # Fetch the course based on the provided course_id
+        course = Course.objects.filter(id=course_id).first()
+        if not course:
+            return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Include course data in request data
+        request.data['course'] = course_id
+
+        # Serialize data
+        serializer = ModuleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LessonCreateViewAPI(APIView):
+    def post(self, request, module_id):
+        # Fetch the course based on the provided course_id
+        course = Module.objects.filter(id=module_id).first()
+        if not course:
+            return Response({'error': 'Module not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Include course data in request data
+        request.data['module'] = module_id
+
+        # Serialize data
+        serializer = LessonSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ModuleCreateView(CreateView):
     model = Module
     form_class = ModuleForm
@@ -486,6 +543,7 @@ def bulk_create_lessons(request, module_id):
 
     return JsonResponse({'status': 'success', 'message': f'{len(created_lessons)} lessons created successfully'})
 
+
 @require_http_methods(["POST"])
 def update_module_and_lessons(request, module_id):
     module = get_object_or_404(Module, pk=module_id)
@@ -514,4 +572,5 @@ def update_module_and_lessons(request, module_id):
     if errors:
         return JsonResponse({'status': 'error', 'errors': errors}, status=400)
 
-    return JsonResponse({'status': 'success', 'message': f'{len(updated_lessons)} lessons updated/created successfully, module updated'})
+    return JsonResponse({'status': 'success',
+                         'message': f'{len(updated_lessons)} lessons updated/created successfully, module updated'})

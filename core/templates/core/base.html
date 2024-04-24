@@ -17,6 +17,9 @@
         {% if messages %}
         messagesOnLoad()
         {% endif %}
+        {% block onload_script %}
+
+        {% endblock %}
     }
 </script>
 </body>

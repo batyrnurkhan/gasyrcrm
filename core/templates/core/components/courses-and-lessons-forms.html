@@ -3,113 +3,356 @@
     <script>
         var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a global variable for later use
     </script>
-    <div class="rounded-lg shadow-lg flex flex-row overflow-hidden mb-[50px]">
-        {% include "core/components/course-sidebar-edit.html" with course=course module_id=module.id %}
-        <div class="w-[75%] p-10 overflow-y-auto h-side">
-            <h2 class="text-[32px] font-semibold text-accent-red">Модуль {{ module_index }}</h2>
-            <form method="post">
-                {% csrf_token %}
-                <div class="w-full mb-6">
-                    <label>
-                        <span class="float-left mb-2 font-semibold">Введите название модуля</span>
-                        <small class="float-right opacity-50">Макс: 50 симв</small>
-                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                               name="module_name" placeholder="Пример: Основы математики"
-                               value="{{ module.module_name }}">
-                    </label>
-                </div>
-            </form>
-            <div id="lesson-container">
-                <!-- Dynamic lesson forms will be appended here -->
-                {% for lesson in module.lessons.all %}
-                {% include "core/components/lesson-form.html" with counter=forloop.counter lesson=lesson %}
-                {% endfor %}
-            </div>
-
-            <a href="#" id="add-lesson-button" class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
-                <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить урок
-            </a>
+    {% include "core/components/course-sidebar-edit.html" with course=course %}
+    <div id="modules" class="w-[75%] p-10 overflow-y-auto h-side bg-whiteless">
+        <div id="cat" class="w-[75%] p-10 overflow-y-auto h-side bg-whiteless text-center">
+            <img class="mx-auto mb-10" src="{% static 'core/images/cats/teacher.png' %}" alt="">
+            <p class="text-lg">Тут вы можете управлять всеми модулями, и уроками. Для начала<br/>создайте первый модуль
+                и перейдите в него для создания первого урока</p>
         </div>
-        <div id="lesson-form-template" style="display:none;">
-            <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
-                <h2 class="text-xl font-semibold text-accent-red">Урок</h2>
-                <div class="w-full mb-6">
-                    <label>
-                        <span class="float-left mb-2 font-semibold">Введите название урока</span>
-                        <small class="float-right opacity-50">Макс: 24 симв</small>
-                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                               name="lesson_name[]" placeholder="Пример: Основы математики">
-                    </label>
-                </div>
-                <div class="w-full mb-6">
-                    <label>
-                        <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
-                        <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
-                               name="video_link[]" placeholder="Ссылка на видео">
-                    </label>
-                </div>
+    </div>
+    <div id="lesson-form-template" style="display:none;">
+        <div class="border border-[#CDCDCD] rounded-lg p-6 mb-5">
+            <h2 class="text-xl font-semibold text-accent-red">Урок</h2>
+            <div class="w-full mb-6">
+                <label>
+                    <span class="float-left mb-2 font-semibold">Введите название урока</span>
+                    <small class="float-right opacity-50">Макс: 24 симв</small>
+                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                           name="lesson_name[]" placeholder="Пример: Основы математики">
+                </label>
+            </div>
+            <div class="w-full mb-6">
+                <label>
+                    <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
+                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                           name="video_link[]" placeholder="Ссылка на видео">
+                </label>
             </div>
         </div>
     </div>
 </div>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    var addButton = document.getElementById('add-lesson-button');
-    var confirmButton = document.getElementById('confirmButton');
-    var csrfToken = '{{ csrf_token }}';
-    console.log('Confirm button:', confirmButton);
 
-    if(addButton) {
-        addButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            var container = document.getElementById('lesson-container');
-            var template = document.getElementById('lesson-form-template').innerHTML;
-            var counter = container.children.length + 1;
-            var newFormHtml = template.replace(/Урок/g, `Урок ${counter}`);
-            container.insertAdjacentHTML('beforeend', newFormHtml);
-        });
-    }
+    let data, current_module = 0, modules_count = 0;
 
-    if(confirmButton) {
-        confirmButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            var lessonNames = document.querySelectorAll('[name="lesson_name[]"]');
-            var videoLinks = document.querySelectorAll('[name="video_link[]"]');
-            var formData = new FormData();
-
-            lessonNames.forEach((element, index) => {
-                formData.append('lesson_names[]', element.value);
-                formData.append('video_links[]', videoLinks[index].value);
+    async function new_module() {
+        console.log(data.modules, modules_count)
+        await fetch("{% url 'courses:module_create' course_id=course.id %}", {
+            method: 'POST',
+            body: JSON.stringify({"module_name": `Модуль ${modules_count + 1}`}),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+            .then(response => response.json())
+            .then(res_data => {
+                if (res_data.error) {
+                    alert("Error: " + JSON.stringify(res_data.error));
+                } else {
+                    // Module was created successfully, reload to show new module
+                    console.log(res_data)
+                    res_data["lessons"] = []
+                    delete res_data["course"]
+                    data.modules.push(res_data);
+                    modules_count = data.modules.length;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add module');
             });
-
-            fetch("{% url 'courses:bulk_create_lessons' module.id %}", {
-    method: 'POST',
-    body: formData,
-    headers: {
-        'X-CSRFToken': csrfToken,
-    },
-})
-.then(response => {
-    if (!response.ok) {
-        throw new Error('Server responded with status ' + response.status);
-    }
-    return response.json();
-})
-.then(data => {
-    if (data.status === 'success') {
-        console.log('Success:', data);
-        alert('All changes saved successfully!');
-    } else if (data.status === 'error') {
-        console.error('Validation errors:', data.errors);
-        alert('There were errors with the data submitted. Check the console for more information.');
-    }
-})
-.catch(error => {
-    console.error('Failed to save lessons:', error);
-    alert('Failed to save lessons. Check console for more information.');
-});
+        let module = document.createElement("div");
+        module.id = `module-${modules_count}`;
+        module.classList = "module";
+        let sidebar_module = document.createElement("div");
+        sidebar_module.classList = "relative overflow-hidden mb-4";
+        module.classList.add("hidden");
+        let active = false;
+        module.innerHTML = module_div({
+            id: modules_count,
+            module_name: data.modules[modules_count-1].module_name
         });
+        document.getElementById("modules").appendChild(module);
+        sidebar_module.innerHTML = sidebar_modules_div({
+            id: modules_count,
+            active: active,
+        })
+        document.getElementById("sidebar_modules").appendChild(sidebar_module);
+        console.log(modules_count)
     }
-});
+
+    async function new_lesson(module_id) {
+        let lesson_count = data.modules[module_id].lessons.length
+        console.log(data.modules[module_id].lessons, lesson_count)
+        await fetch(`/courses/${module_id}/lesson/create/`, {
+            method: 'POST',
+            body: JSON.stringify({
+                "lesson_name": `Урок ${lesson_count + 1}`,
+                "video_link": `https://player.vimeo.com/video/823111497?h=9a60ec7769&badge=0&autopause=0&player_id=0&app_id=58479`,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+            .then(response => response.json())
+            .then(res_data => {
+                if (res_data.error) {
+                    alert("Error: " + JSON.stringify(res_data.error));
+                } else {
+                    // Module was created successfully, reload to show new module
+                    console.log(res_data)
+                    res_data["lessons"] = []
+                    delete res_data["course"]
+                    data.modules.push(res_data);
+                    modules_count = data.modules.length;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add module');
+            });
+        let module = document.createElement("div");
+        module.id = `module-${modules_count}`;
+        module.classList = "module";
+        let sidebar_module = document.createElement("div");
+        sidebar_module.classList = "relative overflow-hidden mb-4";
+        module.classList.add("hidden");
+        let active = false;
+        module.innerHTML = module_div({
+            id: modules_count,
+            module_name: data.modules[modules_count-1].module_name
+        });
+        document.getElementById("modules").appendChild(module);
+        sidebar_module.innerHTML = sidebar_modules_div({
+            id: modules_count,
+            active: active,
+        })
+        document.getElementById("sidebar_modules").appendChild(sidebar_module);
+        console.log(modules_count)
+    }
+
+    function openModule(module_id) {
+        let side_module_text, side_module_folder, side_module_arrow, module_div;
+        for (let i = 0; i < data.modules.length; i++) {
+            side_module_arrow = document.getElementById(`side_module_arrow_${i + 1}`);
+            side_module_text = document.getElementById(`side_module_text_${i + 1}`);
+            side_module_folder = document.getElementById(`side_module_folder_${i + 1}`);
+            module_div = document.getElementById(`module-${i + 1}`);
+
+            side_module_folder.src = "{% static "core/icons/folder-fill-black-main.svg" %}";
+            side_module_arrow.src = "{% static "core/icons/arrow-down-button-gray.svg" %}";
+            if (!side_module_arrow.classList.contains("-rotate-90")) side_module_arrow.classList.add("-rotate-90");
+            if (side_module_text.classList.contains("text-accent-red")) side_module_text.classList.remove("text-accent-red");
+            if (!module_div.classList.contains("hidden")) module_div.classList.add("hidden");
+        }
+        side_module_arrow = document.getElementById(`side_module_arrow_${module_id}`);
+        side_module_text = document.getElementById(`side_module_text_${module_id}`);
+        side_module_folder = document.getElementById(`side_module_folder_${module_id}`);
+        module_div = document.getElementById(`module-${module_id}`);
+
+        side_module_folder.src = "{% static "core/icons/folder-fill-accent-red.svg" %}";
+        side_module_arrow.src = "{% static "core/icons/arrow-right-button-accent-red.svg" %}";
+        side_module_arrow.classList.remove("-rotate-90");
+        side_module_text.classList.add("text-accent-red");
+        module_div.classList.remove("hidden");
+        current_module = module_id;
+    }
+
+    function sidebar_modules_div(vars) {
+        let folder, arrow;
+        if (vars.active) {
+            folder = "{% static "core/icons/folder-fill-accent-red.svg" %}";
+            arrow = "{% static "core/icons/arrow-right-button-accent-red.svg" %}";
+        } else {
+            folder = "{% static "core/icons/folder-fill-black-main.svg" %}";
+            arrow = "{% static "core/icons/arrow-down-button-gray.svg" %}";
+        }
+        return `
+        <button onclick="openModule(${vars.id})" type="button">
+            <div class="bg-white rounded-lg text-start font-bold px-6">
+                <img class="inline-block mr-3" id="side_module_folder_${vars.id}"
+                     src="${folder}" alt="">
+                <p id="side_module_text_${vars.id}" class="inline-block mr-auto ${vars.active ? "text-accent-red" : ""}">Модуль ${vars.id}</p>
+            </div>
+            <img id="side_module_arrow_${vars.id}" class="absolute right-6 top-0 block h-[24px] ${vars.active ? "" : "-rotate-90"}"
+                 src="${arrow}" alt="">
+        </button>
+        `;
+    }
+
+    function module_div(vars) {
+        return `<h2 class="text-[32px] font-semibold text-accent-red">Модуль ${vars.id}</h2>
+            <div class="w-full mb-6">
+                <label>
+                    <span class="float-left mb-2 font-semibold">Введите название модуля</span>
+                    <small class="float-right opacity-50">Макс: 50 симв</small>
+                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                           name="module_name" placeholder="Пример: Основы математики"
+                           value="${vars.module_name}">
+                </label>
+            </div>
+            <div id="lesson-container-${vars.id}">
+                <!-- Dynamic lesson forms will be appended here -->
+            </div>
+
+            <a href="#" id="add-lesson-button"
+               class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
+                <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить
+                урок
+            </a>`;
+    }
+
+    function lesson_div(vars) {
+        return `<h2 class="text-xl font-semibold text-accent-red">Урок ${vars.id}</h2>
+        <div class="w-full mb-6">
+            <label class="">
+                <span class="float-left mb-2 font-semibold">Введите название урока</span>
+                <small class="float-right opacity-50">Макс: 24 симв</small>
+                <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                       name="lesson_name" placeholder="Пример: Основы математики"
+                       value="${vars.lesson_name}">
+            </label>
+        </div>
+        <div class="w-full mb-6">
+            <label class="">
+                <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
+                <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                       name="video_link" placeholder="Пример: Основы математики"
+                       value="${vars.video_link}">
+            </label>
+        </div>
+        <div class="w-full mb-6">
+            <div class="w-full mb-2 font-semibold">Тестирование</div>
+            <a class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg"
+               href="/courses/lesson/${vars.lesson_id}/test/">
+                <img class="inline-block mr-[23px]"
+                     src="{% static 'core/icons/table-view.svg' %}" alt="">
+                Добавить тест после урока
+            </a>
+        </div>
+        <div class="w-full mb-6">
+            <div class="w-full mb-2 font-semibold">Литература</div>
+            <div id="literature-container-${vars.module_id}-${vars.id}" class="mb-2 font-semibold"></div>
+            <label class="">
+                <input id="input-file" class="hidden" type="file"
+                       name="file">
+                <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                    <img class="inline-block align-middle mr-[23px]"
+                         src="{% static 'core/icons/upload-2-fill.svg' %}"
+                         alt="">
+                    <span id="input-file-text" type="text"
+                          class="text-[#5E8BFF] underline font-semibold">
+                            Загрузить файлы
+                        </span>
+                </div>
+            </label>
+        </div>
+        `;
+    }
+
+    function literature_div(vars) {
+        let image;
+        switch (vars.literature_type) {
+            case "Video":
+                image = `<img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Video.svg' %}" alt="">`;
+                break;
+            case "Audio":
+                image = `<img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Audio.svg' %}" alt="">`;
+                break;
+            case "Book":
+                image = `<img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Book.svg' %}" alt="">`;
+                break;
+            case "Text":
+                image = `<img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Text.svg' %}" alt="">`;
+                break;
+        }
+        return `
+            ${image}
+            <p class="underline mr-auto">${vars.literature_name}</p>
+            <img onclick="removeLiterature(${vars.module_id}, ${vars.lesson_id}, ${vars.id})" class="cursor-pointer"
+                 src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+        `;
+    }
+
+    function placeData(data) {
+        let literature, lesson, module, sidebar_module, active = true;
+        console.log(data.modules.length);
+        if (data.modules.length !== 0) {
+            document.getElementById("cat").classList.add('hidden');
+            for (let i = 0; i < data.modules.length; i++) {
+                module = document.createElement("div");
+                module.id = `module-${i + 1}`;
+                module.classList = "module";
+                sidebar_module = document.createElement("div");
+                sidebar_module.classList = "relative overflow-hidden mb-4";
+                if (i !== 0) {
+                    module.classList.add("hidden");
+                    active = false;
+                }
+                module.innerHTML = module_div({
+                    id: i + 1,
+                    module_name: data.modules[i].module_name
+                });
+                document.getElementById("modules").appendChild(module);
+                sidebar_module.innerHTML = sidebar_modules_div({
+                    id: i + 1,
+                    active: active,
+                })
+                document.getElementById("sidebar_modules").appendChild(sidebar_module);
+                for (let j = 0; j < data.modules[i].lessons.length; j++) {
+                    lesson = document.createElement("div");
+                    lesson.id = `module-${i + 1}-lesson-${j + 1}`;
+                    lesson.classList = "border border-[#CDCDCD] rounded-lg p-6 mb-5";
+                    lesson.innerHTML = lesson_div({
+                        id: j + 1,
+                        module_id: i + 1,
+                        lesson_name: data.modules[i].lessons[j].lesson_name,
+                        video_link: data.modules[i].lessons[j].video_link,
+                        lesson_id: data.modules[i].lessons[j].id,
+                    });
+                    document.getElementById(`lesson-container-${i + 1}`).appendChild(lesson);
+                    for (let k = 0; k < data.modules[i].lessons[j].literatures.length; k++) {
+                        literature = document.createElement("div");
+                        literature.id = `module-${i + 1}-lesson-${j + 1}-literature-${k + 1}`;
+                        literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
+                        console.log(data.modules[i].lessons[j].literatures[k]);
+                        literature.innerHTML = literature_div({
+                            id: k + 1,
+                            lesson_id: j + 1,
+                            module_id: i + 1,
+                            literature_type: data.modules[i].lessons[j].literatures[k].literature_type,
+                            literature_name: data.modules[i].lessons[j].literatures[k].literature_name,
+                        });
+                        document.getElementById(`literature-container-${i + 1}-${j + 1}`).appendChild(literature);
+                    }
+                }
+            }
+        }
+    }
+
+    function getAllModules() {
+        var courseId = {{ course.id }}; // Set the course ID you want to retrieve data for
+        let modules;
+        fetch(`/courses/${courseId}/modules/api/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(res_data => {
+                modules = res_data;
+                data = res_data;
+                modules_count = data.modules.length;
+                console.log('Data received:', res_data);
+                placeData(modules)
+                // Process and display your data here
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
 </script>

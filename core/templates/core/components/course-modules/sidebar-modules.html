@@ -1,0 +1,12 @@
+{% load static %}
+<div class="relative overflow-hidden mb-4">
+    <button type="button">
+        <div class="bg-white rounded-lg text-start font-bold px-6">
+            <img class="inline-block mr-3"
+                 src="{% static "core/icons/folder-fill-black-main.svg" %}" alt="">
+            <p class="inline-block mr-auto">Модуль <span id="forloop_counter_{{ forloop.counter }}"></span></p>
+        </div>
+        <img class="absolute right-6 top-0 block h-[24px] -rotate-90"
+             src="{% static "core/icons/arrow-down-button-gray.svg" %}" alt="">
+    </button>
+</div>

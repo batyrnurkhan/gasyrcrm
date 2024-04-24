@@ -46,12 +46,6 @@
                     <a href="{% url 'courses:module_create' course_id=course.id %}">Добавить модули</a>
                 {% endif %}
                 <a href="{% url 'courses:success_video_edit' pk=course.id %}">Поменять видео-поздравление</a>
-                <a href="#">Редактировать финальный тест</a>
-{% if course.modules.exists %}
-    <a href="{% url 'courses:module_detail' pk=course.modules.first.id %}">Редактировать модули</a>
-{% else %}
-    <a href="{% url 'courses:module_detail' course_id=course.id %}">Создать модуль</a>
-{% endif %}                <a href="#">Поменять видео-поздравление</a>
             </div>
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">

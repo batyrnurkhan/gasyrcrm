@@ -4,7 +4,8 @@ from .views import (
     ModuleDetailView, LessonDetailView,
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
-    delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons
+    delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
+    ModuleCreateViewAPI, LessonCreateViewAPI
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -19,8 +20,8 @@ urlpatterns = [
     path('delete/<int:pk>/', CourseDelete.as_view(), name='course_delete'),
     path('create/step1/', CreateCourseStep1View.as_view(), name='create_course_step1'),
     path('create/step2/', CreateCourseStep2View.as_view(), name='create_course_step2'),
-    path('<int:course_id>/module/create/', ModuleCreateView.as_view(), name='module_create'),
-    path('<int:module_id>/lesson/create/', LessonCreateView.as_view(), name='lesson_create'),
+    path('<int:course_id>/module/create/', ModuleCreateViewAPI.as_view(), name='module_create'),
+    path('<int:module_id>/lesson/create/', LessonCreateViewAPI.as_view(), name='lesson_create'),
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
     path('<int:pk>/final_test/edit', CourseFinalTestView.as_view(), name='final_test_creation'),
     path('<int:pk>/success_video/edit', SuccessVideoLinkEditView.as_view(), name='success_video_edit'),
@@ -37,4 +38,5 @@ urlpatterns = [
     path('course/<int:course_id>/module/', ModuleDetailView.as_view(), name='module_detail'),
     path('module/<int:module_id>/bulk-create-lessons/', bulk_create_lessons, name='bulk_create_lessons'),
     path('module/<int:module_id>/update-module-and-lessons/', bulk_create_lessons, name='update_module_and_lessons'),
+    path('<int:course_id>/modules/api/', CourseModulesView.as_view(), name='course-modules'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

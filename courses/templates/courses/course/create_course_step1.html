@@ -5,7 +5,8 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-5">
+        {% include 'core/components/create-progress.html' with step=1 %}
         <div class="w-full white-block flex flex-row">
             <div class="w-2/5 p-14">
                 <div class="">
