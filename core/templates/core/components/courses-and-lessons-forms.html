@@ -84,8 +84,8 @@
     }
 
     async function new_lesson(module_id) {
-        let lesson_count = data.modules[module_id].lessons.length
-        console.log(data.modules[module_id].lessons, lesson_count)
+        let lesson_count = data.modules[module_id-1].lessons.length
+        console.log(data.modules[module_id-1].lessons, lesson_count)
         await fetch(`/courses/${module_id}/lesson/create/`, {
             method: 'POST',
             body: JSON.stringify({
@@ -104,34 +104,28 @@
                 } else {
                     // Module was created successfully, reload to show new module
                     console.log(res_data)
-                    res_data["lessons"] = []
-                    delete res_data["course"]
-                    data.modules.push(res_data);
-                    modules_count = data.modules.length;
+                    res_data["literatures"] = []
+                    delete res_data["module"]
+                    data.modules[module_id-1].lessons.push(res_data);
+                    lesson_count = data.modules[module_id-1].lessons.length;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to add module');
+                alert('Failed to add lesson');
             });
-        let module = document.createElement("div");
-        module.id = `module-${modules_count}`;
-        module.classList = "module";
-        let sidebar_module = document.createElement("div");
-        sidebar_module.classList = "relative overflow-hidden mb-4";
-        module.classList.add("hidden");
-        let active = false;
-        module.innerHTML = module_div({
-            id: modules_count,
-            module_name: data.modules[modules_count-1].module_name
+        console.log(module_id, lesson_count)
+        lesson = document.createElement("div");
+        lesson.id = `module-${module_id}-lesson-${lesson_count}`;
+        lesson.classList = "border border-[#CDCDCD] rounded-lg p-6 mb-5";
+        lesson.innerHTML = lesson_div({
+            id: lesson_count,
+            module_id: module_id,
+            lesson_name: data.modules[module_id-1].lessons[lesson_count-1].lesson_name,
+            video_link: data.modules[module_id-1].lessons[lesson_count-1].video_link,
+            lesson_id: data.modules[module_id-1].lessons[lesson_count-1].id,
         });
-        document.getElementById("modules").appendChild(module);
-        sidebar_module.innerHTML = sidebar_modules_div({
-            id: modules_count,
-            active: active,
-        })
-        document.getElementById("sidebar_modules").appendChild(sidebar_module);
-        console.log(modules_count)
+        document.getElementById(`lesson-container-${module_id}`).appendChild(lesson);
     }
 
     function openModule(module_id) {
@@ -198,11 +192,11 @@
                 <!-- Dynamic lesson forms will be appended here -->
             </div>
 
-            <a href="#" id="add-lesson-button"
-               class="block text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
+            <button onclick="new_lesson(${vars.id})" type="button"
+               class="block w-full text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
                 <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить
                 урок
-            </a>`;
+            </button>`;
     }
 
     function lesson_div(vars) {
