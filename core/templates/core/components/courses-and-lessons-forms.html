@@ -122,16 +122,16 @@
         let lesson_count = data.modules[id - 1].lessons.length
         console.log(data.modules[id - 1].lessons, lesson_count)
         await fetch(`/courses/${module_id}/lesson/create/`, {
-            method: 'POST',
-            body: JSON.stringify({
-                "lesson_name": `Урок ${lesson_count + 1}`,
-                "video_link": `https://player.vimeo.com/video/823111497?h=9a60ec7769&badge=0&autopause=0&player_id=0&app_id=58479`,
-            }),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}',
-            },
-        })
+    method: 'POST',
+    body: JSON.stringify({
+        "lesson_name": `Урок ${lesson_count + 1}`,
+        "video_link": `https://player.vimeo.com/video/823111497?h=9a60ec7769&badge=0&autopause=0&player_id=0&app_id=58479`,
+    }),
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+    },
+})
             .then(response => response.json())
             .then(res_data => {
                 if (res_data.error) {

@@ -339,6 +339,9 @@ class LessonCreateViewAPI(APIView):
 
         # Include course data in request data
         request.data['module'] = module_id
+        module = Module.objects.filter(id=module_id).first()
+        if not module:
+            return Response({'error': 'Module not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Serialize data
         serializer = LessonSerializer(data=request.data)
@@ -371,6 +374,19 @@ class LiteratureDeleteViewAPI(APIView):
         LessonLiterature.objects.get(id=literature_id).delete()
         return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
 
+
+class ModuleDeleteViewAPI(APIView):
+    def delete(self, request, module_id):
+        # Add lesson to the request data
+        Module.objects.get(id=module_id).delete()
+        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
+
+
+class LessonDeleteViewAPI(APIView):
+    def delete(self, request, lesson_id):
+        # Add lesson to the request data
+        Lesson.objects.get(id=lesson_id).delete()
+        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
 
 class ModuleCreateView(CreateView):
     model = Module
@@ -598,3 +614,5 @@ def update_module_and_lessons(request, module_id):
 
     return JsonResponse({'status': 'success',
                          'message': f'{len(updated_lessons)} lessons updated/created successfully, module updated'})
+
+

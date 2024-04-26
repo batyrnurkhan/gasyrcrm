@@ -91,6 +91,13 @@ class Course(models.Model):
 
         return (submitted_tests_count / total_tests) * 100
 
+    # def save(self, *args, **kwargs):
+    #     is_new = self.pk is None  # Check if this is a new course
+    #     super().save(*args, **kwargs)
+    #     if is_new:
+    #         # Automatically create a module when a new course is created
+    #         Module.objects.create(course=self, module_name="Default Module")
+
     def __str__(self):
         return self.course_name
 
