@@ -36,7 +36,40 @@
 
     let data, current_module = 0, modules_count = 0;
 
+    async function send_data() {
+        await fetch("{% url 'courses:course-modules' course_id=course.id %}", {
+            method: 'PUT',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+            .then(response => response.json())
+            .then(res_data => {
+                console.log(res_data)
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add module');
+            });
+    }
+
+    function edit_input(event, module, module_id, lesson_id = null) {
+        let value = event.target.value
+        if (module) {
+            data.modules[module_id - 1].module_name = value;
+        } else {
+            if (event.target.name === "lesson_name") {
+                data.modules[module_id - 1].lessons[lesson_id - 1].lesson_name = value;
+            } else {
+                data.modules[module_id - 1].lessons[lesson_id - 1].video_link = value;
+            }
+        }
+    }
+
     async function new_module() {
+        await send_data();
         console.log(data.modules, modules_count)
         await fetch("{% url 'courses:module_create' course_id=course.id %}", {
             method: 'POST',
@@ -72,7 +105,8 @@
         let active = false;
         module.innerHTML = module_div({
             id: modules_count,
-            module_name: data.modules[modules_count-1].module_name
+            module_id: data.modules[modules_count - 1].id,
+            module_name: data.modules[modules_count - 1].module_name
         });
         document.getElementById("modules").appendChild(module);
         sidebar_module.innerHTML = sidebar_modules_div({
@@ -83,9 +117,10 @@
         console.log(modules_count)
     }
 
-    async function new_lesson(module_id) {
-        let lesson_count = data.modules[module_id-1].lessons.length
-        console.log(data.modules[module_id-1].lessons, lesson_count)
+    async function new_lesson(id, module_id) {
+        await send_data();
+        let lesson_count = data.modules[id - 1].lessons.length
+        console.log(data.modules[id - 1].lessons, lesson_count)
         await fetch(`/courses/${module_id}/lesson/create/`, {
             method: 'POST',
             body: JSON.stringify({
@@ -106,26 +141,112 @@
                     console.log(res_data)
                     res_data["literatures"] = []
                     delete res_data["module"]
-                    data.modules[module_id-1].lessons.push(res_data);
-                    lesson_count = data.modules[module_id-1].lessons.length;
+                    data.modules[id - 1].lessons.push(res_data);
+                    lesson_count = data.modules[id - 1].lessons.length;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert('Failed to add lesson');
             });
-        console.log(module_id, lesson_count)
+        console.log(id, lesson_count)
         lesson = document.createElement("div");
-        lesson.id = `module-${module_id}-lesson-${lesson_count}`;
+        lesson.id = `module-${id}-lesson-${lesson_count}`;
         lesson.classList = "border border-[#CDCDCD] rounded-lg p-6 mb-5";
         lesson.innerHTML = lesson_div({
             id: lesson_count,
-            module_id: module_id,
-            lesson_name: data.modules[module_id-1].lessons[lesson_count-1].lesson_name,
-            video_link: data.modules[module_id-1].lessons[lesson_count-1].video_link,
-            lesson_id: data.modules[module_id-1].lessons[lesson_count-1].id,
+            module_id: id,
+            lesson_name: data.modules[id - 1].lessons[lesson_count - 1].lesson_name,
+            video_link: data.modules[id - 1].lessons[lesson_count - 1].video_link,
+            lesson_id: data.modules[id - 1].lessons[lesson_count - 1].id,
         });
-        document.getElementById(`lesson-container-${module_id}`).appendChild(lesson);
+        document.getElementById(`lesson-container-${id}`).appendChild(lesson);
+    }
+
+    async function new_literature(event, id, lid, lesson_id) {
+        await send_data();
+        let literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+        console.log(data.modules[id - 1].lessons, literature_count);
+        const formData = new FormData();
+        let file = event.target.files[0];
+        formData.append('file', file);
+        console.log(file)
+        if (file) {
+            const fileType = file.type;
+            // Additional logic based on file type can be added here
+            if (fileType.startsWith('application/pdf')) {
+                formData.append('literature_type', "Book");
+            } else if (fileType.startsWith('video/')) {
+                formData.append('literature_type', "Video");
+            } else if (fileType.startsWith('audio/')) {
+                formData.append('literature_type', "Audio");
+            } else {
+                formData.append('literature_type', "Text");
+            }
+            formData.append('literature_name', file.name.slice(0, 20));
+            await fetch(`/courses/${lesson_id}/literature/create/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            })
+                .then(response => response.json())
+                .then(res_data => {
+                    if (res_data.error) {
+                        alert("Error: " + JSON.stringify(res_data.error));
+                    } else {
+                        // Module was created successfully, reload to show new module
+                        console.log(res_data)
+                        data.modules[id - 1].lessons[lid - 1].literatures.push(res_data);
+                        literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add lesson');
+                });
+            console.log(id, literature_count)
+            let literature = document.createElement("div");
+            literature.id = `module-${id}-lesson-${lid}-literature-${literature_count}`;
+            literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
+            console.log(data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1]);
+            literature.innerHTML = literature_div({
+                id: literature_count,
+                lesson_id: lid,
+                module_id: id,
+                literature_id: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].id,
+                literature_type: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].literature_type,
+                literature_name: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].literature_name,
+            });
+            document.getElementById(`literature-container-${id}-${lid}`).appendChild(literature);
+        }
+    }
+
+    async function remove_literature(module_i, lesson_i, literature_i, literature_id) {
+        await send_data();
+        await fetch(`/courses/literature/${literature_id}/delete/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+            .then(response => response.json())
+            .then(res_data => {
+                if (res_data.error) {
+                    alert("Error: " + JSON.stringify(res_data.error));
+                } else {
+                    // Module was created successfully, reload to show new module
+                    console.log(res_data);
+                    data.modules[module_i - 1].lessons[lesson_i - 1].literatures.splice(literature_i - 1, 1);
+                    console.log(data.modules[module_i - 1].lessons[lesson_i - 1])
+                    document.getElementById(`module-${module_i}-lesson-${lesson_i}-literature-${literature_i}`).remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to remove literature');
+            });
     }
 
     function openModule(module_id) {
@@ -183,7 +304,7 @@
                 <label>
                     <span class="float-left mb-2 font-semibold">Введите название модуля</span>
                     <small class="float-right opacity-50">Макс: 50 симв</small>
-                    <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                    <input onchange="edit_input(event, true, ${vars.id})" class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
                            name="module_name" placeholder="Пример: Основы математики"
                            value="${vars.module_name}">
                 </label>
@@ -192,7 +313,7 @@
                 <!-- Dynamic lesson forms will be appended here -->
             </div>
 
-            <button onclick="new_lesson(${vars.id})" type="button"
+            <button onclick="new_lesson(${vars.id}, ${vars.module_id})" type="button"
                class="block w-full text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
                 <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить
                 урок
@@ -205,7 +326,8 @@
             <label class="">
                 <span class="float-left mb-2 font-semibold">Введите название урока</span>
                 <small class="float-right opacity-50">Макс: 24 симв</small>
-                <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                <input onchange="edit_input(event, false, ${vars.module_id}, ${vars.id})"
+                       class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
                        name="lesson_name" placeholder="Пример: Основы математики"
                        value="${vars.lesson_name}">
             </label>
@@ -213,7 +335,8 @@
         <div class="w-full mb-6">
             <label class="">
                 <span class="float-left mb-2 font-semibold">Ссылка на урок Vimeo</span>
-                <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
+                <input onchange="edit_input(event, false, ${vars.module_id}, ${vars.id})"
+                       class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
                        name="video_link" placeholder="Пример: Основы математики"
                        value="${vars.video_link}">
             </label>
@@ -231,8 +354,8 @@
             <div class="w-full mb-2 font-semibold">Литература</div>
             <div id="literature-container-${vars.module_id}-${vars.id}" class="mb-2 font-semibold"></div>
             <label class="">
-                <input id="input-file" class="hidden" type="file"
-                       name="file">
+                <input id="module-${vars.module_id}-lesson-${vars.id}" class="hidden" type="file"
+                       name="file" onchange="new_literature(event, ${vars.module_id}, ${vars.id}, ${vars.lesson_id})">
                 <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
                     <img class="inline-block align-middle mr-[23px]"
                          src="{% static 'core/icons/upload-2-fill.svg' %}"
@@ -266,7 +389,7 @@
         return `
             ${image}
             <p class="underline mr-auto">${vars.literature_name}</p>
-            <img onclick="removeLiterature(${vars.module_id}, ${vars.lesson_id}, ${vars.id})" class="cursor-pointer"
+            <img onclick="remove_literature(${vars.module_id}, ${vars.lesson_id}, ${vars.id}, ${vars.literature_id})" class="cursor-pointer"
                  src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
         `;
     }
@@ -288,6 +411,7 @@
                 }
                 module.innerHTML = module_div({
                     id: i + 1,
+                    module_id: data.modules[i].id,
                     module_name: data.modules[i].module_name
                 });
                 document.getElementById("modules").appendChild(module);
@@ -317,6 +441,7 @@
                             id: k + 1,
                             lesson_id: j + 1,
                             module_id: i + 1,
+                            literature_id: data.modules[i].lessons[j].literatures[k].id,
                             literature_type: data.modules[i].lessons[j].literatures[k].literature_type,
                             literature_name: data.modules[i].lessons[j].literatures[k].literature_name,
                         });

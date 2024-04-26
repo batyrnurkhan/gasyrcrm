@@ -5,7 +5,7 @@ from .views import (
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
-    ModuleCreateViewAPI, LessonCreateViewAPI
+    ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -22,6 +22,8 @@ urlpatterns = [
     path('create/step2/', CreateCourseStep2View.as_view(), name='create_course_step2'),
     path('<int:course_id>/module/create/', ModuleCreateViewAPI.as_view(), name='module_create'),
     path('<int:module_id>/lesson/create/', LessonCreateViewAPI.as_view(), name='lesson_create'),
+    path('<int:lesson_id>/literature/create/', LiteratureCreateViewAPI.as_view(), name='literature_create'),
+    path('literature/<int:literature_id>/delete/', LiteratureDeleteViewAPI.as_view(), name='literature_delete'),
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
     path('<int:pk>/final_test/edit', CourseFinalTestView.as_view(), name='final_test_creation'),
     path('<int:pk>/success_video/edit', SuccessVideoLinkEditView.as_view(), name='success_video_edit'),

@@ -21,7 +21,7 @@ from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
     AnswerForm, QuestionForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
-from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer
+from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer
 
 
 class CourseDelete(DetailView):
@@ -302,8 +302,9 @@ class CourseModulesView(APIView):
             return Response(serializer.data)
         return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, course_id):
-        serializer = CourseSerializer(data=request.data)
+    def put(self, request, course_id):
+        course = Course.objects.get(pk=course_id)
+        serializer = CourseSerializer(course, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -346,6 +347,29 @@ class LessonCreateViewAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LiteratureCreateViewAPI(APIView):
+    def post(self, request, lesson_id):
+        # Check if the lesson exists
+        if not Lesson.objects.filter(id=lesson_id).exists():
+            return Response({'error': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Add lesson to the request data
+        request.data["lesson"] = lesson_id
+        serializer = LiteratureSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LiteratureDeleteViewAPI(APIView):
+    def delete(self, request, literature_id):
+        # Add lesson to the request data
+        LessonLiterature.objects.get(id=literature_id).delete()
+        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
 
 
 class ModuleCreateView(CreateView):
