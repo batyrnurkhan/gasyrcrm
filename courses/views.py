@@ -396,6 +396,19 @@ class LiteratureDeleteViewAPI(APIView):
         return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
 
 
+class ModuleDeleteViewAPI(APIView):
+    def delete(self, request, module_id):
+        # Add lesson to the request data
+        Module.objects.get(id=module_id).delete()
+        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
+
+
+class LessonDeleteViewAPI(APIView):
+    def delete(self, request, lesson_id):
+        # Add lesson to the request data
+        Lesson.objects.get(id=lesson_id).delete()
+        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
+
 class ModuleCreateView(CreateView):
     model = Module
     form_class = ModuleForm
