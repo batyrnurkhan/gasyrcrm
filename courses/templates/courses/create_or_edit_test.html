@@ -26,74 +26,6 @@ Test for
               placeholder="Новый тест" type="text" id="title" name="title" required value="{% if test_exists %}{{ test.title }}{% endif %}" />
             </div>
             <div id="questionsContainer">
-                <div class="px-10 pt-9 pb-10 rounded-[10px] bg-white container-test mb-5">
-                    <h1 class="text-black-main text-[16px] font-bold uppercase mb-4">
-                        Вопрос 1
-                    </h1>
-                    <input class="border-[#CDCDCD] mb-[12px] rounded-[10px] border-[1px] w-full py-[23px] pl-[26px] placeholder-black-main text-[20px]" placeholder="Введите ваш вопрос"/>
-                    <div class="relative mb-5">
-                        <label class="">
-                            <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg placeholder:text-text-base
-                            appearance-none *: *:px-8 *:py-5" name="user_city" id="id_user_city" required onchange="changeType(event, 0)">
-                                <option selected value="_">Выберите тип вопроса</option>
-                                <option value="SC">Вопрос с одним вариантом ответа</option>
-                                <option value="MC">Вопрос с несколькими ответа</option>
-                                <option value="AUD">Аудио-вопрос</option>
-                                <option value="IMG">Вопрос с картинкой</option>
-                            </select>
-                            <div class="absolute inset-y-0 left-1 pl-3
-                                flex items-center
-                                pointer-events-none">
-                                <img src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
-                            </div>
-                        </label>
-                    </div>
-                    <label class="inline-block w-full mb-5 hidden">
-                        <input id="question-0-audio" class="hidden" type="file"
-                               name="file">
-                        <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
-                            <img class="inline-block align-middle mr-[23px]"
-                                 src="{% static 'core/icons/upload-2-fill.svg' %}"
-                                 alt="">
-                            <span id="input-file-text" type="text"
-                                  class="text-[#5E8BFF] underline font-semibold">
-                                    Загрузить аудио-файл
-                                </span>
-                        </div>
-                    </label>
-                    <label class="inline-block w-full mb-5 hidden">
-                        <input id="question-0-photo" class="hidden" type="file"
-                               name="file">
-                        <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
-                            <img class="inline-block align-middle mr-[23px]"
-                                 src="{% static 'core/icons/upload-2-fill.svg' %}"
-                                 alt="">
-                            <span id="input-file-text" type="text"
-                                  class="text-[#5E8BFF] underline font-semibold">
-                                    Загрузить скриншот, фотографию
-                                </span>
-                        </div>
-                    </label>
-                    <div class="flex gap-4" id="answers-0">
-                        <div class="flex items-end relative top-[-1rem]">
-                            <img class="w-8" src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="a">
-                        </div>
-                        <div class="w-full">
-                            <h3 class="text-[18px] mb-2 font-semibold text-black-main">
-                                Ответы
-                            </h3>
-                            <div id="question-0-answers" class="flex flex-col gap-3">
-                                <!-- Checkbox answers -->
-                                <label class="w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center">
-                                    <input type="radio" name="questions[2][answers][1][is_correct]"
-                                           class="rounded-full question-0-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
-                                    <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text"
-                                           placeholder="Введите вариант ответа" value="ASqwdscde">
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 {% if test_exists %}
                     {% for question in test.questions.all %}
                         <div class="question">
@@ -142,30 +74,50 @@ Test for
                 </button>
             </div>
           </div>
-        <label for="title">Test Title:</label>
-        <input type="text" id="title" name="title" required value="{% if test_exists %}{{ test.title }}{% endif %}"><br><br>
-        <button type="button">Add Question</button>
         <input type="hidden" name="question_count" id="questionCount" value="{{ test.questions.count|default:'0' }}">
-        <br><br>
-        <input type="submit" value="{% if test %}Edit Test{% else %}Create Test{% endif %}">
     </form>
 </div>
 <script>
 
+function addAnswer (event, question_id) {
+    let answers_div = document.getElementById(`question-${question_id}-answers`);
+    let count = answers_div.childElementCount
+    let answer = document.createElement("label");
+    answer.classList = "w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center";
+    answer.innerHTML = `
+    <input type="radio" name="questions[${question_id}][answers][${count}][is_correct]"
+           class="rounded-full question-0-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
+    <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text"
+           placeholder="Введите вариант ответа" name="questions[${question_id}][answers][${count}][is_correct]">
+    `;
+    answers_div.appendChild(answer);
+}
+
 function changeType (event, question_id) {
     let type, items = document.getElementsByClassName(`question-${question_id}-answers`);
+    let audio = document.getElementById(`question-${question_id}-audio`);
+    let photo = document.getElementById(`question-${question_id}-photo`);
     switch (event.target.value) {
         case "MC":
             type = "checkbox";
+            audio.classList.add("hidden")
+            photo.classList.add("hidden")
             break;
         case "SC":
             type = "radio";
+            audio.classList.add("hidden")
+            photo.classList.add("hidden")
             break;
-    }
-    if (event.target.value === "MC") {
-
-    } else {
-        type = "radio";
+        case "IMG":
+            type = "radio";
+            audio.classList.add("hidden")
+            photo.classList.remove("hidden")
+            break;
+        case "AUD":
+            type = "radio";
+            audio.classList.remove("hidden")
+            photo.classList.add("hidden")
+            break;
     }
     for (let i = 0; i < items.length; i++) {
         document.getElementsByClassName(`question-${question_id}-answers`)[i].type = type
@@ -187,8 +139,8 @@ function test() {
 
     $('#addQuestion').click(function(e) {
         e.preventDefault();
-        console.log("work")
         let questionHTML = `
+            {% comment %}
             <div class="question" data-index="${questionCount}">
                 <label>Question:</label>
                 <input type="text" name="questions[${questionCount}][text]" required>
@@ -213,7 +165,73 @@ function test() {
                     </div>
                 `).join('') + `
                 </div>
-            </div>`;
+            </div>
+            {% endcomment %}
+            <div class="px-10 pt-9 pb-10 rounded-[10px] bg-white container-test mb-5" data-index="${questionCount}">
+                <h1 class="text-black-main text-[16px] font-bold uppercase mb-4">
+                    Вопрос ${questionCount + 1}
+                </h1>
+                <input class="border-[#CDCDCD] mb-[12px] rounded-[10px] border-[1px] w-full py-[23px] pl-[26px] placeholder-black-main text-[20px]"
+                       placeholder="Введите ваш вопрос"/>
+                <div class="relative mb-5">
+                    <label class="">
+                        <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg placeholder:text-text-base
+                                appearance-none *: *:px-8 *:py-5" name="user_city" id="id_user_city" required onchange="changeType(event, ${questionCount})"
+                                name="questions[${questionCount}][type]" >
+                            <option value="SC">Вопрос с одним вариантом ответа</option>
+                            <option value="MC">Вопрос с несколькими ответа</option>
+                            <option value="AUD">Аудио-вопрос</option>
+                            <option value="IMG">Вопрос с картинкой</option>
+                        </select>
+                        <div class="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
+                            <img src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
+                        </div>
+                    </label>
+                </div>
+                <label id="question-${questionCount}-audio" class="inline-block w-full mb-5 hidden">
+                    <input id="question-${questionCount}-audio-input" class="hidden" type="file"
+                           name="questions[${questionCount}][audio]" accept="audio/*">
+                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                        <img class="inline-block align-middle mr-[23px]" src="{% static 'core/icons/upload-2-fill.svg' %}" alt="">
+                        <span id="input-file-text" type="text" class="text-[#5E8BFF] underline font-semibold">
+                            Загрузить аудио-файл
+                        </span>
+                    </div>
+                </label>
+                <label id="question-${questionCount}-photo" class="inline-block w-full mb-5 hidden">
+                    <input id="question-${questionCount}-photo-input" class="hidden" type="file"
+                           name="questions[${questionCount}][image]" accept="image/*">
+                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                        <img class="inline-block align-middle mr-[23px]"
+                             src="{% static 'core/icons/upload-2-fill.svg' %}"
+                             alt="">
+                        <span id="input-file-text" type="text"
+                              class="text-[#5E8BFF] underline font-semibold">
+                                Загрузить скриншот, фотографию
+                            </span>
+                    </div>
+                </label>
+                <div class="flex gap-4" id="answers-${questionCount}">
+                    <div class="flex items-end relative top-[-1rem]">
+                        <img onclick="addAnswer(event, ${questionCount})" class="w-8 cursor-pointer" src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="a">
+                    </div>
+                    <div class="w-full">
+                        <h3 class="text-[18px] mb-2 font-semibold text-black-main">
+                            Ответы
+                        </h3>
+                        <div id="question-${questionCount}-answers" class="flex flex-col gap-3">
+                            <!-- Checkbox answers -->
+                            <label class="w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center">
+                                <input type="radio" name="questions[${questionCount}][answers][0][is_correct]" checked
+                                       class="rounded-full question-${questionCount}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
+                                <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text"
+                                       placeholder="Введите вариант ответа"  name="questions[${questionCount}][answers][0][text]">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
 
         $('#questionsContainer').append(questionHTML);
         $('html, body').animate({ scrollTop: $(`div[data-index="${questionCount}"]`).offset().top }, 'slow');
