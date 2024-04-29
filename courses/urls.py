@@ -5,7 +5,8 @@ from .views import (
     CreateCourseStep1View, CreateCourseStep2View, CreateOrEditTestView, ModuleCreateView, AddStudentsView,
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
-    ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI
+    ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
+    CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -20,6 +21,10 @@ urlpatterns = [
     path('delete/<int:pk>/', CourseDelete.as_view(), name='course_delete'),
     path('create/step1/', CreateCourseStep1View.as_view(), name='create_course_step1'),
     path('create/step2/', CreateCourseStep2View.as_view(), name='create_course_step2'),
+    path('create/step3/<int:course_id>', CreateCourseStep3View.as_view(), name='create_course_step3'),
+    path('create/step4/<int:course_id>', CreateCourseStep4View.as_view(), name='create_course_step4'),
+    path('create/step5/<int:course_id>', CreateCourseStep5View.as_view(), name='create_course_step5'),
+    path('create/ending/<int:course_id>', CreateCourseEndingView.as_view(), name='create_course_ending'),
     path('<int:course_id>/module/create/', ModuleCreateViewAPI.as_view(), name='module_create'),
     path('<int:module_id>/lesson/create/', LessonCreateViewAPI.as_view(), name='lesson_create'),
     path('<int:lesson_id>/literature/create/', LiteratureCreateViewAPI.as_view(), name='literature_create'),

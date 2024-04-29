@@ -81,6 +81,10 @@
         height: calc(100% - 1rem);
     }
 
+    .h-side-create {
+        height: calc(100vh - 450px);
+    }
+
     .h-side {
         height: calc(100vh - 390px);
     }

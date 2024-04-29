@@ -3,9 +3,11 @@
     <script>
         var csrfToken = '{{ csrf_token }}'; // Store CSRF token in a global variable for later use
     </script>
-    {% include "core/components/course-sidebar-edit.html" with course=course %}
-    <div id="modules" class="w-[75%] p-10 overflow-y-auto h-side bg-whiteless">
-        <div id="cat" class="w-[75%] p-10 overflow-y-auto h-side bg-whiteless text-center">
+    {% include "core/components/course-sidebar-edit.html" with course=course create=create %}
+    <div id="modules"
+         class="w-[75%] p-10 overflow-y-auto {% if create %}h-side-create{% else %}h-side{% endif %} bg-whiteless">
+        <div id="cat"
+             class="w-[75%] p-10 overflow-y-auto {% if create %}h-side-create{% else %}h-side{% endif %} bg-whiteless text-center">
             <img class="mx-auto mb-10" src="{% static 'core/images/cats/teacher.png' %}" alt="">
             <p class="text-lg">Тут вы можете управлять всеми модулями, и уроками. Для начала<br/>создайте первый модуль
                 и перейдите в него для создания первого урока</p>
@@ -35,6 +37,7 @@
 <script>
 
     let data, current_module = 0, modules_count = 0;
+
 
     async function send_data() {
         await fetch("{% url 'courses:course-modules' course_id=course.id %}", {
@@ -251,6 +254,8 @@
 
     function openModule(module_id) {
         let side_module_text, side_module_folder, side_module_arrow, module_div;
+        if (!document.getElementById("cat").classList.contains("hidden"))
+            document.getElementById("cat").classList.add("hidden");
         for (let i = 0; i < data.modules.length; i++) {
             side_module_arrow = document.getElementById(`side_module_arrow_${i + 1}`);
             side_module_text = document.getElementById(`side_module_text_${i + 1}`);
@@ -317,7 +322,13 @@
                class="block w-full text-center bg-accent-red rounded-lg font-semibold text-white py-5 mb-9">
                 <img class="inline-block pr-[23px]" src="{% static 'core/icons/add-circle-white.svg' %}" alt="">Добавить
                 урок
-            </button>`;
+            </button>
+
+            <a href="/courses/module/${vars.module_id}/test/" target="_blank"
+               class="block w-full text-center border border-accent-red rounded-lg font-semibold text-accent-red py-5 mb-9">
+                <img class="inline-block pr-[23px]" src="{% static 'core/icons/pencil-fill-accent-red.svg' %}" alt="">Добавить
+                тестирование по модулю
+            </a>`;
     }
 
     function lesson_div(vars) {
@@ -344,7 +355,7 @@
         <div class="w-full mb-6">
             <div class="w-full mb-2 font-semibold">Тестирование</div>
             <a class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg"
-               href="/courses/lesson/${vars.lesson_id}/test/">
+               href="/courses/lesson/${vars.lesson_id}/test/" target="_blank">
                 <img class="inline-block mr-[23px]"
                      src="{% static 'core/icons/table-view.svg' %}" alt="">
                 Добавить тест после урока

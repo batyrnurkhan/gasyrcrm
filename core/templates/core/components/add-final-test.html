@@ -1,12 +1,12 @@
 {% load static %}
-<div class="white-block mb-[50px] h-block overflow-y-auto">
+<div class="white-block mb-[50px] {% if create %}h-side{% else %}h-block{% endif %} overflow-y-auto">
     <div class="px-[230px] pt-[76px] text-center">
         <h2 class="text-[32px] font-bold mb-[30px]">Финальное тестирование</h2>
         <img class="inline-block mb-[53px]" src="{% static 'core/images/cats/test.png' %}" alt="">
         <p class="text-lg mb-[70px]">
             Осталось проверить результаты ваших будущих учеников, давайте подготовим финальное тестирование
         </p>
-        <a class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg"
+        <a class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg" target="_blank"
            href="{% url 'courses:create_edit_test' parent_type='course' parent_id=course.id %}">
             <img class="inline-block mr-[23px]"
                  src="{% static 'core/icons/table-view.svg' %}" alt="">

@@ -1,5 +1,5 @@
 {% load static %}
-<div class="h-side w-[25%] flex flex-col pt-[60px] p-5 bg-white overflow-y-auto">
+<div class="{% if create %}h-side-create{% else %}h-side{% endif %} w-[25%] flex flex-col pt-[60px] p-5 bg-white overflow-y-auto">
     <div class="mb-auto" id="sidebar_modules"></div>
     <button onclick="new_module()" type="button"
        class="text-center border border-accent-red rounded-lg font-semibold text-accent-red py-5">

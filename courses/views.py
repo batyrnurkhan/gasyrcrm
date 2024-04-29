@@ -97,8 +97,32 @@ class CreateCourseStep2View(View):
             course.created_by = request.user
             course.save()
             del request.session['course_step1_data']
-            return redirect('courses:module_create', course_id=course.id)
+            return redirect('courses:create_course_step3', course_id=course.id)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
+
+
+class CreateCourseStep3View(View):
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(id=self.kwargs["course_id"])
+        return render(request, 'courses/course/create_course_step3.html', {'course': course})
+
+
+class CreateCourseStep4View(View):
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(id=self.kwargs["course_id"])
+        return render(request, 'courses/course/create_course_step4.html', {'course': course})
+
+
+class CreateCourseStep5View(View):
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(id=self.kwargs["course_id"])
+        return render(request, 'courses/course/create_course_step5.html', {'course': course})
+
+
+class CreateCourseEndingView(View):
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(id=self.kwargs["course_id"])
+        return render(request, 'courses/course/create_course_ending.html', {'course': course})
 
 
 from django.db.models import Prefetch
@@ -241,7 +265,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class CreateOrEditTestView(View):
+class CreateOrEditTestView(View, LoginRequiredMixin):
     def get(self, request, parent_type, parent_id):
         parent_model = {'course': Course, 'module': Module, 'lesson': Lesson}.get(parent_type)
         parent_object = get_object_or_404(parent_model, pk=parent_id)

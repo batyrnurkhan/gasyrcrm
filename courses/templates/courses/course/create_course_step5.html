@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        {% include 'core/components/create-progress.html' with step=5 %}
+
+        {% include 'core/components/success-video-link.html' with course=course create=True %}
+        <div class="flex flex-row">
+            <a class="w-[390px] text-center py-[26px] border border-gray text-gray text-xl font-semibold rounded-lg mx-auto block"
+               href="javascript:history.back()">Предыдущий этап
+            </a>
+            <a class="w-[390px] text-center py-[26px] border border-accent-red text-accent-red text-xl font-semibold rounded-lg mx-auto block"
+               href="{% url 'courses:create_course_ending' course_id=course.id %}">Опубликовать курс
+            </a>
+        </div>
+    </div>
+{% endblock %}

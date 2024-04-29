@@ -1,0 +1,43 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+        {% include 'core/components/create-progress.html' with step=3 %}
+        <form method="post">
+            <h2 class="text-[42px] font-bold">Модули и уроки</h2>
+
+            {% include 'core/components/courses-and-lessons-forms.html' with course=course create=True %}
+            <div class="flex flex-row">
+                <a class="w-[390px] text-center py-[26px] border border-gray text-gray text-xl font-semibold rounded-lg mx-auto block"
+                   href="javascript:history.back()">Предыдущий этап
+                </a>
+                <button onclick="next()" type="button" class="block border border-accent-red text-accent-red text-xl
+                font-semibold mx-auto py-[23px] w-[391px] rounded-lg">
+                    Следующий этап
+                </button>
+            </div>
+{#            <a href="{% url 'courses:course_detail_edit' pk=course.id %}" type="submit" class="block text-center border border-accent-red text-accent-red text-xl#}
+{#                font-semibold mx-auto py-[23px] w-[391px] rounded-lg" id="confirmButton">#}
+{#                Сохранить изменения#}
+{#            </a>#}
+        </form>
+    </div>
+    <script>
+    async function next() {
+        await send_data();
+        window.location.replace("{% url 'courses:create_course_step4' course_id=course.id %}")
+    }
+    </script>
+{% endblock %}
+
+
+{% block onload_script %}
+    getAllModules();
+{% endblock %}

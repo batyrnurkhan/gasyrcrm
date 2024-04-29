@@ -1,5 +1,5 @@
 {% load static %}
-<div class="rounded-lg shadow-lg bg-white mb-[50px] h-block overflow-y-auto">
+<div class="rounded-lg shadow-lg bg-white mb-[50px] {% if create %}h-side{% else %}h-block{% endif %} overflow-y-auto">
     <div class="px-[230px] pt-[76px] text-center">
         <h2 class="text-[32px] font-bold mb-[30px]">Осталось только поздравить ваших будущих выпускников</h2>
         <img class="inline-block mb-[53px]" src="{% static 'core/images/cats/success.png' %}" alt="">
