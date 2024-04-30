@@ -125,6 +125,8 @@ class CreateCourseEndingView(View):
         return render(request, 'courses/course/create_course_ending.html', {'course': course})
 
 
+
+
 from django.db.models import Prefetch
 
 
@@ -279,38 +281,77 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
         parent_object = get_object_or_404(parent_model, pk=parent_id)
         content_type = ContentType.objects.get_for_model(parent_object)
 
-        form = TestForm(request.POST, request.FILES)
+        existing_test = Test.objects.filter(content_type=content_type, object_id=parent_id).first()
+        form = TestForm(request.POST, request.FILES, instance=existing_test)
+
         if form.is_valid():
             test = form.save(commit=False)
             test.content_object = parent_object
             test.save()
 
-            questions_data = json.loads(request.POST.get('questions_data', '[]'))
-            print(questions_data)
-            for key, value in request.POST.items():
-                print(f'Key: {key}')
-                print(f'Value: {value}')
-            for question_data in questions_data:
-                question_id = question_data.get('id')
-                question_form = QuestionForm(question_data, request.FILES or None)
+            # Collect existing question IDs for deletion check
+            existing_question_ids = {question.id for question in test.questions.all()}
+            question_count = int(request.POST.get('question_count', 0))
+
+            for i in range(question_count):
+                question_id = request.POST.get(f'questions[{i}][id]', None)
+                question_data = {
+                    'text': request.POST.get(f'questions[{i}][text]'),
+                    'question_type': request.POST.get(f'questions[{i}][type]'),
+                    'image': request.FILES.get(f'questions[{i}][image]') if 'IMG' in request.POST.get(
+                        f'questions[{i}][type]', '') else None,
+                    'audio': request.FILES.get(f'questions[{i}][audio]') if 'AUD' in request.POST.get(
+                        f'questions[{i}][type]', '') else None
+                }
+                if question_id:
+                    question = Question.objects.get(id=question_id)
+                    question_form = QuestionForm(question_data, request.FILES, instance=question)
+                else:
+                    question_form = QuestionForm(question_data, request.FILES)
+
                 if question_form.is_valid():
                     question = question_form.save(commit=False)
-                    if question_id:
-                        question.id = question_id
                     question.test = test
-                    question.full_clean()  # This will trigger your custom validation in the model's clean method
                     question.save()
+                    existing_question_ids.discard(question.id)  # Remove from set for deletion check
 
-                    answers_data = question_data.get('answers', [])
-                    for answer_data in answers_data:
-                        answer_id = answer_data.get('id')
-                        answer_form = AnswerForm(answer_data)
+                    # Handle answers
+                    existing_answer_ids = {answer.id for answer in question.answers.all()}
+                    answer_index = 0
+                    while True:
+                        answer_text = request.POST.get(f'questions[{i}][answers][{answer_index}][text]', None)
+                        if answer_text is None:
+                            break
+                        answer_id = request.POST.get(f'questions[{i}][answers][{answer_index}][id]', None)
+                        answer_data = {
+                            'text': answer_text,
+                            'is_correct': 'is_correct' in request.POST.get(
+                                f'questions[{i}][answers][{answer_index}][is_correct]', '')
+                        }
+                        if answer_id:
+                            answer = Answer.objects.get(id=answer_id)
+                            answer_form = AnswerForm(answer_data, instance=answer)
+                        else:
+                            answer_form = AnswerForm(answer_data)
+
                         if answer_form.is_valid():
                             answer = answer_form.save(commit=False)
-                            if answer_id:
-                                answer.id = answer_id
                             answer.question = question
                             answer.save()
+                            existing_answer_ids.discard(answer.id)  # Remove from set for deletion check
+                        answer_index += 1
+
+                    # Delete any answers not submitted
+                    Answer.objects.filter(id__in=existing_answer_ids).delete()
+
+            # Delete any questions not submitted
+            Question.objects.filter(id__in=existing_question_ids).delete()
+
+        else:
+            print(form.errors)
+            # Handle form errors
+
+        # Redirect based on parent object type
         if isinstance(parent_object, Course):
             redirect_url = reverse('courses:course_detail_edit', kwargs={'pk': parent_object.pk})
         elif isinstance(parent_object, Module):
@@ -320,7 +361,6 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
             redirect_url = reverse('home', kwargs={'pk': parent_object.module.pk})
 
         return redirect(redirect_url)
-
 
 class CourseModulesView(APIView):
     def get(self, request, course_id):
