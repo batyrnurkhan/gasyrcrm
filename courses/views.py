@@ -519,8 +519,10 @@ class TakeTestView(LoginRequiredMixin, View):
         score = 0
         total_questions = test.questions.count()
         questions = test.questions.all()
+        all_selected_answer_ids = []
         for question in questions:
             selected_answer_ids = list(map(int, request.POST.getlist(f'answer_{question.id}')))
+            all_selected_answer_ids.append(selected_answer_ids)
             correct_answers = list(question.answers.filter(is_correct=True).values_list('id', flat=True))
 
             if not selected_answer_ids:
@@ -537,9 +539,26 @@ class TakeTestView(LoginRequiredMixin, View):
                 if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
                     score += 1
 
+        selected_answers = Answer.objects.filter(id__in=all_selected_answer_ids)
         score_percentage = (score / total_questions) * 100 if total_questions else 0
-        TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
+        test_submission = TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
+        test_submission.selected_answers.add(*selected_answers)
         return redirect('courses:test_result', score=score_percentage)
+
+
+def student_results_view(request, course_id, student_login_code):
+    student = CustomUser.objects.get(login_code=student_login_code)
+    course = Course.objects.get(id=course_id)
+    context = {'student': student, 'course': course}
+    course_tests = Test.objects.filter(object_id=course_id)
+    modules = Module.objects.filter(course_id=course_id)
+    module_tests = Test.objects.filter(object_id__in=modules.values_list('id', flat=True))
+    lessons = Lesson.objects.filter(module__course_id=course_id)
+    lesson_tests = Test.objects.filter(object_id__in=lessons.values_list('id', flat=True))
+    context['sub_test_lesson'] = TestSubmission.objects.filter(user=student, test__in=lesson_tests)
+    context['sub_test_module'] = TestSubmission.objects.filter(user=student, test__in=module_tests)
+    context['sub_test_course'] = TestSubmission.objects.filter(user=student, test__in=course_tests)
+    return render(request, 'courses/student_results.html', context)
 
 
 def test_result_view(request, score):

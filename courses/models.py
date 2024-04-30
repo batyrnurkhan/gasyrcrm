@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class Test(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -18,6 +19,7 @@ class Test(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class Question(models.Model):
     TYPE_CHOICES = [
@@ -43,6 +45,7 @@ class Question(models.Model):
     def __str__(self):
         return self.text if self.text else f"Question ID: {self.id} - {self.get_question_type_display()}"
 
+
 class Answer(models.Model):
     question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     text = models.CharField(max_length=255)
@@ -50,6 +53,7 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
+
 
 class Course(models.Model):
     DIFFICULTY_CHOICES = [
@@ -69,6 +73,8 @@ class Course(models.Model):
     users = models.ManyToManyField(CustomUser, related_name='courses', blank=True)
     created_by = models.ForeignKey(CustomUser, related_name='created_courses', on_delete=models.CASCADE)
     course_success_video = models.FileField(upload_to="course_videos/", blank=True, null=True)
+    tests = GenericRelation(Test)
+
     ##publish true false
     def is_user_enrolled(self, user):
         return self.users.filter(pk=user.pk).exists()
@@ -110,6 +116,7 @@ class Module(models.Model):
     def __str__(self):
         return self.module_name
 
+
 class Lesson(models.Model):
     module = models.ForeignKey(Module, related_name='lessons', on_delete=models.CASCADE)
     lesson_name = models.CharField(max_length=24)
@@ -118,6 +125,7 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.lesson_name
+
 
 class LessonLiterature(models.Model):
     lesson = models.ForeignKey(Lesson, related_name='literatures', on_delete=models.CASCADE)
@@ -133,13 +141,13 @@ class LessonLiterature(models.Model):
     def __str__(self):
         return self.literature_name
 
-from django.conf import settings
 
 class TestSubmission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='test_submissions')
     test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='test_submissions')
     score = models.FloatField(default=0.0)
     completed = models.DateTimeField(auto_now_add=True)
+    selected_answers = models.ManyToManyField(Answer, related_name="user_checked_answers")
 
     def __str__(self):
         return f"{self.user} - {self.test.title} - Score: {self.score}"

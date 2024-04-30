@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+{% load course_tags %}
+{% load static %}
+
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
+
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
+
+        <section class="pt-[42px]">
+            <div class="px-10 pt-9 pb-10 rounded-[10px] flex items-center gap-[36px] container-test mb-5 bg-cover bg-center"
+                 style="background-image: url('{% static 'core/images/gasyr-accent-red-background.png' %}')">
+                <div class="w-[210px] h-[210px] rounded-[100px] overflow-hidden">
+                    <img src="{% if student.profile_picture %}
+                            /{{ student.profile_picture }}
+                            {% else %}
+                            {% static "core/images/default-user.svg" %}
+                        {% endif %}"
+                         alt="avatar"
+                         class="w-full h-full object-cover"/>
+                </div>
+                <div>
+                    <h1 class="mb-[16px] text-[56px] font-[600] text-white">
+                        {{ student.full_name }}
+                    </h1>
+                    <p class="mb-[20px] text-[24px] text-[18px] text-white">
+                        Ученик
+                    </p>
+                    <div class="flex gap-[12px] text-white  ">
+                        <p class=""><img src="{% static 'core/icons/kz.png' %}" alt=""></p>
+                        <p class="mr-[20px]">{{ student.phone_number|format_phone_number }}</p>
+                        <p>г. {{ student.city }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-10 pt-9 pb-10 rounded-[10px] bg-white container-test mb-5">
+                {% for module in course.modules.all %}
+                    <table class="mb-8 w-full">
+                        <thead class="border-b border-[#CDCDCD]">
+                        <tr class="text-[16px] text-black-main font-[700]">
+                            <th class="pb-4 text-[24px] w-[30%] text-left">
+                                Модуль {{ forloop.counter }}: {{ module.module_name }}</th>
+                            <th class="pb-4 text-center w-[15%]">Дата прохождения</th>
+                            <th class="pb-4 text-right">Результат</th>
+                        </tr>
+                        </thead>
+                        <tbody class="">
+                        {% for lesson in module.lessons.all %}
+                            <tr class="border-b border-[#CDCDCD] text-[16px] text-black-main font-[700]">
+                                <th class="py-4 text-left">Тестирование за урок: {{ lesson.lesson_name }}</th>
+                                {% if lesson.tests.count > 0 %}
+                                    {% with submission=sub_test_lesson|get_lesson_submission:lesson.id %}
+                                        {% if submission %}
+                                            <th class="">{{ submission.completed|date:"d.m.Y" }}</th>
+                                            <th class="text-right">
+                                                <a class="text-blue-ielts underline hover:text-blue-700" href="#">Результат</a>
+                                            </th>
+                                        {% else %}
+                                            <th class=""></th>
+                                            <th class="text-right">
+                                                <p>Не пройден</p>
+                                            </th>
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    <th class=""></th>
+                                    <th class="text-right">
+                                        <p>No test</p>
+                                    </th>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

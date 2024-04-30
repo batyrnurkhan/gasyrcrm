@@ -63,7 +63,7 @@
                         <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
                         <p class="w-[15%]">12.12.2024</p>
                         <p class="w-[12%]">{{ student.login_code }}</p>
-                        <a href="#" class="text-blue-ielts underline">Результаты</a>
+                        <a href="{% url 'courses:student_results' course_id=course.id student_login_code=student.login_code %}" class="text-blue-ielts underline">Результаты</a>
                     </div>
                 {% empty %}
                     <div class="bg-white p-[50px] rounded-lg text-center">

@@ -6,7 +6,7 @@ from .views import (
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
-    CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView
+    CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view
 )
 from core.views import CoursePageView
 from django.conf import settings
@@ -38,6 +38,8 @@ urlpatterns = [
     path('<int:course_id>/add-student/<int:student_id>/', add_student_to_course, name='add_student_to_course'),
     path('course/search-students/', search_students, name='search_students'),
     path('literature/delete/', delete_literature, name='literature_delete'),
+
+    path('<int:course_id>/student/<str:student_login_code>', student_results_view, name='student_results'),
 
     path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),
