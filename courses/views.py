@@ -313,9 +313,8 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
                     question = question_form.save(commit=False)
                     question.test = test
                     question.save()
-                    existing_question_ids.discard(question.id)  # Remove from set for deletion check
+                    existing_question_ids.discard(question.id)
 
-                    # Handle answers
                     existing_answer_ids = {answer.id for answer in question.answers.all()}
                     answer_index = 0
                     while True:
@@ -341,23 +340,19 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
                             existing_answer_ids.discard(answer.id)  # Remove from set for deletion check
                         answer_index += 1
 
-                    # Delete any answers not submitted
                     Answer.objects.filter(id__in=existing_answer_ids).delete()
 
-            # Delete any questions not submitted
             Question.objects.filter(id__in=existing_question_ids).delete()
 
         else:
             print(form.errors)
-            # Handle form errors
 
-        # Redirect based on parent object type
         if isinstance(parent_object, Course):
             redirect_url = reverse('courses:course_detail_edit', kwargs={'pk': parent_object.pk})
         elif isinstance(parent_object, Module):
             redirect_url = reverse('home',
-                                   kwargs={'pk': parent_object.pk})  # Assuming you have a view for module details
-        elif hasattr(parent_object, 'module'):  # Likely a Lesson
+                                   kwargs={'pk': parent_object.pk})
+        elif hasattr(parent_object, 'module'):
             redirect_url = reverse('home', kwargs={'pk': parent_object.module.pk})
 
         return redirect(redirect_url)
