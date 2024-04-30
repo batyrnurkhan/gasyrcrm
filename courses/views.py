@@ -286,6 +286,10 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
             test.save()
 
             questions_data = json.loads(request.POST.get('questions_data', '[]'))
+            print(questions_data)
+            for key, value in request.POST.items():
+                print(f'Key: {key}')
+                print(f'Value: {value}')
             for question_data in questions_data:
                 question_id = question_data.get('id')
                 question_form = QuestionForm(question_data, request.FILES or None)
@@ -308,12 +312,12 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
                             answer.question = question
                             answer.save()
         if isinstance(parent_object, Course):
-            redirect_url = reverse('courses:course_detail', kwargs={'pk': parent_object.pk})
+            redirect_url = reverse('courses:course_detail_edit', kwargs={'pk': parent_object.pk})
         elif isinstance(parent_object, Module):
-            redirect_url = reverse('courses:module_detail',
+            redirect_url = reverse('home',
                                    kwargs={'pk': parent_object.pk})  # Assuming you have a view for module details
         elif hasattr(parent_object, 'module'):  # Likely a Lesson
-            redirect_url = reverse('courses:module_detail', kwargs={'pk': parent_object.module.pk})
+            redirect_url = reverse('home', kwargs={'pk': parent_object.module.pk})
 
         return redirect(redirect_url)
 

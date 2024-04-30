@@ -81,14 +81,16 @@ Test for
 
 function addAnswer (event, question_id) {
     let answers_div = document.getElementById(`question-${question_id}-answers`);
-    let count = answers_div.childElementCount
+    let count = answers_div.childElementCount;
     let answer = document.createElement("label");
+    let type_val = document.getElementById(`question-${question_id}-type`).value;
+    let type = type_val === "MC" ? "checkbox" : "radio";
     answer.classList = "w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center";
     answer.innerHTML = `
-    <input type="radio" name="questions[${question_id}][answers][${count}][is_correct]"
+    <input type="${type}" name="questions[${question_id}][answers][${count}][is_correct]" onclick="uncheck(event, ${question_id})"
            class="rounded-full question-0-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
     <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text"
-           placeholder="Введите вариант ответа" name="questions[${question_id}][answers][${count}][is_correct]">
+           placeholder="Введите вариант ответа" name="questions[${question_id}][answers][${count}][text]">
     `;
     answers_div.appendChild(answer);
 }
@@ -124,18 +126,19 @@ function changeType (event, question_id) {
     }
 }
 
+function uncheck(e, question_id){
+    if (e.target.type === "radio"){
+        let items = document.getElementsByClassName(`question-${question_id}-answers`);
+        for (let i = 0; i < items.length; i++) {
+            document.getElementsByClassName(`question-${question_id}-answers`)[i].checked = false;
+        }
+        e.target.checked = true;
+    }
+}
+
 function test() {
     let questionCount = parseInt($('#questionCount').val());
 
-    $(`.question-0-answers`).click(function(e){
-        if (e.target.type === "radio"){
-            let items = document.getElementsByClassName("question-0-answers");
-            for (let i = 0; i < items.length; i++) {
-                document.getElementsByClassName(`question-0-answers`)[i].checked = false;
-            }
-            e.target.checked = true;
-        }
-    })
 
     $('#addQuestion').click(function(e) {
         e.preventDefault();
@@ -172,12 +175,13 @@ function test() {
                     Вопрос ${questionCount + 1}
                 </h1>
                 <input class="border-[#CDCDCD] mb-[12px] rounded-[10px] border-[1px] w-full py-[23px] pl-[26px] placeholder-black-main text-[20px]"
-                       placeholder="Введите ваш вопрос"/>
+                       placeholder="Введите ваш вопрос" name="questions[${questionCount}][text]"/>
                 <div class="relative mb-5">
                     <label class="">
                         <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg placeholder:text-text-base
-                                appearance-none *: *:px-8 *:py-5" name="user_city" id="id_user_city" required onchange="changeType(event, ${questionCount})"
-                                name="questions[${questionCount}][type]" >
+                                appearance-none *: *:px-8 *:py-5" id="question-${questionCount}-type"
+                                required onchange="changeType(event, ${questionCount})"
+                                name="questions[${questionCount}][type]">
                             <option value="SC">Вопрос с одним вариантом ответа</option>
                             <option value="MC">Вопрос с несколькими ответа</option>
                             <option value="AUD">Аудио-вопрос</option>
@@ -222,10 +226,10 @@ function test() {
                         <div id="question-${questionCount}-answers" class="flex flex-col gap-3">
                             <!-- Checkbox answers -->
                             <label class="w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center">
-                                <input type="radio" name="questions[${questionCount}][answers][0][is_correct]" checked
-                                       class="rounded-full question-${questionCount}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
+                                <input type="radio" name="questions[${questionCount}][answers][0][is_correct]" checked  onclick="uncheck(event, ${questionCount})"
+                                       class="question-${questionCount}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red" />
                                 <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text"
-                                       placeholder="Введите вариант ответа"  name="questions[${questionCount}][answers][0][text]">
+                                       placeholder="Введите вариант ответа" name="questions[${questionCount}][answers][0][text]">
                             </label>
                         </div>
                     </div>
