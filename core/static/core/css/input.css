@@ -29,7 +29,7 @@
         font-style: normal;
         font-weight: 600;
         font-display: swap;
-        src: url('/static/core/fonts/QanelasSemibold.otf') format('woff2');
+        src: url('/static/core/fonts/QanelasSemiBold.otf') format('woff2');
     }
     @font-face {
         font-family: 'Qanelas';
