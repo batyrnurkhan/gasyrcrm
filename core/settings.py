@@ -140,7 +140,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
-import os
+REST_FRAMEWORK = {
+    'UNICODE_JSON': False,
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
