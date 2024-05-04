@@ -34,8 +34,8 @@ class CourseDelete(DetailView):
 class EditCourseView(View):
 
     def get(self, request, *args, **kwargs):
-        form = CourseForm()
         course = Course.objects.get(pk=self.kwargs["pk"])
+        form = CourseForm(instance=course)
         return render(request, 'courses/course/edit_course.html', {'form': form, 'course': course})
 
     def post(self, request, *args, **kwargs):
@@ -123,8 +123,6 @@ class CreateCourseEndingView(View):
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(id=self.kwargs["course_id"])
         return render(request, 'courses/course/create_course_ending.html', {'course': course})
-
-
 
 
 from django.db.models import Prefetch
@@ -303,44 +301,60 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
                     'audio': request.FILES.get(f'questions[{i}][audio]') if 'AUD' in request.POST.get(
                         f'questions[{i}][type]', '') else None
                 }
+                print(question_data)
                 if question_id:
                     question = Question.objects.get(id=question_id)
-                    question_form = QuestionForm(question_data, request.FILES, instance=question)
+                #     question_form = QuestionForm(question_data, request.FILES, instance=question)
+                # else:
+                #     question_form = QuestionForm(question_data, request.FILES)
+                # print(question_form.is_valid())
+                # print(question_form.errors)
+                # if question_form.is_valid():
+                #     question = question_form.save(commit=False)
                 else:
-                    question_form = QuestionForm(question_data, request.FILES)
+                    question = Question()
+                question.text = question_data["text"]
+                question.question_type = question_data["question_type"]
+                if question_data["question_type"] == "IMG" and question_data["image"]:
+                    question.image = question_data["image"]
+                    question.audio = None
+                if question_data["question_type"] == "AUD" and question_data["audio"]:
+                    question.image = None
+                    question.audio = question_data["audio"]
+                if question_data["question_type"] == "MC" or question_data["question_type"] == "SC":
+                    question.image = None
+                    question.audio = None
 
-                if question_form.is_valid():
-                    question = question_form.save(commit=False)
-                    question.test = test
-                    question.save()
-                    existing_question_ids.discard(question.id)
+                question.test = test
+                question.save()
+                existing_question_ids.discard(question.id)
 
-                    existing_answer_ids = {answer.id for answer in question.answers.all()}
-                    answer_index = 0
-                    while True:
-                        answer_text = request.POST.get(f'questions[{i}][answers][{answer_index}][text]', None)
-                        if answer_text is None:
-                            break
-                        answer_id = request.POST.get(f'questions[{i}][answers][{answer_index}][id]', None)
-                        answer_data = {
-                            'text': answer_text,
-                            'is_correct': 'is_correct' in request.POST.get(
-                                f'questions[{i}][answers][{answer_index}][is_correct]', '')
-                        }
-                        if answer_id:
-                            answer = Answer.objects.get(id=answer_id)
-                            answer_form = AnswerForm(answer_data, instance=answer)
-                        else:
-                            answer_form = AnswerForm(answer_data)
+                existing_answer_ids = {answer.id for answer in question.answers.all()}
+                answer_index = 0
+                while True:
+                    answer_text = request.POST.get(f'questions[{i}][answers][{answer_index}][text]', None)
+                    if answer_text is None:
+                        break
+                    answer_id = request.POST.get(f'questions[{i}][answers][{answer_index}][id]', None)
+                    answer_data = {
+                        'text': answer_text,
+                        'is_correct': 'on' in request.POST.get(
+                            f'questions[{i}][answers][{answer_index}][is_correct]', '')
+                    }
+                    if answer_id:
+                        answer = Answer.objects.get(id=answer_id)
+                        answer_form = AnswerForm(answer_data, instance=answer)
+                    else:
+                        answer_form = AnswerForm(answer_data)
 
-                        if answer_form.is_valid():
-                            answer = answer_form.save(commit=False)
-                            answer.question = question
-                            answer.save()
-                            existing_answer_ids.discard(answer.id)  # Remove from set for deletion check
-                        answer_index += 1
+                    if answer_form.is_valid():
+                        answer = answer_form.save(commit=False)
+                        answer.question = question
+                        answer.save()
+                        existing_answer_ids.discard(answer.id)  # Remove from set for deletion check
+                    answer_index += 1
 
-                    Answer.objects.filter(id__in=existing_answer_ids).delete()
+                Answer.objects.filter(id__in=existing_answer_ids).delete()
 
             Question.objects.filter(id__in=existing_question_ids).delete()
 
@@ -356,6 +370,7 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
             redirect_url = reverse('home', kwargs={'pk': parent_object.module.pk})
 
         return redirect(redirect_url)
+
 
 class CourseModulesView(APIView):
     def get(self, request, course_id):
@@ -447,6 +462,7 @@ class LessonDeleteViewAPI(APIView):
         # Add lesson to the request data
         Lesson.objects.get(id=lesson_id).delete()
         return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
+
 
 class ModuleCreateView(CreateView):
     model = Module

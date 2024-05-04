@@ -8,7 +8,7 @@
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
         <div>
             <h2 class="text-[32px] font-bold mb-7">Страница с подробностями о курсе</h2>
-<form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data">
                 <div class="white-block p-14 mb-[47px]">
                     {% csrf_token %}
                     <div class="flex flex-row flex-wrap">
@@ -18,7 +18,7 @@
                                 <small class="float-right opacity-50">Макс: 50 симв</small>
                                 <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
                                        name="{{ form.course_name.name }}" placeholder="Пример: Курс по Hello World"
-                                       value="{{ course.course_name }}">
+                                       value="{{ form.course_name.value }}">
                             </label>
                         </div>
                         <div class="w-1/3 px-3 mb-6">
@@ -28,7 +28,7 @@
                                 <textarea class="border py-[25px] px-4 border-gray w-full rounded-lg" rows="10"
                                           type="text"
                                           name="{{ form.mini_description.name }}"
-                                          placeholder="Пример: Курс по Hello World">{{ course.mini_description }}</textarea>
+                                          placeholder="Пример: Курс по Hello World">{{ form.mini_description.value }}</textarea>
                             </label>
                         </div>
                         <div class="w-1/3 px-3 mb-6">
@@ -38,12 +38,12 @@
                             </div>
                             <br>
                             <label>
-                                <input id="input-file" class="hidden" type="file" name="{{ form.course_picture.name }}" value="/media/{{ course.course_picture }}">
+                                <input id="input-file" class="hidden" type="file" name="{{ form.course_picture.name }}" value="/{{ course.course_picture }}">
 
                                 <img class="inline align-middle" src="{% static 'core/icons/upload-2-fill.svg' %}"
                                      alt="">
                                 <span id="input-file-text" type="text" class="text-[#5E8BFF] underline font-semibold">
-                                {{ course.course_picture }}
+                                {{ course.course_picture.name }}
                             </span>
                             </label>
                         </div>
@@ -53,7 +53,7 @@
                                 <textarea class="border py-[25px] px-4 border-gray w-full rounded-lg" rows="10"
                                           type="text"
                                           name="{{ form.big_description.name }}"
-                                          placeholder="Вкладывайте всю свою душу и расписывайте о курсе подробнее">{{ course.big_description }}</textarea>
+                                          placeholder="Вкладывайте всю свою душу и расписывайте о курсе подробнее">{{ form.big_description.value }}</textarea>
                             </label>
                         </div>
                         <div class="w-1/4 px-3 mb-6">
@@ -61,7 +61,7 @@
                                 <span class="float-left mb-2 font-semibold">Сколько часов длится весь курс?</span>
                                 <input class="border py-[25px] px-4 border-gray w-full rounded-lg" type="number"
                                        name="{{ form.course_time.name }}" placeholder="Введите кол-во часов"
-                                       value="{{ course.course_time }}">
+                                       value="{{ form.course_time.value }}">
                             </label>
                         </div>
                         <div class="w-3/4 px-3 flex flex-row items-center gap-4 mb-6">
@@ -69,31 +69,31 @@
                                 <span class="float-left mb-2 font-semibold">Сколько часов длится весь курс?</span>
                                 <div class="my-container">
                                     <div class="container__items border py-[25px] px-4 border-gray w-full rounded-lg rotate-180">
-                                        <input value="5" {% if course.course_difficulty == 5 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Hard">
+                                        <input value="5" {% if form.course_difficulty.value >= 5 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Hard">
                                         <label for="Very Hard">
                                             <div class="star-stroke">
                                                 <div class="star-fill"></div>
                                             </div>
                                         </label>
-                                        <input value="4" {% if course.course_difficulty == 4 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Hard">
+                                        <input value="4" {% if form.course_difficulty.value >= 4 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Hard">
                                         <label for="Hard">
                                             <div class="star-stroke">
                                                 <div class="star-fill"></div>
                                             </div>
                                         </label>
-                                        <input value="3" {% if course.course_difficulty == 3 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Medium">
+                                        <input value="3" {% if form.course_difficulty.value >= 3 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Medium">
                                         <label for="Medium">
                                             <div class="star-stroke">
                                                 <div class="star-fill"></div>
                                             </div>
                                         </label>
-                                        <input value="2" {% if course.course_difficulty == 2 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Easy">
+                                        <input value="2" {% if form.course_difficulty.value >= 2 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Easy">
                                         <label for="Easy">
                                             <div class="star-stroke">
                                                 <div class="star-fill"></div>
                                             </div>
                                         </label>
-                                        <input value="1" {% if course.course_difficulty == 1 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Easy">
+                                        <input value="1" {% if form.course_difficulty.value >= 1 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Easy">
                                         <label for="Very Easy">
                                             <div class="star-stroke">
                                                 <div class="star-fill"></div>
@@ -113,7 +113,7 @@
                                 <textarea class="border py-[25px] px-4 border-gray w-full rounded-lg" rows="10"
                                           type="text"
                                           name="{{ form.full_description.name }}"
-                                          placeholder="Вкладывайте всю свою душу и расписывайте о себе в подробностях. Расскажите чего вы добились, с кем встречались">{{ course.full_description }}</textarea>
+                                          placeholder="Вкладывайте всю свою душу и расписывайте о себе в подробностях. Расскажите чего вы добились, с кем встречались">{{ form.full_description.value }}</textarea>
                             </label>
                         </div>
                     </div>
