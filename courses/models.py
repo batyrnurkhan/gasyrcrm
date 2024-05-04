@@ -1,8 +1,12 @@
 # models.py
+import os
+
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.dispatch import receiver
+
 from users.models import CustomUser
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -38,12 +42,53 @@ class Question(models.Model):
     def clean(self):
         # Validate based on question_type
         if self.question_type == 'IMG' and not self.image:
-            raise ValidationError(_('Image file is required for image-based questions.'))
+            raise ValidationError('Image file is required for image-based questions.')
         if self.question_type == 'AUD' and not self.audio:
-            raise ValidationError(_('Audio file is required for audio-based questions.'))
+            raise ValidationError('Audio file is required for audio-based questions.')
 
     def __str__(self):
         return self.text if self.text else f"Question ID: {self.id} - {self.get_question_type_display()}"
+
+
+@receiver(models.signals.post_delete, sender=Question)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deletes file from filesystem
+    when corresponding `MediaFile` object is deleted.
+    """
+    if instance.image:
+        if os.path.isfile(instance.image.path):
+            os.remove(instance.image.path)
+    if instance.audio:
+        if os.path.isfile(instance.audio.path):
+            os.remove(instance.audio.path)
+
+
+@receiver(models.signals.pre_save, sender=Question)
+def auto_delete_file_on_change(sender, instance, **kwargs):
+    """
+    Deletes old file from filesystem
+    when corresponding `MediaFile` object is updated
+    with new file.
+    """
+    if not instance.pk:
+        return False
+
+    try:
+        old_image = Question.objects.get(pk=instance.pk).image
+        old_audio = Question.objects.get(pk=instance.pk).audio
+    except Question.DoesNotExist:
+        return False
+    if old_image:
+        new_file = instance.image
+        if not old_image == new_file:
+            if os.path.isfile(old_image.path):
+                os.remove(old_image.path)
+    if old_audio:
+        new_file = instance.audio
+        if not old_audio == new_file:
+            if os.path.isfile(old_audio.path):
+                os.remove(old_audio.path)
 
 
 class Answer(models.Model):

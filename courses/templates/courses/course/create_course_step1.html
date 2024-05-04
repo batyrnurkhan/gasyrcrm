@@ -21,7 +21,7 @@
                                     <input id="course_name_input" required
                                            class="border py-[25px] px-4 border-gray w-full rounded-lg" type="text"
                                            name="{{ form.course_name.name }}" placeholder="Пример: Курс по Hello World"
-                                           value="{{ course.course_name }}">
+                                           value="{{ form.course_name }}">
                                 </label>
                             </div>
                             <div class="w-full px-3 mb-6">
@@ -31,7 +31,7 @@
                                     <textarea class="border py-[25px] px-4 border-gray w-full rounded-lg" rows="10"
                                               type="text" id="course_desc_input" required
                                               name="{{ form.mini_description.name }}"
-                                              placeholder="Пример: Курс по Hello World">{{ course.mini_description }}</textarea>
+                                              placeholder="Пример: Курс по Hello World">{{ form.mini_description }}</textarea>
                                 </label>
                             </div>
                             <div class="w-full px-3 mb-6">
@@ -43,12 +43,12 @@
                                 <label>
                                     <input id="input-file" class="hidden" type="file"
                                            name="{{ form.course_picture.name }}"
-                                           value="/media/{{ course.course_picture }}" required>
+                                           value="/{{ course.course_picture }}" required>
                                     <img class="inline align-middle" src="{% static 'core/icons/upload-2-fill.svg' %}"
                                          alt="">
                                     <span id="input-file-text" type="text"
                                           class="text-[#5E8BFF] underline font-semibold">
-                                        {{ course.course_picture }}
+                                        Добавить картинку
                                     </span>
                                 </label>
                             </div>

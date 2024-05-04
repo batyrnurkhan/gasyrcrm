@@ -28,6 +28,99 @@ Test for
             <div id="questionsContainer">
                 {% if test_exists %}
                     {% for question in test.questions.all %}
+                        <div class="px-10 pt-9 pb-10 rounded-[10px] bg-white container-test mb-5" data-index="{{ forloop.counter0 }}">
+                            <h1 class="text-black-main text-[16px] font-bold uppercase mb-4">
+                                Вопрос {{ forloop.counter }}
+                            </h1>
+                            <input value="{{ question.id }}" name="questions[{{ forloop.counter0 }}][id]" hidden />
+                            <input class="border-[#CDCDCD] mb-[12px] rounded-[10px] border-[1px] w-full py-[23px] pl-[26px] placeholder-black-main text-[20px]"
+                                   placeholder="Введите ваш вопрос" name="questions[{{ forloop.counter0 }}][text]" value="{{ question.text }}"/>
+                            <div class="relative">
+                                <label class="">
+                                    <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg placeholder:text-text-base
+                                            appearance-none *: *:px-8 *:py-5" id="question-{{ forloop.counter0 }}-type"
+                                            required onchange="changeType(event, {{ forloop.counter0 }})"
+                                            name="questions[{{ forloop.counter0 }}][type]">
+                                        <option {% if question.question_type == "SC" %}selected{% endif %} value="SC">Вопрос с одним вариантом ответа</option>
+                                        <option {% if question.question_type == "MC" %}selected{% endif %} value="MC">Вопрос с несколькими ответа</option>
+                                        <option {% if question.question_type == "AUD" %}selected{% endif %} value="AUD">Аудио-вопрос</option>
+                                        <option {% if question.question_type == "IMG" %}selected{% endif %} value="IMG">Вопрос с картинкой</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
+                                        <img src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="mb-2 mt-2.5">
+                                <label id="question-{{ forloop.counter0 }}-audio" class="inline-block w-full hidden">
+                                    <input id="question-{{ forloop.counter0 }}-audio-input" class="hidden" type="file"
+                                           name="questions[{{ forloop.counter0 }}][audio]" accept="audio/*"
+                                           onchange="newFile(event, 'audio', {{ forloop.counter0 }})"
+                                           value="{{ request.get_host }}/{{ question.image }}"
+                                           >
+                                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                                        <img class="inline-block align-middle mr-[23px]" src="{% static 'core/icons/upload-2-fill.svg' %}" alt="">
+                                        <span id="input-file-text" type="text" class="text-[#5E8BFF] underline font-semibold">
+                                            Загрузить аудио-файл
+                                        </span>
+                                    </div>
+                                </label>
+                                <div id="question-{{ forloop.counter0 }}-existing-audio-file" class="border border-gray flex flex-row p-4 rounded-lg {% if question.question_type != "AUD" %}hidden{% endif %}">
+                                    <img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Audio.svg' %}" alt="">
+                                    <p class="underline mr-auto">{{ question.audio.name }}</p>
+                                    <img class="cursor-pointer" onclick="removeFile(event, 'audio', {{ forloop.counter0 }})"
+                                         src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+                                </div>
+                            </div>
+                            <div class="mb-2 mt-2.5">
+                                <label id="question-{{ forloop.counter0 }}-image" class="inline-block w-full hidden">
+                                    <input id="question-{{ forloop.counter0 }}-image-input" class="hidden" type="file"
+                                           name="questions[{{ forloop.counter0 }}][image]" accept="image/*"
+                                           onchange="newFile(event, 'image', {{ forloop.counter0 }})"
+                                           value="{{ request.get_host }}/{{ question.image }}"
+                                           >
+                                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                                        <img class="inline-block align-middle mr-[23px]"
+                                             src="{% static 'core/icons/upload-2-fill.svg' %}"
+                                             alt="">
+                                        <span id="input-file-text" type="text"
+                                              class="text-[#5E8BFF] underline font-semibold">
+                                                Загрузить скриншот, фотографию
+                                            </span>
+                                    </div>
+                                </label>
+                                <div id="question-{{ forloop.counter0 }}-existing-image-file" class="border border-gray flex flex-row p-4 rounded-lg {% if question.question_type != "IMG" %}hidden{% endif %}">
+                                    <img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Image.svg' %}" alt="">
+                                    <p class="underline mr-auto">{{ question.image.name }}</p>
+                                    <img class="cursor-pointer" onclick="removeFile(event, 'image', {{ forloop.counter0 }})"
+                                         src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+                                </div>
+                            </div>
+                            <div class="flex gap-4 mt-5" id="answers-{{ forloop.counter0 }}">
+                                <div class="flex items-end relative top-[-1rem]">
+                                    <img onclick="addAnswer(event, {{ forloop.counter0 }})" class="w-8 cursor-pointer" src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="a">
+                                </div>
+                                <div class="w-full">
+                                    <h3 class="text-[18px] mb-2 font-semibold text-black-main">
+                                        Ответы
+                                    </h3>
+                                    <div id="question-{{ forloop.counter0 }}-answers" class="flex flex-col gap-3 mt-5">
+                                        <!-- Checkbox answers -->
+                                        {% for answer in question.answers.all %}
+                                            <label class="w-full pl-5 border-[1px] border-[#CDCDCD] rounded-[5px] flex gap-3 items-center">
+                                                <input hidden name="questions[{{ forloop.parentloop.counter0 }}][answers][{{ forloop.counter0 }}][id]" value="{{ answer.id }}">
+                                                <input type="{% if question.question_type == "MC" %}checkbox{% else %}radio{% endif %}" name="questions[{{ forloop.parentloop.counter0 }}][answers][{{ forloop.counter0 }}][is_correct]"
+                                                       {% if answer.is_correct %}checked{% endif %} onclick="uncheck(event, {{ forloop.parentloop.counter0 }})"
+                                                       class="question-{{ forloop.parentloop.counter0 }}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red"/>
+                                                <input class="p-5 pl-0 text-[16px] font-medium text-black-main w-full" type="text" value="{{ answer.text }}"
+                                                       placeholder="Введите вариант ответа" name="questions[{{ forloop.parentloop.counter0 }}][answers][{{ forloop.counter0 }}][text]">
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% comment %}
                         <div class="question">
                             <!-- Hidden input for question ID -->
                             <input type="hidden" name="questions[{{ forloop.counter0 }}][id]" value="{{ question.id }}">
@@ -57,6 +150,7 @@ Test for
                                 {% endfor %}
                             </div>
                         </div>
+                    {% endcomment %}
                     {% endfor %}
                 {% endif %}
             </div>
@@ -79,6 +173,24 @@ Test for
 </div>
 <script>
 
+function removeFile(event, type, question_id) {
+    let file_div = document.getElementById(`question-${question_id}-existing-${type}-file`);
+    let input_div = document.getElementById(`question-${question_id}-${type}`);
+    let input = document.getElementById(`question-${question_id}-${type}-input`);
+    file_div.classList.add("hidden");
+    input_div.classList.remove("hidden");
+    input.value = null;
+}
+
+function newFile(event, type, question_id) {
+    let file_div = document.getElementById(`question-${question_id}-existing-${type}-file`);
+    let input_div = document.getElementById(`question-${question_id}-${type}`);
+    let input = document.getElementById(`question-${question_id}-${type}-input`);
+    input_div.classList.add('hidden');
+    file_div.classList.remove('hidden');
+    file_div.childNodes.item(3).innerText = input.files[0].name;
+}
+
 function addAnswer (event, question_id) {
     let answers_div = document.getElementById(`question-${question_id}-answers`);
     let count = answers_div.childElementCount;
@@ -98,32 +210,41 @@ function addAnswer (event, question_id) {
 function changeType (event, question_id) {
     let type, items = document.getElementsByClassName(`question-${question_id}-answers`);
     let audio = document.getElementById(`question-${question_id}-audio`);
-    let photo = document.getElementById(`question-${question_id}-photo`);
+    let image = document.getElementById(`question-${question_id}-image`);
+    document.getElementById(`question-${question_id}-existing-audio-file`).classList.add("hidden");
+    document.getElementById(`question-${question_id}-existing-audio-file`).childNodes.item(3).innerText = null;
+    document.getElementById(`question-${question_id}-audio`).classList.add("hidden");
+    document.getElementById(`question-${question_id}-audio-input`).value = null;
+    document.getElementById(`question-${question_id}-existing-image-file`).classList.add("hidden");
+    document.getElementById(`question-${question_id}-existing-image-file`).childNodes.item(3).innerText = null;
+    document.getElementById(`question-${question_id}-image`).classList.add("hidden");
+    document.getElementById(`question-${question_id}-image-input`).value = null;
     switch (event.target.value) {
         case "MC":
             type = "checkbox";
             audio.classList.add("hidden")
-            photo.classList.add("hidden")
+            image.classList.add("hidden")
             break;
         case "SC":
             type = "radio";
             audio.classList.add("hidden")
-            photo.classList.add("hidden")
+            image.classList.add("hidden")
             break;
         case "IMG":
             type = "radio";
             audio.classList.add("hidden")
-            photo.classList.remove("hidden")
+            image.classList.remove("hidden")
             break;
         case "AUD":
             type = "radio";
             audio.classList.remove("hidden")
-            photo.classList.add("hidden")
+            image.classList.add("hidden")
             break;
     }
     for (let i = 0; i < items.length; i++) {
         document.getElementsByClassName(`question-${question_id}-answers`)[i].type = type
     }
+    document.getElementsByClassName(`question-${question_id}-answers`)[0].dispatchEvent(new Event("click"));
 }
 
 function uncheck(e, question_id){
@@ -176,7 +297,7 @@ function test() {
                 </h1>
                 <input class="border-[#CDCDCD] mb-[12px] rounded-[10px] border-[1px] w-full py-[23px] pl-[26px] placeholder-black-main text-[20px]"
                        placeholder="Введите ваш вопрос" name="questions[${questionCount}][text]"/>
-                <div class="relative mb-5">
+                <div class="relative">
                     <label class="">
                         <select class="border py-[25px] pr-4 pl-14 border-gray w-full rounded-lg placeholder:text-text-base
                                 appearance-none *: *:px-8 *:py-5" id="question-${questionCount}-type"
@@ -192,30 +313,46 @@ function test() {
                         </div>
                     </label>
                 </div>
-                <label id="question-${questionCount}-audio" class="inline-block w-full mb-5 hidden">
-                    <input id="question-${questionCount}-audio-input" class="hidden" type="file"
-                           name="questions[${questionCount}][audio]" accept="audio/*">
-                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
-                        <img class="inline-block align-middle mr-[23px]" src="{% static 'core/icons/upload-2-fill.svg' %}" alt="">
-                        <span id="input-file-text" type="text" class="text-[#5E8BFF] underline font-semibold">
-                            Загрузить аудио-файл
-                        </span>
-                    </div>
-                </label>
-                <label id="question-${questionCount}-photo" class="inline-block w-full mb-5 hidden">
-                    <input id="question-${questionCount}-photo-input" class="hidden" type="file"
-                           name="questions[${questionCount}][image]" accept="image/*">
-                    <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
-                        <img class="inline-block align-middle mr-[23px]"
-                             src="{% static 'core/icons/upload-2-fill.svg' %}"
-                             alt="">
-                        <span id="input-file-text" type="text"
-                              class="text-[#5E8BFF] underline font-semibold">
-                                Загрузить скриншот, фотографию
+                <div class="mb-2 mt-2">
+                    <label id="question-${questionCount}-audio" class="inline-block w-full hidden">
+                        <input id="question-${questionCount}-audio-input" class="hidden" type="file"
+                               name="questions[${questionCount}][audio]" accept="audio/*" onchange="newFile(event, 'audio', ${questionCount})" />
+                        <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                            <img class="inline-block align-middle mr-[23px]" src="{% static 'core/icons/upload-2-fill.svg' %}" alt="">
+                            <span id="input-file-text" type="text" class="text-[#5E8BFF] underline font-semibold">
+                                Загрузить аудио-файл
                             </span>
+                        </div>
+                    </label>
+                    <div id="question-${questionCount}-existing-audio-file" class="border border-gray flex flex-row p-4 rounded-lg hidden">
+                        <img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Audio.svg' %}" alt="">
+                        <p class="underline mr-auto"></p>
+                        <img class="cursor-pointer" src="{% static 'core/icons/close-fill-black-main.svg' %}" alt=""
+                             onclick="removeFile(event, 'audio', ${questionCount})">
                     </div>
-                </label>
-                <div class="flex gap-4" id="answers-${questionCount}">
+                </div>
+                <div class="mb-2 mt-2">
+                    <label id="question-${questionCount}-image" class="inline-block w-full hidden">
+                        <input id="question-${questionCount}-image-input" class="hidden" type="file"
+                               name="questions[${questionCount}][image]" accept="image/*" onchange="newFile(event, 'image', ${questionCount})">
+                        <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                            <img class="inline-block align-middle mr-[23px]"
+                                 src="{% static 'core/icons/upload-2-fill.svg' %}"
+                                 alt="">
+                            <span id="input-file-text" type="text"
+                                  class="text-[#5E8BFF] underline font-semibold">
+                                    Загрузить скриншот, фотографию
+                                </span>
+                        </div>
+                    </label>
+                    <div id="question-${questionCount}-existing-image-file" class="border border-gray flex flex-row p-4 rounded-lg mb-2 mt-2 hidden">
+                        <img class="inline-block mr-[21px]" src="{% static 'core/icons/file-accent-red-fill-Image.svg' %}" alt="">
+                        <p class="underline mr-auto"></p>
+                        <img class="cursor-pointer" src="{% static 'core/icons/close-fill-black-main.svg' %}" alt=""
+                             onclick="removeFile(event, 'image', ${questionCount})">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-5" id="answers-${questionCount}">
                     <div class="flex items-end relative top-[-1rem]">
                         <img onclick="addAnswer(event, ${questionCount})" class="w-8 cursor-pointer" src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="a">
                     </div>
