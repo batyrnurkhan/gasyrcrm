@@ -110,7 +110,7 @@ class Course(models.Model):
     ]
     course_name = models.CharField(max_length=100)
     mini_description = models.CharField(max_length=255)
-    course_picture = models.ImageField(upload_to="course_pictures/")
+    course_picture = models.ImageField(upload_to="course_pictures/", default='static/core/images/course-default-bg.png')
     big_description = models.TextField()
     course_time = models.PositiveIntegerField(help_text="Duration in hours")
     course_difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)

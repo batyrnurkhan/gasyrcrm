@@ -364,10 +364,9 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
         if isinstance(parent_object, Course):
             redirect_url = reverse('courses:course_detail_edit', kwargs={'pk': parent_object.pk})
         elif isinstance(parent_object, Module):
-            redirect_url = reverse('home',
-                                   kwargs={'pk': parent_object.pk})
+            redirect_url = reverse('home')  # Ensure no kwargs are passed here
         elif hasattr(parent_object, 'module'):
-            redirect_url = reverse('home', kwargs={'pk': parent_object.module.pk})
+            redirect_url = reverse('home')
 
         return redirect(redirect_url)
 
