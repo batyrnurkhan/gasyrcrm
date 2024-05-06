@@ -5,6 +5,16 @@ from .models import Course, Module, Lesson, LessonLiterature
 class LiteratureSerializer(serializers.ModelSerializer):
     file = serializers.CharField(read_only=True)
 
+    def save(self, **kwargs):
+        # Directly manipulate self.validated_data if needed
+        if 'literature_name' in self.validated_data:
+            literature_name = self.validated_data['literature_name']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['literature_name'] = literature_name.encode('utf-8').decode('utf-8')
+
+        # Call the superclass method to actually save the data
+        return super(LiteratureSerializer, self).save(**kwargs)
+
     class Meta:
         model = LessonLiterature
         fields = ['id', 'file', 'literature_name', 'literature_type', 'lesson']
@@ -13,6 +23,20 @@ class LiteratureSerializer(serializers.ModelSerializer):
 class LessonFullSerializer(serializers.ModelSerializer):
     literatures = LiteratureSerializer(many=True)
     id = serializers.IntegerField(required=False)
+
+    def save(self, **kwargs):
+        # Directly manipulate self.validated_data if needed
+        if 'lesson_name' in self.validated_data:
+            lesson_name = self.validated_data['lesson_name']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['lesson_name'] = lesson_name.encode('utf-8').decode('utf-8')
+        if 'video_link' in self.validated_data:
+            video_link = self.validated_data['video_link']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['video_link'] = video_link.encode('utf-8').decode('utf-8')
+
+        # Call the superclass method to actually save the data
+        return super(LessonFullSerializer, self).save(**kwargs)
 
     class Meta:
         model = Lesson
@@ -24,6 +48,20 @@ class LessonFullSerializer(serializers.ModelSerializer):
 
 
 class LessonSerializer(serializers.ModelSerializer):
+    def save(self, **kwargs):
+        # Directly manipulate self.validated_data if needed
+        if 'lesson_name' in self.validated_data:
+            lesson_name = self.validated_data['lesson_name']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['lesson_name'] = lesson_name.encode('utf-8').decode('utf-8')
+        if 'video_link' in self.validated_data:
+            video_link = self.validated_data['video_link']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['video_link'] = video_link.encode('utf-8').decode('utf-8')
+
+        # Call the superclass method to actually save the data
+        return super(LessonSerializer, self).save(**kwargs)
+
     class Meta:
         model = Lesson
         fields = ['id', 'lesson_name', 'video_link', 'module']
@@ -32,6 +70,16 @@ class LessonSerializer(serializers.ModelSerializer):
 class ModuleFullSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     lessons = LessonFullSerializer(many=True)
+
+    def save(self, **kwargs):
+        # Directly manipulate self.validated_data if needed
+        if 'module_name' in self.validated_data:
+            module_name = self.validated_data['module_name']
+            # Example operation, though this might be redundant if encoding is handled:
+            self.validated_data['module_name'] = module_name.encode('utf-8').decode('utf-8')
+
+        # Call the superclass method to actually save the data
+        return super(ModuleFullSerializer, self).save(**kwargs)
 
     class Meta:
         model = Module
