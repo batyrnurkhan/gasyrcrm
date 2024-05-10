@@ -29,115 +29,94 @@ class SignUpView(View):
         return render(request, 'users/signup.html')
 
     def post(self, request):
-        try:
-            full_name = request.POST.get('full_name')
-            phone_number = request.POST.get('phone_number')
-            user_city = request.POST.get('user_city')
-            password = request.POST.get('password')
+        full_name = request.POST.get('full_name')
+        phone_number = request.POST.get('phone_number')
+        user_city = request.POST.get('user_city')
+        password = request.POST.get('password')
 
-            CustomUser = get_user_model()
-            login_code = generate_unique_code()  # Generate the login code here
+        CustomUser = get_user_model()
+        login_code = generate_unique_code()  # Generate the login code here
 
-            # Create the user instance with all necessary data
-            user = CustomUser.objects.create_user(
-                phone_number=phone_number,
-                password=password,
-                full_name=full_name,
-                user_city=user_city,
-                login_code=login_code  # Set login code for the user instance
-            )
-            return redirect('users:login')
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        # Create the user instance with all necessary data
+        user = CustomUser.objects.create_user(
+            phone_number=phone_number,
+            password=password,
+            full_name=full_name,
+            user_city=user_city,
+            login_code=login_code  # Set login code for the user instance
+        )
+        return redirect('users:login')
 
 
 class ShowCodeView(LoginRequiredMixin, TemplateView):
     template_name = 'users/show_code.html'
 
     def get(self, request, *args, **kwargs):
-        try:
-            # Redirect teachers and superusers directly to the home page
-            if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
-                return redirect('home')
-            return super().get(request, *args, **kwargs)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        # Redirect teachers and superusers directly to the home page
+        if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
+            return redirect('home')
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        try:
-            context = super().get_context_data(**kwargs)
-            context['login_code'] = self.request.user.login_code
-            return context
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        context = super().get_context_data(**kwargs)
+        context['login_code'] = self.request.user.login_code
+        return context
 
 
 class LoginView(View):
     form_class = CustomUserAuthenticationForm
 
     def get(self, request):
-        try:
-            form = self.form_class()
-            return render(request, 'users/login.html', {'form': form})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        form = self.form_class()
+        return render(request, 'users/login.html', {'form': form})
 
     def post(self, request):
-        try:
-            form = self.form_class(request, data=request.POST)
-            if form.is_valid():
-                raw_phone_number = form.cleaned_data.get('phone_number')
-                formatted_phone_number = re.sub(r'\D', '', raw_phone_number)  # Strip non-numeric characters
-                password = form.cleaned_data.get('password')
-                user = authenticate(request, username=formatted_phone_number, password=password)
+        form = self.form_class(request, data=request.POST)
+        if form.is_valid():
+            raw_phone_number = form.cleaned_data.get('phone_number')
+            formatted_phone_number = re.sub(r'\D', '', raw_phone_number)  # Strip non-numeric characters
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, username=formatted_phone_number, password=password)
 
-                if user is not None:
-                    login(request, user)
-                    if user.has_access or user.role in ['Teacher', 'Superuser']:
-                        redirect_url = request.GET.get("next", "/home/")
-                        return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users
-                    else:
-                        return redirect('users:show_code')  # Redirect to the page where users can see their access code
+            if user is not None:
+                login(request, user)
+                if user.has_access or user.role in ['Teacher', 'Superuser']:
+                    redirect_url = request.GET.get("next", "/home/")
+                    return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users
                 else:
-                    form.add_error(None, "Phone number or password is incorrect.")
-            return render(request, 'users/login.html', {'form': form})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+                    return redirect('users:show_code')  # Redirect to the page where users can see their access code
+            else:
+                form.add_error(None, "Phone number or password is incorrect.")
+        return render(request, 'users/login.html', {'form': form})
 
 
 class GrantAccessView(View):
     form_class = AccessCodeForm
 
     def get(self, request):
-        try:
-            form = self.form_class()
-            return render(request, 'users/grant_access.html', {'form': form})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        form = self.form_class()
+        return render(request, 'users/grant_access.html', {'form': form})
 
     def post(self, request):
-        try:
-            form = self.form_class(request.POST)
-            user_info = None
-            if form.is_valid():
-                login_code = form.cleaned_data.get('login_code')
-                CustomUser = get_user_model()
-                try:
-                    user_to_grant = CustomUser.objects.get(login_code=login_code)
-                    if 'grant_access' in request.POST:
-                        user_to_grant.has_access = True
-                        user_to_grant.save()
-                    user_info = {
-                        'full_name': user_to_grant.full_name,
-                        'phone_number': user_to_grant.phone_number,
-                        'user_city': user_to_grant.user_city,
-                        'has_access': user_to_grant.has_access,
-                    }
-                except CustomUser.DoesNotExist:
-                    form.add_error('login_code', 'No user found with this login code.')
-            return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        form = self.form_class(request.POST)
+        user_info = None
+        if form.is_valid():
+            login_code = form.cleaned_data.get('login_code')
+            CustomUser = get_user_model()
+            try:
+                user_to_grant = CustomUser.objects.get(login_code=login_code)
+                if 'grant_access' in request.POST:
+                    user_to_grant.has_access = True
+                    user_to_grant.save()
+                user_info = {
+                    'full_name': user_to_grant.full_name,
+                    'phone_number': user_to_grant.phone_number,
+                    'user_city': user_to_grant.user_city,
+                    'has_access': user_to_grant.has_access,
+                }
+            except CustomUser.DoesNotExist:
+                form.add_error('login_code', 'No user found with this login code.')
+        return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -145,61 +124,46 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = 'users/profile.html'
 
     def get(self, request):
-        try:
-            form = self.form_class(instance=request.user, user=request.user)
-            return render(request, self.template_name, {'form': form})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        form = self.form_class(instance=request.user, user=request.user)
+        return render(request, self.template_name, {'form': form})
 
     def post(self, request):
-        try:
-            form = self.form_class(request.POST, request.FILES, instance=request.user, user=request.user)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'Your profile has been updated successfully!')
-                return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
-            messages.error(request, 'Form is invalid')
-            return render(request, self.template_name, {'form': form})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        form = self.form_class(request.POST, request.FILES, instance=request.user, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile has been updated successfully!')
+            return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
+        messages.error(request, 'Form is invalid')
+        return render(request, self.template_name, {'form': form})
 
 
 @login_required
 def change_password(request):
-    try:
-        form = PasswordChangeForm(request.POST)
-        if form.is_valid():
-            old_password = form.cleaned_data.get('old_password')
-            new_password = form.cleaned_data.get('new_password')
-            user = request.user
-            if user.check_password(old_password):
-                user.set_password(new_password)
-                user.save()
-                update_session_auth_hash(request, user)  # Important!
-                messages.success(request, 'Ваш пароль был успешно обновлен!')
-            else:
-                messages.error(request, "Неправильный пароль")
+    form = PasswordChangeForm(request.POST)
+    if form.is_valid():
+        old_password = form.cleaned_data.get('old_password')
+        new_password = form.cleaned_data.get('new_password')
+        user = request.user
+        if user.check_password(old_password):
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Ваш пароль был успешно обновлен!')
         else:
-            messages.error(request, form.errors)
-        return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+            messages.error(request, "Неправильный пароль")
+    else:
+        messages.error(request, form.errors)
+    return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
 
 
 class CheckAccessView(LoginRequiredMixin, View):
     def post(self, request):
-        try:
-            if request.user.has_access:
-                return JsonResponse({'has_access': True, 'url': reverse('home')})
-            else:
-                return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
+        if request.user.has_access:
+            return JsonResponse({'has_access': True, 'url': reverse('home')})
+        else:
+            return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
 
 
 def log_out(request):
-    try:
-        logout(request)
-        return redirect("users:login")
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
+    logout(request)
+    return redirect("users:login")
