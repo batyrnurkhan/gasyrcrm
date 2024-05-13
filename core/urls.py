@@ -29,11 +29,13 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('courses/', include('courses.urls')),
     path('appointments/', include('appointments.urls')),
-
+    path('chats/', include('chats.urls')),
+    
     path('', WelcomePageView.as_view(), name='welcome'),
     path('home/', HomePageView.as_view(), name='home'),
     path('my-courses/', MyCoursesPageView.as_view(), name='my-courses'),
     path('completed-courses/', CompletedCoursesPageView.as_view(), name='completed-courses'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

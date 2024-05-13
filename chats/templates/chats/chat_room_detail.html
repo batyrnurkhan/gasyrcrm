@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room - {{ room.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>{{ room.title }}</h1>
+    <div>
+        <h2>Messages</h2>
+        <ul>
+            {% for message in room.messages.all %}
+            <li>
+                <strong>{{ message.user.full_name }} ({{ message.timestamp }})</strong><br>
+                {{ message.message }}
+            </li>
+            {% empty %}
+            <li>No messages in this chat room yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <h3>Send a message:</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <!-- Optionally, add a form here for adding messages -->
+</body>
+</html>
