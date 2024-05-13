@@ -10,7 +10,7 @@ class LiteratureSerializer(serializers.ModelSerializer):
         if 'literature_name' in self.validated_data:
             literature_name = self.validated_data['literature_name']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['literature_name'] = literature_name.encode('utf-8').decode('utf-8')
+            self.validated_data['literature_name'] = literature_name.encode('utf-8', 'ignore').decode('utf-8')
 
         # Call the superclass method to actually save the data
         return super(LiteratureSerializer, self).save(**kwargs)
@@ -29,11 +29,11 @@ class LessonFullSerializer(serializers.ModelSerializer):
         if 'lesson_name' in self.validated_data:
             lesson_name = self.validated_data['lesson_name']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['lesson_name'] = lesson_name.encode('utf-8').decode('utf-8')
+            self.validated_data['lesson_name'] = lesson_name.encode('utf-8', 'ignore').decode('utf-8')
         if 'video_link' in self.validated_data:
             video_link = self.validated_data['video_link']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['video_link'] = video_link.encode('utf-8').decode('utf-8')
+            self.validated_data['video_link'] = video_link.encode('utf-8', 'ignore').decode('utf-8')
 
         # Call the superclass method to actually save the data
         return super(LessonFullSerializer, self).save(**kwargs)
@@ -53,11 +53,11 @@ class LessonSerializer(serializers.ModelSerializer):
         if 'lesson_name' in self.validated_data:
             lesson_name = self.validated_data['lesson_name']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['lesson_name'] = lesson_name.encode('utf-8').decode('utf-8')
+            self.validated_data['lesson_name'] = lesson_name.encode('utf-8', 'ignore').decode('utf-8')
         if 'video_link' in self.validated_data:
             video_link = self.validated_data['video_link']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['video_link'] = video_link.encode('utf-8').decode('utf-8')
+            self.validated_data['video_link'] = video_link.encode('utf-8', 'ignore').decode('utf-8')
 
         # Call the superclass method to actually save the data
         return super(LessonSerializer, self).save(**kwargs)
@@ -76,7 +76,7 @@ class ModuleFullSerializer(serializers.ModelSerializer):
         if 'module_name' in self.validated_data:
             module_name = self.validated_data['module_name']
             # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['module_name'] = module_name.encode('utf-8').decode('utf-8')
+            self.validated_data['module_name'] = module_name.encode('utf-8', 'ignore').decode('utf-8')
 
         # Call the superclass method to actually save the data
         return super(ModuleFullSerializer, self).save(**kwargs)

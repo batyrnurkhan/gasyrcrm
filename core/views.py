@@ -1,5 +1,8 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.views.generic import TemplateView, DetailView
+from django.urls import reverse_lazy, reverse
 
 from courses.models import Course, Module, Lesson
 
@@ -51,6 +54,34 @@ class CoursePageView(LoginRequiredMixin, DetailView):
             lessons_count += Lesson.objects.filter(module_id=module.id).count()
         context["lessons_count"] = lessons_count
         context["courses"] = Course.objects.exclude(id=self.object.id)[:2]
+        return context
+
+
+def course_redirect(request, pk):
+    try:
+        module = Module.objects.filter(course_id=pk).first()
+        lesson = Lesson.objects.filter(module_id=module.pk).first()
+    except:
+        messages.error(request, "Course not found")
+        return redirect(reverse("home"))
+    return redirect(reverse("courses:course_start", kwargs={'pk': pk, 'lesson_name': lesson.lesson_name}))
+
+
+class CourseStartPageView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'core/student/course_start.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = Lesson.objects.filter(lesson_name=self.kwargs['lesson_name'])
+        module = Module.objects.filter(lessons__in=lesson).first()
+        context['lesson'] = lesson.first()
+        for i, item in enumerate(module.lessons.all()):
+            print(item, type(item))
+            if item == lesson.first():
+                context['lesson_position'] = i+1
+                break
+        context['module_id'] = module.pk
         return context
 
 

@@ -53,7 +53,11 @@
                 {# About Teacher #}
                 <div class="rounded-lg bg-white p-8 mb-[42px]">
                     <div class="flex flex-row items-center mb-5">
-                        <img class="w-full max-w-14" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
+                        <img class="w-full max-w-14" src="{% if course.created_by.profile_picture %}
+                                /{{ course.created_by.profile_picture }}
+                                {% else %}
+                                {% static "core/images/default-user.svg" %}
+                            {% endif %}" alt="">
                         <div class="ml-3.5 mr-8 h-fit">
                             <h2 class="text-xl text-black-main font-bold">{{ course.created_by.full_name }}</h2>
                             <p class="m-0 font-light">Учитель</p>
@@ -74,7 +78,11 @@
             <div class="w-1/3 relative">
                 <div class="absolute left-0 -top-[35px] right-5 white-block">
                     <div class="border-b border-gray p-8 pb-6 flex flex-row items-center">
-                        <img class="w-full max-w-14" src="{% static "core/images/anonymous-user-image.png" %}" alt="">
+                        <img class="w-full max-w-14" src="{% if course.created_by.profile_picture %}
+                                /{{ course.created_by.profile_picture }}
+                                {% else %}
+                                {% static "core/images/default-user.svg" %}
+                            {% endif %}" alt="">
                         <div class="ml-3.5 mr-8 h-fit">
                             <h2 class="text-xl text-black-main font-bold">{{ course.created_by.full_name }}</h2>
                             <p class="m-0">Учитель</p>
@@ -96,9 +104,9 @@
                                  src="{% static "core/icons/pencil-line-accent-red.svg" %}" alt="">
                             {{ lessons_count }} уроков
                         </div>
-                        <button class="py-6 px-5 w-full bg-accent-red rounded-lg text-white text-lg font-medium mb-2">
+                        <a href="{% url 'courses:course_start' pk=course.id %}" class="text-center block py-6 px-5 w-full bg-accent-red rounded-lg text-white text-lg font-medium mb-2">
                             Начать курс
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

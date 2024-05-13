@@ -8,7 +8,7 @@ from .views import (
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
     CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view
 )
-from core.views import CoursePageView
+from core.views import CoursePageView, CourseStartPageView, course_redirect
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = 'courses'
@@ -16,6 +16,8 @@ app_name = 'courses'
 urlpatterns = [
     path('', CourseListView.as_view(), name='course_list'),
     path('<int:pk>/', CoursePageView.as_view(), name='course_detail'),
+    path('student/<int:pk>/', course_redirect, name='course_start'),
+    path('student/<int:pk>/<str:lesson_name>', CourseStartPageView.as_view(), name='course_start'),
     path('edit/<int:pk>/', CourseDetailView.as_view(), name='course_detail_edit'),
     path('edit/<int:pk>/about/', EditCourseView.as_view(), name='course_detail_edit_about'),
     path('delete/<int:pk>/', CourseDelete.as_view(), name='course_delete'),

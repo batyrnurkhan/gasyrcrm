@@ -77,12 +77,20 @@
         @apply peer-checked:max-h-full
     }
 
+    .peer-active-font-bold {
+        @apply peer-checked:font-bold transition-none
+    }
+
     .h-full-4 {
         height: calc(100% - 1rem);
     }
 
     .h-side-create {
         height: calc(100vh - 450px);
+    }
+
+    .h-without-navbar {
+        height: calc(100vh - 92px);
     }
 
     .h-side {

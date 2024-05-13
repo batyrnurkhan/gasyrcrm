@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main-without-links.html' %}
+    <div class="flex">
+        {% include 'core/components/course-sidebar.html' %}
+        <div class="course px-[40px] pt-[40px] w-full">
+            <div
+                    class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md"
+            >
+                <div
+                        class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase"
+                >
+                    Урок 1 - Модуль: основы права
+                </div>
+                <div
+                        class="course__title leading-[52px] text-[42px] text-black-main font-bold mb-3.5"
+                >
+                    Введение
+                </div>
+                <div class="video-container relative w-full">
+                    <div style="padding:56.25% 0 0 0;position:relative;">
+                        <iframe src="https://player.vimeo.com/video/945765443?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479"
+                                frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
+                                style="position:absolute;top:0;left:0;width:100%;height:100%;"
+                                title="five-factorizations-version-4_360p_16_9"></iframe>
+                    </div>
+                    <script src="https://player.vimeo.com/api/player.js"></script>
+                    <button
+                            class="play-button absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 "
+                    >
+                        <img src="./assets/bigPlayIcon.png" alt="">
+                    </button>
+                </div>
+
+                <div class="course__testBtn text-center mt-5">
+                    <button
+                            class="test-btn px-[64px] py-[26px] hover:bg-accent-red hover:text-white rounded-sm border border-[1px] border-accent-red leading-7 text-5 font-semibold text-accent-red"
+                    >
+                        Перейти к тесту
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
