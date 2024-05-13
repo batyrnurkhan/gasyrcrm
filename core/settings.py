@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'courses',
     'appointments',
     'rest_framework',
+    'chats',
 ]
 
 MIDDLEWARE = [
