@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2
+from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2, Task
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +28,8 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson_crm2
         fields = ['id', 'mentor', 'teacher', 'teacher_id', 'group_name', 'subject', 'group_template']
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'name', 'deadline', 'file', 'chat_room']

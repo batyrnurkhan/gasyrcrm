@@ -1,0 +1,24 @@
+
+{% block content %}
+    <h1>Create Task in {{ room.title }}</h1>
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Publish Task</button>
+</form>
+
+    <h2>Existing Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.name }} - Due: {{ task.deadline|date:"Y-m-d H:i" }}
+                {% if task.file %}
+                    <a href="{{ task.file.url }}">Download</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        {% if not tasks %}
+            <li>No tasks have been created yet.</li>
+        {% endif %}
+    </ul>
+{% endblock %}

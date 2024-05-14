@@ -1,7 +1,17 @@
 from django.db import models
-
+from django.conf import settings
+from chats.models import ChatRoom
 from users.models import CustomUser
 
+class Task(models.Model):
+    chat_room = models.ForeignKey(ChatRoom, related_name='tasks', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    deadline = models.DateTimeField()
+    file = models.FileField(upload_to='task_files/', null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_tasks')
+
+    def __str__(self):
+        return self.name
 
 # Create your models here.
 class Subject(models.Model):
