@@ -3,8 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic import TemplateView, DetailView
 from django.urls import reverse_lazy, reverse
+from django.db.models import Prefetch
 
-from courses.models import Course, Module, Lesson
+from courses.models import Course, Module, Lesson, TestSubmission
 
 
 class HomePageView(LoginRequiredMixin, TemplateView):
@@ -47,15 +48,41 @@ class CoursePageView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        modules = Module.objects.filter(course_id=self.object.id)
-        context['modules_count'] = modules.count()
-        lessons_count = 0
-        for module in modules:
-            lessons_count += Lesson.objects.filter(module_id=module.id).count()
-        context["lessons_count"] = lessons_count
-        context["courses"] = Course.objects.exclude(id=self.object.id)[:2]
-        return context
+        user = self.request.user
+        modules = Module.objects.filter(course_id=self.object.id).prefetch_related(Prefetch('tests'))
 
+        accessible_modules = []
+        lessons_count = 0
+        allow_access_to_next = True
+
+        for i, module in enumerate(modules):
+            if i == 0:  # The first module is always accessible
+                accessible_modules.append(module)
+                lessons_count += Lesson.objects.filter(module=module).count()
+                continue
+
+            # Check if the previous module's test was passed
+            previous_module = accessible_modules[-1]
+            test = previous_module.tests.first()  # Assuming only one test per module
+            if test:
+                test_submission = TestSubmission.objects.filter(user=user, test=test).first()
+                if test_submission and test_submission.score >= 50:
+                    accessible_modules.append(module)
+                    lessons_count += Lesson.objects.filter(module=module).count()
+                else:
+                    break  # Stop adding modules if the previous one wasn't passed
+            else:
+                accessible_modules.append(module)
+                lessons_count += Lesson.objects.filter(module=module).count()
+
+        context.update({
+            'modules': accessible_modules,  # Only modules the user can access
+            'modules_count': len(accessible_modules),
+            'lessons_count': lessons_count,
+            'courses': Course.objects.exclude(id=self.object.id)[:2]  # Suggesting other courses
+        })
+
+        return context
 
 def course_redirect(request, pk):
     try:

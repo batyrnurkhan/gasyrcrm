@@ -30,6 +30,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('Anonymous', 'Anonymous'),
         ('Student', 'Student'),
         ('Teacher', 'Teacher'),
+        ('Mentor', 'Mentor'),
     )
 
     full_name = models.CharField(max_length=255)

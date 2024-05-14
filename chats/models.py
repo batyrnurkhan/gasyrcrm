@@ -7,12 +7,13 @@ class ChatRoom(models.Model):
     
     def __str__(self):
         return self.title
-    
+
 class Message(models.Model):
     chat_room = models.ForeignKey(ChatRoom, related_name='messages', on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    message = models.TextField()
+    message = models.TextField(blank=True)  # Allow blank messages for file-only cases
+    file = models.FileField(upload_to='chat_files/', null=True, blank=True)  # Add optional file field
     timestamp = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
-        return self.message
+        return self.message if self.message else "File Message"

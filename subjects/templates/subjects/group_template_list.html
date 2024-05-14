@@ -1,0 +1,53 @@
+<!-- templates/group_template_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Group Templates</h1>
+<form id="groupTemplateForm">
+    <label for="name">Group Name:</label>
+    <input type="text" id="name" name="name" required><br>
+    <button type="submit">Add Group Template</button>
+</form>
+
+<ul id="groupTemplateList"></ul>
+
+<script>
+document.getElementById('groupTemplateForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = document.getElementById('name').value;
+
+    fetch('{% url "grouptemplate-list" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'
+        },
+        body: JSON.stringify({name: name})
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        loadGroupTemplates();  // Reload the list after adding
+    });
+});
+
+function loadGroupTemplates() {
+    fetch('{% url "grouptemplate-list" %}', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'
+        }
+    }).then(response => response.json())
+      .then(data => {
+        var list = document.getElementById('groupTemplateList');
+        list.innerHTML = '';
+        data.forEach(function(template) {
+            var item = document.createElement('li');
+            item.textContent = template.name;
+            list.appendChild(item);
+        });
+    });
+}
+
+window.onload = loadGroupTemplates;
+</script>
+{% endblock %}

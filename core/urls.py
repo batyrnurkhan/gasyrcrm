@@ -30,7 +30,8 @@ urlpatterns = [
     path('courses/', include('courses.urls')),
     path('appointments/', include('appointments.urls')),
     path('chats/', include('chats.urls')),
-    
+    path('subjects/', include('subjects.urls')),
+
     path('', WelcomePageView.as_view(), name='welcome'),
     path('home/', HomePageView.as_view(), name='home'),
     path('my-courses/', MyCoursesPageView.as_view(), name='my-courses'),

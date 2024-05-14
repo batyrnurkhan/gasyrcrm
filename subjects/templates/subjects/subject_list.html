@@ -1,0 +1,58 @@
+<!-- templates/subject_list.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Subjects</h1>
+<form id="subjectForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required></textarea><br>
+    <button type="submit">Add Subject</button>
+</form>
+
+<ul id="subjectList"></ul>
+
+<script>
+document.getElementById('subjectForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var name = document.getElementById('name').value;
+    var description = document.getElementById('description').value;
+
+    fetch('{% url "subject-list" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'  // Replace YOUR_TOKEN_HERE with the actual token
+        },
+        body: JSON.stringify({name: name, description: description})
+    }).then(function(response) {
+        return response.json();
+    }).then(function(data) {
+        console.log(data);
+        loadSubjects();  // Reload the list after adding
+    });
+});
+
+function loadSubjects() {
+    fetch('{% url "subject-list" %}', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'  // Replace YOUR_TOKEN_HERE with the actual token
+        }
+    }).then(function(response) {
+        return response.json();
+    }).then(function(data) {
+        var list = document.getElementById('subjectList');
+        list.innerHTML = '';
+        data.forEach(function(subject) {
+            var item = document.createElement('li');
+            item.textContent = subject.name + ' - ' + subject.description;
+            list.appendChild(item);
+        });
+    });
+}
+
+window.onload = loadSubjects;
+</script>
+{% endblock %}

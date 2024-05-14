@@ -1,38 +1,38 @@
 {% load static %}
 <div class="h-without-navbar w-[25%] flex flex-col pt-[60px] pb-5 bg-white space-y-6">
-    {% for module in course.modules.all %}
+    {% for module in modules %} <!-- Ensure you are iterating over 'modules' context variable -->
         <div class="relative overflow-hidden">
             <input {% if module_id == module.id %}checked{% endif %} type="checkbox"
                    class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
             <div class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
                 <img class="inline-block mr-3"
-                     src="{% static "core/icons/folder-fill-accent-red.svg" %}" alt="">
+                     src="{% static 'core/icons/folder-fill-accent-red.svg' %}" alt="">
                 <span class="mr-auto">Модуль {{ forloop.counter }}</span>
             </div>
             <img class="absolute right-6 top-0 accordion-red block h-[24px]"
-                 src="{% static "core/icons/arrow-right-button-accent-red.svg" %}" alt="">
+                 src="{% static 'core/icons/arrow-right-button-accent-red.svg' %}" alt="">
             <img class="absolute right-6 top-0 accordion-gray hidden h-[24px]"
-                 src="{% static "core/icons/arrow-down-button-gray.svg" %}" alt="">
+                 src="{% static 'core/icons/arrow-down-button-gray.svg' %}" alt="">
             <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px] text-black-main">
                 <div class="px-6 py-3 space-y-5">
-                    {% for l in module.lessons.all %}
+                    {% for lesson in module.lessons.all %}
                         <div class="relative overflow-hidden">
-                            <input {% if l.id == lesson.id %}checked{% endif %} type="checkbox"
+                            <input {% if lesson.id == lesson.id %}checked{% endif %} type="checkbox"
                                    class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
-                            <p class="peer-active-font-bold text-[18px] leading-[22px] text-black-main mb-[12px] block">{{ l.lesson_name }}</p>
+                            <p class="peer-active-font-bold text-[18px] leading-[22px] text-black-main mb-[12px] block">{{ lesson.lesson_name }}</p>
                             <ul class="overflow-hidden transition-all peer-active-max-h-full
                             max-h-0 space-y-3 pl-[36px] list-disc list-outside">
                                 <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                     <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
                                     <span>Лекция</span>
                                 </li>
-                                {% if l.tests.count > 0 %}
+                                {% if lesson.tests.count > 0 %}
                                     <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                         <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
                                         <span>Тестирование</span>
                                     </li>
                                 {% endif %}
-                                {% if l.literatures.count > 0 %}
+                                {% if lesson.literatures.count > 0 %}
                                     <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                         <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
                                         <span>Литература</span>
@@ -48,7 +48,6 @@
                             <p class="text-[18px] leading-[22px] text-black-main mb-[12px] block">Тестирование модуля: {{ test.title }}</p>
                         </div>
                     {% endfor %}
-
                 </div>
             </div>
         </div>

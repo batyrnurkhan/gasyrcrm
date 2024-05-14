@@ -2536,3 +2536,85 @@ video {
     width: 75%;
   }
 }
+.py-\[18px\] {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.py-\[9px\] {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.pb-10 {
+  padding-bottom: 2.5rem;
+}
+
+.pl-0 {
+  padding-left: 0px;
+}
+
+.pl-\[26px\] {
+  padding-left: 26px;
+}
+
+.pt-9 {
+  padding-top: 2.25rem;
+}
+
+.pt-\[42px\] {
+  padding-top: 42px;
+}
+
+.text-\[16px\] {
+  font-size: 16px;
+}
+
+.text-\[18px\] {
+  font-size: 18px;
+}
+
+.text-\[20px\] {
+  font-size: 20px;
+}
+
+.leading-7 {
+  line-height: 1.75rem;
+}
+
+.placeholder-accent-red::-moz-placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(186 32 37 / var(--tw-placeholder-opacity));
+}
+
+.placeholder-accent-red::placeholder {
+  --tw-placeholder-opacity: 1;
+  color: rgb(186 32 37 / var(--tw-placeholder-opacity));
+}
+
+.\*\:px-8 > * {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.\*\:py-5 > * {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.checked\:accent-accent-red:checked {
+  accent-color: #BA2025;
+}
+
+
+@media (min-width: 1024px) {
+  .lg\:w-10\/12 {
+    width: 83.333333%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .xl\:w-3\/4 {
+    width: 75%;
+  }
+}

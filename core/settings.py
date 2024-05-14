@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'appointments',
     'rest_framework',
     'chats',
+    'subjects',
 ]
 
 MIDDLEWARE = [
