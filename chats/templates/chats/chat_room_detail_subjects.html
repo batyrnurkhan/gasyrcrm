@@ -8,7 +8,16 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
+
     <h1>{{ room.title }}</h1>
+    <div>
+        <h2>Lesson Subject Details</h2>
+        <p>Subject: {{ lesson.subject.name }}</p>
+        <p>Description: {{ lesson.subject.description }}</p>
+        {% if lesson.subject.image %}
+            <img src="{{ lesson.subject.image.url }}" alt="{{ lesson.subject.name }}" style="max-width:200px; max-height:200px;">
+        {% endif %}
+    </div>
     <div>
         <h2>Messages</h2>
         <ul>
@@ -41,7 +50,22 @@
 <div>
     <a href="{% url 'chats:create_task' room.id %}">Create Task</a>
 </div>
-
+<div>
+    <h3>Group Template Users:</h3>
+    <ul>
+        {% for user in group_template_users %}
+            <li>{{ user.full_name }} ({{ user.email }})</li>
+        {% empty %}
+            <li>No students in this group template.</li>
+        {% endfor %}
+    </ul>
+    <h2>Teacher</h2>
+{% if teacher %}
+    <p>{{ teacher.full_name }} ({{ teacher.email }})</p>
+{% else %}
+    <p>No teacher assigned to this lesson.</p>
+{% endif %}
+</div>
 </body>
 
 </html>

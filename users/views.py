@@ -10,7 +10,9 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, View
-from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm, PasswordChangeForm
+from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm, PasswordChangeForm, \
+    TeacherCreationForm
+from users.models import CustomUser
 
 logger = logging.getLogger(__name__)
 
@@ -167,3 +169,29 @@ class CheckAccessView(LoginRequiredMixin, View):
 def log_out(request):
     logout(request)
     return redirect("users:login")
+
+
+@login_required
+def create_teacher(request):
+    if not (request.user.is_superuser or request.user.role == 'Mentor'):
+        messages.error(request, "Unauthorized access.")
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = TeacherCreationForm(request.POST)
+        if form.is_valid():
+            user, password = form.save()  # Save the user and get the generated password
+            # Pass the details to the template directly
+            context = {
+                'form': TeacherCreationForm(),  # Reset the form for new input
+                'created': True,
+                'user_phone': user.phone_number,
+                'user_password': password
+            }
+            return render(request, 'users/create_teacher.html', context)
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = TeacherCreationForm()
+
+    return render(request, 'users/create_teacher.html', {'form': form})

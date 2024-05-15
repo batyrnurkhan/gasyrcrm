@@ -1,57 +1,80 @@
 from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 from rest_framework import generics, permissions
 from rest_framework.generics import get_object_or_404
 
 from chats.models import ChatRoom, Message
-from .forms import TaskForm
+from users.models import CustomUser
+from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task
 from .permissions import IsMentorSuperuserOrGroupMember
 from .serializers import SubjectSerializer, GroupTemplateSerializer, LessonSerializer, TaskSerializer
 
 
-class SubjectListView(generics.ListCreateAPIView):
-    queryset = Subject.objects.all()
-    serializer_class = SubjectSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class SubjectListView(ListView):
+    model = Subject
+    template_name = 'subjects/subject_list.html'
 
-class GroupTemplateListView(generics.ListCreateAPIView):
-    queryset = GroupTemplate.objects.all()
-    serializer_class = GroupTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+def group_template_list(request):
+    form = GroupTemplateForm(request.POST or None)
+    search_form = UserSearchForm(request.GET or None)
+    students = []
+    group_templates = GroupTemplate.objects.all()  # Fetch all group templates
+
+    if 'search' in request.GET and search_form.is_valid():
+        students = search_form.search_users()
+
+    if request.method == 'POST' and 'create_template' in request.POST:
+        if form.is_valid():
+            group_template = form.save(commit=False)
+            selected_students = request.POST.getlist('selected_students')
+            group_template.save()
+            group_template.students.set(selected_students)  # Save selected students to the group template
+            return redirect('subjects:grouptemplate-list')  # Redirect to avoid double POST on refresh
+
+    return render(request, 'subjects/group_template_list.html', {
+        'form': form,
+        'search_form': search_form,
+        'students': students,
+        'group_templates': group_templates  # Pass the list of group templates to the template
+    })
 
 
-class LessonListView(generics.ListCreateAPIView):
-    queryset = Lesson_crm2.objects.all()
-    serializer_class = LessonSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class LessonListView(CreateView):
+    model = Lesson_crm2
+    form_class = LessonForm
+    template_name = 'subjects/lesson_create.html'
+    success_url = reverse_lazy('lesson_list')  # Adjust this to the correct URL for listing lessons
 
-    def perform_create(self, serializer):
-        if not (self.request.user.role == 'Mentor' or self.request.user.is_superuser):
-            raise permissions.PermissionDenied("You do not have permission to create a lesson.")
-
-        with transaction.atomic():  # Ensures that both Lesson and ChatRoom are created successfully
-            lesson = serializer.save(mentor=self.request.user)
-
-            # Create a ChatRoom
-            chat_room = ChatRoom.objects.create(title=f"Lesson {lesson.id} Chat")
-            # Add all users from the selected group template to the chat room
-            for student in lesson.group_template.students.all():
-                chat_room.participants.add(student)
-            chat_room.participants.add(lesson.teacher)  # Add the teacher as well
+    def form_valid(self, form):
+        with transaction.atomic():
+            chat_room = ChatRoom.objects.create(title="Temporary Title")  # Initial title
+            self.object = form.save(commit=False)
+            self.object.mentor = self.request.user  # Automatically set mentor to the current user
+            self.object.save()
+            chat_room.title = f"Lesson {self.object.id} Chat"
             chat_room.save()
+
+            # Add users to chat room
+            for student in self.object.group_template.students.all():
+                chat_room.participants.add(student)
+            if self.object.teacher:
+                chat_room.participants.add(self.object.teacher)
+            return super().form_valid(form)
 
 from rest_framework import generics
 
-class LessonDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Lesson_crm2.objects.all()
-    serializer_class = LessonSerializer
-    permission_classes = [IsMentorSuperuserOrGroupMember]
+class LessonDetailView(DetailView):
+    model = Lesson_crm2
+    template_name = 'subjects/lesson_detail.html'
 
     def get_object(self):
-        obj = super().get_object()
-        self.check_object_permissions(self.request, obj)
-        return obj
+        lesson = super().get_object()
+        # Optionally, check permissions here
+        return lesson
 
 from django.utils.timezone import localtime
 
@@ -86,3 +109,14 @@ def create_task(request, room_id):
         'room': room,
         'tasks': tasks
     })
+
+
+def search_students(request):
+    search_term = request.GET.get('search', '')
+    students = CustomUser.objects.filter(
+        role='Student',
+        full_name__icontains=search_term
+    ).order_by('full_name')[:10]
+
+    student_list = list(students.values('id', 'full_name'))  # Create a list of dicts
+    return JsonResponse(student_list, safe=False)

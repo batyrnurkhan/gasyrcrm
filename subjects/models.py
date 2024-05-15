@@ -17,9 +17,11 @@ class Task(models.Model):
 class Subject(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
+    image = models.ImageField(upload_to='subject_images/', blank=True, null=True)  # Add this line
 
     def __str__(self):
         return self.name
+
 
 class GroupTemplate(models.Model):
     name = models.CharField(max_length=255)
@@ -34,6 +36,7 @@ class Lesson_crm2(models.Model):
     group_name = models.CharField(max_length=255)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     group_template = models.ForeignKey(GroupTemplate, on_delete=models.CASCADE)
+    chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='lessons')
 
     def __str__(self):
         return f"{self.group_name} - {self.subject.name}"

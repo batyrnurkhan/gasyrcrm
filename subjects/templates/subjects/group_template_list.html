@@ -1,53 +1,50 @@
-<!-- templates/group_template_list.html -->
-{% extends 'base.html' %}
-
 {% block content %}
-<h1>Group Templates</h1>
-<form id="groupTemplateForm">
-    <label for="name">Group Name:</label>
-    <input type="text" id="name" name="name" required><br>
-    <button type="submit">Add Group Template</button>
+<h1>Create Group Template</h1>
+
+<!-- Display existing group templates -->
+<h2>Existing Group Templates</h2>
+<ul>
+    {% for gt in group_templates %}
+        <li>{{ gt.name }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Form for creating a group template and selecting students -->
+<form id="group-template-form" method="post" action="">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Form for the group template name -->
+    {{ search_form.as_p }}  <!-- Form for searching students -->
+    <label for="selected_students">Select Students:</label>
+    <select name="selected_students" id="selected_students" multiple size="10">
+        {% for student in students %}
+            <option value="{{ student.id }}">{{ student.full_name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" name="create_template">Create Group Template</button>
+    <button type="button" onclick="searchStudents()">Search</button>
 </form>
 
-<ul id="groupTemplateList"></ul>
-
 <script>
-document.getElementById('groupTemplateForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    var name = document.getElementById('name').value;
+function searchStudents() {
+    var searchInput = document.querySelector('[name="search"]').value;
+    var url = '{% url "subjects:search-students" %}?search=' + searchInput;
 
-    fetch('{% url "grouptemplate-list" %}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'
-        },
-        body: JSON.stringify({name: name})
-    }).then(response => response.json())
-      .then(data => {
-        console.log(data);
-        loadGroupTemplates();  // Reload the list after adding
-    });
-});
-
-function loadGroupTemplates() {
-    fetch('{% url "grouptemplate-list" %}', {
-        method: 'GET',
-        headers: {
-            'Authorization': 'Token ' + 'YOUR_TOKEN_HERE'
-        }
-    }).then(response => response.json())
-      .then(data => {
-        var list = document.getElementById('groupTemplateList');
-        list.innerHTML = '';
-        data.forEach(function(template) {
-            var item = document.createElement('li');
-            item.textContent = template.name;
-            list.appendChild(item);
-        });
-    });
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            var select = document.getElementById('selected_students');
+            select.innerHTML = '';  // Clear existing options
+            if (Array.isArray(data)) {  // Ensure data is an array
+                data.forEach(student => {
+                    var option = new Option(student.full_name, student.id);  // Simplified option creation
+                    select.add(option);
+                });
+            } else {
+                console.error('Received data is not an array:', data);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
-
-window.onload = loadGroupTemplates;
 </script>
+
 {% endblock %}

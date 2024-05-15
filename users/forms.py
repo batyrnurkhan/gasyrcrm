@@ -69,3 +69,23 @@ class ProfileUpdateForm(forms.ModelForm):
             if CustomUser.objects.filter(phone_number=formatted_phone_number).exists():
                 raise forms.ValidationError("This phone number is already in use.")
         return formatted_phone_number
+
+
+class TeacherCreationForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=255, required=True)
+    last_name = forms.CharField(max_length=255, required=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['phone_number']
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.full_name = f"{self.cleaned_data['first_name']} {self.cleaned_data['last_name']}"
+        user.role = 'Teacher'
+        user.user_city = "Almaty"  # Default city
+        password = CustomUser.objects.make_random_password()  # Generate a random password
+        user.set_password(password)  # Set the generated password
+        if commit:
+            user.save()
+        return user, password

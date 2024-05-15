@@ -1,0 +1,16 @@
+{% block content %}
+<h1>Create Teacher</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Teacher</button>
+</form>
+
+{% if created %}
+    <div>
+        <h2>Teacher Created Successfully!</h2>
+        <p>Phone Number: {{ user_phone }}</p>
+        <p>Generated Password: {{ user_password }}</p>
+    </div>
+{% endif %}
+{% endblock %}
