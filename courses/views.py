@@ -572,16 +572,12 @@ class TakeTestView(LoginRequiredMixin, View):
         all_selected_answer_ids = []
         for question in questions:
             selected_answer_ids = list(map(int, request.POST.getlist(f'answer_{question.id}')))
-            all_selected_answer_ids.append(selected_answer_ids)
+            all_selected_answer_ids.extend(selected_answer_ids)  # Extending instead of appending to flatten the list
             correct_answers = list(question.answers.filter(is_correct=True).values_list('id', flat=True))
 
-            if not selected_answer_ids:
-                continue
-
-            # Handling Single and Multiple Choice
+            # Adjusted logic to handle multiple correct answers
             if question.question_type in ['SC', 'MC']:
-                selected_correct = set(selected_answer_ids).intersection(correct_answers)
-                if len(selected_correct) == len(correct_answers) == len(selected_answer_ids):
+                if set(selected_answer_ids) == set(correct_answers):
                     score += 1
 
             elif question.question_type in ['IMG', 'AUD']:
