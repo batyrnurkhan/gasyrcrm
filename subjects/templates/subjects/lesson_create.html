@@ -1,8 +1,9 @@
 {% block content %}
   <h1>Create a New Lesson</h1>
-  <form method="post">
+<form method="post" action="{% url 'subjects:lesson-create' time_id=time_id %}">
     {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="time_slot" value="{{ time_id }}" id="id_time_slot">
     <button type="submit">Save</button>
   </form>
 {% endblock %}

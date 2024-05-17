@@ -1,0 +1,17 @@
+{% block content %}
+<div class="container">
+    <h2>Schedule a Lesson</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Renders the form fields here -->
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Please correct the errors below and resubmit.</strong>
+            </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock %}

@@ -31,6 +31,7 @@ urlpatterns = [
     path('appointments/', include('appointments.urls')),
     path('chats/', include('chats.urls')),
     path('subjects/', include('subjects.urls')),
+    path('schedule/', include('schedule.urls')),
 
     path('', WelcomePageView.as_view(), name='welcome'),
     path('home/', HomePageView.as_view(), name='home'),

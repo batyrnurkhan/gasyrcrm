@@ -15,7 +15,10 @@ class TaskForm(forms.ModelForm):
 class LessonForm(forms.ModelForm):
     class Meta:
         model = Lesson_crm2
-        fields = ['group_name', 'subject', 'group_template', 'teacher']  # adjust fields as necessary
+        fields = ['group_name', 'subject', 'group_template', 'teacher', 'time_slot']
+        widgets = {
+            'time_slot': forms.HiddenInput()
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

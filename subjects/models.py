@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from chats.models import ChatRoom
+from schedule.models import Shift, ShiftTime
 from users.models import CustomUser
 
 class Task(models.Model):
@@ -37,6 +38,7 @@ class Lesson_crm2(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     group_template = models.ForeignKey(GroupTemplate, on_delete=models.CASCADE)
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='lessons')
+    time_slot = models.ForeignKey(ShiftTime, related_name='lessons', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.group_name} - {self.subject.name}"

@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView
 from rest_framework import generics, permissions
 from rest_framework.generics import get_object_or_404
@@ -43,28 +43,44 @@ def group_template_list(request):
     })
 
 
-class LessonListView(CreateView):
+class LessonCreateView(CreateView):
     model = Lesson_crm2
     form_class = LessonForm
     template_name = 'subjects/lesson_create.html'
-    success_url = reverse_lazy('lesson_list')  # Adjust this to the correct URL for listing lessons
+
+    def get_context_data(self, **kwargs):
+        # Ensure the time_id is passed to the template for the hidden field
+        context = super().get_context_data(**kwargs)
+        context['time_id'] = self.kwargs['time_id']
+        return context
+
+    def get_success_url(self):
+        # Redirects back to the shifts page after successful creation
+        return reverse('schedule:shifts')
 
     def form_valid(self, form):
-        with transaction.atomic():
-            chat_room = ChatRoom.objects.create(title="Temporary Title")  # Initial title
-            self.object = form.save(commit=False)
-            self.object.mentor = self.request.user  # Automatically set mentor to the current user
-            self.object.save()
-            chat_room.title = f"Lesson {self.object.id} Chat"
-            chat_room.save()
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.instance.mentor = self.request.user  # Set the mentor as the current user
+        form.instance.time_slot_id = self.kwargs['time_id']  # Set the time_slot from the URL parameter
 
-            # Add users to chat room
-            for student in self.object.group_template.students.all():
-                chat_room.participants.add(student)
-            if self.object.teacher:
-                chat_room.participants.add(self.object.teacher)
-            return super().form_valid(form)
+        # Create a chat room for the lesson
+        chat_room = ChatRoom.objects.create(title="Temporary Title")
+        form.instance.chat_room = chat_room  # Associate the chat room with the lesson
 
+        response = super().form_valid(form)  # Save the lesson and form data
+
+        # Update the chat room title and save it
+        chat_room.title = f"Lesson {self.object.id} Chat"
+        chat_room.save()
+
+        # Add users to chat room
+        for student in self.object.group_template.students.all():
+            chat_room.participants.add(student)
+        if self.object.teacher:
+            chat_room.participants.add(self.object.teacher)
+
+        return response
 from rest_framework import generics
 
 class LessonDetailView(DetailView):
@@ -118,5 +134,5 @@ def search_students(request):
         full_name__icontains=search_term
     ).order_by('full_name')[:10]
 
-    student_list = list(students.values('id', 'full_name'))  # Create a list of dicts
+    student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)

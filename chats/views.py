@@ -15,7 +15,10 @@ def chat_room_detail(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
     lesson = get_object_or_404(Lesson_crm2, chat_room=room)
     group_template_users = lesson.group_template.students.all()
-    teacher = lesson.teacher  # This fetches the teacher related to the lesson
+    teacher = lesson.teacher
+
+    if request.user != teacher and request.user not in group_template_users:
+        return HttpResponseForbidden("You are not allowed to view this chat room.")
 
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -28,12 +31,12 @@ def chat_room_detail(request, room_id):
     else:
         form = MessageForm()
 
-    messages = room.messages.all()
+    messages = room.messages.all().order_by('-created_at')  # Assuming there's a 'created_at' field
     return render(request, 'chats/chat_room_detail_subjects.html', {
         'room': room,
         'messages': messages,
         'lesson': lesson,
         'form': form,
         'group_template_users': group_template_users,
-        'teacher': teacher  # Pass the teacher to the template
+        'teacher': teacher
     })
