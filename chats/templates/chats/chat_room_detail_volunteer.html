@@ -1,0 +1,14 @@
+{% block content %}
+<h1>Chat Room for {{ lesson.subject.name }} - {{ lesson.group_name }}</h1>
+<div>
+    <h3>Messages:</h3>
+    {% for message in messages %}
+    <p><strong>{{ message.user.full_name }}:</strong> {{ message.message }}</p>
+    {% endfor %}
+</div>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Send</button>
+</form>
+{% endblock %}

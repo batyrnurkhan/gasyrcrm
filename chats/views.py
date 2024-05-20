@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 
@@ -13,12 +15,18 @@ def chat_room_list(request):
 @login_required
 def chat_room_detail(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
-    lesson = get_object_or_404(Lesson_crm2, chat_room=room)
-    group_template_users = lesson.group_template.students.all()
-    teacher = lesson.teacher
+    try:
+        lesson = Lesson_crm2.objects.get(chat_room=room)
+        group_template_users = lesson.group_template.students.all()
+        teacher = lesson.teacher
 
-    if request.user != teacher and request.user not in group_template_users:
-        return HttpResponseForbidden("You are not allowed to view this chat room.")
+        if not (request.user.is_superuser or request.user == lesson.mentor or request.user in group_template_users):
+            return HttpResponseForbidden("You are not allowed to view this chat room.")
+    except ObjectDoesNotExist:
+        # Handle the case where there is no lesson linked to this chat room
+        lesson = None
+        group_template_users = []
+        teacher = None
 
     if request.method == 'POST':
         form = MessageForm(request.POST)
@@ -31,7 +39,7 @@ def chat_room_detail(request, room_id):
     else:
         form = MessageForm()
 
-    messages = room.messages.all().order_by('-created_at')  # Assuming there's a 'created_at' field
+    messages = room.messages.all().order_by('-timestamp')
     return render(request, 'chats/chat_room_detail_subjects.html', {
         'room': room,
         'messages': messages,

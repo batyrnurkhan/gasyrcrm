@@ -1,17 +1,14 @@
-from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView
-from rest_framework import generics, permissions
 from rest_framework.generics import get_object_or_404
-
 from chats.models import ChatRoom, Message
 from users.models import CustomUser
-from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm
-from .models import Subject, GroupTemplate, Lesson_crm2, Task
-from .permissions import IsMentorSuperuserOrGroupMember
-from .serializers import SubjectSerializer, GroupTemplateSerializer, LessonSerializer, TaskSerializer
+from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm
+from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel
 
 
 class SubjectListView(ListView):
@@ -135,3 +132,32 @@ def search_students(request):
 
     student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
+
+
+@login_required
+def create_volunteer_channel(request):
+    if not (request.user.role == 'Mentor' or request.user.is_superuser):
+        messages.error(request, "Only mentors and superusers can create channels.")
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = VolunteerChannelForm(request.POST, request.FILES)
+        if form.is_valid():
+            volunteer_channel = form.save(commit=False)
+            chat_room = ChatRoom.objects.create(title=f"Chat for {volunteer_channel.name}")
+            volunteer_channel.chat_room = chat_room  # Ensure this assignment is done correctly
+            volunteer_channel.save()
+            form.save_m2m()
+            for user in volunteer_channel.users.all():
+                chat_room.participants.add(user)
+            chat_room.participants.add(request.user)  # Optionally adding the creator
+            return redirect('subjects:volunteer_channel_list')
+    else:
+        form = VolunteerChannelForm()
+
+    return render(request, 'subjects/volunteer_channel_form.html', {'form': form})
+
+
+def volunteer_channel_list(request):
+    channels = VolunteerChannel.objects.all()
+    return render(request, 'subjects/volunteer_channel_list.html', {'channels': channels})

@@ -1,5 +1,5 @@
 from django import forms
-
+from .models import VolunteerChannel
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
 
@@ -40,3 +40,9 @@ class UserSearchForm(forms.Form):
         search_term = self.cleaned_data['search']
         # Fetch top 10 students by name, alphabetically
         return CustomUser.objects.filter(role='Student', full_name__icontains=search_term).order_by('full_name')[:10]
+
+
+class VolunteerChannelForm(forms.ModelForm):
+    class Meta:
+        model = VolunteerChannel
+        fields = ['name', 'description', 'users']
