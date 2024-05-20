@@ -8,7 +8,7 @@ from rest_framework.generics import get_object_or_404
 from chats.models import ChatRoom, Message
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
-from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel
+from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
 
 
 class SubjectListView(ListView):
@@ -39,6 +39,30 @@ def group_template_list(request):
         'group_templates': group_templates  # Pass the list of group templates to the template
     })
 
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView
+from .models import Lesson_crm2
+from django.utils import timezone
+
+class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Lesson_crm2
+    template_name = 'subjects/lesson_list.html'
+    context_object_name = 'lessons'
+
+    def test_func(self):
+        # Check if user is a student or a superuser
+        return self.request.user.is_superuser or self.request.user.role == 'Student'
+
+    def get_queryset(self):
+        # Superusers see all lessons, students see only their lessons
+        if self.request.user.is_superuser:
+            return Lesson_crm2.objects.all().select_related('teacher', 'time_slot')
+        return Lesson_crm2.objects.filter(group_template__students=self.request.user).select_related('teacher', 'time_slot')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = timezone.now()  # if you need the current time
+        return context
 
 class LessonCreateView(CreateView):
     model = Lesson_crm2
@@ -182,3 +206,18 @@ def set_grade(request, lesson_id):
         'lesson': lesson,
         'students': students
     })
+
+
+@login_required
+def grades_by_day_view(request):
+    # Fetch grades for the logged-in user, grouped by the date assigned
+    grades = Grade.objects.filter(student=request.user).order_by('date_assigned')
+
+    # Group grades by date
+    grades_by_date = {}
+    for grade in grades:
+        if grade.date_assigned not in grades_by_date:
+            grades_by_date[grade.date_assigned] = []
+        grades_by_date[grade.date_assigned].append(grade)
+
+    return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})

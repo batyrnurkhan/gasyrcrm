@@ -1,0 +1,18 @@
+
+{% block content %}
+<div class="container">
+    <h2>Grades by Days</h2>
+    {% if grades_by_date %}
+        {% for date, grades in grades_by_date.items %}
+            <h3>{{ date|date:"l, d M Y" }}</h3>
+            <ul>
+                {% for grade in grades %}
+                    <li>{{ grade.lesson.subject.name }} - {{ grade.lesson.group_name }}: {{ grade.grade }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% else %}
+        <p>No grades available.</p>
+    {% endif %}
+</div>
+{% endblock %}
