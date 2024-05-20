@@ -81,7 +81,6 @@ class LessonCreateView(CreateView):
             chat_room.participants.add(self.object.teacher)
 
         return response
-from rest_framework import generics
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2
