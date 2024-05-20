@@ -65,6 +65,11 @@
 {% else %}
     <p>No teacher assigned to this lesson.</p>
 {% endif %}
+    <div>
+    <h3>Set Grade for Today:</h3>
+    <a href="{% url 'subjects:set_grade' lesson.id %}" class="btn btn-primary">Set grade to this day</a>
+</div>
+
 </div>
 </body>
 

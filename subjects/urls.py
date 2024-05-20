@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import SubjectListView, group_template_list, LessonCreateView, LessonDetailView, search_students, \
-    create_volunteer_channel, volunteer_channel_list
+    create_volunteer_channel, volunteer_channel_list, set_grade
 
 app_name = 'subjects'
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('search/', search_students, name='search-students'),
     path('volunteer_channels/create/', create_volunteer_channel, name='create_volunteer_channel'),
     path('volunteer_channels/', volunteer_channel_list, name='volunteer_channel_list'),
+    path('set-grade/<int:lesson_id>/', set_grade, name='set_grade'),
 ]

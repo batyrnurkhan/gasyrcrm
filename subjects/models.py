@@ -66,3 +66,12 @@ class VolunteerChannel(models.Model):
             with open(image_path, 'rb') as f:
                 self.image.save(os.path.basename(image_path), File(f), save=False)
         super(VolunteerChannel, self).save(*args, **kwargs)
+
+class Grade(models.Model):
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'Student'})
+    lesson = models.ForeignKey(Lesson_crm2, on_delete=models.CASCADE)
+    date_assigned = models.DateField()
+    grade = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f"{self.grade} for {self.student.full_name} on {self.date_assigned}"

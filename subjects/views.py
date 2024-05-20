@@ -1,13 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView
 from rest_framework.generics import get_object_or_404
 from chats.models import ChatRoom, Message
 from users.models import CustomUser
-from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm
+from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel
 
 
@@ -161,3 +161,24 @@ def create_volunteer_channel(request):
 def volunteer_channel_list(request):
     channels = VolunteerChannel.objects.all()
     return render(request, 'subjects/volunteer_channel_list.html', {'channels': channels})
+
+
+@login_required
+def set_grade(request, lesson_id):
+    lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
+    students = lesson.group_template.students.all()
+    if request.user != lesson.teacher and not request.user.is_superuser:
+        return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
+
+    if request.method == 'POST':
+        form = GradeForm(request.POST, students=students)
+        if form.is_valid():
+            form.save_grades(lesson, form.cleaned_data['date_assigned'])
+    else:
+        form = GradeForm(students=students)
+
+    return render(request, 'subjects/set_grade.html', {
+        'form': form,
+        'lesson': lesson,
+        'students': students
+    })

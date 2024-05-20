@@ -1,5 +1,5 @@
 from django import forms
-from .models import VolunteerChannel
+from .models import VolunteerChannel, Grade
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
 
@@ -46,3 +46,29 @@ class VolunteerChannelForm(forms.ModelForm):
     class Meta:
         model = VolunteerChannel
         fields = ['name', 'description', 'users']
+
+class GradeForm(forms.Form):
+    max_grade = forms.IntegerField(label="Maximum Grade")
+    date_assigned = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+
+    def __init__(self, *args, **kwargs):
+        students = kwargs.pop('students', None)
+        super().__init__(*args, **kwargs)
+        self.student_fields = []
+        if students:
+            for student in students:
+                field_name = f'grade_{student.id}'
+                self.fields[field_name] = forms.IntegerField(label=f'Grade for {student.full_name}', required=False)
+                self.student_fields.append((student, self[field_name]))
+
+    def save_grades(self, lesson, date_assigned):
+        grades = []
+        for student, field in self.student_fields:
+            if self.cleaned_data[field.name]:
+                grades.append(Grade(
+                    student=student,
+                    lesson=lesson,
+                    grade=self.cleaned_data[field.name],
+                    date_assigned=date_assigned
+                ))
+        Grade.objects.bulk_create(grades)

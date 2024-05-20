@@ -1,0 +1,17 @@
+{% load grade_tags %}
+
+{% block content %}
+    <h2>Set Grades for {{ lesson.subject.name }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.max_grade.label_tag }} {{ form.max_grade }}
+        {{ form.date_assigned.label_tag }} {{ form.date_assigned }}
+        {% for student, field in form.student_fields %}
+            <div>
+                {{ field.label_tag }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <button type="submit">Submit Grades</button>
+    </form>
+{% endblock %}
