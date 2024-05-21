@@ -21,9 +21,12 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         if self.request.user.role == "Teacher":
-            context["courses"] = Course.objects.filter(created_by=self.request.user)
+            courses = Course.objects.filter(created_by=self.request.user)
+            context["published_courses"] = courses.filter(published=True)
+            context["unpublished_courses"] = courses.filter(published=False)
         else:
-            context["courses"] = Course.objects.all()
+            context["courses"] = Course.objects.filter(published=True).all()
+
         return context
 
 
@@ -45,6 +48,14 @@ class CompletedCoursesPageView(LoginRequiredMixin, TemplateView):
 class CoursePageView(LoginRequiredMixin, DetailView):
     model = Course
     template_name = 'core/course_detail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        course = Course.objects.filter(pk=self.kwargs['pk'])
+        if not course.exists() or not course.first().published:
+            messages.error(request, "Курса не существует")
+            return redirect(reverse("home"))
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -91,24 +102,78 @@ def course_redirect(request, pk):
     except:
         messages.error(request, "Course not found")
         return redirect(reverse("home"))
-    return redirect(reverse("courses:course_start", kwargs={'pk': pk, 'lesson_name': lesson.lesson_name}))
+    return redirect(reverse("courses:course_student_lecture", kwargs={'pk': pk, 'lesson_id': lesson.id}))
 
 
-class CourseStartPageView(LoginRequiredMixin, DetailView):
+class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
     model = Course
-    template_name = 'core/student/course_start.html'
+    template_name = 'core/student/course_lecture.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        course = Course.objects.filter(pk=self.kwargs['pk'])
+        if not course.exists() or not course.first().published:
+            messages.error(request, "Курса не существует")
+            return redirect(reverse("home"))
+        if self.request.user not in course.first().users.all():
+            messages.error(request, "Вас нет в этом курсе")
+            return redirect(reverse("home"))
+
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        lesson = Lesson.objects.filter(lesson_name=self.kwargs['lesson_name'])
+        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
         module = Module.objects.filter(lessons__in=lesson).first()
         context['lesson'] = lesson.first()
         for i, item in enumerate(module.lessons.all()):
-            print(item, type(item))
             if item == lesson.first():
                 context['lesson_position'] = i+1
                 break
         context['module_id'] = module.pk
+        context['module_name'] = module.module_name
+        return context
+
+
+class CourseStudentLessonTestPageView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'core/student/course_lesson_test.html'
+
+    def get_template_names(self):
+        user = self.request.user
+        test = Lesson.objects.filter(pk=self.kwargs['lesson_id']).first().tests.first()
+        submission = TestSubmission.objects.filter(user=user, test=test)
+        if not submission.exists():
+            return "core/student/course_lesson_test.html"
+        else:
+            return "core/student/course_lesson_test_results.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        course = Course.objects.filter(pk=self.kwargs['pk'])
+        if not course.exists() or not course.first().published:
+            messages.error(request, "Курса не существует")
+            return redirect(reverse("home"))
+        if self.request.user not in course.first().users.all():
+            messages.error(request, "Вас нет в этом курсе")
+            return redirect(reverse("home"))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
+        module = Module.objects.filter(lessons__in=lesson).first()
+        user = self.request.user
+        test = lesson.first().tests.first()
+        submission = TestSubmission.objects.filter(user=user, test=test)
+        if submission.exists():
+            context['submission'] = submission.first()
+        context['lesson'] = lesson.first()
+        for i, item in enumerate(module.lessons.all()):
+            if item == lesson.first():
+                context['lesson_position'] = i+1
+                break
+        context['module_id'] = module.pk
+        context['module_name'] = module.module_name
         return context
 
 

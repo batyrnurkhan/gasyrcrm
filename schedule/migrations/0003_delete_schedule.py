@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('schedule', '0002_shift_shifttime'),
+        ('subjects', '0007_remove_lesson_crm2_schedule'),
     ]
 
     operations = [

@@ -704,3 +704,10 @@ def update_module_and_lessons(request, module_id):
 
     return JsonResponse({'status': 'success',
                          'message': f'{len(updated_lessons)} lessons updated/created successfully, module updated'})
+
+
+def publishCourse(request, pk):
+    course = Course.objects.get(pk=pk)
+    course.published = not course.published
+    course.save()
+    return redirect('courses:course_detail_edit', pk=pk)

@@ -1,0 +1,201 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main-without-links.html' %}
+    <div class="flex">
+    {% include 'core/components/course-sidebar.html' %}
+    <div class="course px-[40px] pt-[40px] w-full">
+        <div class="result pl-[60px] pt-[60px] flex flex-col space-y-5">
+            <div class="results w-[100%] h-[300px] rounded-md bg-center bg-no-repeat flex items-center max-w-[995px]"
+                 style="background-image: url('{% static 'core/images/goodResultBG.png' %}')">
+                <div class="result-precent flex justify-around w-full items-center text-center">
+                    <img src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
+                    <div class="results-text font-semibold text-white">
+                        <span class="text-[156px] leading-[190px]">{{ submission.score|floatformat:"0" }}%</span> <br/>
+                        <span class="text-[24px] leading-[30px]">Отличный результат!</span>
+                    </div>
+                    <img src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
+                </div>
+            </div>
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
+                <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
+                    Урок {{ lesson_position }} - Модуль: {{ module_name }}
+                </div>
+                <div class="course__title leading-[52px] text-[42px] text-accent-red font-bold mb-3.5">
+                    Тестирование по лекции
+                </div>
+                <div class="video-container relative w-full">
+                    {% for test in lesson.tests.all %}
+                        <form action="{% url 'courses:take_test' test_id=test.id %}" method="post">
+                            {% csrf_token %}
+                            <ul class="testing__questions pt-[42px] pb-20 flex flex-col space-y-[36px] text-5 text-black-main font-bold leading-6">
+                                {% for question in test.questions.all %}
+                                    <li class="testing__question-item">
+                                        <div class="testing__question-title mb-[24px]">
+                                            {{ forloop.counter }}. {{ question.text }}
+                                        </div>
+                                        {% if question.question_type == 'IMG' and question.image %}
+                                            <div class="testing__question-photo w-full flex items-center h-[226px] border-[1px] border-[#D8D8D8] justify-center mb-[20px]">
+                                                <img class="h-full w-full object-scale-down"
+                                                     src="{{ question.image.url }}" alt=""/>
+                                            </div>
+                                        {% elif question.question_type == 'AUD' and question.audio %}
+                                            <div id="audio-player-container-{{ forloop.counter0 }}"
+                                                 class="flex items-center gap-3.5 bg-[#F7F7F7] rounded-md py-[13px] pl-[13px] pr-[20px] mb-6 max-w-[360px]">
+                                                <img src="{% static 'core/icons/audioIcon.png' %}" alt="Audio Icon"
+                                                     class="w-6 h-6"/>
+                                                <div class="relative flex-1">
+                                                    <input type="range" id="seek-slider" value="0" min="0" max="100"
+                                                           class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
+                                                           style="
+                      background: linear-gradient(
+                        to right,
+                        red 0%,
+                        red var(--progress-percentage),
+                        white var(--progress-percentage),
+                        white 100%
+                      );
+                    " oninput="updateTime()"/>
+                                                    <div class="flex absolute w-full justify-between top-[1px]">
+                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                                id="current-time-{{ forloop.counter0 }}">00:00
+                                                        </output>
+                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                                id="time-{{ forloop.counter0 }}">3:10
+                                                        </output>
+                                                    </div>
+                                                </div>
+                                                <audio id="audioPlayer" preload="metadata"
+                                                       src="{{ question.audio.url }}"></audio>
+                                                <button id="play-icon" type="button"
+                                                        class="flex justify-center items-center focus:outline-none">
+                                                    <img src="{% static 'core/icons/playIcon.png' %}" alt="Play Icon"
+                                                         id="playPauseIcon" class="w-8 h-8"/>
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                        <div class="testing__question-answers grid gap-2.5 grid-cols-2">
+                                            {% for answer in question.answers.all %}
+                                                <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 cursor-pointer">
+                                                    <input type="{% if question.question_type == 'MC' %}checkbox{% else %}radio{% endif %}"
+                                                            {% if answer in submission.selected_answers.all %}
+                                                           checked
+                                                            {% endif %}
+                                                           name="answer_{{ question.id }}"
+                                                           value="{{ answer.id }}"
+                                                           {% if question.question_type != 'MC' %}required{% endif %}
+                                                           class="question-{{ forloop.parentloop.counter0 }}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red mr-[26px]"/>
+                                                    <span>{{ answer.text }}</span>
+                                                    <div class="answer-icon">
+                                                        <img src="./assets/checkIcon.png" alt=""/>
+                                                    </div>
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                                <div class="testing__btn mx-auto">
+                                    <button class="border-accent-red hover:bg-accent-red hover:text-white text-center mt-4 px-[64px] py-[26px] text-5 leading-7 font-bold text-accent-red border rounded-lg inline">
+                                        Закончить тестирование
+                                    </button>
+                                </div>
+                            </ul>
+                        </form>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const playIconContainer = document.getElementById('play-icon');
+        const audioPlayerContainer = document.getElementById('audio-player-container');
+        const seekSlider = document.getElementById('seek-slider');
+        let playState = 'play';
+
+
+        const playButton = () => {
+            if (playState === 'play') {
+                audio.play();
+                requestAnimationFrame(whilePlaying);
+                playState = 'pause';
+            } else {
+                audio.pause();
+                cancelAnimationFrame(raf);
+                playState = 'play';
+            }
+        };
+
+        const showRangeProgress = (rangeInput) => {
+            if (rangeInput === seekSlider) audioPlayerContainer.style.setProperty('--seek-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+            else audioPlayerContainer.style.setProperty('--volume-before-width', rangeInput.value / rangeInput.max * 100 + '%');
+        }
+
+        seekSlider.addEventListener('input', (e) => {
+            showRangeProgress(e.target);
+        });
+
+        /** Implementation of the functionality of the audio player */
+
+        const audio = document.querySelector('audio');
+        const durationContainer = document.getElementById('duration');
+        const currentTimeContainer = document.getElementById('current-time');
+        let raf = null;
+
+        const calculateTime = (secs) => {
+            const minutes = Math.floor(secs / 60);
+            const seconds = Math.floor(secs % 60);
+            const returnedSeconds = seconds < 10 ? `0${seconds}` : `${seconds}`;
+            return `${minutes}:${returnedSeconds}`;
+        }
+
+        const displayDuration = () => {
+            durationContainer.textContent = calculateTime(audio.duration);
+        }
+
+        const setSliderMax = () => {
+            seekSlider.max = Math.floor(audio.duration);
+        }
+
+        const displayBufferedAmount = () => {
+            const bufferedAmount = Math.floor(audio.buffered.end(audio.buffered.length - 1));
+            audioPlayerContainer.style.setProperty('--buffered-width', `${(bufferedAmount / seekSlider.max) * 100}%`);
+        }
+
+        const whilePlaying = () => {
+            seekSlider.value = Math.floor(audio.currentTime);
+            currentTimeContainer.textContent = calculateTime(seekSlider.value);
+            audioPlayerContainer.style.setProperty('--seek-before-width', `${seekSlider.value / seekSlider.max * 100}%`);
+            raf = requestAnimationFrame(whilePlaying);
+        }
+
+        if (audio.readyState > 0) {
+            displayDuration();
+            setSliderMax();
+            displayBufferedAmount();
+        } else {
+            audio.addEventListener('loadedmetadata', () => {
+                displayDuration();
+                setSliderMax();
+                displayBufferedAmount();
+            });
+        }
+
+        audio.addEventListener('progress', displayBufferedAmount);
+
+        seekSlider.addEventListener('input', () => {
+            currentTimeContainer.textContent = calculateTime(seekSlider.value);
+            if (!audio.paused) {
+                cancelAnimationFrame(raf);
+            }
+        });
+
+        seekSlider.addEventListener('change', () => {
+            audio.currentTime = seekSlider.value;
+            if (!audio.paused) {
+                requestAnimationFrame(whilePlaying);
+            }
+        });
+    </script>
+{% endblock %}

@@ -6,9 +6,9 @@ from .views import (
     add_student_to_course, TakeTestView, test_result_view, search_students, EditCourseView, CourseDelete,
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
-    CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view
+    CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view, publishCourse
 )
-from core.views import CoursePageView, CourseStartPageView, course_redirect
+from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentLessonTestPageView
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = 'courses'
@@ -17,8 +17,10 @@ urlpatterns = [
     path('', CourseListView.as_view(), name='course_list'),
     path('<int:pk>/', CoursePageView.as_view(), name='course_detail'),
     path('student/<int:pk>/', course_redirect, name='course_start'),
-    path('student/<int:pk>/<str:lesson_name>', CourseStartPageView.as_view(), name='course_start'),
+    path('student/<int:pk>/<int:lesson_id>/lecture', CourseStudentLecturePageView.as_view(), name='course_student_lecture'),
+    path('student/<int:pk>/<int:lesson_id>/test', CourseStudentLessonTestPageView.as_view(), name='course_student_test'),
     path('edit/<int:pk>/', CourseDetailView.as_view(), name='course_detail_edit'),
+    path('publish/<int:pk>/', publishCourse, name='course_publish'),
     path('edit/<int:pk>/about/', EditCourseView.as_view(), name='course_detail_edit_about'),
     path('delete/<int:pk>/', CourseDelete.as_view(), name='course_delete'),
     path('create/step1/', CreateCourseStep1View.as_view(), name='create_course_step1'),

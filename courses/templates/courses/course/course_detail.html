@@ -47,6 +47,8 @@
                 {% endif %}
                 <a href="{% url 'courses:success_video_edit' pk=course.id %}">Поменять видео-поздравление</a>
             </div>
+            <a class="text-accent-red text-center text-xl font-semibold w-[391px] bg-white py-[26px] rounded-lg mt-[52px]"
+               href="{% url 'courses:course_publish' pk=course.id %}">{% if course.published %}Убрать в черновики{% else %}Опубликовать курс{% endif %}</a>
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">
             <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>

@@ -19,9 +19,27 @@
         </div>
 
         <h1 class="text-[42px] font-bold mb-3">Мои курсы</h1>
-        <div class="grid grid-cols-2 gap-5 mb-10">
-            {% for course in courses %}
+        <div class="grid grid-cols-2 gap-5 mb-10 ">
+            {% for course in published_courses %}
                 {% include 'core/components/course-card-edit.html' with course=course %}
+            {% empty %}
+                <div class="bg-white text-center col-span-2 py-[30px]">
+                    <img class="inline-block" src="{% static 'core/images/cats/ball.png' %}" alt="">
+                    <h2 class="font-bold text-[32px]">Тут еще ничего нет</h2>
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <h1 class="text-[42px] font-bold mb-3">Черновики</h1>
+        <div class="grid grid-cols-2 gap-5 mb-10">
+            {% for course in unpublished_courses %}
+                {% include 'core/components/course-card-edit.html' with course=course %}
+            {% empty %}
+                <div class="bg-white text-center col-span-2 py-[30px]">
+                    <img class="inline-block" src="{% static 'core/images/cats/ball.png' %}" alt="">
+                    <h2 class="font-bold text-[32px]">Тут еще ничего нет</h2>
+                </div>
             {% endfor %}
 
         </div>

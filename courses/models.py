@@ -117,7 +117,8 @@ class Course(models.Model):
     full_description = models.TextField()
     users = models.ManyToManyField(CustomUser, related_name='courses', blank=True)
     created_by = models.ForeignKey(CustomUser, related_name='created_courses', on_delete=models.CASCADE)
-    course_success_video = models.FileField(upload_to="course_videos/", blank=True, null=True)
+    course_success_video = models.CharField(max_length=255, blank=True, null=True)
+    published = models.BooleanField(default=False)
     tests = GenericRelation(Test)
 
     ##publish true false
