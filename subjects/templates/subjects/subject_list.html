@@ -1,8 +1,16 @@
 {% block content %}
-  <h1>Subject List</h1>
-  <ul>
-    {% for subject in object_list %}
-      <li>{{ subject.name }} - {{ subject.description }}</li>
-    {% endfor %}
-  </ul>
+    <h2>All Subjects</h2>
+    <div class="subjects-list">
+        {% for subject in object_list %}
+            <div class="subject">
+                <h3>{{ subject.name }}</h3>
+                <p>{{ subject.description }}</p>
+                {% if subject.image %}
+                    <img src="{{ subject.image.url }}" alt="{{ subject.name }}">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No subjects available at the moment.</p>
+        {% endfor %}
+    </div>
 {% endblock %}

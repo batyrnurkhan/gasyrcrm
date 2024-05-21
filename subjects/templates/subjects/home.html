@@ -1,0 +1,60 @@
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="{% url 'subjects:weekly-schedule' %}" class="list-group-item">Shifts</a>
+                <a href="{% url 'subjects:grades-by-day' %}" class="list-group-item">Grades</a>
+                <a href="#" class="list-group-item">News</a>
+                <a href="{% url 'subjects:tasks' %}" class="list-group-item">Tasks</a>
+                <a href="{% url 'subjects:subject-list' %}" class="list-group-item">Online Subjects</a>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2>Home Page</h2>
+            {% if user.role == 'Student' %}
+                <a href="https://example.com/video" class="btn btn-primary">Посмотреть видео</a>
+                <a href="{% url 'subjects:grades-by-day' %}" class="btn btn-secondary">See Grades</a>
+
+                <h3>Last Created Task</h3>
+                {% if last_task %}
+                    <p>{{ last_task.name }} - Due: {{ last_task.deadline|date:"d M Y H:i" }}</p>
+                    {% if last_task.file %}
+                        <a href="{{ last_task.file.url }}" class="btn btn-sm btn-secondary" download>Download File</a>
+                    {% endif %}
+                {% else %}
+                    <p>Заданий на сегодня нет</p>
+                {% endif %}
+
+                <h3>Lessons Today ({{ today|date:"d M Y" }})</h3>
+                {% if lessons_today %}
+                    <ul>
+                        {% for lesson in lessons_today %}
+                            <li>
+                                {{ lesson.subject.name }} - {{ lesson.group_name }}<br>
+                                {{ lesson.time_slot.start_time|date:"H:i" }} - {{ lesson.time_slot.end_time|date:"H:i" }}<br>
+                                Teacher: {{ lesson.teacher.full_name }}<br>
+                                <a href="{% url 'chats:chat_room_detail' lesson.chat_room.id %}" class="btn btn-info">Status</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Расписание на этот день еще не назначено</p>
+                {% endif %}
+
+                <a href="#" class="btn btn-primary">Записаться к проф ориентологу</a>
+                <a href="#" class="btn btn-primary">Записаться к психологу</a>
+
+                <h3>Last Achievement</h3>
+                {% if last_achievement %}
+                    <p>{{ last_achievement }}</p>
+                {% else %}
+                    <p>Достижений на данный момент нет</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

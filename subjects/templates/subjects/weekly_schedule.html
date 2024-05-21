@@ -1,0 +1,17 @@
+
+{% block content %}
+<h2>Weekly Lessons Schedule</h2>
+<p>User: {{ user }}</p>
+{% for day, lessons in lessons_by_day.items %}
+    <h3>{{ day }}</h3>
+    {% if lessons %}
+        <ul>
+        {% for lesson in lessons %}
+            <li>{{ lesson.time_slot.start_time }} - {{ lesson.time_slot.end_time }}: {{ lesson.subject.name }} with {{ lesson.mentor.full_name }} in {{ lesson.group_name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No lessons scheduled.</p>
+    {% endif %}
+{% endfor %}
+{% endblock %}

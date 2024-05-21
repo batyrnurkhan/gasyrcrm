@@ -1,3 +1,5 @@
+from datetime import timedelta, datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponseForbidden
@@ -10,6 +12,83 @@ from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
 
+
+@login_required
+def home_view(request):
+    user = request.user
+    today = timezone.now().date()
+    now = timezone.now().time()
+
+    # Get the last created task related to the lessons where the user is a student
+    last_task = Task.objects.filter(chat_room__lessons__group_template__students=user).order_by('-deadline').first()
+
+    # Get lessons for today
+    lessons_today = Lesson_crm2.objects.filter(
+        group_template__students=user,
+        time_slot__date=today
+    ).select_related('teacher', 'subject', 'time_slot')
+
+    # Check if any lessons have started and send message
+    for lesson in lessons_today:
+        if lesson.time_slot.start_time <= now < lesson.time_slot.end_time:
+            message_content = f"{lesson.subject.name} начался"
+            Message.objects.create(
+                chat_room=lesson.chat_room,
+                user=request.user,  # or a system user if you have one
+                message=message_content
+            )
+
+    # Get last achievement (temporarily hardcoded)
+    last_achievement = "Top Student of the Month"  # Replace with real data later
+
+    return render(request, 'subjects/home.html', {
+        'user': user,
+        'last_task': last_task,
+        'lessons_today': lessons_today,
+        'last_achievement': last_achievement,
+        'today': today
+    })
+
+@login_required
+def tasks_view(request):
+    user = request.user
+    # Get all tasks related to the lessons where the user is a student
+    tasks = Task.objects.filter(chat_room__lessons__group_template__students=user).order_by('-deadline')
+
+    return render(request, 'subjects/tasks.html', {
+        'tasks': tasks
+    })
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+class LessonsByWeekdayView(ListView):
+    model = Lesson_crm2
+    template_name = 'subjects/weekly_schedule.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Get the current week's range
+        today = timezone.localdate()
+        start_week = today - timedelta(days=today.weekday())  # Monday
+        end_week = start_week + timedelta(days=6)  # Sunday
+
+        # Fetch lessons within the week
+        context['lessons_by_day'] = {}
+        user = self.request.user
+
+        for i in range(7):
+            date = start_week + timedelta(days=i)
+            lessons = Lesson_crm2.objects.filter(
+                time_slot__date=date,
+                mentor=user
+            ).order_by('time_slot__start_time')
+            context['lessons_by_day'][date.strftime('%A')] = lessons
+
+        return context
 
 class SubjectListView(ListView):
     model = Subject
@@ -112,7 +191,8 @@ class LessonDetailView(DetailView):
         # Optionally, check permissions here
         return lesson
 
-from django.utils.timezone import localtime
+from django.utils.timezone import localtime, localdate, make_aware
+
 
 def create_task(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
@@ -210,7 +290,6 @@ def set_grade(request, lesson_id):
 
 @login_required
 def grades_by_day_view(request):
-    # Fetch grades for the logged-in user, grouped by the date assigned
     grades = Grade.objects.filter(student=request.user).order_by('date_assigned')
 
     # Group grades by date

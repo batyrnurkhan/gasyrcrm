@@ -1,0 +1,17 @@
+{% block content %}
+<div class="container">
+    <h2>All Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.name }} - Due: {{ task.deadline|date:"d M Y H:i" }}
+                {% if task.file %}
+                    <a href="{{ task.file.url }}" class="btn btn-sm btn-secondary" download>Download File</a>
+                {% endif %}
+            </li>
+        {% empty %}
+            <li>No tasks found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
