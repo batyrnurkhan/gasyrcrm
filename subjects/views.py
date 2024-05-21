@@ -1,13 +1,15 @@
-from datetime import timedelta, datetime
+import datetime
+from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView
 from rest_framework.generics import get_object_or_404
 from chats.models import ChatRoom, Message
+from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
@@ -60,35 +62,45 @@ def tasks_view(request):
     })
 
 
-import logging
+@login_required
+def weekly_schedule_view(request):
+    user = request.user
+    # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
+    if user.is_superuser or user.role == 'Mentor':
+        shifts = Shift.objects.prefetch_related(
+            'times__lessons',
+            'times__lessons__teacher'
+        ).all()
 
-logger = logging.getLogger(__name__)
+        if not shifts:
+            print("No shifts found.")
+        else:
+            print(f"Found {len(shifts)} shifts.")
 
+        return render(request, 'schedule/shifts.html', {'shifts': shifts})
 
-class LessonsByWeekdayView(ListView):
-    model = Lesson_crm2
-    template_name = 'subjects/weekly_schedule.html'
+    today = timezone.now().date()
+    start_week = today - datetime.timedelta(days=today.weekday())
+    end_week = start_week + datetime.timedelta(days=6)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Get the current week's range
-        today = timezone.localdate()
-        start_week = today - timedelta(days=today.weekday())  # Monday
-        end_week = start_week + timedelta(days=6)  # Sunday
+    # Calculate days of the week for the range
+    days_of_week = [(start_week + datetime.timedelta(days=x)).weekday() for x in range(7)]
 
-        # Fetch lessons within the week
-        context['lessons_by_day'] = {}
-        user = self.request.user
+    # Match ShiftTimes by weekday
+    weekly_lessons = {day: [] for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
+    base_date = datetime.date(2024, 1, 1)  # Adjust based on your needs
+    for i, day in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']):
+        if i in days_of_week:
+            shift_day = (base_date + datetime.timedelta(days=i)).weekday()
+            day_shift_times = ShiftTime.objects.filter(date__week_day=shift_day + 1)  # Django week_day starts from 1 (Sunday)
+            lessons_on_this_day = []
+            for time_slot in day_shift_times:
+                lessons = Lesson_crm2.objects.filter(time_slot=time_slot)
+                for lesson in lessons:
+                    lessons_on_this_day.append((lesson, time_slot.id))
+            weekly_lessons[day] = lessons_on_this_day
 
-        for i in range(7):
-            date = start_week + timedelta(days=i)
-            lessons = Lesson_crm2.objects.filter(
-                time_slot__date=date,
-                mentor=user
-            ).order_by('time_slot__start_time')
-            context['lessons_by_day'][date.strftime('%A')] = lessons
-
-        return context
+    return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons})
 
 class SubjectListView(ListView):
     model = Subject
@@ -156,11 +168,22 @@ class LessonCreateView(CreateView):
 
     def get_success_url(self):
         # Redirects back to the shifts page after successful creation
-        return reverse('schedule:shifts')
+        return reverse('subjects:weekly-schedule')
+
+    def form_invalid(self, form):
+        # This is where you handle the form errors
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, error)
+        return super().form_invalid(form)
 
     def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
+        try:
+            time_slot = ShiftTime.objects.get(pk=self.kwargs['time_id'])
+        except ShiftTime.DoesNotExist:
+            raise Http404("Time slot does not exist")
+        form.instance.time_slot = time_slot
+
         form.instance.mentor = self.request.user  # Set the mentor as the current user
         form.instance.time_slot_id = self.kwargs['time_id']  # Set the time_slot from the URL parameter
 
@@ -191,7 +214,7 @@ class LessonDetailView(DetailView):
         # Optionally, check permissions here
         return lesson
 
-from django.utils.timezone import localtime, localdate, make_aware
+from django.utils.timezone import localtime, localdate
 
 
 def create_task(request, room_id):

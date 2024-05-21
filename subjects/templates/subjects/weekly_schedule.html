@@ -1,17 +1,27 @@
 
+The issue is that time_id is not available for days when there are no lessons scheduled, which causes a NoReverseMatch error when trying to generate the URL with an empty time_id. To resolve this, you need to ensure that the "+" link is only rendered when there is a valid time_id.
+
+Fixing the Issue in the Template
+You need to adjust your template logic to ensure that the link to create a lesson is only displayed when there is a valid time_id. This involves checking that time_id is not empty or undefined before attempting to render the link.
+
+Here's how you can adjust the template to handle this:
+
+html
+Копировать код
 {% block content %}
-<h2>Weekly Lessons Schedule</h2>
-<p>User: {{ user }}</p>
-{% for day, lessons in lessons_by_day.items %}
-    <h3>{{ day }}</h3>
-    {% if lessons %}
-        <ul>
-        {% for lesson in lessons %}
-            <li>{{ lesson.time_slot.start_time }} - {{ lesson.time_slot.end_time }}: {{ lesson.subject.name }} with {{ lesson.mentor.full_name }} in {{ lesson.group_name }}</li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>No lessons scheduled.</p>
-    {% endif %}
-{% endfor %}
+<h1>Weekly Schedule</h1>
+<div>
+    {% for day, lessons in weekly_lessons.items %}
+        <h2>{{ day }}</h2>
+        {% if lessons %}
+            <ul>
+                {% for lesson, time_id in lessons %}
+                    <li>{{ lesson.group_name }} - {{ lesson.subject.name }} ({{ lesson.time_slot.start_time }} to {{ lesson.time_slot.end_time }})</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No lessons scheduled for this day.</p>
+        {% endif %}
+    {% endfor %}
+</div>
 {% endblock %}

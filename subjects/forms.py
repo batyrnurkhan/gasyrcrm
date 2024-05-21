@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from django.forms import ModelForm
+
 from .models import VolunteerChannel, Grade
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
@@ -12,12 +15,12 @@ class TaskForm(forms.ModelForm):
             'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
         }
 
-class LessonForm(forms.ModelForm):
+class LessonForm(ModelForm):
     class Meta:
         model = Lesson_crm2
         fields = ['group_name', 'subject', 'group_template', 'teacher', 'time_slot']
         widgets = {
-            'time_slot': forms.HiddenInput()
+            'time_slot': forms.HiddenInput()  # Assuming you handle the time_slot input elsewhere in your logic
         }
 
     def __init__(self, *args, **kwargs):
@@ -26,6 +29,30 @@ class LessonForm(forms.ModelForm):
         self.fields['subject'].widget.attrs.update({'class': 'form-control'})
         self.fields['group_template'].widget.attrs.update({'class': 'form-control'})
         self.fields['teacher'].widget.attrs.update({'class': 'form-control'})
+
+    def clean(self):
+        cleaned_data = super().clean()
+        group_template = cleaned_data.get('group_template')
+        teacher = cleaned_data.get('teacher')
+        time_slot = cleaned_data.get('time_slot')
+
+        # Validate that no student in the group template has a conflicting lesson
+        if group_template and time_slot:
+            students = group_template.students.all()
+            overlapping_lessons = Lesson_crm2.objects.filter(
+                group_template__students__in=students,
+                time_slot=time_slot
+            ).distinct()
+
+            if overlapping_lessons.exists():
+                raise ValidationError("A student in the selected group template already has a lesson during this time slot.")
+
+        # Check if the selected teacher is already booked for the given time slot
+        if teacher and time_slot:
+            if Lesson_crm2.objects.filter(teacher=teacher, time_slot=time_slot).exists():
+                raise ValidationError(f"Учитель уже занят в это время: {teacher.full_name} has a lesson at {time_slot.start_time} to {time_slot.end_time}.")
+
+        return cleaned_data
 
 
 class GroupTemplateForm(forms.ModelForm):
