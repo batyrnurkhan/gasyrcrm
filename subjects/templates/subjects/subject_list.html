@@ -325,24 +325,29 @@
         <div class="items-main">
           <h1 class="items__title font-semibold text-[42px] leading-[52px] text-black-main mb-[20px]">Предметы</h1>
           <div class="items__inner grid grid-cols-2 gap-[20px]">
-            {% for subject in object_list %}
-                    <div class="bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md flex p-[20px]">
-                        <div class="mr-[25px]">
-                            {% if subject.image %}
-                                <img src="{{ subject.image.url }}" alt="{{ subject.name }}" class="w-[160px] h-[160px] object-cover">
-                            {% endif %}
-                        </div>
-                        <div>
-                            <h3 class="text-[24px] font-semibold">{{ subject.name }}</h3>
-                            <p class="text-[16px]">{{ subject.description }}</p>
-                            {% if request.user.is_superuser or request.user.role == 'Mentor' %}
-                                <a href="{% url 'edit_subject' subject.id %}" class="text-blue-500">Edit</a>
-                            {% endif %}
-                        </div>
-                    </div>
-                {% empty %}
-                    <p class="col-span-2 text-center">No subjects available at the moment.</p>
-                {% endfor %}
+            {% for lesson in lessons %}
+            <div class="item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md flex p-[20px]">
+                <div class="item-image mr-[25px]">
+                    {% if lesson.subject.image %}
+                        <img src="{{ lesson.subject.image.url }}" alt="{{ lesson.subject.name }}" class="w-[160px] h-[160px] object-cover">
+                    {% endif %}
+                </div>
+                <div class="item-details">
+                    <h3 class="text-[24px] font-semibold">{{ lesson.group_name }}</h3>
+                    <p class="text-[16px]">{{ lesson.subject.description }}</p>
+                    {% if lesson.teacher %}
+                        <p class="text-[16px]"> {{ lesson.teacher.full_name }}</p>
+                        {% if lesson.teacher.profile_picture %}
+                            <img src="{{ lesson.teacher.profile_picture.url }}" alt="{{ lesson.teacher.full_name }}" class="w-[60px] h-[60px] object-cover rounded-full">
+                        {% else %}
+                            <img src="{{ default_profile_picture_url }}" alt="Default Profile Picture" class="w-[60px] h-[60px] object-cover rounded-full">
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center">No lessons scheduled.</p>
+        {% endfor %}
           </div>
         </div>
         <div class="items-additionally mt-[56px]">

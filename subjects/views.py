@@ -103,8 +103,19 @@ def weekly_schedule_view(request):
     return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons})
 
 class SubjectListView(ListView):
-    model = Subject
+    model = Lesson_crm2
     template_name = 'subjects/subject_list.html'
+    context_object_name = 'lessons'
+
+    def get_queryset(self):
+        # Ensuring only lessons where the user is part of the group template are shown
+        return Lesson_crm2.objects.filter(
+            group_template__students=self.request.user
+        ).select_related('mentor', 'teacher', 'subject')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
 def group_template_list(request):
     form = GroupTemplateForm(request.POST or None)
