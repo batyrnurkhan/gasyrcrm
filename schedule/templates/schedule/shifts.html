@@ -1,19 +1,29 @@
+
 {% block content %}
 <div class="container">
     <h2>Lesson Shifts</h2>
     {% for shift in shifts %}
-        <h3>{{ shift.name }} ({{ shift.start_time }} - {{ shift.end_time }})</h3>
+        <h3>{{ shift.name }} ({{ shift.start_time|date:"H:i" }} - {{ shift.end_time|date:"H:i" }})</h3>
         <ul>
             {% for time in shift.times.all %}
-                <li>{{ time.start_time }} - {{ time.end_time }}
+                <li>
+                    {{ time.date|date:"Y-m-d" }}: {{ time.start_time|date:"H:i" }} - {{ time.end_time|date:"H:i" }}
                     <ul>
                         {% for lesson in time.lessons.all %}
-                            <li>{{ lesson.subject }} - {{ lesson.group_name }}</li>
+                            <li>
+                                {{ lesson.subject.name }} - {{ lesson.group_name }}
+                                <!-- Link to open chat for this lesson -->
+                                <a href="{% url 'chats:chat_room_detail' lesson.chat_room.id %}" class="btn btn-secondary btn-sm">Open Chat</a>
+                            </li>
+                        {% empty %}
+                            <li>No lessons for this time slot.</li>
                         {% endfor %}
                     </ul>
                     <!-- Link to create a new lesson for this time -->
-                <a href="{% url 'subjects:lesson-create' time.id %}" class="btn btn-primary">Add Lesson</a>
+                    <a href="{% url 'subjects:lesson-create' time.id %}" class="btn btn-primary btn-sm">Add Lesson</a>
                 </li>
+            {% empty %}
+                <li>No time slots available for this shift.</li>
             {% endfor %}
         </ul>
     {% endfor %}

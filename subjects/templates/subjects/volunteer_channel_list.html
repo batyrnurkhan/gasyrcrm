@@ -1,0 +1,9 @@
+{% block content %}
+  <ul>
+    {% for channel in channels %}
+    <li><a href="{% url 'chats:chat_room_detail' room_id=channel.chat_room.id %}">{{ channel.name }}</a></li>
+    {% empty %}
+    <li>No channels found.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

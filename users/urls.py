@@ -13,6 +13,9 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('check-access/', CheckAccessView.as_view(), name='check-access'),
     path('change-password/', change_password, name='change_password'),
+
+
+
     path('create-teacher/', create_teacher, name='create-teacher'),
 ]
 
