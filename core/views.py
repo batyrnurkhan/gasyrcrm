@@ -123,6 +123,16 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
+        module = Module.objects.filter(lessons__in=lesson).first()
+        context['lesson'] = lesson.first()
+        for i, item in enumerate(module.lessons.all()):
+            if item == lesson.first():
+                context['lesson_position'] = i+1
+                break
+        context['module_id'] = module.pk
+        context['module_name'] = module.module_name
+        # TODO Batyr ty chto tut sdelal?
         course = self.get_object()
         user = self.request.user
 
@@ -164,6 +174,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
             accessible_modules.append(module)
 
         context['modules'] = accessible_modules
+        return context
 
 
 class CourseStudentLessonTestPageView(LoginRequiredMixin, DetailView):
