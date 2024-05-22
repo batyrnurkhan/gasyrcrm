@@ -81,6 +81,10 @@
         @apply peer-checked:font-bold transition-none
     }
 
+    .w-without-slider {
+        width: calc(100vw - 302px);
+    }
+
     .h-full-4 {
         height: calc(100% - 1rem);
     }
