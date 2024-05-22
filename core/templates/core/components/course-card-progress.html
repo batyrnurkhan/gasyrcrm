@@ -9,19 +9,18 @@
     <div class="flex flex-row">
         <p class="text-gray font-semibold">Онлайн-курс</p>
         <img class="mx-1.5" src="{% static "core/icons/gray-point.svg" %}" alt="">
-        <p class="text-gray font-semibold">Ms. Salt and Nult</p>
+        <p class="text-gray font-semibold">{{ course.created_by.full_name }}</p>
     </div>
     <div>
-        <h2 class="text-2xl font-semibold mb-3">Курс по SAT:MATH для начинающих</h2>
-        <p class="font-light text-sm mb-7">Не следует, однако забывать, что реализация намеченных плановых заданий
-            обеспечивает широкому кругу </p>
+        <h2 class="text-2xl font-semibold mb-3">{{ course.course_name }}</h2>
+        <p class="font-light text-sm mb-7">{{ course.big_description }} </p>
         <div class="flex flex-row justify-between">
             <a class="block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
-               href="#">Продолжить курс</a>
+               href="{% url 'courses:course_start' pk=course.id %}">Продолжить курс</a>
             <div class="block w-1/2 text-center p-3 bg-[#F3F3F3] rounded-lg font-semibold">
-                Пройдено: 16%
+                Пройдено: {{ completion_percentage|floatformat:'0' }}%
                 <div class="w-full bg-gray rounded-full h-4 dark:bg-gray-700">
-                    <div class="bg-math h-4 rounded-full" style="width: 16%"></div>
+                    <div class="bg-math h-4 rounded-full" style="width: {{ completion_percentage }}%"></div>
                 </div>
             </div>
         </div>

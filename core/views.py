@@ -174,6 +174,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         context['blocked_modules'] = blocked_modules
         return context
 
+
 class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
     model = Course
     template_name = 'core/student/course_lesson_test.html'
@@ -200,10 +201,9 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
         else:
             test = Course.objects.filter(pk=self.kwargs['pk']).first().tests.first()
             submission = TestSubmission.objects.filter(user=user, test=test)
-            if not submission.exists():
-                return "core/student/course_test.html"
-            else:
-                return "core/student/course_test.html"
+            if submission.exists():
+                return "core/student/course_test_results.html"
+            return "core/student/course_test.html"
 
     def dispatch(self, request, *args, **kwargs):
         course = Course.objects.filter(pk=self.kwargs['pk'])
@@ -236,11 +236,19 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
             context['module'] = module.first()
             context['module_name'] = module.first().module_name
         else:
-            module = Module.objects.filter(pk=self.kwargs['module_id'])
-            test = module.first().tests.first()
+            course = Course.objects.filter(pk=self.kwargs['pk'])
+            test = course.first().tests.first()
         user = self.request.user
         submission = TestSubmission.objects.filter(user=user, test=test)
         if submission.exists():
+            if not self.kwargs['lesson_id'] and not self.kwargs['module_id']:
+                modules = Module.objects.filter(course_id=self.object.id).prefetch_related(Prefetch('tests'))
+                lessons_count = 0
+
+                for module in enumerate(modules):
+                    lessons_count += Lesson.objects.filter(module=module).count()
+                context['modules_count'] = len(modules)
+                context['lessons_count'] = lessons_count
             context['submission'] = submission.first()
         return context
 

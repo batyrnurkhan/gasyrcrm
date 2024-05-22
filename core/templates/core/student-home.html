@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load course_tags %}
 {% load static %}
 {% block title %}Gasyr - foundation school{% endblock %}
 {% block body-classes %}bg-whiteless{% endblock %}
@@ -48,7 +49,15 @@
         <div class="grid grid-cols-2 gap-5 mb-10">
             {% for course in courses %}
                 {% if user in course.users.all %}
-                    {% include 'core/components/course-card-start.html' with course=course %}
+                    {% with course|calculate_completion_percentage:user as completion_percentage %}
+                        {% if completion_percentage == 100 %}
+                            {% include 'core/components/course-card-completed.html' with course=course %}
+                        {% elif completion_percentage > 0 %}
+                            {% include 'core/components/course-card-progress.html' with course=course completion_percentage=completion_percentage%}
+                        {% else %}
+                            {% include 'core/components/course-card-start.html' with course=course %}
+                        {% endif %}
+                    {% endwith %}
                 {% else %}
                     {% include 'core/components/course-card-payed.html' with course=course %}
                 {% endif %}

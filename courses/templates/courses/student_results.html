@@ -56,7 +56,8 @@
                                         {% if submission %}
                                             <th class="">{{ submission.completed|date:"d.m.Y" }}</th>
                                             <th class="text-right">
-                                                <a class="text-blue-ielts underline hover:text-blue-700" href="#">Результат</a>
+                                                <a class="text-blue-ielts underline hover:text-blue-700"
+                                                   href="{% url 'courses:student_test_results' course_id=course.id student_login_code=student.login_code submission_id=submission.id %}">Результат</a>
                                             </th>
                                         {% else %}
                                             <th class=""></th>

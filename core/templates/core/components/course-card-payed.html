@@ -8,11 +8,11 @@
     <div class="flex flex-row">
         <p class="text-gray font-semibold">Онлайн-курс</p>
         <img class="mx-1.5" src="{% static "core/icons/gray-point.svg" %}" alt="">
-        <p class="text-gray font-semibold">Ms. Salt and Nult</p>
+        <p class="text-gray font-semibold">{{ course.created_by.full_name }}</p>
     </div>
     <div>
-        <h2 class="text-2xl font-semibold mb-3">Курс по SAT:MATH для начинающих</h2>
-        <p class="font-light text-sm mb-7">Не следует, однако забывать, что реализация намеченных плановых заданий обеспечивает широкому кругу </p>
+        <h2 class="text-2xl font-semibold mb-3">{{ course.course_name }}</h2>
+        <p class="font-light text-sm mb-7">{{ course.big_description }}</p>
         <a class="inline-block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
            href="{% url 'courses:course_detail' pk=course.id %}">Приобрести курс</a>
     </div>

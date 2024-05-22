@@ -612,6 +612,16 @@ def student_results_view(request, course_id, student_login_code):
     return render(request, 'courses/student_results.html', context)
 
 
+def student_test_results_view(request, course_id, student_login_code, submission_id):
+    student = CustomUser.objects.get(login_code=student_login_code)
+    course = Course.objects.get(id=course_id)
+    submission = TestSubmission.objects.get(id=submission_id)
+    test = Test.objects.get(id=submission.test.id)
+    context = {'student': student, 'course': course, 'test': test, 'submission': submission}
+
+    return render(request, 'courses/student_test_results.html', context)
+
+
 def test_result_view(request, score):
     return render(request, 'courses/test_result.html', {'score': score})
 

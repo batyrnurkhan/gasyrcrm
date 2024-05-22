@@ -26,12 +26,12 @@
                             max-h-0 space-y-3 pl-[36px] list-disc list-outside">
                                 <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                     <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                    <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=module.id lesson_id=l.id %}">Лекция</a>
+                                    <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=m.id lesson_id=l.id %}">Лекция</a>
                                 </li>
                                 {% if l.tests.count > 0 %}
                                     <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                         <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                        <a href="{% url 'courses:course_student_test_lesson' pk=course.id module_id=module.id lesson_id=l.id %}">Тестирование</a>
+                                        <a href="{% url 'courses:course_student_test_lesson' pk=course.id module_id=m.id lesson_id=l.id %}">Тестирование</a>
                                     </li>
                                 {% endif %}
                                 {% if l.literatures.count > 0 %}
@@ -56,4 +56,12 @@
             </div>
         </div>
     {% endfor %}
+    <div class="relative overflow-hidden">
+        <a href="{% url 'courses:course_student_test_course' pk=course.id %}"
+           class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
+            <img class="inline-block mr-3"
+                 src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
+            Финал
+        </a>
+    </div>
 </div>

@@ -29,3 +29,9 @@ def get_lesson_submission(queryset, object_id):
 def addstr(arg1, arg2):
     """concatenate arg1 & arg2"""
     return str(arg1) + str(arg2)
+
+
+@register.filter
+def calculate_completion_percentage(course, user):
+    """concatenate arg1 & arg2"""
+    return course.calculate_completion_percentage(user)
