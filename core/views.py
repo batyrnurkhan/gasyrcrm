@@ -130,8 +130,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         module = Module.objects.filter(lessons=lesson).first()
         if lesson and module:
             context['lesson'] = lesson
-            context['module_id'] = module.pk
-            context['module_name'] = module.module_name
+            context['module'] = module
             for i, item in enumerate(module.lessons.all()):
                 if item == lesson:
                     context['lesson_position'] = i + 1
@@ -215,10 +214,9 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
         elif self.kwargs['module_id']:
             test = Module.objects.filter(pk=self.kwargs['module_id']).first().tests.first()
             submission = TestSubmission.objects.filter(user=user, test=test)
-            if not submission.exists():
-                return "core/student/course_module_test.html"
-            else:
-                return "core/student/course_module_test.html"
+            if submission.exists():
+                return "core/student/course_module_test_results.html"
+            return "core/student/course_module_test.html"
         else:
             test = Course.objects.filter(pk=self.kwargs['pk']).first().tests.first()
             submission = TestSubmission.objects.filter(user=user, test=test)
@@ -235,25 +233,35 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
         if self.request.user not in course.first().users.all():
             messages.error(request, "Вас нет в этом курсе")
             return redirect(reverse("home"))
-
+        if not self.kwargs.get('lesson_id', None): self.kwargs['lesson_id'] = None
+        if not self.kwargs.get('module_id', None): self.kwargs['module_id'] = None
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
-        module = Module.objects.filter(lessons__in=lesson).first()
+        if self.kwargs['lesson_id']:
+            lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
+            module = Module.objects.filter(pk=self.kwargs['module_id'])
+            context['lesson'] = lesson.first()
+            test = lesson.first().tests.first()
+            for i, item in enumerate(module.first().lessons.all()):
+                if item == lesson.first():
+                    context['lesson_position'] = i+1
+                    break
+            context['module'] = module.first()
+            context['module_name'] = module.first().module_name
+        elif self.kwargs['module_id']:
+            module = Module.objects.filter(pk=self.kwargs['module_id'])
+            test = module.first().tests.first()
+            context['module'] = module.first()
+            context['module_name'] = module.first().module_name
+        else:
+            module = Module.objects.filter(pk=self.kwargs['module_id'])
+            test = module.first().tests.first()
         user = self.request.user
-        test = lesson.first().tests.first()
         submission = TestSubmission.objects.filter(user=user, test=test)
         if submission.exists():
             context['submission'] = submission.first()
-        context['lesson'] = lesson.first()
-        for i, item in enumerate(module.lessons.all()):
-            if item == lesson.first():
-                context['lesson_position'] = i+1
-                break
-        context['module_id'] = module.pk
-        context['module_name'] = module.module_name
         return context
 
 

@@ -18,7 +18,7 @@ module.exports = {
             'accent-red': "#BA2025",
             'light-gray': "rgba(246, 246, 246, 1)",
             gray: "rgba(194, 194, 194, 1)",
-            green: "rgba(90, 180, 34, 1)",
+            green: "#56C024",
             'math': "rgba(80, 181, 33, 1)",
             'blue-ielts': "rgba(122, 72, 228, 1)",
             whiteless: "rgba(250, 250, 250, 1)",

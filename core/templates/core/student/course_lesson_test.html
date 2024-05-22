@@ -16,7 +16,7 @@
                 </div>
                 <div class="video-container relative w-full">
                     {% for test in lesson.tests.all %}
-                        <form action="{% url 'courses:take_test_lesson' test_id=test.id lesson_id=lesson.id module_id=module_id course_id=course.id %}" method="post">
+                        <form action="{% url 'courses:take_test_lesson' test_id=test.id lesson_id=lesson.id module_id=module.id course_id=course.id %}" method="post">
                             {% csrf_token %}
                             <ul class="testing__questions pt-[42px] pb-20 flex flex-col space-y-[36px] text-5 text-black-main font-bold leading-6">
                                 {% for question in test.questions.all %}

@@ -23,3 +23,9 @@ def get_lesson_submission(queryset, object_id):
     if len(submissions) > 0:
         return submissions[0]
     return False
+
+
+@register.filter
+def addstr(arg1, arg2):
+    """concatenate arg1 & arg2"""
+    return str(arg1) + str(arg2)

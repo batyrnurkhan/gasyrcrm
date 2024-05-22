@@ -565,6 +565,7 @@ class TakeTestView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'test': test, 'questions': questions})
 
     def post(self, request, test_id, course_id, module_id=None, lesson_id=None):
+        print("OK?")
         test = get_object_or_404(Test, pk=test_id)
         score = 0
         total_questions = test.questions.count()
