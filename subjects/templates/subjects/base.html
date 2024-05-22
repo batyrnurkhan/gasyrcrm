@@ -12,13 +12,9 @@
 
 <body class="bg-[#fafafa]">
 <div class="flex">
-    {% include "subjects/components/crm2-sidebar.html" %}
-    <main class="main flex-1 pb-[100px] w-3/4">
-        {% include "subjects/components/crm2-header.html" %}
         {% block content %}
 
         {% endblock %}
-    </main>
 </div>
 <script>
     function toggleDropdown(event) {
