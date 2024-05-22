@@ -36,7 +36,7 @@
                 </div>
 
                 <div class="course__testBtn text-center mt-5">
-                    <a href="{% url 'courses:course_student_test' pk=course.id lesson_id=lesson.id %}"
+                    <a href="{% url 'courses:course_student_test_lesson' pk=course.id module_id=module_id lesson_id=lesson.id %}"
                             class="inline-block test-btn px-[64px] py-[26px] hover:bg-accent-red hover:text-white rounded-lg border-[1px] border-accent-red leading-7 text-5 font-semibold text-accent-red"
                     >
                         Перейти к тесту

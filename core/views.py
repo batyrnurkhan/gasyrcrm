@@ -103,7 +103,7 @@ def course_redirect(request, pk):
     except:
         messages.error(request, "Course not found")
         return redirect(reverse("home"))
-    return redirect(reverse("courses:course_student_lecture", kwargs={'pk': pk, 'lesson_id': lesson.id}))
+    return redirect(reverse("courses:course_student_lecture", kwargs={'pk': pk, 'module_id': module.id, 'lesson_id': lesson.id}))
 
 
 class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
@@ -124,7 +124,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
-        module = Module.objects.filter(lessons__in=lesson).first()
+        module = Module.objects.filter(pk=self.kwargs['module_id']).first()
         context['lesson'] = lesson.first()
         for i, item in enumerate(module.lessons.all()):
             if item == lesson.first():
@@ -132,7 +132,6 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
                 break
         context['module_id'] = module.pk
         context['module_name'] = module.module_name
-        # TODO Batyr ty chto tut sdelal?
         course = self.get_object()
         user = self.request.user
 
@@ -177,18 +176,37 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CourseStudentLessonTestPageView(LoginRequiredMixin, DetailView):
+class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
     model = Course
     template_name = 'core/student/course_lesson_test.html'
 
     def get_template_names(self):
         user = self.request.user
-        test = Lesson.objects.filter(pk=self.kwargs['lesson_id']).first().tests.first()
-        submission = TestSubmission.objects.filter(user=user, test=test)
-        if not submission.exists():
-            return "core/student/course_lesson_test.html"
+        if self.kwargs['lesson_id']:
+            lessons = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
+            if lessons.exists():
+                if lessons.first().tests:
+                    test = lessons.first().tests.first()
+                    submission = TestSubmission.objects.filter(user=user, test=test)
+                    if submission.exists():
+                        return "core/student/course_lesson_test_results.html"
+                    return "core/student/course_lesson_test.html"
+                return "core/student/course_lesson_test.html"
+
+        elif self.kwargs['module_id']:
+            test = Module.objects.filter(pk=self.kwargs['module_id']).first().tests.first()
+            submission = TestSubmission.objects.filter(user=user, test=test)
+            if not submission.exists():
+                return "core/student/course_module_test.html"
+            else:
+                return "core/student/course_module_test.html"
         else:
-            return "core/student/course_lesson_test_results.html"
+            test = Course.objects.filter(pk=self.kwargs['pk']).first().tests.first()
+            submission = TestSubmission.objects.filter(user=user, test=test)
+            if not submission.exists():
+                return "core/student/course_test.html"
+            else:
+                return "core/student/course_test.html"
 
     def dispatch(self, request, *args, **kwargs):
         course = Course.objects.filter(pk=self.kwargs['pk'])

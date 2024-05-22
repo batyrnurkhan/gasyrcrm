@@ -28,81 +28,80 @@
                 </div>
                 <div class="video-container relative w-full">
                     {% for test in lesson.tests.all %}
-                        <form action="{% url 'courses:take_test' test_id=test.id %}" method="post">
-                            {% csrf_token %}
-                            <ul class="testing__questions pt-[42px] pb-20 flex flex-col space-y-[36px] text-5 text-black-main font-bold leading-6">
-                                {% for question in test.questions.all %}
-                                    <li class="testing__question-item">
-                                        <div class="testing__question-title mb-[24px]">
-                                            {{ forloop.counter }}. {{ question.text }}
+                        <ul class="testing__questions pt-[42px] pb-20 flex flex-col space-y-[36px] text-5 text-black-main font-bold leading-6">
+                            {% for question in test.questions.all %}
+                                <li class="testing__question-item">
+                                    <div class="testing__question-title mb-[24px]">
+                                        {{ forloop.counter }}. {{ question.text }}
+                                    </div>
+                                    {% if question.question_type == 'IMG' and question.image %}
+                                        <div class="testing__question-photo w-full flex items-center h-[226px] border-[1px] border-[#D8D8D8] justify-center mb-[20px]">
+                                            <img class="h-full w-full object-scale-down"
+                                                 src="{{ question.image.url }}" alt=""/>
                                         </div>
-                                        {% if question.question_type == 'IMG' and question.image %}
-                                            <div class="testing__question-photo w-full flex items-center h-[226px] border-[1px] border-[#D8D8D8] justify-center mb-[20px]">
-                                                <img class="h-full w-full object-scale-down"
-                                                     src="{{ question.image.url }}" alt=""/>
-                                            </div>
-                                        {% elif question.question_type == 'AUD' and question.audio %}
-                                            <div id="audio-player-container-{{ forloop.counter0 }}"
-                                                 class="flex items-center gap-3.5 bg-[#F7F7F7] rounded-md py-[13px] pl-[13px] pr-[20px] mb-6 max-w-[360px]">
-                                                <img src="{% static 'core/icons/audioIcon.png' %}" alt="Audio Icon"
-                                                     class="w-6 h-6"/>
-                                                <div class="relative flex-1">
-                                                    <input type="range" id="seek-slider" value="0" min="0" max="100"
-                                                           class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
-                                                           style="
-                      background: linear-gradient(
-                        to right,
-                        red 0%,
-                        red var(--progress-percentage),
-                        white var(--progress-percentage),
-                        white 100%
-                      );
-                    " oninput="updateTime()"/>
-                                                    <div class="flex absolute w-full justify-between top-[1px]">
-                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
-                                                                id="current-time-{{ forloop.counter0 }}">00:00
-                                                        </output>
-                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
-                                                                id="time-{{ forloop.counter0 }}">3:10
-                                                        </output>
-                                                    </div>
+                                    {% elif question.question_type == 'AUD' and question.audio %}
+                                        <div id="audio-player-container-{{ forloop.counter0 }}"
+                                             class="flex items-center gap-3.5 bg-[#F7F7F7] rounded-md py-[13px] pl-[13px] pr-[20px] mb-6 max-w-[360px]">
+                                            <img src="{% static 'core/icons/audioIcon.png' %}" alt="Audio Icon"
+                                                 class="w-6 h-6"/>
+                                            <div class="relative flex-1">
+                                                <input type="range" id="seek-slider" value="0" min="0" max="100"
+                                                       class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
+                                                       style="
+                  background: linear-gradient(
+                    to right,
+                    red 0%,
+                    red var(--progress-percentage),
+                    white var(--progress-percentage),
+                    white 100%
+                  );
+                " oninput="updateTime()"/>
+                                                <div class="flex absolute w-full justify-between top-[1px]">
+                                                    <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                            id="current-time-{{ forloop.counter0 }}">00:00
+                                                    </output>
+                                                    <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                            id="time-{{ forloop.counter0 }}">3:10
+                                                    </output>
                                                 </div>
-                                                <audio id="audioPlayer" preload="metadata"
-                                                       src="{{ question.audio.url }}"></audio>
-                                                <button id="play-icon" type="button"
-                                                        class="flex justify-center items-center focus:outline-none">
-                                                    <img src="{% static 'core/icons/playIcon.png' %}" alt="Play Icon"
-                                                         id="playPauseIcon" class="w-8 h-8"/>
-                                                </button>
                                             </div>
-                                        {% endif %}
-                                        <div class="testing__question-answers grid gap-2.5 grid-cols-2">
-                                            {% for answer in question.answers.all %}
-                                                <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 cursor-pointer">
-                                                    <input type="{% if question.question_type == 'MC' %}checkbox{% else %}radio{% endif %}"
-                                                            {% if answer in submission.selected_answers.all %}
-                                                           checked
-                                                            {% endif %}
-                                                           name="answer_{{ question.id }}"
-                                                           value="{{ answer.id }}"
-                                                           {% if question.question_type != 'MC' %}required{% endif %}
-                                                           class="question-{{ forloop.parentloop.counter0 }}-answers w-5 h-5 border-[#D8D8D8] checked:accent-accent-red mr-[26px]"/>
-                                                    <span>{{ answer.text }}</span>
-                                                    <div class="answer-icon">
-                                                        <img src="./assets/checkIcon.png" alt=""/>
-                                                    </div>
-                                                </label>
-                                            {% endfor %}
+                                            <audio id="audioPlayer" preload="metadata"
+                                                   src="{{ question.audio.url }}"></audio>
+                                            <button id="play-icon" type="button"
+                                                    class="flex justify-center items-center focus:outline-none">
+                                                <img src="{% static 'core/icons/playIcon.png' %}" alt="Play Icon"
+                                                     id="playPauseIcon" class="w-8 h-8"/>
+                                            </button>
                                         </div>
-                                    </li>
-                                {% endfor %}
-                                <div class="testing__btn mx-auto">
-                                    <button class="border-accent-red hover:bg-accent-red hover:text-white text-center mt-4 px-[64px] py-[26px] text-5 leading-7 font-bold text-accent-red border rounded-lg inline">
-                                        Закончить тестирование
-                                    </button>
-                                </div>
-                            </ul>
-                        </form>
+                                    {% endif %}
+                                    <div class="testing__question-answers grid gap-2.5 grid-cols-2">
+                                        {% for answer in question.answers.all %}
+                                            <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 cursor-pointer
+                                                   {% if answer in submission.selected_answers.all %}bg-[#56C024]{% endif %}">
+                                                <input type="{% if question.question_type == 'MC' %}checkbox{% else %}radio{% endif %}"
+                                                        {% if answer in submission.selected_answers.all %}
+                                                       checked
+                                                        {% endif %}
+                                                       disabled
+                                                       name="answer_{{ question.id }}"
+                                                       value="{{ answer.id }}"
+                                                       {% if question.question_type != 'MC' %}required{% endif %}
+                                                       class="question-{{ forloop.parentloop.counter0 }}-answers w-5 h-5 border-[#D8D8D8] checked:accent-[green] mr-[26px]"/>
+                                                <span>{{ answer.text }}</span>
+                                                <div class="answer-icon">
+                                                    <img src="./assets/checkIcon.png" alt=""/>
+                                                </div>
+                                            </label>
+                                        {% endfor %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                            <div class="testing__btn mx-auto">
+                                <button class="border-accent-red hover:bg-accent-red hover:text-white text-center mt-4 px-[64px] py-[26px] text-5 leading-7 font-bold text-accent-red border rounded-lg inline">
+                                    Закончить тестирование
+                                </button>
+                            </div>
+                        </ul>
                     {% endfor %}
                 </div>
             </div>

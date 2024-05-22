@@ -1335,6 +1335,10 @@ video {
   height: 26px;
 }
 
+.h-\[300px\] {
+  height: 300px;
+}
+
 .h-\[53px\] {
   height: 53px;
 }
@@ -1354,10 +1358,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-\[300px\] {
-  height: 300px;
 }
 
 .max-h-0 {
@@ -1448,6 +1448,10 @@ video {
   width: 2rem;
 }
 
+.w-\[100\%\] {
+  width: 100%;
+}
+
 .w-\[12\%\] {
   width: 12%;
 }
@@ -1509,10 +1513,6 @@ video {
 }
 
 .w-full {
-  width: 100%;
-}
-
-.w-\[100\%\] {
   width: 100%;
 }
 
@@ -1870,6 +1870,11 @@ video {
 
 .bg-whiteless {
   background-color: rgba(250, 250, 250, 1);
+}
+
+.bg-\[\#56C024\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(86 192 36 / var(--tw-bg-opacity));
 }
 
 .bg-gradient-to-r {
@@ -2234,6 +2239,10 @@ video {
   padding-left: 36px;
 }
 
+.pl-\[60px\] {
+  padding-left: 60px;
+}
+
 .pr-10 {
   padding-right: 2.5rem;
 }
@@ -2298,10 +2307,6 @@ video {
   padding-top: 76px;
 }
 
-.pl-\[60px\] {
-  padding-left: 60px;
-}
-
 .text-left {
   text-align: left;
 }
@@ -2341,6 +2346,10 @@ video {
 
 .text-\[12px\] {
   font-size: 12px;
+}
+
+.text-\[156px\] {
+  font-size: 156px;
 }
 
 .text-\[16px\] {
@@ -2395,10 +2404,6 @@ video {
   line-height: 1.75rem;
 }
 
-.text-\[156px\] {
-  font-size: 156px;
-}
-
 .font-\[600\] {
   font-weight: 600;
 }
@@ -2443,8 +2448,16 @@ video {
   line-height: 102.3px;
 }
 
+.leading-\[190px\] {
+  line-height: 190px;
+}
+
 .leading-\[22px\] {
   line-height: 22px;
+}
+
+.leading-\[30px\] {
+  line-height: 30px;
 }
 
 .leading-\[52px\] {
@@ -2457,14 +2470,6 @@ video {
 
 .leading-\[68\.49px\] {
   line-height: 68.49px;
-}
-
-.leading-\[190px\] {
-  line-height: 190px;
-}
-
-.leading-\[30px\] {
-  line-height: 30px;
 }
 
 .tracking-widest {
@@ -2647,8 +2652,37 @@ video {
   opacity: 0.6;
 }
 
+.checked\:border-white:checked {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
 .checked\:accent-accent-red:checked {
   accent-color: #BA2025;
+}
+
+.checked\:accent-white:checked {
+  accent-color: #fff;
+}
+
+.checked\:accent-whiteless:checked {
+  accent-color: rgba(250, 250, 250, 1);
+}
+
+.checked\:accent-black-main:checked {
+  accent-color: #4F4F4F;
+}
+
+.checked\:accent-\[\#56C024\]:checked {
+  accent-color: #56C024;
+}
+
+.checked\:accent-\[green\]:checked {
+  accent-color: green;
+}
+
+.checked\:accent-\[\]:checked {
+  accent-color: ;
 }
 
 .hover\:bg-accent-red:hover {

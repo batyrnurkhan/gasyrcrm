@@ -25,12 +25,12 @@
                             max-h-0 space-y-3 pl-[36px] list-disc list-outside">
                                 <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                     <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                    <a href="{% url 'courses:course_student_lecture' pk=course.id lesson_id=l.id %}">Лекция</a>
+                                    <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=module.id lesson_id=l.id %}">Лекция</a>
                                 </li>
                                 {% if l.tests.count > 0 %}
                                     <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                                         <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                        <a href="{% url 'courses:course_student_test' pk=course.id lesson_id=lesson.id %}">Тестирование</a>
+                                        <a href="{% url 'courses:course_student_test_lesson' pk=course.id module_id=module.id lesson_id=l.id %}">Тестирование</a>
                                     </li>
                                 {% endif %}
                                 {% if l.literatures.count > 0 %}
@@ -46,7 +46,7 @@
                         <div class="relative overflow-hidden">
                             <input checked type="checkbox"
                                    class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
-                            <p class="text-[18px] leading-[22px] text-black-main mb-[12px] block">Тестирование модуля: {{ test.title }}</p>
+                            <p class="text-[18px] leading-[22px] text-black-main mb-[12px] block">Тестирование</p>
                         </div>
                     {% endfor %}
                 </div>

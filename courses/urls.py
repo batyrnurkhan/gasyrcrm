@@ -8,7 +8,7 @@ from .views import (
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
     CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view, publishCourse
 )
-from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentLessonTestPageView
+from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentTestPageView
 from django.conf import settings
 from django.conf.urls.static import static
 app_name = 'courses'
@@ -17,8 +17,10 @@ urlpatterns = [
     path('', CourseListView.as_view(), name='course_list'),
     path('<int:pk>/', CoursePageView.as_view(), name='course_detail'),
     path('student/<int:pk>/', course_redirect, name='course_start'),
-    path('student/<int:pk>/<int:lesson_id>/lecture', CourseStudentLecturePageView.as_view(), name='course_student_lecture'),
-    path('student/<int:pk>/<int:lesson_id>/test', CourseStudentLessonTestPageView.as_view(), name='course_student_test'),
+    path('student/<int:pk>/<int:module_id>/<int:lesson_id>/lecture', CourseStudentLecturePageView.as_view(), name='course_student_lecture'),
+    path('student/<int:pk>/<int:module_id>/<int:lesson_id>/test', CourseStudentTestPageView.as_view(), name='course_student_test_lesson'),
+    path('student/<int:pk>/<int:module_id>/test', CourseStudentTestPageView.as_view(), name='course_student_test_module'),
+    path('student/<int:pk>/test', CourseStudentTestPageView.as_view(), name='course_student_test_course'),
     path('edit/<int:pk>/', CourseDetailView.as_view(), name='course_detail_edit'),
     path('publish/<int:pk>/', publishCourse, name='course_publish'),
     path('edit/<int:pk>/about/', EditCourseView.as_view(), name='course_detail_edit_about'),
@@ -45,7 +47,9 @@ urlpatterns = [
 
     path('<int:course_id>/student/<str:student_login_code>', student_results_view, name='student_results'),
 
-    path('test/take/<int:test_id>/', TakeTestView.as_view(), name='take_test'),
+    path('test/take/<int:course_id>/<int:module_id>/<int:lesson_id>/<int:test_id>/', TakeTestView.as_view(), name='take_test_lesson'),
+    path('test/take/<int:course_id>/<int:module_id>/<int:test_id>/', TakeTestView.as_view(), name='take_test_module'),
+    path('test/take/<int:course_id>/<int:test_id>/', TakeTestView.as_view(), name='take_test_course'),
     re_path(r'^test/result/(?P<score>\d+\.\d+)/$', test_result_view, name='test_result'),
 
     path('course/<int:course_id>/module/', ModuleDetailView.as_view(), name='module_detail'),

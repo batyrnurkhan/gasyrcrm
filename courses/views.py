@@ -125,7 +125,7 @@ class CreateCourseEndingView(View):
         return render(request, 'courses/course/create_course_ending.html', {'course': course})
 
 
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 
 class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -564,7 +564,7 @@ class TakeTestView(LoginRequiredMixin, View):
         questions = test.questions.prefetch_related('answers').all()
         return render(request, self.template_name, {'test': test, 'questions': questions})
 
-    def post(self, request, test_id):
+    def post(self, request, test_id, course_id, module_id=None, lesson_id=None):
         test = get_object_or_404(Test, pk=test_id)
         score = 0
         total_questions = test.questions.count()
@@ -589,7 +589,11 @@ class TakeTestView(LoginRequiredMixin, View):
         score_percentage = (score / total_questions) * 100 if total_questions else 0
         test_submission = TestSubmission.objects.create(user=request.user, test=test, score=score_percentage)
         test_submission.selected_answers.add(*selected_answers)
-        return redirect('courses:test_result', score=score_percentage)
+        if lesson_id:
+            return redirect('courses:course_student_test_lesson', pk=course_id, module_id=module_id, lesson_id=lesson_id)
+        elif module_id:
+            return redirect('courses:course_student_test_module', pk=course_id, module_id=module_id)
+        return redirect('courses:course_student_test_course', pk=course_id)
 
 
 def student_results_view(request, course_id, student_login_code):
