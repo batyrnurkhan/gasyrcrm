@@ -10,6 +10,7 @@ module.exports = {
         "./core/**/*.{html,js}",
         "./users/**/*.{html,js}",
         "./courses/**/*.{html,js}",
+        "./subjects/**/*.{html,js}",
     ],
     theme: {
         extend: {},

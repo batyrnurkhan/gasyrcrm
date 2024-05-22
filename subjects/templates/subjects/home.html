@@ -1,214 +1,236 @@
-{% extends 'subjects/base.html'%}
+{% extends 'subjects/base.html' %}
 
-{% include 'subjects/components/crm2-sidebar.html' %}
 {% load static %}
+{% load l10n %}
 
 {% block content %}
-
-      <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-        <div class="main__welcome mb-[20px] w-full h-[340px] pt-[50px] pl-[50px] rounded-md" style="
-              background: url('{% static "core/images/crm2/main1_bg.png" %}');
-              background-position: center;
-              background-size: cover;
-              background-repeat: no-repeat;
-            ">
-          <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
-            Добро пожаловать в Gasyr Foundation School!
-          </h1>
-          <p class="main__welcome-text font-medium text-[16px] leading-[24px] text-white max-w-[400px] mb-[30px]">
-            Посмотри видео, и ознакомься с платформой нашей онлайн-школы
-            подробнее
-          </p>
-          <button
-            class="main__welcome-btn py-[21px] px-[50px] rounded-sm border-[1px] border-white font-semibold text-white text-[16px] leading-[22px] hover:bg-white hover:text-accent-red">
-            Посмотреть видео
-          </button>
-        </div>
-        <div class="flex gap-[20px]">
-          <div
-            class="h-[208px] main__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md max-w-[510px] p-[32px]">
-            <div class="task__author flex gap-[12px]">
-  {% if task_teacher and task_teacher.profile_picture %}
-    <img src="{{ creator_profile_pic_url }}" alt="Profile Picture of {{ task_teacher.full_name }}" class="max-w-[42px] max-h-[42px] rounded-full">
-  {% elif task_teacher %}
-    <img src="./assets/main__author.png" alt="Profile Picture of {{ task_teacher.full_name }}" class="max-w-[42px] max-h-[42px] rounded-full">
-  {% else %}
-    <img src="./assets/default_profile_pic.png" alt="Default Profile Picture" class="max-w-[42px] max-h-[42px] rounded-full">
-  {% endif %}
-  <div class="author__info">
-    {% if task_teacher %}
-      <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
-        Учитель {{ task_teacher.full_name }} добавил задание
-      </h3>
-    {% else %}
-      <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
-        Учитель не указан
-      </h3>
-    {% endif %}
-    {% if last_task %}
-      <p class="author__item font-regular text-[14px] leading-[20px]">
-        {{ subject_name }}
-      </p>
-    {% else %}
-      <p class="author__item font-regular text-[14px] leading-[20px]">
-        Предмет не указан
-      </p>
-    {% endif %}
-  </div>
-</div>
-{% if last_task %}
-  <p class="main__task-title font-bold text-[18px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px]">
-    {{ last_task.name }}
-  </p>
-  <p class="main__task-date font-regular text-[14px] leading-[20px] text-black-main">
-    Срок заканчивается {{ last_task.deadline|date:"d.m.Y H:i" }} г.
-  </p>
-{% else %}
-  <p class="main__task-title font-bold text-[18px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px]">
-    На данный момент заданий нет.
-  </p>
-{% endif %}
-
-
-          </div>
-          <div class="goto__result w-[510px] h-[208px] rounded-md pt-[52px] pl-[30px]" style="
-                background-repeat: no-repeat;
-                background-position: center;
-                background-image: url('{% static "core/images/crm2/main2-bg.png" %}');
-              ">
-            <h1 class="goto__result-title text-white font-semibold text-[20px] leading-[30px] max-w-[270px] mb-[12px]">
-              Хотите узнать результат своих тестирований?
-            </h1>
-            <button
-              class="py-[17px] px-[35px] border-[1px] border-white rounded-sm text-white font-semibold text-[16px] leading-[22px]">
-              Перейти в дневник
-            </button>
-          </div>
-        </div>
-        <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
-          <div class="lessons__texts flex justify-between mb-[18px] items-center">
-            <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
-              Уроки сегодня
-            </h1>
-            <p class="lessons__date flex gap-[10px] items-center font-medium text-[16px] leading-[20px] text-[#9D9E9E]">
-              <img src="./assets/calendarIcon.svg" class="max-w-[15px] max-h-[15px]" alt="" />
-              <span>10 марта</span>
-            </p>
-          </div>
-          <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">
-            <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
-              <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                Английский язык
-              </p>
-              <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                15:00 - 16:00
-              </p>
-              <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full" />
-              <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
-                Ернур Амашев
-              </p>
-              <a href="#"
-                class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">Присоединиться
-                к уроку</a>
-            </li>
-            <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
-              <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                Ораторское мастерство
-              </p>
-              <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                16:00 - 16:30
-              </p>
-              <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full" />
-              <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
-                Ернур Алкашев
-              </p>
-              <a href="#"
-                class="lesson__link w-[220px] text-math-color text-right underline font-medium text-[16px] leading-[20px]">Урок
-                запланирован</a>
-            </li>
-            <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
-              <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                IELTS
-              </p>
-              <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                16:30 - 16:45
-              </p>
-              <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full" />
-              <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
-                Ернур Ерназаров
-              </p>
-              <a href="#"
-                class="lesson__link w-[220px] text-black-main text-right underline font-medium text-[16px] leading-[20px]">Посмотреть
-                данные по уроку</a>
-            </li>
-            <li class="lessons__item flex items-center h-[60px] justify-between">
-              <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                SAT
-              </p>
-              <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                17:00 - 17:45
-              </p>
-              <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full" />
-              <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
-                Ернур Ричбоев
-              </p>
-              <a href="#"
-                class="lesson__link w-[220px] text-black-main text-right underline font-medium text-[16px] leading-[20px]">Посмотреть
-                данные по уроку</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="flex mt-[20px] gap-[20px]">
-          <div class="pt-[32px] px-[32px] goto__psy w-[520px] h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md"
-            style="background-position: center; background-repeat: no-repeat; background-image: url('{% static "core/images/crm2/main3_bg-psy.png" %}');">
-            <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
-              Нуждаетесь в психологической помощи?</h3>
-            <button class="mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-sm">Записаться
-              к психологу</button>
-          </div>
-          <div class="pt-[32px] px-[32px] goto__psy w-[520px] h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md"
-            style="background-position: center; background-repeat: no-repeat; background-image: url('{% static "core/images/crm2/main4_bg-career.png" %}');">
-            <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">Не
-              знаете кем хотите стать в будущем?</h3>
-            <button class="mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-sm">Записаться
-              к проф. ориентологу</button>
-          </div>
-        </div>
-        <div class="lastAchieve mt-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md p-[32px] pb-[24px]">
-          <div class="lastAchieve__header flex justify-between items-center">
-            <h3 class="lastAchieve__title font-semibold text-[32px] leading-[44px] text-black-main max-w-[600px]">
-              Последнее полученное
-              достижение</h3>
-            <div class="lastAchieve__items flex gap-[20px]">
-              <div class="lastAchieve__item text-center"><img src="./assets/almaz.png" class="max-w-[45px] max-h-[35px]"
-                  alt=""><span class="font-semibold text-[16px] leading-[22px] text-[#282827]">0</span></div>
-              <div class="lastAchieve__item text-center"><img src="./assets/zoloto.png" class="max-w-[45px] max-h-[35px]"
-                  alt=""><span class="font-semibold text-[16px] leading-[22px] text-[#282827]">0</span></div>
-              <div class="lastAchieve__item text-center"><img src="./assets/zhelza.png" class="max-w-[45px] max-h-[35px]"
-                  alt=""><span class="font-semibold text-[16px] leading-[22px] text-[#282827]">1</span></div>
+    {% include "subjects/components/crm2-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="main__welcome mb-[20px] w-full h-[340px] pt-[50px] pl-[50px] rounded-md bg-center bg-cover bg-no-repeat"
+                 style="background: url('{% static "core/images/crm2/main1_bg.png" %}');">
+                <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
+                    Добро пожаловать в Gasyr Foundation School!
+                </h1>
+                <p class="main__welcome-text font-medium text-[16px] leading-[24px] text-white max-w-[400px] mb-[30px]">
+                    Посмотри видео, и ознакомься с платформой нашей онлайн-школы
+                    подробнее
+                </p>
+                <button class="main__welcome-btn py-[21px] px-[50px] rounded-sm border-[1px] border-white font-semibold text-white text-[16px] leading-[22px] hover:bg-white hover:text-accent-red">
+                    Посмотреть видео
+                </button>
             </div>
-          </div>
-          <div
-            class="lastAchieve__main mt-[20px] bg-[#FAFAFA] rounded-[20px] h-[135px] flex items-center justify-between px-[40px]">
-            <div class="lastAchieve__main-texts ">
-              <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">Получи
-                больше 5 баллов на пробном тестировании IELTS</h3>
-              <div
-                class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
-                <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
-                <ul class="lastAchieve__main-circles flex gap-1">
-                  <li class="w-3 h-3 rounded-full bg-accent-red "></li>
-                  <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                  <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                  <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                  <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                </ul>
-              </div>
+            <div class="flex gap-[20px]">
+                <div class="h-[208px] main__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md max-w-[510px] p-[32px]">
+                    {% if last_task %}
+                        <div class="task__author flex gap-[12px]">
+                            {% if task_teacher and task_teacher.profile_picture %}
+                                <img src="{{ creator_profile_pic_url }}"
+                                     alt="Profile Picture of {{ task_teacher.full_name }}"
+                                     class="max-w-[42px] max-h-[42px] rounded-full">
+                            {% elif task_teacher %}
+                                <img src="./assets/main__author.png"
+                                     alt="Profile Picture of {{ task_teacher.full_name }}"
+                                     class="max-w-[42px] max-h-[42px] rounded-full">
+                            {% else %}
+                                <img src="./assets/default_profile_pic.png" alt="Default Profile Picture"
+                                     class="max-w-[42px] max-h-[42px] rounded-full">
+                            {% endif %}
+                            <div class="author__info">
+                                {% if task_teacher %}
+                                    <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
+                                        Учитель {{ task_teacher.full_name }} добавил задание
+                                    </h3>
+                                {% else %}
+                                    <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
+                                        Учитель не указан
+                                    </h3>
+                                {% endif %}
+                                {% if last_task %}
+                                    <p class="author__item font-regular text-[14px] leading-[20px]">
+                                        {{ subject_name }}
+                                    </p>
+                                {% else %}
+                                    <p class="author__item font-regular text-[14px] leading-[20px]">
+                                        Предмет не указан
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="main__task-title font-bold text-[18px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px]">
+                            {{ last_task.name }}
+                        </p>
+                        <p class="main__task-date font-regular text-[14px] leading-[20px] text-black-main">
+                            Срок заканчивается {{ last_task.deadline|date:"d.m.Y H:i" }} г.
+                        </p>
+                    {% else %}
+                        <div class="flex flex-row justify-content-around items-center">
+                            <img class="inline-block mr-9" src="{% static 'core/images/cats/sitting.png' %}" alt="">
+                            <p class="main__task-title font-bold text-[24px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px] h-fit">
+                                На данный момент заданий нет.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="goto__result w-[510px] h-[208px] rounded-md pt-[52px] pl-[30px]" style="
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-image: url('{% static "core/images/crm2/main2-bg.png" %}');">
+                    <h1 class="goto__result-title text-white font-semibold text-[20px] leading-[30px] max-w-[270px] mb-[12px]">
+                        Хотите узнать результат своих тестирований?
+                    </h1>
+                    <button class="py-[17px] px-[35px] border-[1px] border-white rounded-sm text-white font-semibold text-[16px] leading-[22px]">
+                        Перейти в дневник
+                    </button>
+                </div>
             </div>
-            <img src="./assets/zhelza.png" alt="" class="max-w-[55px] max-h-[40px]">
-          </div>
-        </div>
-      </div>
+            <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
+                <div class="lessons__texts flex justify-between mb-[18px] items-center">
+                    <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
+                        Уроки сегодня
+                    </h1>
+                    <p class="lessons__date flex gap-[10px] items-center font-medium text-[16px] leading-[20px] text-[#9D9E9E]">
+                        <img src="./assets/calendarIcon.svg" class="max-w-[15px] max-h-[15px]" alt=""/>
+                        <span>{% localize on %}{% now "d M" %}{% endlocalize %}</span>
+                    </p>
+                </div>
+                {% if False %}
+                    <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">
+                        <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
+                            <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
+                                Английский язык
+                            </p>
+                            <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
+                                15:00 - 16:00
+                            </p>
+                            <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full"/>
+                            <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
+                                Ернур Амашев
+                            </p>
+                            <a href="#"
+                               class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">Присоединиться
+                                к уроку</a>
+                        </li>
+                        <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
+                            <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
+                                Ораторское мастерство
+                            </p>
+                            <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
+                                16:00 - 16:30
+                            </p>
+                            <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full"/>
+                            <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
+                                Ернур Алкашев
+                            </p>
+                            <a href="#"
+                               class="lesson__link w-[220px] text-math text-right underline font-medium text-[16px] leading-[20px]">Урок
+                                запланирован</a>
+                        </li>
+                        <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
+                            <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
+                                IELTS
+                            </p>
+                            <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
+                                16:30 - 16:45
+                            </p>
+                            <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full"/>
+                            <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
+                                Ернур Ерназаров
+                            </p>
+                            <a href="#"
+                               class="lesson__link w-[220px] text-black-main text-right underline font-medium text-[16px] leading-[20px]">Посмотреть
+                                данные по уроку</a>
+                        </li>
+                        <li class="lessons__item flex items-center h-[60px] justify-between">
+                            <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
+                                SAT
+                            </p>
+                            <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
+                                17:00 - 17:45
+                            </p>
+                            <img src="./assets/main__author.png" alt="" class="max-w-[32px] max-h-[32px] rounded-full"/>
+                            <p class="author__name font-semibold text-[16px] leading-[20px] text-black-main w-[150px]">
+                                Ернур Ричбоев
+                            </p>
+                            <a href="#"
+                               class="lesson__link w-[220px] text-black-main text-right underline font-medium text-[16px] leading-[20px]">Посмотреть
+                                данные по уроку</a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
+                        <img src="{% static 'core/images/cats/papers.png' %}" alt=""
+                             class="max-w-[215px] max-h-[215px]">
+                        <p class="empty-text max-w-[310px] font-bold text-[24px] leading-[36px] text-black-main">
+                            Расписание на этот
+                            день еще не назначено.<br/>Скоро все будет :)
+                        </p>
+                    </ul>
+                {% endif %}
+            </div>
 
+            <div class="flex mt-[20px] gap-[20px]">
+                <div class="pt-[32px] px-[32px] goto__psy w-[520px] h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md bg-center bg-no-repeat"
+                     style="background-image: url('{% static "core/images/crm2/main3_bg-psy.png" %}');">
+                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
+                        Нуждаетесь в психологической помощи?</h3>
+                    <button class="mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-sm">
+                        Записаться
+                        к психологу
+                    </button>
+                </div>
+                <div class="pt-[32px] px-[32px] goto__psy w-[520px] h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md bg-center bg-no-repeat"
+                     style="background-image: url('{% static "core/images/crm2/main4_bg-career.png" %}');">
+                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">Не
+                        знаете кем хотите стать в будущем?</h3>
+                    <button class="mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-sm">
+                        Записаться
+                        к проф. ориентологу
+                    </button>
+                </div>
+            </div>
+            <div class="lastAchieve mt-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md p-[32px] pb-[24px]">
+                <div class="lastAchieve__header flex justify-between items-center">
+                    <h3 class="lastAchieve__title font-semibold text-[32px] leading-[44px] text-black-main max-w-[600px]">
+                        Последнее полученное
+                        достижение</h3>
+                    <div class="lastAchieve__items flex gap-[20px]">
+                        <div class="lastAchieve__item text-center"><img src="./assets/almaz.png"
+                                                                        class="max-w-[45px] max-h-[35px]"
+                                                                        alt=""><span
+                                class="font-semibold text-[16px] leading-[22px] text-[#282827]">0</span></div>
+                        <div class="lastAchieve__item text-center"><img src="./assets/zoloto.png"
+                                                                        class="max-w-[45px] max-h-[35px]"
+                                                                        alt=""><span
+                                class="font-semibold text-[16px] leading-[22px] text-[#282827]">0</span></div>
+                        <div class="lastAchieve__item text-center"><img src="./assets/zhelza.png"
+                                                                        class="max-w-[45px] max-h-[35px]"
+                                                                        alt=""><span
+                                class="font-semibold text-[16px] leading-[22px] text-[#282827]">1</span></div>
+                    </div>
+                </div>
+                <div
+                        class="lastAchieve__main mt-[20px] bg-[#FAFAFA] rounded-[20px] h-[135px] flex items-center justify-between px-[40px]">
+                    <div class="lastAchieve__main-texts ">
+                        <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">
+                            Получи
+                            больше 5 баллов на пробном тестировании IELTS</h3>
+                        <div
+                                class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
+                            <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
+                            <ul class="lastAchieve__main-circles flex gap-1">
+                                <li class="w-3 h-3 rounded-full bg-accent-red "></li>
+                                <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                                <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                                <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                                <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <img src="./assets/zhelza.png" alt="" class="max-w-[55px] max-h-[40px]">
+                </div>
+            </div>
+        </div>
+    </main>
 {% endblock %}
