@@ -127,18 +127,24 @@ class Course(models.Model):
 
     def calculate_completion_percentage(self, user):
         """Calculate what percentage of the course the user has completed based on tests."""
+        course_ct = ContentType.objects.get_for_model(Course)
+        module_ct = ContentType.objects.get_for_model(Module)
+        lesson_ct = ContentType.objects.get_for_model(Lesson)
+
         total_tests = Test.objects.filter(
-            content_type=ContentType.objects.get_for_model(Course),
-            object_id=self.pk
+            content_type__in=[course_ct, module_ct, lesson_ct],
+            object_id__in=[self.pk] + list(self.modules.values_list('pk', flat=True)) + list(
+                self.modules.values_list('lessons__pk', flat=True))
         ).count()
 
         if total_tests == 0:
-            return 0  # Avoid division by zero
+            return 0
 
         submitted_tests_count = Test.objects.filter(
-            content_type=ContentType.objects.get_for_model(Course),
-            object_id=self.pk,
-            test_submissions__user=user  # Assumes existence of a TestSubmission model relating users to tests
+            content_type__in=[course_ct, module_ct, lesson_ct],
+            object_id__in=[self.pk] + list(self.modules.values_list('pk', flat=True)) + list(
+                self.modules.values_list('lessons__pk', flat=True)),
+            test_submissions__user=user
         ).distinct().count()
 
         return (submitted_tests_count / total_tests) * 100

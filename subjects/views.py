@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Prefetch
 from django.http import JsonResponse, HttpResponseForbidden, Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -15,40 +16,39 @@ from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, Volu
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
 
 
+
 @login_required
 def home_view(request):
     user = request.user
     today = timezone.now().date()
-    now = timezone.now().time()
 
-    # Get the last created task related to the lessons where the user is a student
-    last_task = Task.objects.filter(chat_room__lessons__group_template__students=user).order_by('-deadline').first()
+    # Debugging: List all lessons for the user with their chat rooms
+    user_lessons = Lesson_crm2.objects.filter(
+        group_template__students=user
+    ).select_related('teacher', 'subject', 'chat_room')
+    print("Debug - User Lessons with Chat Rooms:", [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
 
-    # Get lessons for today
-    lessons_today = Lesson_crm2.objects.filter(
-        group_template__students=user,
-        time_slot__date=today
-    ).select_related('teacher', 'subject', 'time_slot')
+    # Fetch the last task considering chat rooms directly linked to user lessons
+    last_task = Task.objects.filter(
+        chat_room__in=[lesson.chat_room for lesson in user_lessons]
+    ).select_related('created_by').order_by('-deadline').first()
 
-    # Check if any lessons have started and send message
-    for lesson in lessons_today:
-        if lesson.time_slot.start_time <= now < lesson.time_slot.end_time:
-            message_content = f"{lesson.subject.name} начался"
-            Message.objects.create(
-                chat_room=lesson.chat_room,
-                user=request.user,  # or a system user if you have one
-                message=message_content
-            )
+    print("Debug - Last Task Details:", last_task)
 
-    # Get last achievement (temporarily hardcoded)
-    last_achievement = "Top Student of the Month"  # Replace with real data later
+    if last_task:
+        task_teacher = last_task.created_by
+        creator_profile_pic_url = task_teacher.profile_picture.url if task_teacher.profile_picture else None
+        subject_name = last_task.chat_room.lessons.first().subject.name if last_task.chat_room.lessons.exists() else "No Subject"
+    else:
+        task_teacher = None
+        creator_profile_pic_url = None
+        subject_name = "No Subject"
 
     return render(request, 'subjects/home.html', {
-        'user': user,
-        'last_task': last_task,
-        'lessons_today': lessons_today,
-        'last_achievement': last_achievement,
-        'today': today
+        'task_teacher': task_teacher,
+        'creator_profile_pic_url': creator_profile_pic_url,
+        'subject_name': subject_name,
+        'last_task': last_task
     })
 
 @login_required
