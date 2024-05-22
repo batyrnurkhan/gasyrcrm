@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 
 <head>
     <meta charset="UTF-8" />
@@ -141,355 +142,80 @@
                   </button>
                 </div>
               </div>
-              <div class=" p-[30px] bg-white">
-                <div class="flex gap-[4px] mb-[30px] text-center font-bold text-white">
-                    <button class="bg-accent-red py-[7px] font-semibold text-[20px] leading-[24px] text-white px-[34px] rounded-[40px]">Понедельник</button>
-                    <button class="border-[1px] border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Вторник</button>
-                    <button class="border-[1px] border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Среда</button>
-                    <button class="border-[1px] border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Четверг</button>
-                    <button class="border-[1px] border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Пятница</button>
-                    <button class="border-[1px] border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Суббота</button>
-                    
-                </div>
-                <div class="grid gap-[40px] ">
-                    <div class="item  min-w-full">
-                        <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">1 смена</p>
-                        <div class="rounded-sm  border-[1px] border-[#CACACA] overflow-x-auto ">
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">9:00 - 10:20</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid">
+            {% for shift in shifts %}
+            <div class="item min-w-full">
+                <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">{{ shift.name }}</p>
+                <div class="rounded-sm border-[1px] border-[#CACACA] overflow-x-auto">
+                    {% for time in shift.times.all %}
+                    <div class="item p-[16px] flex item-start min-w-max flex-grow">
+                        <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">{{ time.start_time }} - {{ time.end_time }}</p>
+                        <div class="flex items-center gap-[17px]">
+                            {% for lesson in time.lessons.all %}
+                            <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-sm p-[14px] bg-[#FAFAFA]">
+                                <div class="flex items-center gap-[8px]">
+                                    <p class="font-semibold text-[16px] leading-20px text-black-main">{{ lesson.teacher.full_name }}</p>
                                 </div>
+                                <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">{{ lesson.subject.name }}</h3>
+                                <h5 class="font-regular text-[14px] leading-[16px] text-black-main">{{ lesson.group_template.name }}</h5>
                             </div>
-                            
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow  ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">10:30 - 12:00 </p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#E82424] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Ерназаров</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Турецкий язык</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start flex-grow  min-w-max" >
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">12:00 - 13:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">13:00 - 14:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
+                            {% empty %}
+                            <p>No lessons scheduled for this time.</p>
+                            {% endfor %}
+                            <button class="add-lesson-btn w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red" data-time-id="{{ time.id }}">
+                                +
+                            </button>
                         </div>
                     </div>
-                    <div class="item  min-w-full">
-                        <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">2 смена</p>
-                        <div class="rounded-sm  border-[1px] border-[#CACACA] overflow-x-auto ">
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">9:00 - 10:20</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow  ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">10:30 - 12:00 </p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#E82424] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Ерназаров</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Турецкий язык</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start flex-grow  min-w-max" >
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">12:00 - 13:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">13:00 - 14:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item  min-w-full">
-                        <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">3 смена</p>
-                        <div class="rounded-sm  border-[1px] border-[#CACACA] overflow-x-auto ">
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">9:00 - 10:20</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow  ">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">10:30 - 12:00 </p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#E82424] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Ерназаров</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Турецкий язык</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#DBAC33] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start flex-grow  min-w-max" >
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">12:00 - 13:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                            <div class="item p-[16px] flex item-start min-w-max flex-grow">
-                                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">13:00 - 14:00</p>
-                                <div class="flex items-center gap-[17px]">
-                                    <div class="border-t-[#5ED3F8] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Ернур Амашев</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">Математика SAT</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <div class="border-t-[#6372FF] min-w-[245px] grid gap-[12px] border-t-[10px] rounded-sm p-[14px] bg-[#FAFAFA]">
-                                        <div class="flex items-center gap-[8px]">
-                                            <img src="./assets/avatarPhoto.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                            <p class="font-semibold text-[16px] leading-20px text-black-main">Аружан Тлебердиева</p>
-                                        </div>
-                                        <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">General English</h3>
-                                        <h5 class="font-regular text-[14px] leading-[16px] text-black-main">Шаблон группы</h5>
-                                    </div>
-                                    <button class="w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red">+</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
+            {% empty %}
+            <p>No shifts available.</p>
+            {% endfor %}
         </div>
-
+        </div>
     </main>
+      <div id="lessonModal" class="fixed z-10 left-0 top-0 w-full h-full overflow-auto bg-black bg-opacity-40 hidden">
+    <div class="bg-white p-5 m-auto mt-32 rounded shadow-lg w-1/2">
+        <span class="close float-right text-3xl font-bold cursor-pointer">&times;</span>
+        <h1 class="text-xl font-bold mb-4">Create a New Lesson</h1>
+        <div id="lessonFormContainer">
+            <!-- The form will be loaded here via AJAX -->
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = document.getElementById("lessonModal");
+    var closeBtn = document.querySelector(".close");
+
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    document.querySelectorAll('.add-lesson-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const timeId = this.getAttribute("data-time-id");
+            const urlTemplate = `{% url 'subjects:lesson-create' '999' %}`;  // '999' is a placeholder
+            const url = urlTemplate.replace('999', timeId);
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('lessonFormContainer').innerHTML = html;
+                    modal.style.display = "block";
+                });
+        });
+    });
+});
+</script>
+
 </body>
 
 </html>

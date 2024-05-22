@@ -15,6 +15,7 @@ urlpatterns = [
 
     path('lessons/', LessonListView.as_view(), name='lesson-list'),
     path('lessons-create/<int:time_id>/', LessonCreateView.as_view(), name='lesson-create'),
+
     path('lessons/<int:pk>/', LessonDetailView.as_view(), name='lesson-detail'),
     path('search/', search_students, name='search-students'),
     path('volunteer_channels/create/', create_volunteer_channel, name='create_volunteer_channel'),

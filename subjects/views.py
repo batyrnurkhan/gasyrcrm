@@ -169,27 +169,19 @@ class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['now'] = timezone.now()  # if you need the current time
         return context
 
-class LessonCreateView(CreateView):
+class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Lesson_crm2
     form_class = LessonForm
     template_name = 'subjects/lesson_create.html'
 
+    def test_func(self):
+        # Check if the user is authenticated and is a mentor
+        return self.request.user.is_authenticated and self.request.user.role == 'Mentor'
+
     def get_context_data(self, **kwargs):
-        # Ensure the time_id is passed to the template for the hidden field
         context = super().get_context_data(**kwargs)
         context['time_id'] = self.kwargs['time_id']
         return context
-
-    def get_success_url(self):
-        # Redirects back to the shifts page after successful creation
-        return reverse('subjects:weekly-schedule')
-
-    def form_invalid(self, form):
-        # This is where you handle the form errors
-        for field, errors in form.errors.items():
-            for error in errors:
-                messages.error(self.request, error)
-        return super().form_invalid(form)
 
     def form_valid(self, form):
         try:
@@ -218,6 +210,9 @@ class LessonCreateView(CreateView):
             chat_room.participants.add(self.object.teacher)
 
         return response
+    def get_success_url(self):
+        # Redirects back to the shifts page after successful creation
+        return reverse('schedule:shifts')
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2
