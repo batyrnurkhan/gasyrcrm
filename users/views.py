@@ -101,24 +101,25 @@ class GrantAccessView(View):
 
     def post(self, request):
         form = self.form_class(request.POST)
-        user_info = None
         if form.is_valid():
-            login_code = form.cleaned_data.get('login_code')
-            CustomUser = get_user_model()
+            login_code = form.cleaned_data['login_code']
             try:
-                user_to_grant = CustomUser.objects.get(login_code=login_code)
+                user = get_user_model().objects.get(login_code=login_code)
                 if 'grant_access' in request.POST:
-                    user_to_grant.has_access = True
-                    user_to_grant.save()
-                user_info = {
-                    'full_name': user_to_grant.full_name,
-                    'phone_number': user_to_grant.phone_number,
-                    'user_city': user_to_grant.user_city,
-                    'has_access': user_to_grant.has_access,
+                    user.has_access = True
+                    user.save()
+                user_data = {
+                    'full_name': user.full_name,
+                    'phone_number': user.phone_number,
+                    'user_city': user.user_city,
+                    'has_access': user.has_access,
+                    'login_code': user.login_code,
                 }
-            except CustomUser.DoesNotExist:
-                form.add_error('login_code', 'No user found with this login code.')
-        return render(request, 'users/grant_access.html', {'form': form, 'user_info': user_info})
+                return JsonResponse({'status': 'success', 'user': user_data}, status=200)
+            except get_user_model().DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'No user found with this login code.'}, status=404)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid data.'}, status=400)
 
 
 class ProfileView(LoginRequiredMixin, View):
