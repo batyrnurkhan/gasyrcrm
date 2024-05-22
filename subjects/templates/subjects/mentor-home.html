@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main Mentor</title>
+    <link rel="stylesheet" href="{% static 'font.css' %}" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{% static 'tailwindCDNmodule.js' %}"></script>
+</head>
+
+<body class="bg-[#fafafa] flex">
+    <div class="bg-white w-[285px] py-[42px] pl-[15px] pr-[10px] h-full shadow-[0px_4px_14px_0px_#0000000A]"
+        style="height: auto">
+        <a href="#" class="pl-[30px] text-red-500 text-lg font-bold mb-[55px] block"><img
+                src="{% static 'assets/GasyrLogoBlack.png' %}" alt="" />
+        </a>
+        <ul class="">
+            <li class="text-gray-700 text-sm">
+                <a href="#"
+                    class="mr-[35px] pl-[30px] rounded-md flex gap-[14px] width-[210px] py-4 bg-accent-red text-white fill-white">
+
+                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M0 9.49999C0 12.1106 0.0760043 14.3998 0.218907 16.7476C0.281093 17.7693 1.06103 18.602 2.07143 18.7045C5.95095 19.0985 9.3564 19.0985 13.2359 18.7045C14.2463 18.602 15.0263 17.7693 15.0885 16.7476C15.2314 14.3998 15.3074 12.1106 15.3074 9.49999C15.3074 6.88937 15.2314 4.60014 15.0885 2.25237C15.0263 1.2307 14.2463 0.398048 13.2359 0.29545C9.3564 -0.0984835 5.95095 -0.0984835 2.07143 0.29545C1.06103 0.398049 0.281093 1.2307 0.218907 2.25237C0.0760043 4.60014 0 6.88937 0 9.49999ZM5.64972 4.11156C4.87958 4.11156 4.25524 4.74486 4.25524 5.52606V6.43009C4.25524 7.21129 4.87958 7.84458 5.64972 7.84458H9.65786C10.428 7.84458 11.0523 7.21129 11.0523 6.43009V5.52606C11.0523 4.74486 10.428 4.11156 9.65786 4.11156H5.64972ZM17.396 14.0674C17.1867 14.1684 16.9697 13.9905 16.9781 13.7554C17.0258 12.3944 17.0505 10.9989 17.0505 9.50008C17.0505 9.35487 17.0503 9.2106 17.0498 9.06726C17.0492 8.87112 17.2055 8.7115 17.399 8.7115H18.5136C18.6633 8.7115 18.7978 8.80832 18.8375 8.95485C19.1518 10.1119 18.9834 11.2659 18.561 12.6964C18.3755 13.3242 17.9395 13.8049 17.396 14.0674ZM18.3748 6.94338C18.5309 6.94338 18.6685 6.83814 18.7082 6.68511C19.0912 5.21154 19.1444 4.01896 18.5806 2.756C18.3015 2.13046 17.7618 1.76377 17.1948 1.62359C16.973 1.56877 16.7963 1.7811 16.818 2.01163C16.8222 2.05538 16.8256 2.09935 16.8283 2.14351C16.9181 3.61987 16.982 5.07427 17.0176 6.59704C17.022 6.78943 17.1768 6.94338 17.3666 6.94338H18.3748Z"
+                            fill="white" />
+                    </svg>
+
+                    <span class="font-semibold text-5 leading-[24px]">Ученики</span></a>
+            </li>
+            <li class="text-gray-700 text-sm">
+                <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4">
+                    <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M1.33548 4.99675C1.36983 4.74908 1.54923 4.50569 1.87408 4.30184C2.87432 3.67418 3.91169 3.02409 5.10825 2.42482C6.30482 1.82554 7.60281 1.30598 8.85602 0.805036C9.76566 0.441421 11.0697 0.441636 11.982 0.803607L12.0492 0.830293C13.2914 1.32314 14.5777 1.83349 15.7583 2.42482C16.939 3.01615 17.958 3.66036 18.942 4.28248L18.9953 4.31616C19.718 4.77304 19.7184 5.42616 18.9924 5.88174C17.9923 6.50941 16.9549 7.15948 15.7583 7.75876C15.6539 7.81111 15.5486 7.86284 15.4426 7.91399C14.4112 8.41204 13.3157 8.85632 12.246 9.28439L12.0106 9.37855C11.1009 9.74216 9.79685 9.74195 8.88462 9.37998L8.81736 9.35329C7.73048 8.92205 6.60981 8.47741 5.55566 7.97684L5.42402 7.91386C5.31801 7.86276 5.21272 7.81108 5.10825 7.75876C4.51538 7.46184 3.96326 7.15156 3.43588 6.83745V11.9954C3.93705 12.3378 4.26599 12.9138 4.26599 13.5666C4.26599 14.6168 3.41464 15.4681 2.36443 15.4681C1.31424 15.4681 0.462891 14.6168 0.462891 13.5666C0.462891 12.9138 0.791841 12.3379 1.29302 11.9954V5.29636C1.29302 5.19236 1.30784 5.09184 1.33548 4.99675ZM5.30795 9.82978C5.32209 10.2461 5.35158 10.6545 5.38802 11.0527C5.54526 12.7704 6.93678 14.1593 8.65056 14.323C9.22518 14.3778 9.82192 14.4186 10.4333 14.4186C11.0447 14.4186 11.6414 14.3778 12.216 14.323C13.9298 14.1593 15.3213 12.7704 15.4786 11.0527C15.515 10.6549 15.5444 10.2469 15.5586 9.83096C14.5913 10.2701 13.604 10.6647 12.6863 11.0315L12.6734 11.0367C11.3373 11.5708 9.56036 11.5693 8.22599 11.0398L8.12925 11.0014C7.22809 10.6439 6.25749 10.2588 5.30795 9.82978Z"
+                            fill="#9D9E9E" />
+                    </svg>
+
+                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Учителя</span></a>
+            </li>
+            <li class="text-gray-700 text-sm">
+                <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0)">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M4.29039 3.19616V1.30727C4.29039 0.715536 4.77008 0.23584 5.36182 0.23584C5.95355 0.23584 6.43325 0.715534 6.43325 1.30727V2.98543C7.97575 2.87311 9.27739 2.83558 9.99985 2.83558C10.7207 2.83558 12.0184 2.87296 13.5566 2.98471V1.30727C13.5566 0.715536 14.0363 0.23584 14.6279 0.23584C15.2198 0.23584 15.6994 0.715534 15.6994 1.30727V3.19428C17.4624 3.52661 18.8682 4.83413 19.3184 6.55333C19.4245 6.95903 19.0906 7.3215 18.6712 7.3215H1.3284C0.909015 7.3215 0.575124 6.95903 0.681352 6.55331C1.13065 4.83733 2.53202 3.5315 4.29039 3.19616ZM0.393616 9.78407C0.409121 9.40454 0.723055 9.10721 1.10291 9.10721H18.8966C19.2765 9.10721 19.5905 9.40454 19.6059 9.78408C19.6325 10.4321 19.6426 10.9631 19.6426 11.3017C19.6426 12.0101 19.5979 13.5591 19.4532 15.2616C19.2634 17.4945 17.5165 19.2372 15.3029 19.4634C13.0318 19.6952 10.9813 19.7644 9.99983 19.7644C9.01838 19.7644 6.96789 19.6952 4.69675 19.4634C2.48313 19.2372 0.736335 17.4945 0.546431 15.2616C0.401635 13.5592 0.356934 12.0101 0.356934 11.3017C0.356934 10.9631 0.367145 10.4321 0.393616 9.78407Z"
+                                fill="#9D9E9E" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0">
+                                <rect width="20" height="20" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+
+
+                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Расписания</span></a>
+            </li>
+            <li class="text-gray-700 text-sm">
+                <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M2.88742 2.88693C4.57599 1.19979 7.01171 0.356934 10.0003 0.356934C12.9889 0.356934 15.4246 1.19979 17.1131 2.88693C18.8003 4.57551 19.6431 7.01122 19.6431 9.99979C19.6431 12.9884 18.8003 15.4241 17.1131 17.1126C15.4246 18.7998 12.9889 19.6426 10.0003 19.6426C7.01171 19.6426 4.57599 18.7998 2.88742 17.1126C1.20028 15.4241 0.357422 12.9884 0.357422 9.99979C0.357422 7.01122 1.20028 4.57551 2.88742 2.88693ZM8.67885 5.03836C9.16314 3.8555 10.836 3.8555 11.3217 5.03836L12.1603 7.08265L14.4446 7.28265C15.7189 7.39551 16.216 8.99693 15.226 9.81122L13.5674 11.1726L14.1103 13.6898C14.3817 14.9455 12.9874 15.8926 11.9203 15.1784L10.0003 13.8941L8.08028 15.1798C7.01171 15.8926 5.61885 14.9455 5.88885 13.6898L6.43171 11.1726L4.77456 9.80979C3.78456 8.99836 4.28028 7.39551 5.55599 7.28265L7.84028 7.08265L8.67885 5.03836Z"
+                            fill="#9D9E9E" />
+                    </svg>
+
+
+                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Каналы</span></a>
+            </li>
+        </ul>
+        <div class="mt-[40px]">
+            <button
+                class="text-[#9D9E9E] text-5 font-semibold p-5 bg-[#F8F8F8] w-[260px] border-[1px] border-[#D3D3D3] rounded-md flex gap-[15px]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_1096_5701)">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M22.8925 1.0914C21.5561 -0.245206 19.3765 -0.203854 18.0915 1.18249L12.4113 7.31103C12.1623 7.57967 11.9736 7.8984 11.8578 8.24588L11.0018 10.8138C10.5551 12.1539 11.8301 13.4289 13.1702 12.9822L15.7381 12.1262C16.0856 12.0104 16.4043 11.8217 16.6729 11.5727L22.8015 5.89241C24.1878 4.60746 24.2291 2.42801 22.8925 1.0914ZM10.8396 5.85438C10.3831 6.34688 10.0371 6.9312 9.8248 7.56824L8.96884 10.1361C7.96372 13.1515 10.8324 16.0202 13.8478 15.0151L16.4157 14.1591C17.0527 13.9468 17.637 13.6008 18.1295 13.1443L21.308 10.1983C21.5699 9.95561 21.9953 10.1209 22.0191 10.4772C22.0722 11.2732 22.1057 12.0848 22.1057 12.9066C22.1057 13.3282 22.0969 13.747 22.0811 14.1625C22.0799 14.1933 22.0823 14.224 22.0868 14.2544C22.1034 14.3655 22.1094 14.4798 22.1036 14.5963C22.0311 16.0416 21.8807 17.4501 21.7319 18.7818C21.5634 20.2909 20.7572 21.6023 19.6047 22.4505C18.8747 22.9991 17.9951 23.3663 17.0382 23.477C15.6152 23.6416 14.0987 23.8115 12.5411 23.8818C12.4414 23.8862 12.3433 23.8821 12.2474 23.8699C12.2215 23.8667 12.1954 23.8652 12.1693 23.866C11.8282 23.8773 11.4849 23.8835 11.1398 23.8835C9.06326 23.8835 7.05131 23.6594 5.19846 23.445C2.76412 23.1635 0.820462 21.2246 0.54757 18.7816C0.341137 16.9336 0.130941 14.9363 0.130941 12.8747C0.130941 12.4531 0.13973 12.0342 0.155478 11.6187C0.156643 11.588 0.15434 11.5572 0.14978 11.5268C0.133132 11.4158 0.127209 11.3014 0.133052 11.185C0.20556 9.73966 0.355921 8.33106 0.504661 6.99951C0.673249 5.49027 1.4795 4.17884 2.63202 3.33063C3.36194 2.78206 4.24146 2.41498 5.19846 2.30429C6.6214 2.13968 8.13794 1.96966 9.69549 1.89951C9.79523 1.89502 9.89337 1.89913 9.98916 1.91122C10.0151 1.91449 10.0412 1.91612 10.0673 1.91526C10.4084 1.90395 10.7517 1.89776 11.0969 1.89776C11.9058 1.89776 12.7049 1.93177 13.4887 1.98598C13.8444 2.01056 14.0087 2.43521 13.7664 2.69667L10.8396 5.85438Z"
+                            fill="#9D9E9E" />
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_1096_5701">
+                            <rect width="24" height="24" fill="white" />
+                        </clipPath>
+                    </defs>
+                </svg>
+                <span>Служба поддержки</span>
+            </button>
+        </div>
+    </div>
+    <main class="main flex-1 pb-[100px]">
+        <header class="header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center"
+            style="justify-content:right; border-left: 1px solid #c6c6c6">
+            <div class="header__author">
+                <div
+                    class="header__avatar border-l-[1px] border-[#C6C6C6] pl-[20px] pr-[75px] flex h-[90px] items-center">
+                    <img src="{% static 'assets/avatarAuthor.png' %}" alt="" class="avatar-photo w-[60px] h-[60px] mr-[13px]" />
+                    <div class="avatar__info mr-[30px]">
+                        <div class="avatar__name text-black-main text-[20px] leading-[24px] font-bold">
+                            {{ user.full_name }}
+                        </div>
+                        <div class="avatar__role leading-[20px] text-black-main font-medium text-[16px]">
+                            {{ user.role }}
+                        </div>
+                    </div>
+                    <button class="avatar__more">
+                        <img src="{% static 'assets/moreAboutAvatar.png' %}" alt=""
+                            class="avatar__more-icon w-[24px] h-[24px]" />
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] gap-[20px] grid relative">
+            <div class="add__user bg-white shadow-[0px_4px_20px_0px_#00000014]  rounded-md p-[32px] pt-[42px]">
+                <h3 class=" font-semibold mb-[24px] text-black-main text-[32px] leading-[40px]">Добавить ученика в
+                    систему Gasyr</h3>
+                <div class="relative">
+    <form id="user-search-form" method="post">
+        {% csrf_token %}
+        <input type="text" name="login_code" placeholder="Введите ID или имя ученика"
+            class="w-full pl-[32px] pr-[70px] text-black-main text-[20px] leading-[32px] font-medium border-[#CDCDCD] border-[1px] h-[80px] items-center flex rounded-md focus:outline-none">
+        <button type="submit" class="absolute right-[30px] top-[30px]">
+            <img src="{% static 'assets/searchIconMentor.svg' %}" alt="" class="max-w-[24px] max-h-[24px]">
+        </button>
+    </form>
+    <div id="search-results" class="hidden mt-4 border-[1px] border-[#CDCDCD] rounded-md pt-[32px] pl-[32px] pr-[37px] pb-[24px]"></div>
+</div>
+
+            </div>
+            <div class="h-[280px] pt-[62px] pl-[32px] pb-[32px] rounded-md"
+                style="background-position: center; background-repeat: no-repeat; background-image: url('{% static "core/images/crm2/mainBg1.png" %}');">
+                <h1 class="max-w-[350px] text-white text-[32px] leading-[45px] font-semibold">Начнем составлять
+                    расписание?</h1>
+                <button
+                    class="px-[54px] py-[26px] border-[1px] border-white rounded-sm mt-[22px] text-[20px] font-semibold leading-[28px] hover:text-accent-red hover:bg-white text-white"
+                    onclick="window.location.href='{% url 'schedule:shifts' %}';">
+                    Составить расписание
+                </button>
+            </div>
+            <div class="flex gap-[20px] ">
+                <div class="w-[450px] pt-[62px] pl-[32px] pb-[32px]  h-[260px] rounded-md"
+                    style="background-image: url('{% static "core/images/crm2/mainBg2.png" %}'); background-position: center;  background-size:coverl; background-repeat:  no-repeat;">
+                    <h3 class="text-white max-w-[300px] text-[32px] leading-[45px] font-semibold mb-[16px]">Создать
+                        шаблон группы учеников</h3>
+                    <button
+                        class="px-[61px] py-[26px] border-[1px] border-white rounded-sm text-white text-[20px] leading-[28px] font-semibold hover:text-[#662CE2] hover:bg-white">Создать
+                        шаблон</button>
+                </div>
+                <div class="w-[570px] h-[260px] rounded-md pt-[62px] pl-[32px] pb-[32px]"
+                    style="background-repeat: no-repeat; background-position: center; background-image: url('{% static "core/images/crm2/mainBg3.png" %}');">
+                    <h3 class="text-white max-w-[270px] text-[32px] leading-[45px] font-semibold mb-[16px]">Появился новый учитель?</h3>
+                    <button class="border-[1px] border-white rounded-sm py-[26px] px-[25px] text-[20px] leading-[28px] font-semibold text-white hover:text-[#7A48E4] hover:bg-white">Добавить в систему</button>
+                </div>
+            </div>
+<!--            <div class="absolute right-0 -bottom-[10px] fillOutYourProfile shadow-[0px_4px_20px_0px_#00000014] w-[450px] bg-white p-[24px] rounded-md">-->
+<!--                <div class="flex items-start justify-between mb-[7px]">-->
+<!--                    <img src="{% static 'assets/pleaseInputYourProfile.png' %}" alt="" class="max-w-[60px] max-h-[62px]">-->
+<!--                    <button class="cursor-pointer"><img src="{% static 'assets/closeModal.svg' %}" alt="" class="max-w-[24px] max-h-[24px]"></button>-->
+<!--                </div>-->
+<!--                <h3 class="font-semibold text-[20px] leading-[28px] text-[#282827]">Пожалуйста, заполните свой профиль</h3>-->
+<!--                <p class="font-regular text-[16px] leading-[22px] text-[#282827]">Нам нужны все ваши данные и аватарка</p>-->
+<!--            </div>-->
+            <div class="absolute left-0 -bottom-[10px] addNewUserDone shadow-[0px_4px_20px_0px_#00000014] w-[450px] bg-white p-[24px] rounded-md">
+                <div class="flex items-start justify-between mb-[7px]">
+                    <img src="{% static 'assets/newUserDoneBg.png' %}" alt="" class="max-w-[60px] max-h-[62px]">
+                    <button class="cursor-pointer"><img src="{% static 'assets/closeModal.svg' %}" alt="" class="max-w-[24px] max-h-[24px]"></button>
+                </div>
+                <h3 class="font-semibold text-[20px] leading-[28px] text-[#282827]">Ученик добавлен</h3>
+                <p class="font-regular text-[16px] leading-[22px] text-[#282827]">Вы можете наблюдать за ним, во вкладке “Ученики”</p>
+            </div>
+        </div>
+
+    </main>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchForm = document.getElementById('user-search-form');
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(searchForm);
+        fetch("{% url 'users:grant_access' %}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Accept': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const resultsContainer = document.getElementById('search-results');
+            if (data.status === 'success') {
+                const user = data.user;
+                resultsContainer.innerHTML = `
+                    <div class="newUser flex justify-between items-center mb-[20px]">
+                        <div class="fullname flex gap-[20px] items-center">
+                            <img src="{% static 'assets/newUserIcon.png' %}" alt="" class="max-w-[32px] max-h-[32px] rounded-full">
+                            <p class="fullname-text font-semibold text-[20px] leading-[32px] text-black-main">${user.full_name}</p>
+                        </div>
+                        <p class="newUser-phonenumber text-[20px] font-regular leading-[32px] text-black-main">${user.phone_number}</p>
+                        <p class="newUser-city text-[20px] font-regular leading-[32px] text-black-main">${user.user_city}</p>
+                        <p class="newUser-id font-semibold text-[20px] leading-[32px] text-black-main">${user.login_code}</p>
+                    </div>
+                    <button id="accept-access" class="py-[18px] px-[42px] rounded-sm font-semibold text-[16px] leading-[22px] text-white bg-accent-red">Принять</button>
+                    <button class="py-[18px] px-[42px] rounded-sm font-semibold text-[16px] leading-[22px] text-accent-red bg-white border-[1px] border-accent-red">Отклонить</button>
+                `;
+                resultsContainer.classList.remove('hidden');
+                document.getElementById('accept-access').addEventListener('click', function() {
+                    formData.append('grant_access', 'true');
+                    fetch("{% url 'users:grant_access' %}", {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Accept': 'application/json'
+                        },
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            resultsContainer.innerHTML = `
+                                <p class="text-green-500 font-semibold text-[20px] leading-[32px]">Ученик добавлен</p>
+                                <p class="text-gray-600 text-[16px] leading-[24px]">Вы можете наблюдать за ним, во вкладке “Ученики”</p>
+                            `;
+                        }
+                    });
+                });
+            } else {
+                resultsContainer.innerHTML = `<p class="text-red-500">${data.message}</p>`;
+                resultsContainer.classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('search-results').innerHTML = `<p class="text-red-500">Error processing your request.</p>`;
+            document.getElementById('search-results').classList.remove('hidden');
+        });
+    });
+});
+</script>
+</body>
+
+</html>

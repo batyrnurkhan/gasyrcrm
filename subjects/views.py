@@ -22,13 +22,11 @@ def home_view(request):
     user = request.user
     today = timezone.now().date()
 
-    # Debugging: List all lessons for the user with their chat rooms
     user_lessons = Lesson_crm2.objects.filter(
         group_template__students=user
     ).select_related('teacher', 'subject', 'chat_room')
     print("Debug - User Lessons with Chat Rooms:", [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
 
-    # Fetch the last task considering chat rooms directly linked to user lessons
     last_task = Task.objects.filter(
         chat_room__in=[lesson.chat_room for lesson in user_lessons]
     ).select_related('created_by').order_by('-deadline').first()
@@ -44,7 +42,12 @@ def home_view(request):
         creator_profile_pic_url = None
         subject_name = "No Subject"
 
-    return render(request, 'subjects/home.html', {
+    if user.role == 'Mentor':
+        template_name = 'subjects/mentor-home.html'
+    else:
+        template_name = 'subjects/home.html'
+
+    return render(request, template_name, {
         'task_teacher': task_teacher,
         'creator_profile_pic_url': creator_profile_pic_url,
         'subject_name': subject_name,
