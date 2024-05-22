@@ -332,3 +332,7 @@ def grades_by_day_view(request):
         grades_by_date[grade.date_assigned].append(grade)
 
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})
+
+@login_required
+def psy_appointment_view(request):
+    return render(request, 'subjects/psy-appointment.html')

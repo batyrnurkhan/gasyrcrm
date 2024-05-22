@@ -1,0 +1,255 @@
+{% extends 'subjects/base.html' %}
+
+{% load static %}
+{% load l10n %}
+
+{% block content %}
+    {% include "subjects/components/crm2-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="font-bold text-black-main text-[42px]">
+                    Запись к психологу
+                </h1>
+                <div
+                        class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md"
+                >
+                    <button class="previous__date">
+                        <img src="./assets/предыдущиеНеделиИконка.png" alt=""/>
+                    </button>
+                    <div class="switch__date-text">20-26 марта</div>
+                    <button class="previous__date">
+                        <img src="./assets/следующаяНеделиИконка.png" alt=""/>
+                    </button>
+                </div>
+            </div>
+            <div
+                    class="days flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3"
+            >
+                <h1
+                        class="days__choose text-[32px] leading-[40px] text-black-main font-bold"
+                >
+                    Выберите день
+                </h1>
+                <div class="days__items flex gap-[10px]">
+                    <div
+                            class="days__item rounded-[10px] pt-3 text-white font-bold pb-3 w-[102px] flex flex-col bg-accent-red"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >20</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >пн</span
+                    >
+                    </div>
+                    <div
+                            class="days__item rounded-[10px] border-[1px] border-accent-red pt-3 text-accent-red font-bold pb-3 w-[102px] flex flex-col"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >21</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >вт</span
+                    >
+                    </div>
+                    <div
+                            class="days__item rounded-[10px] border-[1px] border-accent-red pt-3 text-accent-red font-bold pb-3 w-[102px] flex flex-col"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >22</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >ср</span
+                    >
+                    </div>
+                    <div
+                            class="days__item rounded-[10px] border-[1px] border-[#9D9E9E] pt-3 text-[#9D9E9E] font-bold pb-3 w-[102px] flex flex-col"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >23</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >чт</span
+                    >
+                    </div>
+                    <div
+                            class="days__item rounded-[10px] border-[1px] border-[#9D9E9E] pt-3 text-[#9D9E9E] font-bold pb-3 w-[102px] flex flex-col"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >24</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >пт</span
+                    >
+                    </div>
+                    <div
+                            class="days__item rounded-[10px] border-[1px] border-accent-red pt-3 text-accent-red font-bold pb-3 w-[102px] flex flex-col"
+                    >
+              <span
+                      class="text-[14px] font-bold leading-[14px] block text-center"
+              >Апрель</span
+              ><span
+                            class="block text-center text-[42px] leading-[52px] font-bold"
+                    >25</span
+                    ><span
+                            class="block text-center text-[14px] uppercase leading-[14px] font-bold"
+                    >сб</span
+                    >
+                    </div>
+                </div>
+            </div>
+            <div
+                    class="choose__day shadow-[0px_4px_20px_0px_#0000000A] bg-white rounded-md p-[52px] text-center mb-[36px]"
+            >
+                <h1
+                        class="choose__day-title font-bold text-[20px] text-black-main leading-6 mb-3"
+                >
+                    Выберите убодное время в этот день
+                </h1>
+                <div class="time__list grid grid-cols-4 gap-[6px]">
+                    <label
+                            class="border border-[1px] w-[230px] border-[#D8D8D8] rounded-sm answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-black-main"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                disabled
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-[#9D9E9E]"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-black-main"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                disabled
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-[#9D9E9E]"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                disabled
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-[#9D9E9E]"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-black-main"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-black-main"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                    <label
+                            class="border border-[1px] border-[#D8D8D8] rounded-sm answer w-[230px] border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer"
+                    >
+                        <input
+                                type="radio"
+                                name="answer3"
+                                value="32"
+                                class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                        />
+                        <span
+                                class="font-regular text-[18px] leading-[25px] text-black-main"
+                        >10:00 - 11:30</span
+                        >
+                    </label>
+                </div>
+            </div>
+            <div class="button">
+                <button class="bg-accent-red text-[20px] leading-[28px] font-bold py-[26px] px-[64px] text-white rounded-md">
+                    Записаться к проф. ориентологу
+                </button>
+            </div>
+        </div>
+    </main>
+{% endblock %}

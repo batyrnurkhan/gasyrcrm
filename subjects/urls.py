@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import SubjectListView, group_template_list, LessonCreateView, LessonDetailView, search_students, \
     create_volunteer_channel, volunteer_channel_list, set_grade, LessonListView, grades_by_day_view, home_view, \
-    tasks_view, weekly_schedule_view
+    tasks_view, weekly_schedule_view, psy_appointment_view
 
 app_name = 'subjects'
 
@@ -9,6 +9,7 @@ urlpatterns = [
     path('home/', home_view, name='home'),
     path('tasks/', tasks_view, name='tasks'),
     path('weekly-schedule/', weekly_schedule_view, name='weekly-schedule'),
+    path('psy-appointment/', psy_appointment_view, name='psy-appointment'),
     path('subject-list/', SubjectListView.as_view(), name='subject-list'),
     path('grouptemplates/', group_template_list, name='grouptemplate-list'),
 
