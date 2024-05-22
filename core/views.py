@@ -142,7 +142,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         accessible_modules = []
         blocked_modules = []
 
-        is_first_module = True
+        previous_module_passed = True
 
         for module in modules:
             module_tests = module.tests.all()
@@ -152,47 +152,27 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
             )
             all_tests = (module_tests | lesson_tests).distinct()
 
-            if is_first_module:
-                module.accessible = True
-                accessible_modules.append(module)
+            if all_tests.exists():
                 passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
                 user_passed_all_tests = passed_tests.count() == all_tests.count()
-                is_first_module = False
-                if user_passed_all_tests:
-                    previous_module_passed = True
-                else:
-                    previous_module_passed = False
             else:
-                if all_tests.exists():
-                    passed_tests = all_tests.filter(test_submissions__user=user,
-                                                    test_submissions__score__gte=50).distinct()
-                    user_passed_all_tests = passed_tests.count() == all_tests.count()
+                user_passed_all_tests = True
 
-                    if user_passed_all_tests:
-                        module.accessible = True
-                        accessible_modules.append(module)
-                        previous_module_passed = True
-                    else:
-                        module.accessible = False
-                        blocked_modules.append(module)
-                        previous_module_passed = False
-                else:
-                    if previous_module_passed:
-                        module.accessible = True
-                        accessible_modules.append(module)
-                    else:
-                        module.accessible = False
-                        blocked_modules.append(module)
+            if previous_module_passed:
+                module.accessible = True
+                accessible_modules.append(module)
+            else:
+                module.accessible = False
+                blocked_modules.append(module)
 
-        print("access", accessible_modules)
-        print("blocked", blocked_modules)
+            previous_module_passed = user_passed_all_tests
+
+        print("Accessible Modules:", [m.module_name for m in accessible_modules])
+        print("Blocked Modules:", [m.module_name for m in blocked_modules])
+
         context['modules'] = accessible_modules
         context['blocked_modules'] = blocked_modules
-
-        print("access", accessible_modules)
-        print("blocked", blocked_modules)
         return context
-
 
 class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
     model = Course
