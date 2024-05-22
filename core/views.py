@@ -123,56 +123,75 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id'])
-        module = Module.objects.filter(pk=self.kwargs['module_id']).first()
-        context['lesson'] = lesson.first()
-        for i, item in enumerate(module.lessons.all()):
-            if item == lesson.first():
-                context['lesson_position'] = i+1
-                break
-        context['module_id'] = module.pk
-        context['module_name'] = module.module_name
         course = self.get_object()
         user = self.request.user
 
+        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id']).first()
+        module = Module.objects.filter(lessons=lesson).first()
+        if lesson and module:
+            context['lesson'] = lesson
+            context['module_id'] = module.pk
+            context['module_name'] = module.module_name
+            for i, item in enumerate(module.lessons.all()):
+                if item == lesson:
+                    context['lesson_position'] = i + 1
+                    break
+
         modules = course.modules.prefetch_related(
-            'tests',
             Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
         )
         accessible_modules = []
-        previous_module_passed = True  # First module is always accessible
+        blocked_modules = []
 
-        lesson_content_type = ContentType.objects.get_for_model(Lesson)
+        is_first_module = True
 
         for module in modules:
             module_tests = module.tests.all()
             lesson_tests = Test.objects.filter(
-                content_type=lesson_content_type,
+                content_type=ContentType.objects.get_for_model(Lesson),
                 object_id__in=module.lessons.values_list('id', flat=True)
             )
+            all_tests = (module_tests | lesson_tests).distinct()
 
-            all_tests = module_tests | lesson_tests
-
-            if previous_module_passed:
+            if is_first_module:
+                module.accessible = True
+                accessible_modules.append(module)
+                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
+                user_passed_all_tests = passed_tests.count() == all_tests.count()
+                is_first_module = False
+                if user_passed_all_tests:
+                    previous_module_passed = True
+                else:
+                    previous_module_passed = False
+            else:
                 if all_tests.exists():
-                    # Check if the user has passed all these tests
                     passed_tests = all_tests.filter(test_submissions__user=user,
                                                     test_submissions__score__gte=50).distinct()
                     user_passed_all_tests = passed_tests.count() == all_tests.count()
 
                     if user_passed_all_tests:
                         module.accessible = True
+                        accessible_modules.append(module)
+                        previous_module_passed = True
                     else:
                         module.accessible = False
+                        blocked_modules.append(module)
                         previous_module_passed = False
                 else:
-                    module.accessible = True
-            else:
-                module.accessible = False
+                    if previous_module_passed:
+                        module.accessible = True
+                        accessible_modules.append(module)
+                    else:
+                        module.accessible = False
+                        blocked_modules.append(module)
 
-            accessible_modules.append(module)
-
+        print("access", accessible_modules)
+        print("blocked", blocked_modules)
         context['modules'] = accessible_modules
+        context['blocked_modules'] = blocked_modules
+
+        print("access", accessible_modules)
+        print("blocked", blocked_modules)
         return context
 
 
