@@ -156,28 +156,40 @@ class SubjectListView(ListView):
         context = super().get_context_data(**kwargs)
         return context
 
+
+@login_required
 def group_template_list(request):
     form = GroupTemplateForm(request.POST or None)
     search_form = UserSearchForm(request.GET or None)
-    students = []
-    group_templates = GroupTemplate.objects.all()  # Fetch all group templates
 
+    # Fetch all group templates
+    group_templates = GroupTemplate.objects.all()
+
+    # Default fetch top 8 students alphabetically
+    students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
+
+    # If there is a valid search query, filter by both full name and phone number
     if 'search' in request.GET and search_form.is_valid():
-        students = search_form.search_users()
+        search_query = request.GET.get('search', '')
+        students = CustomUser.objects.filter(
+            Q(full_name__icontains=search_query) | Q(phone_number__icontains=search_query),
+            role='Student'
+        ).order_by('full_name')[:8]
 
+    # If the form is submitted to create a new group template
     if request.method == 'POST' and 'create_template' in request.POST:
         if form.is_valid():
             group_template = form.save(commit=False)
             selected_students = request.POST.getlist('selected_students')
             group_template.save()
-            group_template.students.set(selected_students)  # Save selected students to the group template
+            group_template.students.set(selected_students)
             return redirect('subjects:grouptemplate-list')  # Redirect to avoid double POST on refresh
 
     return render(request, 'subjects/group_template_list.html', {
         'form': form,
         'search_form': search_form,
         'students': students,
-        'group_templates': group_templates  # Pass the list of group templates to the template
+        'group_templates': group_templates
     })
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin

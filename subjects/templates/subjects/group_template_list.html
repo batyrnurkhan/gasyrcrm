@@ -1,48 +1,52 @@
-{% block content %}
-<h1>Create Group Template</h1>
+<!DOCTYPE html>
+<html lang="en">
 
-<h2>Existing Group Templates</h2>
-<ul>
-    {% for gt in group_templates %}
-        <li>{{ gt.name }}</li>
-    {% endfor %}
-</ul>
+{% load static %} <!-- Django template tag to load static files -->
 
-<form id="group-template-form" method="post" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {{ search_form.as_p }}
-    <label for="selected_students">Select Students:</label>
-    <select name="selected_students" id="selected_students" multiple size="10">
-        {% for student in students %}
-            <option value="{{ student.id }}">{{ student.full_name }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" name="create_template">Create Group Template</button>
-    <button type="button" onclick="searchStudents()">Search</button>
-</form>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentor's students</title>
+    <link rel="stylesheet" href="{% static 'font.css' %}" />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="{% static 'tailwindCDNmodule.js' %}"></script>
+</head>
 
-<script>
-function searchStudents() {
-    var searchInput = document.querySelector('[name="search"]').value;
-    var url = '{% url "subjects:search-students" %}?search=' + searchInput;
+<body class="bg-[#fafafa] flex">
+    <!-- Existing Sidebar and Header components here -->
+    <main class="main flex-1 pb-[100px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Создание шаблона группы учеников</h1>
+            <div>
+                <h2>Existing Group Templates</h2>
+                <ul>
+                    {% for gt in group_templates %}
+                        <li>{{ gt.name }} - Created at: {{ gt.created_at|date:"d M Y H:i" }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <label for="selected_students">Select Students:</label>
+                    <select name="selected_students" id="selected_students" multiple size="10">
+                        {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" name="create_template">Create Group Template</button>
+                </form>
+            </div>
+            <div>
+<input type="text" name="search" value="{{ search_query }}" placeholder="Search by name or phone number" oninput="this.form.submit()">
+                <ul id="student_search_results"></ul>
+            </div>
+        </div>
+    </main>
 
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            var select = document.getElementById('selected_students');
-            select.innerHTML = '';  // Clear existing options
-            if (Array.isArray(data)) {  // Ensure data is an array
-                data.forEach(student => {
-                    var option = new Option(student.full_name, student.id);  // Simplified option creation
-                    select.add(option);
-                });
-            } else {
-                console.error('Received data is not an array:', data);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-}
-</script>
 
-{% endblock %}
+</body>
+
+</html>
