@@ -76,8 +76,15 @@ class VolunteerChannelForm(forms.ModelForm):
 
     users = forms.ModelMultipleChoiceField(
         queryset=CustomUser.objects.filter(role='Student').order_by('full_name'),
-        widget=forms.SelectMultiple(attrs={'id': 'user-select'})
+        required=False,
     )
+
+    def clean_users(self):
+        user_ids = self.cleaned_data.get('users', '')
+        if user_ids:
+            user_ids = list(map(int, user_ids.split(',')))  # Convert string of IDs to a list of integers
+            return CustomUser.objects.filter(id__in=user_ids)
+        raise forms.ValidationError("Please select at least one user.")
 
 
 class GradeForm(forms.Form):

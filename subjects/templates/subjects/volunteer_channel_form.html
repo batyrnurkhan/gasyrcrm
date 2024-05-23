@@ -1,7 +1,122 @@
-{% block content %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Submit</button>
-  </form>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentor's Canals</title>
+    <link rel="stylesheet" href="../../../font.css" />
+    <link rel="stylesheet" href="../../../style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../../tailwindCDNmodule.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</head>
+
+<body class="bg-[#fafafa] flex">
+    <div class="bg-white w-[285px] py-[42px] pl-[15px] pr-[10px] h-full shadow-[0px_4px_14px_0px_#0000000A]" style="height: auto">
+        <a href="#" class="pl-[30px] text-red-500 text-lg font-bold mb-[55px] block"><img src="../../assets/GasyrLogoBlack.png" alt="" /></a>
+        <ul class="">
+            <!-- Navigation items -->
+        </ul>
+        <div class="mt-[40px]">
+            <button class="text-[#9D9E9E] text-5 font-semibold p-5 bg-[#F8F8F8] w-[260px] border-[1px] border-[#D3D3D3] rounded-md flex gap-[15px]">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- SVG content -->
+                </svg>
+                <span>Служба поддержки</span>
+            </button>
+        </div>
+    </div>
+    <main class="main flex-1 pb-[100px]">
+        <header class="header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center" style="justify-content:right; border-left: 1px solid #c6c6c6">
+            <div class="header__author">
+                <div class="header__avatar border-l-[1px] border-[#C6C6C6] pl-[20px] pr-[75px] flex h-[90px] items-center">
+                    <img src="../assets/avatarAuthor.png" alt="" class="avatar-photo w-[60px] h-[60px] mr-[13px]" />
+                    <div class="avatar__info mr-[30px]">
+                        <div class="avatar__name text-black-main text-[20px] leading-[24px] font-bold">Акбота Ж.</div>
+                        <div class="avatar__role leading-[20px] text-black-main font-medium text-[16px]">Ментор</div>
+                    </div>
+                    <button class="avatar__more">
+                        <img src="../../assets/moreAboutAvatar.png" alt="" class="avatar__more-icon w-[24px] h-[24px]" />
+                    </button>
+                </div>
+            </div>
+        </header>
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid gap-[24px]">
+            <h1 class="text-[42px] text-red-500 font-semibold leading-[52px]">Каналы</h1>
+            <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[36px] px-[36px] pb-[41px]">
+                <h3 class="text-red-500 font-semibold text-[32px] leading-[40px] mb-[18px]">Создать канал для менторских дел</h3>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-[8px] flex gap-[8px]">
+                        {{ form.name.errors }}
+                        <label class="text-red-500" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                        {{ form.name }}
+                        {{ form.description.errors }}
+                        <label class="text-red-500" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="border-[1px] border-[#CDCDCD] p-[24px] rounded-sm mb-[12px]">
+                        <h5 class="text-red-500 text-[16px] leading-[22px] font-medium mb-[16px]">Добавьте учеников</h5>
+                        <ul id="selected-users-list" class="mb-[16px] gap-[8px] flex flex-wrap"></ul>
+                        <div class="relative">
+                            <img src="./assets/searchIconMentor.svg" class="absolute max-w-[24px] max-h-[24px] left-[15px] top-[17px]" alt="">
+                            <input type="text" id="user-search" class="w-full border-[#CDCDCD] outline-none border-[1px] h-[56px] flex items-center rounded-sm pl-[52px] pr-[20px] font-medium text-[16px] leading-[22px] text-black-main" placeholder="Введите имя ученика">
+                        </div>
+                    </div>
+                    <input type="hidden" id="id_users" name="users" value="{{ form.users.value|default_if_none:'' }}">
+                    <button type="submit" class="w-[320px] h-[75px] flex items-center justify-center rounded-sm bg-accent-red text-white text-[16px] leading-[22px] font-semibold">Создать канал</button>
+                </form>
+            </div>
+            <h2 class="text-[32px] text-red-500 font-semibold leading-[40px] mb-[18px]">Существующие каналы волонтеров</h2>
+            <ul class="list-items grid grid-cols-2 gap-[22px]">
+                {% for channel in channels %}
+                <li class="list-item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md p-[20px] gap-[25px]" style="display: flex;">
+                    <img src="./assets/canals1.png" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
+                    <div class="list-item__content flex justify-center flex-col gap-[28px]">
+                        <div class="flex flex-col gap-[6px]">
+                            <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
+                            <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
+                        </div>
+                        <div class="list-item__author flex gap-[12px] items-center">
+                            <img src="./assets/authorCanal.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                            <p class="text-red-500 font-semibold text-[16px] leading-[20px]">Акбота Жоламан</p>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+
+    <script>
+    $(function() {
+        $("#user-search").autocomplete({
+            source: "{% url 'subjects:search-users' %}",
+            minLength: 2,
+            select: function(event, ui) {
+                event.preventDefault(); // Prevent the default action
+                $("#user-search").val(''); // Clear the input field
+
+                // Display the user in a visible list
+                $('#selected-users-list').append(`<li class="flex gap-[12px] py-[4px] px-[14px] rounded-sm items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red">
+                            <span>${ui.item.label}</span>
+                            <button class="max-w-[16px] max-h-[16px] cursor-pointer">
+                                <img src="./assets/close.svg" alt="" class="max-w-[16px] max-h-[16px]">
+                            </button>
+                        </li>`);
+
+                // Update the hidden input for user IDs
+                var currentValues = $('#id_users').val(); // Get current value
+                var newValues = currentValues ? currentValues + ',' + ui.item.id : ui.item.id;
+                $('#id_users').val(newValues); // Set the new value
+            }
+        });
+    });
+    </script>
+</body>
+
+</html>

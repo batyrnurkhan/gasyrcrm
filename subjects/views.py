@@ -9,15 +9,12 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
 from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
-from .serializers import CustomUserSerializer, VolunteerChannelSerializer
+
 
 
 @login_required
@@ -320,74 +317,6 @@ def search_students(request):
     student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
 
-
-@login_required
-def create_volunteer_channel(request):
-    channels = VolunteerChannel.objects.all()  # Get all channels for listing
-    if request.method == 'POST':
-        if not (request.user.role == 'Mentor' or request.user.is_superuser):
-            messages.error(request, "Only mentors and superusers can create channels.")
-            return redirect('home')
-
-        form = VolunteerChannelForm(request.POST, request.FILES)
-        if form.is_valid():
-            volunteer_channel = form.save(commit=False)
-            chat_room = ChatRoom.objects.create(title=f"Chat for {volunteer_channel.name}")
-            volunteer_channel.chat_room = chat_room
-            volunteer_channel.save()
-            form.save_m2m()
-            for user in volunteer_channel.users.all():
-                chat_room.participants.add(user)
-            chat_room.participants.add(request.user)  # Adding the creator as a participant
-            return redirect('subjects:volunteer_channel_list')  # Redirect to the same page to see the updated list
-    else:
-        form = VolunteerChannelForm()
-
-    return render(request, 'subjects/volunteer_channel_list.html', {
-        'channels': channels,
-        'form': form
-    })
-
-
-@login_required
-def volunteer_channel_list(request):
-    if request.method == 'POST':
-        if not (request.user.role == 'Mentor' or request.user.is_superuser):
-            messages.error(request, "Only mentors and superusers can create channels.")
-            return redirect('home')
-
-        form = VolunteerChannelForm(request.POST, request.FILES)
-        if form.is_valid():
-            volunteer_channel = form.save(commit=False)
-            chat_room = ChatRoom.objects.create(title=f"Chat for {volunteer_channel.name}")
-            volunteer_channel.chat_room = chat_room
-            volunteer_channel.save()
-            form.save_m2m()
-            for user in volunteer_channel.users.all():
-                chat_room.participants.add(user)
-            chat_room.participants.add(request.user)
-            return redirect('subjects:volunteer_channel_list')
-    else:
-        form = VolunteerChannelForm()
-
-    search_query = request.GET.get('search', '')
-    if search_query:
-        users = CustomUser.objects.filter(
-            Q(full_name__icontains=search_query) |
-            Q(phone_number__icontains=search_query),
-            role='Student'
-        )
-    else:
-        users = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
-
-    channels = VolunteerChannel.objects.all()
-
-    return render(request, 'subjects/volunteer_channel_list.html', {
-        'channels': channels,
-        'form': form,
-        'users': users
-    })
-
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
@@ -427,19 +356,43 @@ def psy_appointment_view(request):
     return render(request, 'subjects/psy-appointment.html')
 
 
+@login_required
+def create_volunteer_channel(request):
+    # Ensure only mentors and superusers can create channels
+    if not (request.user.role == 'Mentor' or request.user.is_superuser):
+        messages.error(request, "Only mentors and superusers can create channels.")
+        return redirect('home')
 
-class UserSearchAPIView(APIView):
-    def get(self, request):
-        query = request.query_params.get('term', '')
-        users = CustomUser.objects.filter(
-            Q(full_name__icontains=query) | Q(phone_number__icontains=query),
-            role='Student'
-        )
-        serializer = CustomUserSerializer(users, many=True)
-        return Response(serializer.data)
+    if request.method == 'POST':
+        form = VolunteerChannelForm(request.POST, request.FILES)
+        if form.is_valid():
+            volunteer_channel = form.save(commit=False)
+            # Create a chat room for the new volunteer channel
+            chat_room = ChatRoom.objects.create(title=f"Chat for {volunteer_channel.name}")
+            volunteer_channel.chat_room = chat_room
+            volunteer_channel.save()  # Save the volunteer channel with the chat room
+            form.save_m2m()  # Save any many-to-many fields
+            return redirect('subjects:volunteer_channel_list')  # Redirect to the list of channels
+    else:
+        form = VolunteerChannelForm()
 
-class VolunteerChannelListAPIView(APIView):
-    def get(self, request):
-        channels = VolunteerChannel.objects.all()
-        serializer = VolunteerChannelSerializer(channels, many=True)
-        return Response(serializer.data)
+    channels = VolunteerChannel.objects.all()  # Get all channels for display
+    return render(request, 'subjects/volunteer_channel_form.html', {
+        'form': form,
+        'channels': channels
+    })
+
+def search_users(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        query = request.GET.get('term', '')
+        users = CustomUser.objects.filter(role='Student')
+        if query:
+            users = users.filter(Q(full_name__icontains=query) | Q(phone_number__icontains=query))
+        else:
+            users = users.order_by('full_name')[:8]
+
+        results = [{'id': user.id, 'label': user.full_name, 'value': user.full_name} for user in users]
+        return JsonResponse(results, safe=False)
+    return JsonResponse({'error': 'Not AJAX'}, status=400)
+
+
