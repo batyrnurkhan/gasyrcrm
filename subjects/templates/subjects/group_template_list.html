@@ -1,52 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "subjects/base.html" %}
+{% load course_tags %}
+{% load static %}
+{% block title %}
+    Создание шаблона
+{% endblock %}
 
-{% load static %} <!-- Django template tag to load static files -->
+{% block content %}
+    {% include "subjects/components/crm2-mentor-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4">
+        {% include "subjects/components/crm2-header.html" %}
+        <form method="post">
+            <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid ">
+                <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Создание
+                    шаблона</h1>
+                <div class="grid gap-[16px]">
+                    <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md px-[15px] py-[20px]">
+                        <div class="mb-[27px]">
+                            <input type="text" placeholder="Введите название группы" name="name"
+                                   class="w-[320px] border-[#CDCDCD] border-[1px] h-[72px] flex items-center rounded-md focus:outline-none px-[16px] text-black-main text-[16px] font-regular leading-[22px]">
+                        </div>
+                        <div class="relative">
+                            <div class="absolute  right-[20px] top-[25px]">
+                                <img src="{% static 'core/icons/searck-gray.svg' %}" alt=""
+                                     class="max-w-[24px] max-h-[24px]">
+                            </div>
+                            <input type="text" placeholder="Введите имя ученика" id="search-input"
+                                   class="w-full h-[72px] flex items-center pl-[16px] pr-[50px] border-[#CDCDCD] border-[1px] rounded-md focus:outline-none text-black-main text-[16px] font-regular leading-[22px]">
+                            <div id="suggestions"
+                                 class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden">
+                                {% comment %}
+                                    <div class="px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]"
+                                         value="{{ student.id }}">
+                                        <img src="
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mentor's students</title>
-    <link rel="stylesheet" href="{% static 'font.css' %}" />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{% static 'tailwindCDNmodule.js' %}"></script>
-</head>
+                                                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
+                                             alt="User Image"
+                                             class="w-[32px] h-[32px] rounded-full">
+                                        <span class="text-[16px] leading-[25px] text-black-main font-semibold">Александр Овечкин</span>
+                                    </div>
+                                {% endcomment %}
+                            </div>
+                        </div>
+                        <div class="p-[30px] bg-[#FAFAFA] mt-[12px] hidden">
+                            <ul id="students" class="gap-[16px] max-h-[425px] overflow-y-auto px-[15px]">
+                                {% comment %}
+                                <li class="flex justify-between w-full items-center">
+                                    <div class="gap-[16px] flex items-center w-[230px]">
+                                        <img src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
+                                             alt=""
+                                             class="max-h-[32px] max-w-[32px] rounded-full">
+                                        <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                            {{ student.full_name }}
+                                        </h5>
+                                    </div>
+                                    <div class="flex gap-[8px] items-center w-[200px]">
+                                        <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                            {{ student.phone_number|format_phone_number }}
+                                        </span>
+                                    </div>
+                                    <div class="city flex gap-[8px] items-center w-[160px]">
+                                        <img src="{% static "core/icons/city-fill-accent-red.svg" %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.user_city }}</span>
+                                    </div>
+                                    <a href="#"
+                                       class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
+                                        данные</a>
+                                </li>
+                                {% endcomment %}
+                            </ul>
+                        </div>
+                        <button type="submit" id="submitButton" name="create_template"
+                                class="mt-[24px] font-semibold text-[16px] leading-[22px] px-[100px] py-[26px] rounded-sm bg-accent-red text-white hidden">
+                            Cоздать шаблон
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% csrf_token %}
+        </form>
 
-<body class="bg-[#fafafa] flex">
-    <!-- Existing Sidebar and Header components here -->
-    <main class="main flex-1 pb-[100px]">
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-            <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Создание шаблона группы учеников</h1>
-            <div>
-                <h2>Existing Group Templates</h2>
-                <ul>
-                    {% for gt in group_templates %}
-                        <li>{{ gt.name }} - Created at: {{ gt.created_at|date:"d M Y H:i" }}</li>
+        <script>
+            function search() {
+                const searchInput = document.getElementById('search-input');
+                const suggestionsContainer = document.getElementById('suggestions');
+                const studentsContainer = document.getElementById('students');
+
+                // Массив с предложениями (может быть заменен на данные из API)
+                const suggestions = [
+                    {% for student in students %}
+                        {
+                            id: {{ student.id }},
+                            name: '{{ student.full_name }}',
+                            city: '{{ student.user_city }}',
+                            phone: '{{ student.phone_number|format_phone_number }}',
+                            photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
+                        },
                     {% endfor %}
-                </ul>
-            </div>
-            <div>
-                <form method="post" action="">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <label for="selected_students">Select Students:</label>
-                    <select name="selected_students" id="selected_students" multiple size="10">
-                        {% for student in students %}
-                            <option value="{{ student.id }}">{{ student.full_name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit" name="create_template">Create Group Template</button>
-                </form>
-            </div>
-            <div>
-<input type="text" name="search" value="{{ search_query }}" placeholder="Search by name or phone number" oninput="this.form.submit()">
-                <ul id="student_search_results"></ul>
-            </div>
-        </div>
+                ];
+
+                searchInput.addEventListener('input', () => {
+                    const input = searchInput.value.toLowerCase();
+                    // Очищаем предыдущие предложения
+                    suggestionsContainer.innerHTML = '';
+
+                    if (input) {
+                        suggestionsContainer.classList.remove('hidden')
+                        // Фильтруем предложения на основе ввода пользователя
+                        const filteredSuggestions = suggestions.filter(suggestion =>
+                            suggestion.name.toLowerCase().includes(input)
+                        );
+
+                        // Создаем элементы для каждого подходящего предложения
+                        filteredSuggestions.forEach(suggestion => {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.classList = 'px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]';
+                            suggestionItem.innerHTML = `
+                                <img src="${suggestion.photo}"
+                                     alt="User Image"
+                                     class="w-[32px] h-[32px] rounded-full">
+                                <span class="text-[16px] leading-[25px] text-black-main font-semibold">${suggestion.name}</span>
+                            `;
+
+                            // Добавляем обработчик клика для выбора предложения
+                            suggestionItem.addEventListener('click', () => {
+                                const finder = (elem) => elem.id === suggestion.id;
+                                suggestionsContainer.classList.add('hidden')
+                                studentsContainer.parentElement.classList.remove('hidden')
+                                document.getElementById('submitButton').classList.remove('hidden')
+                                searchInput.value = "";
+                                const index = suggestions.findIndex(finder);
+                                console.log(index)
+                                if (index > -1) {
+                                    suggestions.splice(index, 1);
+                                }
+                                console.log(suggestions)
+                                const listItem = document.createElement('li');
+                                listItem.classList = "flex justify-between w-full items-center";
+                                listItem.innerHTML = `
+                                    <input hidden value="${suggestion.id}" name="selected_students">
+                                    <div class="gap-[16px] flex items-center w-[230px]">
+                                        <img src="${suggestion.photo}"
+                                             alt=""
+                                             class="max-h-[32px] max-w-[32px] rounded-full">
+                                        <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                            ${suggestion.name}
+                                        </h5>
+                                    </div>
+                                    <div class="flex gap-[8px] items-center w-[200px]">
+                                        <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                            ${suggestion.phone}
+                                        </span>
+                                    </div>
+                                    <div class="city flex gap-[8px] items-center w-[160px]">
+                                        <img src="{% static "core/icons/city-fill-accent-red.svg" %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">${suggestion.city}</span>
+                                    </div>
+                                    <a href="#"
+                                       class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
+                                        данные</a>
+                                `;
+                                studentsContainer.appendChild(listItem);
+                            });
+
+                            suggestionsContainer.appendChild(suggestionItem);
+                        });
+                    } else {
+                        suggestionsContainer.classList.add('hidden')
+                    }
+                });
+
+                // Закрываем список предложений при клике вне его
+                document.addEventListener('click', (e) => {
+                    if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+                        suggestionsContainer.innerHTML = '';
+                    }
+                });
+            }
+        </script>
     </main>
+{% endblock %}
 
-
-</body>
-
-</html>
+{% block window_load %}
+    search()
+{% endblock %}

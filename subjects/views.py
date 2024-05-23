@@ -128,6 +128,7 @@ def group_templates_view(request):
         ).order_by('full_name')[:8]
 
     context = {
+        'page': 'students',
         'group_templates': group_templates,
         'student_count': student_count,
         'students': students,
@@ -181,12 +182,14 @@ def group_template_list(request):
 
     # If the form is submitted to create a new group template
     if request.method == 'POST' and 'create_template' in request.POST:
+        print("Here")
         if form.is_valid():
+            print("Here")
             group_template = form.save(commit=False)
             selected_students = request.POST.getlist('selected_students')
             group_template.save()
             group_template.students.set(selected_students)
-            return redirect('subjects:grouptemplate-list')  # Redirect to avoid double POST on refresh
+            return redirect('subjects:group_templates_view')  # Redirect to avoid double POST on refresh
 
     return render(request, 'subjects/group_template_list.html', {
         'form': form,

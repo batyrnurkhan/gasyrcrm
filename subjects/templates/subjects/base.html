@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Main</title>
+    <title>{% block title %}Main{% endblock %}</title>
     <link href="{% static "core/css/output.css" %}" rel="stylesheet">
 </head>
 
@@ -17,6 +17,11 @@
         {% endblock %}
 </div>
 <script>
+    window.onload = () => {
+        {% block window_load %}
+
+        {% endblock %}
+    }
     function toggleDropdown(event) {
         event.stopPropagation();
         var dropdownMenu = document.getElementById("dropdownMenu");
