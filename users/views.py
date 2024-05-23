@@ -182,17 +182,16 @@ def create_teacher(request):
         form = TeacherCreationForm(request.POST)
         if form.is_valid():
             user, password = form.save()  # Save the user and get the generated password
-            # Pass the details to the template directly
-            context = {
-                'form': TeacherCreationForm(),  # Reset the form for new input
-                'created': True,
-                'user_phone': user.phone_number,
-                'user_password': password
-            }
-            return render(request, 'users/create_teacher.html', context)
+            messages.success(request, 'Teacher created successfully!')
+            return redirect('users:create-teacher')  # Redirect to clear the form
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = TeacherCreationForm()
 
-    return render(request, 'users/create_teacher.html', {'form': form})
+    teachers = CustomUser.objects.filter(role='Teacher')
+    context = {
+        'form': form,
+        'teachers': teachers
+    }
+    return render(request, 'users/create_teacher.html', context)
