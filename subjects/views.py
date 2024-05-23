@@ -361,29 +361,35 @@ def psy_appointment_view(request):
 
 @login_required
 def create_volunteer_channel(request):
-    # Ensure only mentors and superusers can create channels
-    if not (request.user.role == 'Mentor' or request.user.is_superuser):
-        messages.error(request, "Only mentors and superusers can create channels.")
-        return redirect('home')
+    form = VolunteerChannelForm(request.POST or None)
+    search_form = UserSearchForm(request.GET or None)
+
+    students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
+
+    if 'search' in request.GET and search_form.is_valid():
+        search_query = request.GET.get('search', '')
+        students = CustomUser.objects.filter(
+            Q(full_name__icontains=search_query) | Q(phone_number__icontains=search_query),
+            role='Student'
+        ).order_by('full_name')[:8]
 
     if request.method == 'POST':
-        form = VolunteerChannelForm(request.POST, request.FILES)
+        selected_students = request.POST.getlist('selected_students')
         if form.is_valid():
             volunteer_channel = form.save(commit=False)
-            # Create a chat room for the new volunteer channel
-            chat_room = ChatRoom.objects.create(title=f"Chat for {volunteer_channel.name}")
-            volunteer_channel.chat_room = chat_room
-            volunteer_channel.save()  # Save the volunteer channel with the chat room
-            form.save_m2m()  # Save any many-to-many fields
-            return redirect('subjects:volunteer_channel_list')  # Redirect to the list of channels
-    else:
-        form = VolunteerChannelForm()
+            volunteer_channel.save()
+            volunteer_channel.users.set(selected_students)
+            return redirect('subjects:volunteer_channel_list')
+        else:
+            print(form.errors)
 
-    channels = VolunteerChannel.objects.all()  # Get all channels for display
     return render(request, 'subjects/volunteer_channel_form.html', {
         'form': form,
-        'channels': channels
+        'students': students,
+        'search_form': search_form,
+        'channels': VolunteerChannel.objects.all()
     })
+
 
 def search_users(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

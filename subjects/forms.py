@@ -72,20 +72,17 @@ class UserSearchForm(forms.Form):
 class VolunteerChannelForm(forms.ModelForm):
     class Meta:
         model = VolunteerChannel
-        fields = ['name', 'description', 'users']
+        fields = ['name', 'description']
 
-    users = forms.ModelMultipleChoiceField(
-        queryset=CustomUser.objects.filter(role='Student').order_by('full_name'),
+    selected_students = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.filter(role='Student'),
         required=False,
+        widget=forms.HiddenInput()
     )
 
-    def clean_users(self):
-        user_ids = self.cleaned_data.get('users', '')
-        if user_ids:
-            user_ids = list(map(int, user_ids.split(',')))  # Convert string of IDs to a list of integers
-            return CustomUser.objects.filter(id__in=user_ids)
-        raise forms.ValidationError("Please select at least one user.")
-
+    def clean_selected_students(self):
+        user_ids = self.cleaned_data.get('selected_students')
+        return CustomUser.objects.filter(id__in=user_ids)
 
 class GradeForm(forms.Form):
     max_grade = forms.IntegerField(label="Maximum Grade")
