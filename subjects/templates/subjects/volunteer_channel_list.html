@@ -1,9 +1,134 @@
-{% block content %}
-  <ul>
-    {% for channel in channels %}
-    <li><a href="{% url 'chats:chat_room_detail' room_id=channel.chat_room.id %}">{{ channel.name }}</a></li>
-    {% empty %}
-    <li>No channels found.</li>
-    {% endfor %}
-  </ul>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentor's canals</title>
+    <link rel="stylesheet" href="../../../font.css" />
+    <link rel="stylesheet" href="../../../style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../../tailwindCDNmodule.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body class="bg-[#fafafa] flex">
+    <div class="bg-white w-[285px] py-[42px] pl-[15px] pr-[10px] h-full shadow-[0px_4px_14px_0px_#0000000A]" style="height: auto">
+        <!-- Sidebar content here -->
+    </div>
+    <main class="main flex-1 pb-[100px]">
+        <header class="header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center" style="justify-content: right; border-left: 1px solid #c6c6c6">
+            <!-- Header content here -->
+        </header>
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid gap-[24px]">
+            <h1 class="text-[42px] text-black-main font-semibold leading-[52px]">Каналы</h1>
+            <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[36px] px-[36px] pb-[41px]">
+                <h3 class="text-black-main font-semibold text-[32px] leading-[40px] mb-[18px]">Создать канал для менторских дел</h3>
+                <!-- Form for channel creation -->
+                <form id="create-channel-form">
+                    <div class="mb-[8px] flex gap-[8px]">
+                        <input type="text" id="channel-name" placeholder="Название канала" class="outline-none border-[1px] border-[#CDCDCD] rounded-[5px] h-[72px] flex items-center px-[16px] w-[320px] text-[16px] font-regular leading-[22px] text-black-main">
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="user-search" class="w-full border-[#CDCDCD] outline-none border-[1px] h-[56px] flex items-center rounded-sm pl-[52px] pr-[20px] font-medium text-[16px] leading-[22px] text-black-main" placeholder="Введите имя ученика">
+                        <ul id="search-results" class="absolute w-full bg-white"></ul>
+                    </div>
+                    <button type="submit" class="w-[320px] h-[75px] mt-4 flex items-center justify-center rounded-sm bg-accent-red text-white text-[16px] leading-[22px] font-semibold">Создать канал</button>
+                </form>
+            </div>
+            <div id="existing-channels" class="mt-8">
+    <h2 class="text-black-main font-semibold text-[32px] leading-[40px] mb-[18px]">Existing Channels</h2>
+    <ul id="channel-list" class="list-none">
+        <!-- Channels will be listed here -->
+    </ul>
+</div>
+        </div>
+    </main>
+    <script>
+$(document).ready(function() {
+    let selectedUsers = [];
+
+    // Load and display existing volunteer channels
+    function loadExistingChannels() {
+        $.ajax({
+            url: '/subjects/api/volunteer-channels/',  // Ensure the URL matches your API endpoint
+            method: 'GET',
+            success: function(data) {
+                let channelsHtml = data.map(channel => `
+                    <li class="mb-2 p-2 bg-gray-100 rounded">
+                        <strong>${channel.name}</strong> - Members: ${channel.users.map(user => user.full_name).join(', ')}
+                    </li>
+                `).join('');
+                $('#channel-list').html(channelsHtml);
+            },
+            error: function() {
+                alert('Failed to load channels. Please try again.');
+            }
+        });
+    }
+
+    // Call this function on page load to display channels
+    loadExistingChannels();
+
+    // User Search
+    $('#user-search').on('input', function() {
+        const query = $(this).val();
+        $.ajax({
+            url: 'subjects/api/search-users/',  // Ensure the URL is correct
+            data: { term: query },
+            success: function(data) {
+                let resultsHtml = data.map(user => `<li onclick="addUser(${user.id}, '${user.full_name}', '${user.phone_number}')" class="p-2 hover:bg-gray-200 cursor-pointer">${user.full_name} - ${user.phone_number}</li>`).join('');
+                $('#search-results').html(resultsHtml).show();
+            }
+        });
+    });
+
+    window.addUser = function(userId, fullName, phoneNumber) {
+        if (!selectedUsers.some(user => user.id === userId)) {
+            selectedUsers.push({ id: userId, fullName: fullName, phoneNumber: phoneNumber });
+            updateSelectedUsersUI();
+        }
+        $('#user-search').val('');
+        $('#search-results').hide();
+    };
+
+    function updateSelectedUsersUI() {
+        let selectedUsersHtml = selectedUsers.map(user => `<li class="flex justify-between items-center p-2 bg-gray-200 rounded">
+            ${user.fullName} - ${user.phoneNumber}
+            <button onclick="removeUser(${user.id})" class="text-red-500">Remove</button>
+        </li>`).join('');
+        $('#selected-users').html(selectedUsersHtml);
+    }
+
+    window.removeUser = function(userId) {
+        selectedUsers = selectedUsers.filter(user => user.id !== userId);
+        updateSelectedUsersUI();
+    };
+
+    $('#create-channel-form').on('submit', function(e) {
+        e.preventDefault();
+        const channelName = $('#channel-name').val();
+        $.ajax({
+            type: 'POST',
+            url: '/subjects/api/volunteer-channels/',  // Ensure the URL is correct
+            data: {
+                name: channelName,
+                users: JSON.stringify(selectedUsers.map(user => user.id))
+            },
+            success: function() {
+                alert('Channel created successfully!');
+                $('#create-channel-form')[0].reset();
+                selectedUsers = [];
+                updateSelectedUsersUI();
+                loadExistingChannels();  // Reload the list of channels after a new one is added
+            },
+            error: function() {
+                alert('Failed to create channel. Please try again.');
+            }
+        });
+    });
+});
+</script>
+</body>
+
+</html>

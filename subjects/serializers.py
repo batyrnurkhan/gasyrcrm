@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2, Task
+from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'full_name', 'phone_number', 'role']
+
+class VolunteerChannelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VolunteerChannel
+        fields = ['id', 'name', 'users']
+        depth = 1
 
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:

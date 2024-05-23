@@ -74,6 +74,12 @@ class VolunteerChannelForm(forms.ModelForm):
         model = VolunteerChannel
         fields = ['name', 'description', 'users']
 
+    users = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.filter(role='Student').order_by('full_name'),
+        widget=forms.SelectMultiple(attrs={'id': 'user-select'})
+    )
+
+
 class GradeForm(forms.Form):
     max_grade = forms.IntegerField(label="Maximum Grade")
     date_assigned = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
