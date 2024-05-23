@@ -1,49 +1,127 @@
 {% extends "subjects/base.html" %}
+{% load course_tags %}
+{% load static %}
+{% block title %}
+    Ученики
+{% endblock %}
 
 {% block content %}
     {% include "subjects/components/crm2-mentor-sidebar.html" %}
-        {% include "subjects/components/crm2-header.html" %}
     <main class="main flex-1 pb-[100px] w-3/4">
+        {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] flex flex-col gap-[20px]">
+            <ul>
+                <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Ученики</h1>
+                <div class="rounded-md mb-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] pt-[48px] px-[42px] pb-[42px]">
+                    <h3 class="text-[32px] leading-[45px] text-black-main font-semibold mb-[12px]">
+                        Шаблоны группы учеников
+                    </h3>
 
-<h1>Ученики</h1>
-<p>Количество учеников: {{ student_count }}</p>
+                    {% if group_templates %}
+                        <ul class="bg-[#FAFAFA] py-[30px] px-[38px] grid items-center gap-[16px] max-h-[200px] overflow-y-auto">
+                            {% for template in group_templates %}
+                                <li class="flex justify-between w-full px-[15px]">
+                                    <div class="flex gap-[12px] items-center">
+                                        <img src="{% static 'core/icons/team-accent-red.svg' %}" alt=""
+                                             class="max-w-[24px] max-h-[24px]">
+                                        <p class="text-black-main font-semibold text-[16px] leading-[22px]">
+                                            {{ template.name }}
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-[12px] items-center">
+                                        <img src="{% static 'core/icons/calendar-accent-red.svg' %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <p class="text-black-main font-semibold text-[16px] leading-[22px]">{{ template.created_at|date:"Y-m-d" }}</p>
+                                    </div>
+                                    <div class="flex gap-[12px] items-center">
+                                        <img src="{% static 'core/icons/user-fill-accent-red.svg' %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <p class="text-black-main font-semibold text-[16px] leading-[22px]">{{ template.students.count }}
+                                            ученик(а)</p>
+                                    </div>
+                                    <a href="#"
+                                       class="text-black-main underline hover:no-underline font-semibold text-[16px] leading-[22px]">
+                                        Редактировать шаблон
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            <li class="flex justify-between w-full px-[15px]">
+                                <a href="{% url 'subjects:grouptemplate-list' %}"
+                                   class="block ml-auto text-[20px] font-semibold hover:bg-gray text-black-main leading-[28px] border-black-main border-[1px] rounded-lg py-[4px] px-[4px]"
+                                   style="width: fit-content;">Добавить шаблон
+                                </a>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <div class="bg-[#FAFAFA] py-[30px] px-[38px] flex items-center gap-[37px]">
+                            <img src="{% static 'core/images/cats/glasses.png' %}" alt=""
+                                 class="max-w-[181px] max-h-[181px]">
+                            <div class="gap-[20px] flex flex-col items-start">
+                                <h4 class="font-semibold text-[24px] leading-[34px] text-black-main">
+                                    У вас еще нет шаблонов групп учеников
+                                </h4>
+                                <a href="{% url 'subjects:grouptemplate-list' %}"
+                                   class="flex text-[20px] font-semibold hover:bg-black-main hover:text-white text-black-main leading-[28px] border-black-main border-[1px] rounded-lg py-[21px] px-[42px]"
+                                   style="width: fit-content;">Создать шаблон
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md p-[14px]">
+                    <div class="searchStudent relative">
+                        <form method="get" action="">
+                            <label>
+                                <input type="text" placeholder="Поиск ученика" name="search" value="{{ search_query }}"
+                                       class="py-[17px] pl-[27px] pr-[65px] border-[1px] border-[#CDCDCD] rounded-md w-full font-medium text-[16px] leading-[25px] text-black-main">
+                                <div class="absolute right-[25px] top-[20px]">
+                                    <img src="{% static 'core/icons/searck-gray.svg' %}" alt=""
+                                         class="max-w-[24px] max-h-[24px]">
+                                </div>
+                            </label>
+                        </form>
+                    </div>
+                    <div class="numberOfStudents pt-[33px] px-[30px] pb-[37px] bg-[#FAFAFA] rounded-lg mt-[10px]">
+                        <h3 class="text-[#4F4F4F] uppercase font-bold text-[16px]  font-bold leading-[26px] mb-[20px]">
+                            Количество учеников:
+                            <span>{{ student_count }}</span>
+                        </h3>
+                        {% if students %}
+                            <ul class="grid gap-[16px] max-h-[425px] overflow-y-auto px-[15px]">
+                                {% for student in students %}
+                                    <li class="flex justify-between w-full items-center">
+                                        <div class="gap-[16px] flex items-center w-[230px]">
+                                            <img src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
+                                                 alt=""
+                                                 class="max-h-[32px] max-w-[32px] rounded-full">
+                                            <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                                {{ student.full_name }}
+                                            </h5>
+                                        </div>
+                                        <div class="flex gap-[8px] items-center w-[200px]">
+                                            <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                                                 class="max-w-[16px] max-h-[16px]">
+                                            <span class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                                {{ student.phone_number|format_phone_number }}
+                                            </span>
+                                        </div>
+                                        <div class="city flex gap-[8px] items-center w-[160px]">
+                                            <img src="{% static "core/icons/city-fill-accent-red.svg" %}" alt=""
+                                                 class="max-w-[16px] max-h-[16px]">
+                                            <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.user_city }}</span>
+                                        </div>
+                                        <a href="#"
+                                           class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
+                                            данные</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Нет учеников.</p>
+                        {% endif %}
+                    </div>
+                </div>
 
-<form method="get" action="">
-    <input type="text" name="search" value="{{ search_query }}" placeholder="Поиск учеников...">
-    <button type="submit">Поиск</button>
-</form>
-
-{% if students %}
-    <ul>
-        {% for student in students %}
-    <div>
-        <p>{{ student.full_name }} {{ student.phone_number }} {{ student.user_city }} <button>Редактировать данные</button> </p>
-    </div>
-{% endfor %}
-    </ul>
-{% else %}
-    <p>Нет учеников.</p>
-{% endif %}
-
-<h2>Шаблоны группы учеников</h2>
-{% if group_templates %}
-    <ul>
-        {% for template in group_templates %}
-    <div>
-        <p>Name: {{ template.name }}</p>
-        <p>Created: {{ template.created_at|date:"Y-m-d H:i" }}</p>  <!-- Format the date as needed -->
-        <p>Number of Students: {{ template.students.count }}</p>
-        <button onclick="location.href='{% url 'subjects:edit_template_url' template.id %}'">Редактировать данные</button>
-    </div>
-{% empty %}
-    <p>У вас еще нет шаблонов групп учеников.</p>
-{% endfor %}
-    </ul>
-{% else %}
-    <p>У вас еще нет шаблонов групп учеников.</p>
-{% endif %}
-<a href="{% url 'subjects:grouptemplate-list' %}">Создать шаблон группы</a>
         </div>
     </main>
 {% endblock %}
