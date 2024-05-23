@@ -3,11 +3,11 @@ from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from django.http import JsonResponse, HttpResponseForbidden, Http404
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework.generics import get_object_or_404
 from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
@@ -104,6 +104,42 @@ def weekly_schedule_view(request):
             weekly_lessons[day] = lessons_on_this_day
 
     return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons})
+
+@login_required
+def group_templates_view(request):
+    # Fetch all group templates
+    group_templates = GroupTemplate.objects.prefetch_related('students').all()
+
+    # Count of all students
+    student_count = CustomUser.objects.filter(role='Student').count()
+
+    # Get top 8 students by alphabet when search is empty
+    students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
+
+    # Handling search
+    search_query = request.GET.get('search', '')
+    if search_query:
+        students = CustomUser.objects.filter(
+            Q(full_name__icontains=search_query) | Q(phone_number__icontains=search_query),
+            role='Student'
+        ).order_by('full_name')[:8]
+
+    context = {
+        'group_templates': group_templates,
+        'student_count': student_count,
+        'students': students,
+        'search_query': search_query
+    }
+    return render(request, 'subjects/group-templates.html', context)
+
+class EditGroupTemplateView(UpdateView):
+    model = GroupTemplate
+    form_class = GroupTemplateForm
+    template_name = 'subjects/edit_group_template.html'
+    context_object_name = 'template'
+
+    def get_success_url(self):
+        return reverse('group_templates_view')
 
 class SubjectListView(ListView):
     model = Lesson_crm2

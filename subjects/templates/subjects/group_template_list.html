@@ -1,7 +1,6 @@
 {% block content %}
 <h1>Create Group Template</h1>
 
-<!-- Display existing group templates -->
 <h2>Existing Group Templates</h2>
 <ul>
     {% for gt in group_templates %}
@@ -9,11 +8,10 @@
     {% endfor %}
 </ul>
 
-<!-- Form for creating a group template and selecting students -->
 <form id="group-template-form" method="post" action="">
     {% csrf_token %}
-    {{ form.as_p }}  <!-- Form for the group template name -->
-    {{ search_form.as_p }}  <!-- Form for searching students -->
+    {{ form.as_p }}
+    {{ search_form.as_p }}
     <label for="selected_students">Select Students:</label>
     <select name="selected_students" id="selected_students" multiple size="10">
         {% for student in students %}

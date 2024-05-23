@@ -1,0 +1,49 @@
+{% extends "subjects/base.html" %}
+
+{% block content %}
+    {% include "subjects/components/crm2-mentor-sidebar.html" %}
+        {% include "subjects/components/crm2-header.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4">
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] flex flex-col gap-[20px]">
+
+<h1>Ученики</h1>
+<p>Количество учеников: {{ student_count }}</p>
+
+<form method="get" action="">
+    <input type="text" name="search" value="{{ search_query }}" placeholder="Поиск учеников...">
+    <button type="submit">Поиск</button>
+</form>
+
+{% if students %}
+    <ul>
+        {% for student in students %}
+    <div>
+        <p>{{ student.full_name }} {{ student.phone_number }} {{ student.user_city }} <button>Редактировать данные</button> </p>
+    </div>
+{% endfor %}
+    </ul>
+{% else %}
+    <p>Нет учеников.</p>
+{% endif %}
+
+<h2>Шаблоны группы учеников</h2>
+{% if group_templates %}
+    <ul>
+        {% for template in group_templates %}
+    <div>
+        <p>Name: {{ template.name }}</p>
+        <p>Created: {{ template.created_at|date:"Y-m-d H:i" }}</p>  <!-- Format the date as needed -->
+        <p>Number of Students: {{ template.students.count }}</p>
+        <button onclick="location.href='{% url 'subjects:edit_template_url' template.id %}'">Редактировать данные</button>
+    </div>
+{% empty %}
+    <p>У вас еще нет шаблонов групп учеников.</p>
+{% endfor %}
+    </ul>
+{% else %}
+    <p>У вас еще нет шаблонов групп учеников.</p>
+{% endif %}
+<a href="{% url 'subjects:grouptemplate-list' %}">Создать шаблон группы</a>
+        </div>
+    </main>
+{% endblock %}

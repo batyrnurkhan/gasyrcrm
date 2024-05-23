@@ -15,7 +15,7 @@ class ShiftTime(models.Model):
     shift = models.ForeignKey(Shift, related_name='times', on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    date = models.DateField()  # Ensure this field is added
+    date = models.DateField()
 
     def day_of_week(self):
         return self.date.strftime('%A')  # Returns the full weekday name

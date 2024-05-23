@@ -30,6 +30,8 @@ class Subject(models.Model):
 class GroupTemplate(models.Model):
     name = models.CharField(max_length=255)
     students = models.ManyToManyField(CustomUser, limit_choices_to={'role': 'Student'})
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return self.name
