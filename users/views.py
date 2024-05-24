@@ -192,6 +192,7 @@ def create_teacher(request):
     teachers = CustomUser.objects.filter(role='Teacher')
     context = {
         'form': form,
-        'teachers': teachers
+        'teachers': teachers,
+        'page': 'teachers',
     }
     return render(request, 'users/create_teacher.html', context)
