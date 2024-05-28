@@ -71,7 +71,7 @@ def tasks_view(request):
 def weekly_schedule_view(request):
     user = request.user
     # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
-    if user.is_superuser or user.role == 'Mentor':
+    if user.role == 'Mentor':
         shifts = Shift.objects.prefetch_related(
             'times__lessons',
             'times__lessons__teacher'
@@ -88,13 +88,16 @@ def weekly_schedule_view(request):
     start_week = today - datetime.timedelta(days=today.weekday())
     end_week = start_week + datetime.timedelta(days=6)
 
+    week_dates = [start_week + timedelta(days=i) for i in range(7)]
+
     # Calculate days of the week for the range
     days_of_week = [(start_week + datetime.timedelta(days=x)).weekday() for x in range(7)]
 
     # Match ShiftTimes by weekday
-    weekly_lessons = {day: [] for day in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']}
+    weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    weekly_lessons = {day: [] for day in weeknames}
     base_date = datetime.date(2024, 1, 1)  # Adjust based on your needs
-    for i, day in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']):
+    for i, day in enumerate(weeknames):
         if i in days_of_week:
             shift_day = (base_date + datetime.timedelta(days=i)).weekday()
             day_shift_times = ShiftTime.objects.filter(date__week_day=shift_day + 1)  # Django week_day starts from 1 (Sunday)
@@ -105,7 +108,8 @@ def weekly_schedule_view(request):
                     lessons_on_this_day.append((lesson, time_slot.id))
             weekly_lessons[day] = lessons_on_this_day
 
-    return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons})
+    weekdays = {weeknames[i]: day for i, day in enumerate(week_dates)}
+    return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons, 'week_dates': weekdays})
 
 @login_required
 def group_templates_view(request):
