@@ -44,6 +44,8 @@ def home_view(request):
 
     if user.role == 'Mentor':
         template_name = 'subjects/mentor-home.html'
+    elif user.role == 'Teacher':
+        template_name = 'subjects/teacher-home.html'
     else:
         template_name = 'subjects/home.html'
 
