@@ -1,13 +1,13 @@
 {% load static %}
 <div class="block w-[285px] h-screen"></div>
-<div class="bg-white z-10 w-[285px] py-[42px] pl-[15px] pr-[10px] h-screen shadow-[0px_4px_14px_0px_#0000000A] fixed">
+<div class="bg-white z-10 w-[285px] py-[42px] pl-[15px] pr-[10px] h-screen shadow-[0px_4px_14px_0px_#0000000A] fixed font-[Qanelas]">
     <a href="{% url 'subjects:home' %}" class="pl-[30px] text-red-500 text-lg font-bold mb-[55px] block"><img
             src="{% static 'core/images/logo.svg' %}" alt=""/>
     </a>
-    <ul class="">
+    <ul class="text-[20px]">
         <li class="text-[#9D9E9E]">
             <a href="{% url 'subjects:weekly-schedule' %}"
-               class="mr-[35px] pl-[30px] rounded-md flex gap-[14px] width-[210px] py-4
+               class="mr-[35px] pl-[30px] rounded-lg flex gap-[14px] width-[210px] py-4 items-center
                {% if page == "schedule" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -26,7 +26,8 @@
                 <span class="font-semibold text-5 leading-[24px]">Расписание</span></a>
         </li>
         <li class="text-[#9D9E9E]">
-            <a href="{% url 'subjects:subject-list' %}" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="{% url 'subjects:subject-list' %}"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "diary" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -39,7 +40,8 @@
                 <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Дневник</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="#"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "news" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -53,7 +55,8 @@
                 <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Новости</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="{% url 'subjects:tasks' %}" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="{% url 'subjects:tasks' %}"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "tasks" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -67,7 +70,8 @@
                 <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Задачи</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="#"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "messenger" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -87,7 +91,8 @@
                 <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Мессенджер</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="#"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "achievements" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -108,7 +113,8 @@
                 <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Достижения</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="{% url 'subjects:subject-list' %}"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "online-classes" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -121,14 +127,15 @@
                     </g>
                     <defs>
                         <clipPath id="clip0_1096_5683">
-                            <rect width="20" height="20" fill="white"/>
+                            <rect width="20" height="20" fill="{% if page == "online-classes" %}white{% else %}#9D9E9E{% endif %}"/>
                         </clipPath>
                     </defs>
                 </svg>
-                <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Онлайн-уроки</span></a>
+                <span class="font-semibold text-5 leading-[24px]">Онлайн-уроки</span></a>
         </li>
         <li class="text-[#9D9E9E] ">
-            <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4
+            <a href="#"
+               class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "courses" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
@@ -159,7 +166,7 @@
         </li>
     </ul>
     <div class="mt-[146px]">
-        <button class="text-[#9D9E9E] text-5 font-semibold p-5 bg-[#F8F8F8] w-[260px] border-[1px] border-[#D3D3D3] rounded-md flex gap-[15px]">
+        <button class="text-[#9D9E9E] text-[20px] font-semibold p-5 bg-[#F8F8F8] w-[260px] border-[1px] border-[#D3D3D3] rounded-md flex gap-[15px]">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_1096_5701)">
                     <path fill-rule="evenodd" clip-rule="evenodd"

@@ -15,5 +15,8 @@ class Message(models.Model):
     file = models.FileField(upload_to='chat_files/', null=True, blank=True)  # Add optional file field
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-timestamp']
+
     def __str__(self):
         return self.message if self.message else "File Message"

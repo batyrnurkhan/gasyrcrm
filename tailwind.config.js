@@ -12,6 +12,7 @@ module.exports = {
         "./courses/**/*.{html,js}",
         "./subjects/**/*.{html,js}",
         "./schedule/**/*.{html,js}",
+        "./chats/**/*.{html,js}",
     ],
     theme: {
         extend: {},
