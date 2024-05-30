@@ -182,7 +182,9 @@ def create_teacher(request):
         form = TeacherCreationForm(request.POST)
         if form.is_valid():
             user, password = form.save()  # Save the user and get the generated password
-            success_message = f'Teacher created successfully! Phone: {user.phone_number}, Password: {password}'
+            # Store the password temporarily in the session using phone_number
+            request.session[user.phone_number] = password
+            success_message = f'Teacher created successfully! Phone: {user.phone_number}'
             messages.success(request, success_message)
             return redirect('users:create-teacher')
         else:
@@ -191,9 +193,11 @@ def create_teacher(request):
         form = TeacherCreationForm()
 
     teachers = CustomUser.objects.filter(role='Teacher')
+    passwords = {teacher.phone_number: request.session.get(teacher.phone_number) for teacher in teachers}
     context = {
         'form': form,
         'teachers': teachers,
+        'passwords': passwords,
         'page': 'teachers',
     }
     return render(request, 'users/create_teacher.html', context)

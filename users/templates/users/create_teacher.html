@@ -1,4 +1,5 @@
 {% extends 'subjects/base.html' %}
+{% load custom_filters %}
 
 {% load static %}
 {% load l10n %}
@@ -121,6 +122,8 @@
                                     </div>
                                     <a class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
                                         данные</a>
+        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ passwords|get_item:teacher.phone_number }}</span>
+
                                 </li>
                             {% empty %}
                                 <li>No teachers found.</li>
