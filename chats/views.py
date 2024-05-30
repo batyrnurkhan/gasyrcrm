@@ -12,6 +12,7 @@ def chat_room_list(request):
     return render(request, 'chats/chat_room_list.html', {'rooms': rooms})
 
 
+#### НАДО ПОДУМАТЬ ####
 @login_required
 def chat_room_detail(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
@@ -23,7 +24,6 @@ def chat_room_detail(request, room_id):
         if not (request.user.is_superuser or request.user == lesson.mentor or request.user in group_template_users):
             return HttpResponseForbidden("You are not allowed to view this chat room.")
     except ObjectDoesNotExist:
-        # Handle the case where there is no lesson linked to this chat room
         lesson = None
         group_template_users = []
         teacher = None
