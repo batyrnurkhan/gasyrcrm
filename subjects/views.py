@@ -302,10 +302,13 @@ def create_task(request, room_id):
             Message.objects.create(
                 chat_room=room,
                 user=request.user,  # or a system user if you have one
-                message=message_content
+                message=message_content,
+                message_type='task',
+                file=task.file if task.file else None,
+                task=task  # Link the message to the task
             )
 
-            return redirect('chats:chat_room_detail', room_id=room_id)  # Adjust this to your chat detail view
+            return redirect('chats:chat_room_detail', room_id=room_id)
     else:
         form = TaskForm()
 

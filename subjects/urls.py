@@ -25,5 +25,4 @@ urlpatterns = [
     path('set-grade/<int:lesson_id>/', set_grade, name='set_grade'),
     path('grades-by-day/', grades_by_day_view, name='grades-by-day'),
     path('search-users/', search_users, name='search-users'),
-
 ]

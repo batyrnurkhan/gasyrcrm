@@ -182,8 +182,9 @@ def create_teacher(request):
         form = TeacherCreationForm(request.POST)
         if form.is_valid():
             user, password = form.save()  # Save the user and get the generated password
-            messages.success(request, 'Teacher created successfully!')
-            return redirect('users:create-teacher')  # Redirect to clear the form
+            success_message = f'Teacher created successfully! Phone: {user.phone_number}, Password: {password}'
+            messages.success(request, success_message)
+            return redirect('users:create-teacher')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:

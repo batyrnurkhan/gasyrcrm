@@ -6,9 +6,10 @@ from django.core.files import File
 from chats.models import ChatRoom
 from schedule.models import Shift, ShiftTime
 from users.models import CustomUser
+from django.apps import apps
 
 class Task(models.Model):
-    chat_room = models.ForeignKey(ChatRoom, related_name='tasks', on_delete=models.CASCADE)
+    chat_room = models.ForeignKey('chats.ChatRoom', related_name='tasks', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     deadline = models.DateTimeField()
     file = models.FileField(upload_to='task_files/', null=True, blank=True)
