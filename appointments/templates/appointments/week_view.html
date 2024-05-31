@@ -1,153 +1,230 @@
+{% extends "subjects/base.html" %}
 
 {% block content %}
-<!-- Button container, initially hidden -->
-<div id="createButtonContainer" style="display: none;">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAppointmentModal">
-        Create Appointment
-    </button>
-</div>
+    {% url 'subjects:home' as home_url %}
+    {% include "core/components/navbar-main-without-links.html" with home_url=home_url %}
+    <main class="profile__main max-w-[1040px] mx-auto">
+        <div class="flex items-center justify-between mb-[24px] mt-[40px]">
+            <h1 class="font-bold text-black-main text-[42px]">
+                Календарь консультации
+            </h1>
+            <div
+                    class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
+                <button class="previous__date">
+                    <img src="./assets/предыдущиеНеделиИконка.png" alt=""/>
+                </button>
+                <div class="switch__date-text">20-26 марта</div>
+                <button class="previous__date">
+                    <img src="./assets/следующаяНеделиИконка.png" alt=""/>
+                </button>
+            </div>
+        </div>
+        <div class="days flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3">
+            <h1 class="days__choose text-[32px] leading-[40px] text-black-main font-bold">
+                Выберите день
+            </h1>
+            <div class="days__items flex gap-[10px]">
+                {% for day in dates_of_week %}
+                    <div class="relative">
+                        <input onclick="selectDate('{{ day.year }}', '{{ day.month }}', '{{ day.day }}', '{{ day|date:'Y-m-d' }}');"
+                               type="radio" name="radio" class="w-full h-full absolute peer opacity-0">
+                        <div class="days__item rounded-[10px] pt-3 border peer-hover-psy border-accent-red text-accent-red font-bold pb-3 w-[102px] flex flex-col">
+                            <span class="text-[14px] font-bold leading-[14px] block text-center">{{ day|date:"M" }}</span>
+                            <span class="block text-center text-[42px] leading-[52px] font-bold">{{ day|date:"d" }}</span>
+                            <span class="block text-center text-[14px] uppercase leading-[14px] font-bold">{{ day|date:"D" }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
 
-<!-- Modal for Creating Appointments -->
-<div class="modal fade" id="createAppointmentModal" tabindex="-1" aria-labelledby="createAppointmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createAppointmentModalLabel">New Appointment</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="createAppointmentForm">
-            <div class="form-group">
-                <input type="date" class="form-control" id="appointmentDate" name="date" required>
+        </div>
+        <div id="details"
+             class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px] hidden">
+            <div class="lessons__texts flex justify-between mb-[18px] items-center">
+                <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
+                    Временные окошки
+                </h1>
+                <button class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px] ">
+                    <img src="./assets/addOfficeHours.svg" alt="" class="max-w-[20px] max-h-[20px] rounded-full">
+                    <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить свободные окошки</span>
+                </button>
             </div>
-            <div class="form-group">
-                <input type="time" class="form-control" id="startTime" name="start_time" required>
+            <ul id="appointmentDetails"
+                class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
+                <img src="./assets/empty1-bg.png" alt="" class="max-w-[215px] max-h-[215px]">
+                <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main">Окошек
+                    на этот день еще нет</p>
+            </ul>
+        </div>
+    </main>
+    <div class="w-full max-w-[1040px] mx-auto">
+        <!-- Button container, initially hidden -->
+        <div id="createButtonContainer">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAppointmentModal">
+                Create Appointment
+            </button>
+        </div>
+
+        <!-- Modal for Creating Appointments -->
+        <div class="modal fade" id="createAppointmentModal" tabindex="-1"
+             aria-labelledby="createAppointmentModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createAppointmentModalLabel">New Appointment</h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createAppointmentForm">
+                            <div class="form-group">
+                                <input type="date" class="form-control" id="appointmentDate" name="date" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="time" class="form-control" id="startTime" name="start_time" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="time" class="form-control" id="endTime" name="end_time" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="url" class="form-control" id="appointmentLink" name="link">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="createAppointment()">Save Appointment
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="time" class="form-control" id="endTime" name="end_time" required>
+        </div>
+
+        <!-- Modal for Setting Link -->
+        <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
+             tabindex="-1"
+             style="display: none"
+             aria-labelledby="setLinkModalLabel"
+             aria-hidden="true">
+            <div class="w-2/3 mx-auto bg-white mt-[140px]">
+                <div class="p-[40px] font-[Qanelas] text-black-main">
+                    <div class="flex flex-row justify-between">
+                        <h5 class="modal-title" id="setLinkModalLabel">Создание окошек</h5>
+                        <button type="button" onclick="closeSetLinkModal()" class="btn-close" data-dismiss="modal"
+                                aria-label="Close">X
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="setLinkForm">
+                            <input type="hidden" id="appointmentId" name="appointmentId">
+                            <input type="url" class="form-control" id="appointmentLinkModal" name="link" required>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="setLink()">Set Link</button>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="url" class="form-control" id="appointmentLink" name="link">
-            </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="createAppointment()">Save Appointment</button>
-      </div>
+        </div>
+
+
+        <ul>
+            {% for date in dates_of_week %}
+                <li>
+                    <a href="#"
+                       onclick="selectDate('{{ date.year }}', '{{ date.month }}', '{{ date.day }}', '{{ date|date:'Y-m-d' }}');">
+                        {{ date|date:"l, F d" }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
     </div>
-  </div>
-</div>
 
-<!-- Modal for Setting Link -->
-<div class="modal fade" id="setLinkModal" tabindex="-1" aria-labelledby="setLinkModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="setLinkModalLabel">Set Link for Appointment</h5>
-        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="setLinkForm">
-            <input type="hidden" id="appointmentId" name="appointmentId">
-            <input type="url" class="form-control" id="appointmentLinkModal" name="link" required>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="setLink()">Set Link</button>
-      </div>
-    </div>
-  </div>
-</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<ul>
-    {% for date in dates_of_week %}
-    <li>
-        <a href="#" onclick="selectDate('{{ date.year }}', '{{ date.month }}', '{{ date.day }}', '{{ date|date:'Y-m-d' }}');">
-            {{ date|date:"l, F d" }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
+    <script>
+        function closeSetLinkModal() {
+            console.log("Sdsd")
+            $('#setLinkModal').hide();
+        }
 
-<div id="appointmentDetails"></div>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.selectDate = function (year, month, day, fullDate) {
+                fetch(`/appointments/api/appointments/${year}/${month}/${day}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const appointments = data.appointments;
+                        const detailsContainer = document.getElementById('appointmentDetails');
+                        document.getElementById("details").classList.remove("hidden")
+                        detailsContainer.innerHTML = '';
+                        if (appointments.length > 0) {
+                            const list = document.createElement('ul');
+                            appointments.forEach(appointment => {
+                                const li = document.createElement('li');
+                                li.textContent = `${appointment.date} from ${appointment.start_time} to ${appointment.end_time}`;
+                                const setLinkButton = document.createElement('button');
+                                setLinkButton.className = 'btn btn-sm btn-secondary';
+                                setLinkButton.textContent = 'Set Link';
+                                setLinkButton.onclick = () => showSetLinkModal(appointment.id, appointment.link);
+                                li.appendChild(setLinkButton);
+                                list.appendChild(li);
+                            });
+                            detailsContainer.appendChild(list);
+                        } else {
+                            detailsContainer.innerHTML = `<img src="./assets/empty1-bg.png" alt="" class="max-w-[215px] max-h-[215px]">
+                            <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main">Окошек
+                                на этот день еще нет</p>`;
+                        }
+                        document.getElementById('appointmentDate').value = fullDate;
+                        document.getElementById('createButtonContainer').style.display = 'block';
+                    });
+            };
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            window.createAppointment = function () {
+                fetch('/appointments/api/appointments/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        date: document.getElementById('appointmentDate').value,
+                        start_time: document.getElementById('startTime').value,
+                        end_time: document.getElementById('endTime').value,
+                        link: document.getElementById('appointmentLink').value
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        $('#createAppointmentModal').modal('hide');
+                        alert('Appointment created!');
+                        selectDate(data.date.split('-')[0], data.date.split('-')[1], data.date.split('-')[2], data.date);
+                    });
+            };
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    window.selectDate = function(year, month, day, fullDate) {
-        fetch(`http://127.0.0.1:8000/appointments/api/appointments/${year}/${month}/${day}/`)
-        .then(response => response.json())
-        .then(data => {
-            const appointments = data.appointments;
-            const detailsContainer = document.getElementById('appointmentDetails');
-            detailsContainer.innerHTML = '';
-            if (appointments.length > 0) {
-                const list = document.createElement('ul');
-                appointments.forEach(appointment => {
-                    const li = document.createElement('li');
-                    li.textContent = `${appointment.date} from ${appointment.start_time} to ${appointment.end_time}`;
-                    const setLinkButton = document.createElement('button');
-                    setLinkButton.className = 'btn btn-sm btn-secondary';
-                    setLinkButton.textContent = 'Set Link';
-                    setLinkButton.onclick = () => showSetLinkModal(appointment.id, appointment.link);
-                    li.appendChild(setLinkButton);
-                    list.appendChild(li);
-                });
-                detailsContainer.appendChild(list);
-            } else {
-                detailsContainer.textContent = 'No appointments for this day.';
-            }
-            document.getElementById('appointmentDate').value = fullDate;
-            document.getElementById('createButtonContainer').style.display = 'block';
+            window.showSetLinkModal = function (appointmentId, currentLink) {
+                document.getElementById('appointmentId').value = appointmentId;
+                document.getElementById('appointmentLinkModal').value = currentLink || '';
+                $('#setLinkModal').show();
+            };
+
+            window.setLink = function () {
+                fetch(`/appointments/api/appointments/${document.getElementById('appointmentId').value}/set-link/`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({link: document.getElementById('appointmentLinkModal').value})
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        $('#setLinkModal').modal('hide');
+                        alert('Link set successfully!');
+                    });
+            };
         });
-    };
-
-    window.createAppointment = function() {
-        fetch('http://127.0.0.1:8000/appointments/api/appointments/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({
-                date: document.getElementById('appointmentDate').value,
-                start_time: document.getElementById('startTime').value,
-                end_time: document.getElementById('endTime').value,
-                link: document.getElementById('appointmentLink').value
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            $('#createAppointmentModal').modal('hide');
-            alert('Appointment created!');
-            selectDate(data.date.split('-')[0], data.date.split('-')[1], data.date.split('-')[2], data.date);
-        });
-    };
-
-    window.showSetLinkModal = function(appointmentId, currentLink) {
-        document.getElementById('appointmentId').value = appointmentId;
-        document.getElementById('appointmentLinkModal').value = currentLink || '';
-        $('#setLinkModal').modal('show');
-    };
-
-    window.setLink = function() {
-        fetch(`http://127.0.0.1:8000/appointments/api/appointments/${document.getElementById('appointmentId').value}/set-link/`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify({ link: document.getElementById('appointmentLinkModal').value })
-        })
-        .then(response => response.json())
-        .then(data => {
-            $('#setLinkModal').modal('hide');
-            alert('Link set successfully!');
-        });
-    };
-});
-</script>
+    </script>
 {% endblock %}

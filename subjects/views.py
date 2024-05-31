@@ -9,6 +9,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework.generics import get_object_or_404
+
+from appointments.forms import AppointmentForm
+from appointments.models import Appointment
 from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
@@ -16,45 +19,56 @@ from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, Volu
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
 
 
-
 @login_required
 def home_view(request):
     user = request.user
-    today = timezone.now().date()
-
-    user_lessons = Lesson_crm2.objects.filter(
-        group_template__students=user
-    ).select_related('teacher', 'subject', 'chat_room')
-    print("Debug - User Lessons with Chat Rooms:", [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
-
-    last_task = Task.objects.filter(
-        chat_room__in=[lesson.chat_room for lesson in user_lessons]
-    ).select_related('created_by').order_by('-deadline').first()
-
-    print("Debug - Last Task Details:", last_task)
-
-    if last_task:
-        task_teacher = last_task.created_by
-        creator_profile_pic_url = task_teacher.profile_picture.url if task_teacher.profile_picture else None
-        subject_name = last_task.chat_room.lessons.first().subject.name if last_task.chat_room.lessons.exists() else "No Subject"
-    else:
-        task_teacher = None
-        creator_profile_pic_url = None
-        subject_name = "No Subject"
+    context = {}
 
     if user.role == 'Mentor':
         template_name = 'subjects/mentor-home.html'
     elif user.role == 'Teacher':
         template_name = 'subjects/teacher-home.html'
-    else:
-        template_name = 'subjects/home.html'
+    elif user.role == 'Psychologist':
+        today = datetime.datetime.now().date()
+        start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
+        dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
 
-    return render(request, template_name, {
-        'task_teacher': task_teacher,
-        'creator_profile_pic_url': creator_profile_pic_url,
-        'subject_name': subject_name,
-        'last_task': last_task
-    })
+        context = {
+            'dates_of_week': dates_of_week,
+        }
+        template_name = 'appointments/week_view.html'
+    else:
+        today = timezone.now().date()
+        user_lessons = Lesson_crm2.objects.filter(
+            group_template__students=user
+        ).select_related('teacher', 'subject', 'chat_room')
+        print("Debug - User Lessons with Chat Rooms:",
+              [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
+
+        last_task = Task.objects.filter(
+            chat_room__in=[lesson.chat_room for lesson in user_lessons]
+        ).select_related('created_by').order_by('-deadline').first()
+
+        print("Debug - Last Task Details:", last_task)
+
+        if last_task:
+            task_teacher = last_task.created_by
+            creator_profile_pic_url = task_teacher.profile_picture.url if task_teacher.profile_picture else None
+            subject_name = last_task.chat_room.lessons.first().subject.name if last_task.chat_room.lessons.exists() else "No Subject"
+        else:
+            task_teacher = None
+            creator_profile_pic_url = None
+            subject_name = "No Subject"
+        template_name = 'subjects/home.html'
+        context = {
+            'task_teacher': task_teacher,
+            'creator_profile_pic_url': creator_profile_pic_url,
+            'subject_name': subject_name,
+            'last_task': last_task
+        }
+
+    return render(request, template_name, context)
+
 
 @login_required
 def tasks_view(request):
@@ -100,7 +114,8 @@ def weekly_schedule_view(request):
     for i, day in enumerate(weeknames):
         if i in days_of_week:
             shift_day = (base_date + datetime.timedelta(days=i)).weekday()
-            day_shift_times = ShiftTime.objects.filter(date__week_day=shift_day + 1)  # Django week_day starts from 1 (Sunday)
+            day_shift_times = ShiftTime.objects.filter(
+                date__week_day=shift_day + 1)  # Django week_day starts from 1 (Sunday)
             lessons_on_this_day = []
             for time_slot in day_shift_times:
                 lessons = Lesson_crm2.objects.filter(time_slot=time_slot)
@@ -109,7 +124,9 @@ def weekly_schedule_view(request):
             weekly_lessons[day] = lessons_on_this_day
 
     weekdays = {weeknames[i]: day for i, day in enumerate(week_dates)}
-    return render(request, 'subjects/weekly_schedule.html', {'weekly_lessons': weekly_lessons, 'week_dates': weekdays})
+    return render(request, 'subjects/weekly_schedule.html',
+                  {'weekly_lessons': weekly_lessons, 'week_dates': weekdays, 'page': 'schedule'})
+
 
 @login_required
 def group_templates_view(request):
@@ -139,6 +156,7 @@ def group_templates_view(request):
     }
     return render(request, 'subjects/group-templates.html', context)
 
+
 class EditGroupTemplateView(UpdateView):
     model = GroupTemplate
     form_class = GroupTemplateForm
@@ -147,6 +165,7 @@ class EditGroupTemplateView(UpdateView):
 
     def get_success_url(self):
         return reverse('group_templates_view')
+
 
 class SubjectListView(ListView):
     model = Lesson_crm2
@@ -202,10 +221,12 @@ def group_template_list(request):
         'group_templates': group_templates
     })
 
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
 from .models import Lesson_crm2
 from django.utils import timezone
+
 
 class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Lesson_crm2
@@ -220,12 +241,14 @@ class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         # Superusers see all lessons, students see only their lessons
         if self.request.user.is_superuser:
             return Lesson_crm2.objects.all().select_related('teacher', 'time_slot')
-        return Lesson_crm2.objects.filter(group_template__students=self.request.user).select_related('teacher', 'time_slot')
+        return Lesson_crm2.objects.filter(group_template__students=self.request.user).select_related('teacher',
+                                                                                                     'time_slot')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['now'] = timezone.now()  # if you need the current time
         return context
+
 
 class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Lesson_crm2
@@ -268,9 +291,11 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             chat_room.participants.add(self.object.teacher)
 
         return response
+
     def get_success_url(self):
         # Redirects back to the shifts page after successful creation
         return reverse('schedule:shifts')
+
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2
@@ -280,6 +305,7 @@ class LessonDetailView(DetailView):
         lesson = super().get_object()
         # Optionally, check permissions here
         return lesson
+
 
 from django.utils.timezone import localtime, localdate
 
@@ -330,6 +356,7 @@ def search_students(request):
     student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
 
+
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
@@ -363,6 +390,7 @@ def grades_by_day_view(request):
         grades_by_date[grade.date_assigned].append(grade)
 
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})
+
 
 @login_required
 def psy_appointment_view(request):
@@ -413,5 +441,3 @@ def search_users(request):
         results = [{'id': user.id, 'label': user.full_name, 'value': user.full_name} for user in users]
         return JsonResponse(results, safe=False)
     return JsonResponse({'error': 'Not AJAX'}, status=400)
-
-

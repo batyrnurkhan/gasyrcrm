@@ -90,6 +90,10 @@
         @apply peer-checked:font-bold transition-none
     }
 
+    .peer-hover-psy {
+        @apply peer-hover:bg-accent-red peer-hover:text-white peer-checked:bg-accent-red peer-checked:text-white
+    }
+
     .w-without-slider {
         width: calc(100vw - 284px);
     }

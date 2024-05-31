@@ -706,6 +706,20 @@ div::-webkit-scrollbar-thumb {
   font-weight: 700;
 }
 
+.peer:checked ~ .peer-hover-psy {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.peer:hover ~ .peer-hover-psy {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
 .w-without-slider {
   width: calc(100vw - 284px);
 }
@@ -1007,6 +1021,14 @@ div::-webkit-scrollbar-thumb {
   z-index: 50;
 }
 
+.z-30 {
+  z-index: 30;
+}
+
+.z-40 {
+  z-index: 40;
+}
+
 .col-span-2 {
   grid-column: span 2 / span 2;
 }
@@ -1055,6 +1077,11 @@ div::-webkit-scrollbar-thumb {
 .my-\[30px\] {
   margin-top: 30px;
   margin-bottom: 30px;
+}
+
+.mx-\[auto\] {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .mb-1 {
@@ -1417,6 +1444,14 @@ div::-webkit-scrollbar-thumb {
   margin-top: auto;
 }
 
+.mt-\[100px\] {
+  margin-top: 100px;
+}
+
+.mt-\[140px\] {
+  margin-top: 140px;
+}
+
 .block {
   display: block;
 }
@@ -1702,6 +1737,10 @@ div::-webkit-scrollbar-thumb {
   max-height: 75px;
 }
 
+.max-h-\[20px\] {
+  max-height: 20px;
+}
+
 .min-h-60 {
   min-height: 15rem;
 }
@@ -1938,6 +1977,10 @@ div::-webkit-scrollbar-thumb {
   width: 100%;
 }
 
+.w-\[1040px\] {
+  width: 1040px;
+}
+
 .min-w-\[245px\] {
   min-width: 245px;
 }
@@ -2079,6 +2122,10 @@ div::-webkit-scrollbar-thumb {
   max-width: 24rem;
 }
 
+.max-w-\[210px\] {
+  max-width: 210px;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -2149,16 +2196,16 @@ div::-webkit-scrollbar-thumb {
   flex-direction: column;
 }
 
-.flex-col-reverse {
-  flex-direction: column-reverse;
-}
-
 .flex-wrap {
   flex-wrap: wrap;
 }
 
 .place-content-between {
   place-content: space-between;
+}
+
+.content-around {
+  align-content: space-around;
 }
 
 .items-start {
@@ -2727,6 +2774,14 @@ div::-webkit-scrollbar-thumb {
 
 .p-\[52px\] {
   padding: 52px;
+}
+
+.p-40 {
+  padding: 10rem;
+}
+
+.p-\[40px\] {
+  padding: 40px;
 }
 
 .px-10 {
@@ -3369,6 +3424,10 @@ div::-webkit-scrollbar-thumb {
 
 .pt-\[76px\] {
   padding-top: 76px;
+}
+
+.pr-\[30px\] {
+  padding-right: 30px;
 }
 
 .text-left {
