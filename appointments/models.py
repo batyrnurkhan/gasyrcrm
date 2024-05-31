@@ -22,3 +22,5 @@ class Appointment(models.Model):
             end_time__gt=self.start_time
         ).exists():
             raise ValidationError('There is an overlap with another appointment.')
+
+

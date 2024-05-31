@@ -1,3 +1,5 @@
+from django.forms import model_to_dict
+from django.http import JsonResponse
 from django.shortcuts import render
 from datetime import datetime, timedelta
 from .models import Appointment
@@ -22,11 +24,18 @@ def appointments_for_day(request, year, month, day):
     return render(request, 'appointments/appointments_for_day.html', context)
 
 
+def appointments_for_day_api(request, year, month, day):
+    date = datetime(year, month, day).date()
+    appointments = Appointment.objects.filter(date=date)
+    appointment_list = [model_to_dict(appointment) for appointment in appointments]  # Convert queryset to list of dicts
+    return JsonResponse({'appointments': appointment_list, 'date': date.strftime("%Y-%m-%d")})
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Appointment
-from .serializers import AppointmentSerializer
+from .serializers import AppointmentSerializer, AppointmentLinkSerializer
+
 
 class AppointmentListCreateAPIView(APIView):
     def get(self, request):
@@ -45,10 +54,12 @@ class AppointmentListCreateAPIView(APIView):
 class AppointmentSetLinkAPIView(APIView):
     def patch(self, request, pk):
         appointment = Appointment.objects.get(pk=pk)
-        serializer = AppointmentSerializer(appointment, data=request.data, partial=True)
+        serializer = AppointmentLinkSerializer(appointment, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+        else:
+            print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def create_appointment_view(request):
