@@ -14,15 +14,6 @@ def week_view(request):
     }
     return render(request, 'appointments/week_view.html', context)
 
-def appointments_for_day(request, year, month, day):
-    date = datetime(year, month, day).date()
-    appointments = Appointment.objects.filter(date=date)
-    context = {
-        'appointments': appointments,
-        'date': date  # Pass the date to use in the template
-    }
-    return render(request, 'appointments/appointments_for_day.html', context)
-
 
 def appointments_for_day_api(request, year, month, day):
     date = datetime(year, month, day).date()
@@ -61,9 +52,3 @@ class AppointmentSetLinkAPIView(APIView):
         else:
             print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-def create_appointment_view(request):
-    return render(request, 'appointments/create_appointment.html')
-
-def set_link_view(request):
-    return render(request, 'appointments/set_link.html')
