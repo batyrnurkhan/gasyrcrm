@@ -1,0 +1,9 @@
+<ul>
+    {% for date in dates_of_week %}
+    <li>
+        <a href="{% url 'appointments_for_day' year=date.year month=date.month day=date.day %}">
+            {{ date|date:"l, F d" }} <!-- Using Django date filter for formatting -->
+        </a>
+    </li>
+    {% endfor %}
+</ul>

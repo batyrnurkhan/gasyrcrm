@@ -2,4 +2,6 @@ from django.contrib import admin
 from .models import Appointment
 # Register your models here.
 
-admin.site.register(Appointment)
+@admin.register(Appointment)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['id', 'date']

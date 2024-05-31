@@ -1,16 +1,16 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import psychologist_home, appointment_view, set_meeting_link, AppointmentViewSet, view1, view2
+from django.urls import path
+from . import views
+from .views import AppointmentListCreateAPIView, AppointmentSetLinkAPIView, set_link_view, create_appointment_view, \
+    appointments_for_day
 
-# API router
-router = DefaultRouter()
-router.register(r'appointments', AppointmentViewSet, basename='appointment')
+
 
 urlpatterns = [
-    path('home/', psychologist_home, name='psychologist_home'),
-    path('add_appointment/', appointment_view, name='add_appointment'),
-    path('set_meeting_link/', set_meeting_link, name='set_meeting_link'),
-    path('api/', include(router.urls)),  # Include the API router
-    path('psychologist/', view1.as_view(), name='psychologist_home_page'),
-    path('student/', view2.as_view(), name='student_home_page'),
+    path('', views.week_view, name='week_view'),
+    path('create-appointment/', create_appointment_view, name='create-appointment'),
+    path('appointments/<int:year>/<int:month>/<int:day>/', appointments_for_day, name='appointments_for_day'),
+    path('set-link/', set_link_view, name='set-link'),
+    path('appointments/<int:year>/<int:month>/<int:day>/', views.appointments_for_day, name='appointments_for_day'),
+    path('api/appointments/', AppointmentListCreateAPIView.as_view(), name='appointment-list-create'),
+    path('api/appointments/<int:pk>/set-link/', AppointmentSetLinkAPIView.as_view(), name='appointment-set-link'),
 ]

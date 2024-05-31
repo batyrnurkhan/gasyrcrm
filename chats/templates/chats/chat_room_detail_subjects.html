@@ -11,8 +11,11 @@
             <div class="course w-full h-block flex bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-lg">
                 <div class="course__info w-[280px] text-center items-center flex flex-col p-[14px] pt-[40px]">
                     <div class="course__info-img mb-[20px]">
-                        <img class="object-cover w-[160px] h-[160px] rounded-lg" src="{{ lesson.subject.image.url }}"
-                             alt=""/>
+                        {% if lesson.subject.image %}
+                            <img class="object-cover w-[160px] h-[160px] rounded-lg" src="{{ lesson.subject.image.url }}" alt=""/>
+                        {% else %}
+                            <img class="object-cover w-[160px] h-[160px] rounded-lg" src="{% static 'path/to/default/image.jpg' %}" alt="Default Image"/>
+                        {% endif %}
                     </div>
                     <h1 class="course__info-title font-semibold text-[24px] leading-[30px] text-black-main mb-[6px]">
                         {{ lesson.subject.name }}

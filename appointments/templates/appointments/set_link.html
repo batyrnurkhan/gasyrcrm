@@ -1,0 +1,28 @@
+
+{% block content %}
+<h2>Set Link for Appointment</h2>
+<form id="linkForm">
+    <label for="appointmentId">Appointment ID:</label>
+    <input type="number" id="appointmentId" name="appointmentId" required><br>
+    <label for="link">New Link:</label>
+    <input type="url" id="link" name="link" required><br>
+    <input type="button" value="Update Link" onclick="updateLink()">
+</form>
+<script>
+function updateLink() {
+    const appointmentId = document.getElementById('appointmentId').value;
+    const link = document.getElementById('link').value;
+
+    fetch(`http://127.0.0.1:8000/appointments/api/appointments/${appointmentId}/set-link/`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ link: link })
+    }).then(response => response.json())
+    .then(data => alert('Link updated!'))
+    .catch(error => console.error('Error:', error));
+}
+</script>
+{% endblock %}
