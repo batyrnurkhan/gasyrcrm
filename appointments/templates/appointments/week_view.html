@@ -1,10 +1,11 @@
 {% extends "subjects/base.html" %}
+{% load l10n %}
 {% load static %}
 
 {% block content %}
     {% url 'subjects:home' as home_url %}
     {% include "core/components/navbar-main-without-links.html" with home_url=home_url %}
-    <main class="profile__main max-w-[1040px] mx-auto">
+    <main class="profile__main max-w-[1040px] mx-auto font-[Qanelas]">
         <div class="flex items-center justify-between mb-[24px] mt-[40px]">
             <h1 class="font-bold text-black-main text-[42px]">
                 Календарь консультации
@@ -30,7 +31,7 @@
                         <input onclick="selectDate('{{ day.year }}', '{{ day.month }}', '{{ day.day }}', '{{ day|date:'Y-m-d' }}');"
                                type="radio" name="radio" class="w-full h-full absolute peer opacity-0">
                         <div class="days__item rounded-[10px] pt-3 border peer-hover-psy border-accent-red text-accent-red font-bold pb-3 w-[102px] flex flex-col">
-                            <span class="text-[14px] font-bold leading-[14px] block text-center">{{ day|date:"M" }}</span>
+                            <span class="text-[14px] font-bold leading-[14px] block text-center">{{ day|date:"M"|localize }}</span>
                             <span class="block text-center text-[42px] leading-[52px] font-bold">{{ day|date:"d" }}</span>
                             <span class="block text-center text-[14px] uppercase leading-[14px] font-bold">{{ day|date:"D" }}</span>
                         </div>
@@ -45,106 +46,129 @@
                 <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
                     Временные окошки
                 </h1>
-                <button class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px] ">
+                <button class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px]" onclick="openNewAppModal()">
                     <img src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="" class="max-w-[20px] max-h-[20px] rounded-full">
                     <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить свободные окошки</span>
                 </button>
             </div>
             <ul id="appointmentDetails"
-                class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
+                class="lessons__items flex items-center justify-center text-black-main rounded-lg">
             </ul>
         </div>
     </main>
-    <div class="w-full max-w-[1040px] mx-auto">
-        <!-- Button container, initially hidden -->
-        <div id="createButtonContainer">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createAppointmentModal">
-                Create Appointment
-            </button>
-        </div>
-
-        <!-- Modal for Creating Appointments -->
-        <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="createAppointmentModal" tabindex="-1"
-             aria-labelledby="createAppointmentModalLabel"
-{#             style="display: none"#}
-             aria-hidden="true">
-            <div class="w-2/3 mx-auto bg-white mt-[140px]">
-                <div class="p-[40px] font-[Qanelas] text-black-main">
-                    <div class="flex flex-row justify-between">
-                        <h5 class="modal-title" id="setLinkModalLabel">Создание окошек</h5>
-                        <button type="button" onclick="closeNewAppModal()" class="btn-close" data-dismiss="modal"
-                                aria-label="Close">X
-                        </button>
-                    </div>
+    <!-- Modal for Creating Appointments -->
+    <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="createAppointmentModal" tabindex="-1"
+         aria-labelledby="createAppointmentModalLabel"
+         style="display: none"
+         aria-hidden="true">
+        <div class="w-2/3 mx-auto bg-white mt-[140px] rounded-lg">
+            <div class="p-[40px] font-[Qanelas] text-black-main">
+                <div class="flex flex-row justify-between mb-[22px]">
+                    <h5 class="font-bold text-[32px]">Создание окошек</h5>
+                    <button type="button" onclick="closeNewAppModal()" class="btn-close" data-dismiss="modal"
+                            aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+                    </button>
+                </div>
+                <div class="flex flex-row justify-between">
                     <div class="modal-body">
                         <form id="createAppointmentForm">
-                            <div class="form-group">
-                                <input type="date" class="form-control" id="appointmentDate" name="date" required>
+                            <span class="font-semibold text-[18px]">Введите время консультации</span>
+                            <input type="date" class="form-control" hidden id="appointmentDate" name="date" required>
+                            <div class="flex flex-row justify-around items-center gap-[18px] rounded-none text-black mb-[18px]">
+                                <h2 class="font-bold h-full">От</h2>
+                                <label for="startHr" class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
+                                    <input type="time" value="00:00" class="form-control" hidden id="startTime" name="start_time" required>
+                                    <div class="">
+                                        <input id="startHr" type="number" onchange="setStartHr(event.target.value)" min="0" max="23" class="without-spin" placeholder="__" />
+                                    </div>
+                                    <div class="separator">:</div>
+                                    <div class="minute">
+                                        <input type="number" onchange="setStartMin(event.target.value)" min="0" max="59" class="without-spin" placeholder="__">
+                                    </div>
+                                </label>
+                                <h2 class="font-bold h-full">До</h2>
+                                <label for="endHr" class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
+                                    <input type="time" value="00:00" class="form-control" hidden id="endTime" name="end_time" required>
+                                    <div class="">
+                                        <input id="endHr" type="number" onchange="setEndHr(event.target.value)" min="0" max="23" class="without-spin" placeholder="__" />
+                                    </div>
+                                    <div class="separator">:</div>
+                                    <div class="minute">
+                                        <input type="number" onchange="setEndMin(event.target.value)" min="0" max="59" class="without-spin" placeholder="__">
+                                    </div>
+                                </label>
                             </div>
-                            <div class="form-group">
-                                <input type="time" class="form-control" id="startTime" name="start_time" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="time" class="form-control" id="endTime" name="end_time" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="url" class="form-control" id="appointmentLink" name="link">
-                            </div>
+                            <input type="url" class="form-control" id="appointmentLink" name="link" hidden>
+                            <button type="button" class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px]"
+                                    onclick="createAppointment()">
+                                <img src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="" class="max-w-[20px] max-h-[20px] rounded-full">
+                                <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить окошко</span>
+                            </button>
                         </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="createAppointment()">Save Appointment
-                        </button>
-                    </div>
+                    <div id="times" class="border border-[#CDCDCD] w-[590px] min-h-max overflow-y-auto rounded-lg grid grid-cols-3 grid-rows-4 gap-[6px] p-[12px]"></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Modal for Setting Link -->
-        <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
+    <!-- Modal for Setting Link -->
+    <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
              tabindex="-1"
              style="display: none"
              aria-labelledby="setLinkModalLabel">
             <div class="w-2/3 mx-auto bg-white mt-[140px]">
                 <div class="p-[40px] font-[Qanelas] text-black-main">
-                    <div class="flex flex-row justify-between">
-                        <h5 class="modal-title" id="setLinkModalLabel">Создание окошек</h5>
+                    <div class="flex flex-row justify-between mb-[22px]">
+                        <h5 class="font-semibold text-[25px]" id="setLinkModalLabel">Вставьте ссылку на Google Meet</h5>
                         <button type="button" onclick="closeSetLinkModal()" class="btn-close" data-dismiss="modal"
-                                aria-label="Close">X
+                                aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
                         </button>
                     </div>
                     <div class="modal-body">
                         <form id="setLinkForm">
-                            <input type="hidden" id="appointmentId" name="appointmentId">
-                            <input type="url" class="form-control" id="appointmentLinkModal" name="link" required>
+                            <label class="rounded-md border border-[#CDCDCD] flex justify-between py-[20px] pl-[30px] pr-[14px]" for="appointmentLinkModal">
+                                <input type="hidden" id="appointmentId" name="appointmentId">
+                                <input type="url" class="w-full" placeholder="Место для ссылки" id="appointmentLinkModal" name="link" required>
+                                <button type="button" class="flex items-center bg-accent-red rounded-lg py-[12px] px-[15px] gap-[18px] w-1/3"
+                                        onclick="setLink()">
+                                    <img src="{% static "core/images/crm2/camera.svg" %}" alt="" class="max-w-[25px] max-h-[20px]">
+                                    <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
+                                </button>
+                            </label>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="setLink()">Set Link</button>
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <ul>
-            {% for date in dates_of_week %}
-                <li>
-                    <a href="#"
-                       onclick="selectDate('{{ date.year }}', '{{ date.month }}', '{{ date.day }}', '{{ date|date:'Y-m-d' }}');">
-                        {{ date|date:"l, F d" }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-
-    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        function setStartHr(hr) {
+            var time = document.getElementById('startTime')
+            var [hours, mins] = (time.value+'').split(':')
+            time.value = `${hr}:${mins}`
+        }
+        function setStartMin(min) {
+            var time = document.getElementById('startTime')
+            var [hours, mins] = (time.value+'').split(':')
+            time.value = `${hours}:${min}`
+        }
+        function setEndHr(hr) {
+            var time = document.getElementById('endTime')
+            var [hours, mins] = (time.value+'').split(':')
+            time.value = `${hr}:${mins}`
+        }
+        function setEndMin(min) {
+            var time = document.getElementById('endTime')
+            var [hours, mins] = (time.value+'').split(':')
+            time.value = `${hours}:${min}`
+        }
+
         function closeSetLinkModal() {
             console.log("Sdsd")
             $('#setLinkModal').hide();
@@ -152,10 +176,6 @@
         function closeNewAppModal() {
             console.log("Sdsd")
             $('#createAppointmentModal').hide();
-        }
-        function openSetLinkModal() {
-            console.log("Sdsd")
-            $('#setLinkModal').show();
         }
         function openNewAppModal() {
             console.log("Sdsd")
@@ -169,28 +189,61 @@
                     .then(data => {
                         const appointments = data.appointments;
                         const detailsContainer = document.getElementById('appointmentDetails');
+                        const times = document.getElementById('times');
                         document.getElementById("details").classList.remove("hidden")
                         detailsContainer.innerHTML = '';
+                        times.innerHTML = '';
                         if (appointments.length > 0) {
-                            const list = document.createElement('ul');
                             appointments.forEach(appointment => {
                                 const li = document.createElement('li');
-                                li.textContent = `${appointment.date} from ${appointment.start_time} to ${appointment.end_time}`;
-                                const setLinkButton = document.createElement('button');
-                                setLinkButton.className = 'btn btn-sm btn-secondary';
-                                setLinkButton.textContent = 'Set Link';
-                                setLinkButton.onclick = () => showSetLinkModal(appointment.id, appointment.link);
-                                li.appendChild(setLinkButton);
-                                list.appendChild(li);
+                                li.classList = "w-full mb-[6px] border-[1px] border-[#D8D8D8] rounded-lg h-[55px] flex items-center pl-[40px] pr-[30px] justify-between" +
+                                    " hover:bg-accent-red hover:text-white group";
+                                li.innerHTML = `<div class="font-regular text-[18px] leading-[25px]">${appointment.start_time.substr(0, 5)} - ${appointment.end_time.substr(0, 5)}</div>`;
+                                if (appointment.is_booked){
+                                    const appointmentUser = document.createElement("div");
+                                    appointmentUser.classList = "flex gap-[50px] items-center";
+                                    appointmentUser.innerHTML = `
+                                        <div class="flex gap-[8px] items-center">
+                                            <img src="{% static 'core/images/default-user.svg' %}" alt="" class="max-w-[32px] max-h-[32px] rounded-full">
+                                            <span class="font-semibold text-[16px] leading-[20px]">Ернур Алкашев</span>
+                                        </div>
+                                        <button onclick="showSetLinkModal(${appointment.id}, '${appointment.link}')"
+                                            class="flex flex-row items-center border-[1px] border-white rounded-sm py-[12px] px-[15px] gap-[18px] hidden group-hover:block">
+                                            <img src="{% static "core/images/crm2/camera.svg" %}" alt="" class="max-w-[25px] max-h-[20px]">
+                                            <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
+                                        </button>
+                                    `;
+                                    li.appendChild(appointmentUser);
+                                } else {
+                                    const text = document.createElement("div");
+                                    text.classList = "font-semibold text-[16px] leading-[20px]";
+                                    text.textContent = "Свободно";
+                                    li.appendChild(text)
+                                }
+                                detailsContainer.appendChild(li);
+                                const time = document.createElement("div");
+                                time.classList = "h-fit text-center p-[12px] text-[18px] border border-[#CDCDCD] rounded-lg";
+                                time.textContent = `${appointment.start_time.substr(0, 5)} - ${appointment.end_time.substr(0, 5)}`;
+                                times.appendChild(time);
                             });
-                            detailsContainer.appendChild(list);
+                            detailsContainer.classList.add('flex-col')
+                            detailsContainer.classList.add('border-[#CDCDCD]')
+                            detailsContainer.classList.add('border')
+                            detailsContainer.classList.add('p-[12px]')
+                            detailsContainer.classList.remove('p-[24px]')
+                            detailsContainer.classList.remove('bg-[#FAFAFA]')
                         } else {
+                            detailsContainer.classList.add('bg-[#FAFAFA]')
+                            detailsContainer.classList.add('p-[24px]')
+                            detailsContainer.classList.remove('p-[12px]')
+                            detailsContainer.classList.remove('flex-col')
+                            detailsContainer.classList.remove('border-[#CDCDCD]')
+                            detailsContainer.classList.remove('border')
                             detailsContainer.innerHTML = `<img src="{% static 'core/images/cats/papers.png' %}" alt="" class="max-w-[215px] max-h-[215px]">
-                            <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main">Окошек
+                            <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main ml-[48px]">Окошек
                                 на этот день еще нет</p>`;
                         }
                         document.getElementById('appointmentDate').value = fullDate;
-                        document.getElementById('createButtonContainer').style.display = 'block';
                     });
             };
 
@@ -211,7 +264,6 @@
                     .then(response => response.json())
                     .then(data => {
                         $('#createAppointmentModal').modal('hide');
-                        alert('Appointment created!');
                         selectDate(data.date.split('-')[0], data.date.split('-')[1], data.date.split('-')[2], data.date);
                     });
             };

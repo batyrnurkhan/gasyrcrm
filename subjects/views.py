@@ -38,7 +38,6 @@ def home_view(request):
         }
         template_name = 'appointments/week_view.html'
     else:
-        today = timezone.now().date()
         user_lessons = Lesson_crm2.objects.filter(
             group_template__students=user
         ).select_related('teacher', 'subject', 'chat_room')

@@ -11,17 +11,20 @@
 </head>
 
 <body class="bg-[#fafafa]">
-<div class="">
-        {% block content %}
+{% block content %}
+    <div class="flex">
+        {% block flex-content %}
 
         {% endblock %}
-</div>
+    </div>
+{% endblock %}
 <script>
     window.onload = () => {
         {% block window_load %}
 
         {% endblock %}
     }
+
     function toggleDropdown(event) {
         event.stopPropagation();
         var dropdownMenu = document.getElementById("dropdownMenu");
