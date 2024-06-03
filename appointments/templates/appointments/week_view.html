@@ -1,4 +1,5 @@
 {% extends "subjects/base.html" %}
+{% load static %}
 
 {% block content %}
     {% url 'subjects:home' as home_url %}
@@ -11,11 +12,11 @@
             <div
                     class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
                 <button class="previous__date">
-                    <img src="./assets/предыдущиеНеделиИконка.png" alt=""/>
+                    <img src="{% static 'core/images/crm2/prev-accent-red.png' %}" alt=""/>
                 </button>
                 <div class="switch__date-text">20-26 марта</div>
                 <button class="previous__date">
-                    <img src="./assets/следующаяНеделиИконка.png" alt=""/>
+                    <img src="{% static 'core/images/crm2/next-accent-red.png' %}" alt=""/>
                 </button>
             </div>
         </div>
@@ -45,15 +46,12 @@
                     Временные окошки
                 </h1>
                 <button class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px] ">
-                    <img src="./assets/addOfficeHours.svg" alt="" class="max-w-[20px] max-h-[20px] rounded-full">
+                    <img src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt="" class="max-w-[20px] max-h-[20px] rounded-full">
                     <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить свободные окошки</span>
                 </button>
             </div>
             <ul id="appointmentDetails"
                 class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
-                <img src="./assets/empty1-bg.png" alt="" class="max-w-[215px] max-h-[215px]">
-                <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main">Окошек
-                    на этот день еще нет</p>
             </ul>
         </div>
     </main>
@@ -66,14 +64,17 @@
         </div>
 
         <!-- Modal for Creating Appointments -->
-        <div class="modal fade" id="createAppointmentModal" tabindex="-1"
+        <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="createAppointmentModal" tabindex="-1"
              aria-labelledby="createAppointmentModalLabel"
+{#             style="display: none"#}
              aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="createAppointmentModalLabel">New Appointment</h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+            <div class="w-2/3 mx-auto bg-white mt-[140px]">
+                <div class="p-[40px] font-[Qanelas] text-black-main">
+                    <div class="flex flex-row justify-between">
+                        <h5 class="modal-title" id="setLinkModalLabel">Создание окошек</h5>
+                        <button type="button" onclick="closeNewAppModal()" class="btn-close" data-dismiss="modal"
+                                aria-label="Close">X
+                        </button>
                     </div>
                     <div class="modal-body">
                         <form id="createAppointmentForm">
@@ -103,8 +104,7 @@
         <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
              tabindex="-1"
              style="display: none"
-             aria-labelledby="setLinkModalLabel"
-             aria-hidden="true">
+             aria-labelledby="setLinkModalLabel">
             <div class="w-2/3 mx-auto bg-white mt-[140px]">
                 <div class="p-[40px] font-[Qanelas] text-black-main">
                     <div class="flex flex-row justify-between">
@@ -149,6 +149,18 @@
             console.log("Sdsd")
             $('#setLinkModal').hide();
         }
+        function closeNewAppModal() {
+            console.log("Sdsd")
+            $('#createAppointmentModal').hide();
+        }
+        function openSetLinkModal() {
+            console.log("Sdsd")
+            $('#setLinkModal').show();
+        }
+        function openNewAppModal() {
+            console.log("Sdsd")
+            $('#createAppointmentModal').show();
+        }
 
         document.addEventListener('DOMContentLoaded', function () {
             window.selectDate = function (year, month, day, fullDate) {
@@ -173,7 +185,7 @@
                             });
                             detailsContainer.appendChild(list);
                         } else {
-                            detailsContainer.innerHTML = `<img src="./assets/empty1-bg.png" alt="" class="max-w-[215px] max-h-[215px]">
+                            detailsContainer.innerHTML = `<img src="{% static 'core/images/cats/papers.png' %}" alt="" class="max-w-[215px] max-h-[215px]">
                             <p class="empty-text max-w-[210px] font-semibold text-[24px] leading-[36px] text-black-main">Окошек
                                 на этот день еще нет</p>`;
                         }
