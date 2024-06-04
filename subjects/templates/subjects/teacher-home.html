@@ -1,0 +1,26 @@
+{% extends 'subjects/base.html' %}
+
+{% load static %}
+{% load l10n %}
+
+{% block flex-content %}
+    {% include "subjects/components/crm2-student-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="main__welcome mb-[20px] w-full h-[340px] pt-[50px] pl-[50px] rounded-md bg-center bg-cover bg-no-repeat"
+                 style="background: url('{% static "core/images/crm2/main1_bg.png" %}');">
+                <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
+                    Добро пожаловать в Gasyr Foundation School!
+                </h1>
+                <p class="main__welcome-text font-medium text-[16px] leading-[24px] text-white max-w-[400px] mb-[30px]">
+                    Посмотри видео, и ознакомься с платформой нашей онлайн-школы
+                    подробнее
+                </p>
+                <button class="main__welcome-btn py-[21px] px-[50px] rounded-sm border-[1px] border-white font-semibold text-white text-[16px] leading-[22px] hover:bg-white hover:text-accent-red">
+                    Посмотреть видео
+                </button>
+            </div>
+        </div>
+    </main>
+{% endblock %}

@@ -1,10 +1,11 @@
 {% extends 'subjects/base.html' %}
+{% load course_tags %}
 {% load custom_filters %}
 
 {% load static %}
 {% load l10n %}
 
-{% block content %}
+{% block flex-content %}
     {% include "subjects/components/crm2-mentor-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
@@ -14,7 +15,8 @@
                 <div class="bg-white flex rounded-md shadow-[0px_4px_20px_0px_#00000014] h-[630px]">
                     <div class="input w-[390px] pt-[48px] pl-[42px] pr-[28px]">
                         <h3 class="max-w-[300px] text-black-main text-[32px] leading-[45px] font-semibold mb-[12px]">
-                            Добавить учителя в систему</h3>
+                            Добавить учителя в систему
+                        </h3>
                         <form method="post" action="{% url 'users:create-teacher' %}"
                               class="w-full max-w-sm space-y-[8px]">
                             {% csrf_token %}
@@ -111,14 +113,14 @@
                                         <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">{{ teacher.full_name }}</h5>
                                     </div>
                                     <div class="flex gap-[8px] items-center w-[200px]">
-                                        <img src="{% static 'assets/phoneIcon.svg' %}" alt=""
+                                        <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
                                              class="max-w-[16px] max-h-[16px]">
-                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ teacher.phone_number }}</span>
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ teacher.phone_number|format_phone_number }}</span>
                                     </div>
                                     <div class="city flex gap-[8px] items-center w-[160px]">
-                                        <img src="{% static 'assets/cityIcon.svg' %}" alt=""
+                                        <img src="{% static 'core/icons/city-fill-accent-red.svg' %}" alt=""
                                              class="max-w-[16px] max-h-[16px]">
-                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ teacher.city }}</span>
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ teacher.user_city }}</span>
                                     </div>
                                     <a class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
                                         данные</a>

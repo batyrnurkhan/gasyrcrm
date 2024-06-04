@@ -9,6 +9,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework.generics import get_object_or_404
+
+from appointments.forms import AppointmentForm
+from appointments.models import Appointment
 from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
@@ -20,41 +23,52 @@ from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel,
 @login_required
 def home_view(request):
     user = request.user
-    today = timezone.now().date()
-
-    user_lessons = Lesson_crm2.objects.filter(
-        group_template__students=user
-    ).select_related('teacher', 'subject', 'chat_room')
-    print("Debug - User Lessons with Chat Rooms:", [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
-
-    last_task = Task.objects.filter(
-        chat_room__in=[lesson.chat_room for lesson in user_lessons]
-    ).select_related('created_by').order_by('-deadline').first()
-
-    print("Debug - Last Task Details:", last_task)
-
-    if last_task:
-        task_teacher = last_task.created_by
-        creator_profile_pic_url = task_teacher.profile_picture.url if task_teacher.profile_picture else None
-        subject_name = last_task.chat_room.lessons.first().subject.name if last_task.chat_room.lessons.exists() else "No Subject"
-    else:
-        task_teacher = None
-        creator_profile_pic_url = None
-        subject_name = "No Subject"
+    context = {}
 
     if user.role == 'Mentor':
         template_name = 'subjects/mentor-home.html'
     elif user.role == 'Teacher':
         template_name = 'subjects/teacher-home.html'
-    else:
-        template_name = 'subjects/home.html'
+    elif user.role == 'Psychologist':
+        today = datetime.datetime.now().date()
+        start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
+        dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
 
-    return render(request, template_name, {
-        'task_teacher': task_teacher,
-        'creator_profile_pic_url': creator_profile_pic_url,
-        'subject_name': subject_name,
-        'last_task': last_task
-    })
+        context = {
+            'dates_of_week': dates_of_week,
+        }
+        template_name = 'appointments/week_view.html'
+    else:
+        user_lessons = Lesson_crm2.objects.filter(
+            group_template__students=user
+        ).select_related('teacher', 'subject', 'chat_room')
+        print("Debug - User Lessons with Chat Rooms:",
+              [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
+
+        last_task = Task.objects.filter(
+            chat_room__in=[lesson.chat_room for lesson in user_lessons]
+        ).select_related('created_by').order_by('-deadline').first()
+
+        print("Debug - Last Task Details:", last_task)
+
+        if last_task:
+            task_teacher = last_task.created_by
+            creator_profile_pic_url = task_teacher.profile_picture.url if task_teacher.profile_picture else None
+            subject_name = last_task.chat_room.lessons.first().subject.name if last_task.chat_room.lessons.exists() else "No Subject"
+        else:
+            task_teacher = None
+            creator_profile_pic_url = None
+            subject_name = "No Subject"
+        template_name = 'subjects/home.html'
+        context = {
+            'task_teacher': task_teacher,
+            'creator_profile_pic_url': creator_profile_pic_url,
+            'subject_name': subject_name,
+            'last_task': last_task
+        }
+
+    return render(request, template_name, context)
+
 
 @login_required
 def tasks_view(request):
@@ -70,6 +84,7 @@ def tasks_view(request):
 @login_required
 def weekly_schedule_view(request):
     user = request.user
+    # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
     if user.role == 'Mentor':
         shifts = Shift.objects.prefetch_related(
             'times__lessons',
@@ -106,12 +121,16 @@ def weekly_schedule_view(request):
 
 @login_required
 def group_templates_view(request):
+    # Fetch all group templates
     group_templates = GroupTemplate.objects.prefetch_related('students').all()
 
+    # Count of all students
     student_count = CustomUser.objects.filter(role='Student').count()
 
+    # Get top 8 students by alphabet when search is empty
     students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
 
+    # Handling search
     search_query = request.GET.get('search', '')
     if search_query:
         students = CustomUser.objects.filter(
@@ -209,7 +228,8 @@ class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         # Superusers see all lessons, students see only their lessons
         if self.request.user.is_superuser:
             return Lesson_crm2.objects.all().select_related('teacher', 'time_slot')
-        return Lesson_crm2.objects.filter(group_template__students=self.request.user).select_related('teacher', 'time_slot')
+        return Lesson_crm2.objects.filter(group_template__students=self.request.user).select_related('teacher',
+                                                                                                     'time_slot')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

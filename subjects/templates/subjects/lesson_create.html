@@ -1,4 +1,4 @@
-{% block content %}
+{% block flex-content %}
   <h1>Create a New Lesson</h1>
 <form method="post" action="{% url 'subjects:lesson-create' time_id=time_id %}">
     {% csrf_token %}
