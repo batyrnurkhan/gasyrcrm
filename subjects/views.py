@@ -82,6 +82,47 @@ def tasks_view(request):
 
 
 @login_required
+def mini_schedule_view(request):
+    user = request.user
+    if user.role == 'Mentor':
+        shifts = Shift.objects.prefetch_related(
+            'times__lessons',
+            'times__lessons__teacher'
+        ).all()
+
+        if not shifts:
+            print("No shifts found.")
+        else:
+            print(f"Found {len(shifts)} shifts.")
+
+        return render(request, 'schedule/shifts.html', {'shifts': shifts})
+
+    today = timezone.now().date()
+    current_weekday = today.weekday()
+    weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    next_three_days = weeknames[current_weekday:current_weekday + 3] if current_weekday <= 4 else weeknames[current_weekday:] + weeknames[:current_weekday + 3 - 7]
+    weekly_lessons = {day: [] for day in next_three_days}
+
+    student_groups = GroupTemplate.objects.filter(students=user)
+    lessons = Lesson_crm2.objects.filter(group_template__in=student_groups)
+
+    for lesson in lessons:
+        lesson_weekday = lesson.time_slot.date.weekday()
+        lesson_day_name = weeknames[lesson_weekday]
+        if lesson_day_name in weekly_lessons:
+            weekly_lessons[lesson_day_name].append(lesson)
+
+    week_dates = {weeknames[i]: today + timedelta(days=i - current_weekday) for i in range(current_weekday, current_weekday + 3) if i < 7}
+
+    print(week_dates)
+    print(weekly_lessons)
+    return render(request, 'subjects/mini_schedule.html', {
+        'weekly_lessons': weekly_lessons,
+        'week_dates': week_dates
+    })
+
+@login_required
 def weekly_schedule_view(request):
     user = request.user
     # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
@@ -121,16 +162,10 @@ def weekly_schedule_view(request):
 
 @login_required
 def group_templates_view(request):
-    # Fetch all group templates
     group_templates = GroupTemplate.objects.prefetch_related('students').all()
-
-    # Count of all students
     student_count = CustomUser.objects.filter(role='Student').count()
-
-    # Get top 8 students by alphabet when search is empty
     students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
 
-    # Handling search
     search_query = request.GET.get('search', '')
     if search_query:
         students = CustomUser.objects.filter(
