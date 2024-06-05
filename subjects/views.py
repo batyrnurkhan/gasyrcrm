@@ -377,23 +377,23 @@ def search_students(request):
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
-    students = lesson.group_template.students.all()
+    students = lesson.group_template.students.all()  # Fetch full student objects
+
     if request.user != lesson.teacher and not request.user.is_superuser:
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
 
     if request.method == 'POST':
-        form = GradeForm(request.POST, students=students)
+        form = GradeForm(request.POST, students=students)  # Pass student objects to the form
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'])
     else:
-        form = GradeForm(students=students)
+        form = GradeForm(students=students)  # Initialize form with student objects for GET request
 
     return render(request, 'subjects/set_grade.html', {
         'form': form,
         'lesson': lesson,
-        'students': students
+        'students': students  # You might want to show detailed student info in the template
     })
-
 
 @login_required
 def grades_by_day_view(request):
