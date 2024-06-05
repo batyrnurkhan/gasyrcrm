@@ -397,17 +397,28 @@ def set_grade(request, lesson_id):
 
 @login_required
 def grades_by_day_view(request):
-    grades = Grade.objects.filter(student=request.user).order_by('date_assigned')
+    grades = Grade.objects.filter(student=request.user).select_related('lesson', 'lesson__teacher').order_by('date_assigned')
 
     # Group grades by date
     grades_by_date = {}
     for grade in grades:
         if grade.date_assigned not in grades_by_date:
             grades_by_date[grade.date_assigned] = []
-        grades_by_date[grade.date_assigned].append(grade)
+
+        # Extract teacher information
+        teacher = grade.lesson.teacher
+        teacher_info = {
+            'full_name': teacher.full_name if teacher else "No teacher assigned",
+            'profile_picture': teacher.profile_picture.url if teacher and teacher.profile_picture else None
+        }
+
+        # Append the grade and teacher info
+        grades_by_date[grade.date_assigned].append({
+            'grade': grade,
+            'teacher': teacher_info
+        })
 
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})
-
 @login_required
 def psy_appointment_view(request):
     return render(request, 'subjects/psy-appointment.html')
