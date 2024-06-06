@@ -24,10 +24,11 @@ class LessonSerializer(serializers.ModelSerializer):
         source='teacher',
         write_only=True
     )
+    google_meet_link = serializers.URLField(allow_blank=True, required=False)
 
     class Meta:
         model = Lesson_crm2
-        fields = ['id', 'mentor', 'teacher', 'teacher_id', 'group_name', 'subject', 'group_template']
+        fields = ['id', 'mentor', 'teacher', 'teacher_id', 'group_name', 'subject', 'group_template', 'google_meet_link']
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:

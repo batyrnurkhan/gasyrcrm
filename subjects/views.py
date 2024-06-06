@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework.generics import get_object_or_404
+from rest_framework.utils import json
 
 from appointments.forms import AppointmentForm
 from appointments.models import Appointment
@@ -469,4 +470,43 @@ def search_users(request):
         return JsonResponse(results, safe=False)
     return JsonResponse({'error': 'Not AJAX'}, status=400)
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from .models import Lesson_crm2
+from chats.models import ChatRoom, Message
+from django.shortcuts import get_object_or_404
+from django.utils.timezone import now
+@csrf_exempt
+@require_http_methods(["PATCH"])
+def update_google_meet_link(request, lesson_id):
+    lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
 
+    # Security check (ensure the user has permissions to update the lesson)
+    if not (request.user.is_superuser or request.user == lesson.mentor):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        data = json.loads(request.body)
+        google_meet_link = data.get('google_meet_link')
+        if not google_meet_link:
+            return JsonResponse({'error': 'No Google Meet link provided'}, status=400)
+
+        # Update the lesson with the new Google Meet link
+        lesson.google_meet_link = google_meet_link
+        lesson.save()
+
+        # Create a conference type message in the chat room
+        Message.objects.create(
+            chat_room=lesson.chat_room,
+            user=request.user,
+            message=f"Google Meet link updated: {google_meet_link}",
+            message_type='conf',
+            timestamp=now()
+        )
+
+        return JsonResponse({'message': 'Google Meet link updated successfully'}, status=200)
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': f'Invalid JSON: {str(e)}'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

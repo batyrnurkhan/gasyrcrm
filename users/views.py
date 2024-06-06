@@ -82,6 +82,8 @@ class LoginView(View):
 
             if user is not None:
                 login(request, user)
+                print(f"User authenticated: {user.phone_number}")
+                print(f"Session ID: {request.session.session_key}")
                 if user.has_access or user.role in ['Teacher', 'Superuser']:
                     redirect_url = request.GET.get("next", "/home/")
                     return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users

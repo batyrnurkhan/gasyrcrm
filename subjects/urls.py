@@ -2,7 +2,7 @@ from django.urls import path
 from .views import SubjectListView, group_template_list, LessonCreateView, LessonDetailView, search_students, \
     create_volunteer_channel, set_grade, LessonListView, grades_by_day_view, home_view, \
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
-    mini_schedule_view
+    mini_schedule_view, update_google_meet_link
 
 app_name = 'subjects'
 
@@ -27,4 +27,7 @@ urlpatterns = [
     path('set-grade/<int:lesson_id>/', set_grade, name='set_grade'),
     path('grades-by-day/', grades_by_day_view, name='grades-by-day'),
     path('search-users/', search_users, name='search-users'),
+    path('api/lesson/<int:lesson_id>/update_google_meet_link/', update_google_meet_link, name='update_google_meet_link'),
+
+
 ]

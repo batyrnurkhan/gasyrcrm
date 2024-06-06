@@ -1,0 +1,11 @@
+<!-- set_google_meet_link.html -->
+{% extends "base.html" %}
+{% block content %}
+<h2>Set Google Meet Link for {{ lesson.subject.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <label for="google_meet_link">Google Meet Link:</label>
+    <input type="url" name="google_meet_link" id="google_meet_link" value="{{ lesson.google_meet_link }}" required>
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
