@@ -19,6 +19,7 @@ from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, Volu
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
 
 
+
 @login_required
 def home_view(request):
     user = request.user
@@ -81,6 +82,47 @@ def tasks_view(request):
 
 
 @login_required
+def mini_schedule_view(request):
+    user = request.user
+    if user.role == 'Mentor':
+        shifts = Shift.objects.prefetch_related(
+            'times__lessons',
+            'times__lessons__teacher'
+        ).all()
+
+        if not shifts:
+            print("No shifts found.")
+        else:
+            print(f"Found {len(shifts)} shifts.")
+
+        return render(request, 'schedule/shifts.html', {'shifts': shifts})
+
+    today = timezone.now().date()
+    current_weekday = today.weekday()
+    weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    next_three_days = weeknames[current_weekday:current_weekday + 3] if current_weekday <= 4 else weeknames[current_weekday:] + weeknames[:current_weekday + 3 - 7]
+    weekly_lessons = {day: [] for day in next_three_days}
+
+    student_groups = GroupTemplate.objects.filter(students=user)
+    lessons = Lesson_crm2.objects.filter(group_template__in=student_groups)
+
+    for lesson in lessons:
+        lesson_weekday = lesson.time_slot.date.weekday()
+        lesson_day_name = weeknames[lesson_weekday]
+        if lesson_day_name in weekly_lessons:
+            weekly_lessons[lesson_day_name].append(lesson)
+
+    week_dates = {weeknames[i]: today + timedelta(days=i - current_weekday) for i in range(current_weekday, current_weekday + 3) if i < 7}
+
+    print(week_dates)
+    print(weekly_lessons)
+    return render(request, 'subjects/mini_schedule.html', {
+        'weekly_lessons': weekly_lessons,
+        'week_dates': week_dates
+    })
+
+@login_required
 def weekly_schedule_view(request):
     user = request.user
     # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
@@ -98,47 +140,32 @@ def weekly_schedule_view(request):
         return render(request, 'schedule/shifts.html', {'shifts': shifts})
 
     today = timezone.now().date()
-    start_week = today - datetime.timedelta(days=today.weekday())
-    end_week = start_week + datetime.timedelta(days=6)
-
-    week_dates = [start_week + timedelta(days=i) for i in range(7)]
-
-    # Calculate days of the week for the range
-    days_of_week = [(start_week + datetime.timedelta(days=x)).weekday() for x in range(7)]
-
-    # Match ShiftTimes by weekday
+    start_of_week = today - timedelta(days=today.weekday())
     weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
     weekly_lessons = {day: [] for day in weeknames}
-    base_date = datetime.date(2024, 1, 1)  # Adjust based on your needs
-    for i, day in enumerate(weeknames):
-        if i in days_of_week:
-            shift_day = (base_date + datetime.timedelta(days=i)).weekday()
-            day_shift_times = ShiftTime.objects.filter(
-                date__week_day=shift_day + 1)  # Django week_day starts from 1 (Sunday)
-            lessons_on_this_day = []
-            for time_slot in day_shift_times:
-                lessons = Lesson_crm2.objects.filter(time_slot=time_slot)
-                for lesson in lessons:
-                    lessons_on_this_day.append((lesson, time_slot.id))
-            weekly_lessons[day] = lessons_on_this_day
 
-    weekdays = {weeknames[i]: day for i, day in enumerate(week_dates)}
-    return render(request, 'subjects/weekly_schedule.html',
-                  {'weekly_lessons': weekly_lessons, 'week_dates': weekdays, 'page': 'schedule'})
+    student_groups = GroupTemplate.objects.filter(students=user)
+    lessons = Lesson_crm2.objects.filter(group_template__in=student_groups)
 
+    for lesson in lessons:
+        lesson_weekday = lesson.time_slot.date.weekday()
+        lesson_day_name = weeknames[lesson_weekday]
+        weekly_lessons[lesson_day_name].append(lesson)
+
+    week_dates = {weeknames[i]: start_of_week + timedelta(days=i) for i in range(7)}
+
+    return render(request, 'subjects/weekly_schedule.html', {
+        'weekly_lessons': weekly_lessons,
+        'week_dates': week_dates
+    })
 
 @login_required
 def group_templates_view(request):
-    # Fetch all group templates
     group_templates = GroupTemplate.objects.prefetch_related('students').all()
-
-    # Count of all students
     student_count = CustomUser.objects.filter(role='Student').count()
-
-    # Get top 8 students by alphabet when search is empty
     students = CustomUser.objects.filter(role='Student').order_by('full_name')[:8]
 
-    # Handling search
     search_query = request.GET.get('search', '')
     if search_query:
         students = CustomUser.objects.filter(
@@ -155,7 +182,6 @@ def group_templates_view(request):
     }
     return render(request, 'subjects/group-templates.html', context)
 
-
 class EditGroupTemplateView(UpdateView):
     model = GroupTemplate
     form_class = GroupTemplateForm
@@ -164,7 +190,6 @@ class EditGroupTemplateView(UpdateView):
 
     def get_success_url(self):
         return reverse('group_templates_view')
-
 
 class SubjectListView(ListView):
     model = Lesson_crm2
@@ -220,12 +245,10 @@ def group_template_list(request):
         'group_templates': group_templates
     })
 
-
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView
 from .models import Lesson_crm2
 from django.utils import timezone
-
 
 class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     model = Lesson_crm2
@@ -247,7 +270,6 @@ class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['now'] = timezone.now()  # if you need the current time
         return context
-
 
 class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Lesson_crm2
@@ -290,11 +312,9 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             chat_room.participants.add(self.object.teacher)
 
         return response
-
     def get_success_url(self):
         # Redirects back to the shifts page after successful creation
         return reverse('schedule:shifts')
-
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2
@@ -304,7 +324,6 @@ class LessonDetailView(DetailView):
         lesson = super().get_object()
         # Optionally, check permissions here
         return lesson
-
 
 from django.utils.timezone import localtime, localdate
 
@@ -355,42 +374,51 @@ def search_students(request):
     student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
 
-
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
-    students = lesson.group_template.students.all()
+    students = lesson.group_template.students.all()  # Fetch full student objects
+
     if request.user != lesson.teacher and not request.user.is_superuser:
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
 
     if request.method == 'POST':
-        form = GradeForm(request.POST, students=students)
+        form = GradeForm(request.POST, students=students)  # Pass student objects to the form
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'])
     else:
-        form = GradeForm(students=students)
+        form = GradeForm(students=students)  # Initialize form with student objects for GET request
 
     return render(request, 'subjects/set_grade.html', {
         'form': form,
         'lesson': lesson,
-        'students': students
+        'students': students  # You might want to show detailed student info in the template
     })
-
 
 @login_required
 def grades_by_day_view(request):
-    grades = Grade.objects.filter(student=request.user).order_by('date_assigned')
+    grades = Grade.objects.filter(student=request.user).select_related('lesson', 'lesson__teacher').order_by('date_assigned')
 
     # Group grades by date
     grades_by_date = {}
     for grade in grades:
         if grade.date_assigned not in grades_by_date:
             grades_by_date[grade.date_assigned] = []
-        grades_by_date[grade.date_assigned].append(grade)
+
+        # Extract teacher information
+        teacher = grade.lesson.teacher
+        teacher_info = {
+            'full_name': teacher.full_name if teacher else "No teacher assigned",
+            'profile_picture': teacher.profile_picture.url if teacher and teacher.profile_picture else None
+        }
+
+        # Append the grade and teacher info
+        grades_by_date[grade.date_assigned].append({
+            'grade': grade,
+            'teacher': teacher_info
+        })
 
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})
-
-
 @login_required
 def psy_appointment_view(request):
     return render(request, 'subjects/psy-appointment.html')
@@ -440,3 +468,5 @@ def search_users(request):
         results = [{'id': user.id, 'label': user.full_name, 'value': user.full_name} for user in users]
         return JsonResponse(results, safe=False)
     return JsonResponse({'error': 'Not AJAX'}, status=400)
+
+
