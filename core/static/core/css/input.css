@@ -64,6 +64,10 @@
         margin: 0;
     }
 
+    .h-webkit-fill {
+        height: -webkit-fill-available;
+    }
+
     .white-block {
         @apply bg-white rounded-lg shadow-lg
     }
