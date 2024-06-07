@@ -45,7 +45,7 @@
                     </div>
                     <div class="w-full h-full bg-[#FAFAFA] rounded-lg px-[14px] pt-[24px] text-[#a4a4a4] text-left">
                         <h1 class="font-bold text-[16px] uppercase">участники</h1>
-                        <div class="h-[260px] overflow-hidden overflow-y-scroll py-[12px] space-y-3">
+                        <div class="h-webkit-fill max-h-[365px] overflow-hidden overflow-y-scroll py-[12px] space-y-3">
                             {% for student in group_template_users %}
                                 <div class="course__info-avatar flex gap-[12px] items-center">
                                     {% if student.profile_picture %}
@@ -62,6 +62,8 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center bg-accent-red w-full py-[15px] text-white" href="#">Задания</a>
+                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center border border-accent-red w-full py-[15px] text-accent-red" href="#">Выставить оценки за сегодня</a>
                 </div>
                 <div class="course__content relative bg-[#FAFAFA] min-h-full w-[760px] rounded-md pt-[60px]">
                     <div id="scrollblock"

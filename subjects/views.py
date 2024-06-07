@@ -138,7 +138,7 @@ def weekly_schedule_view(request):
         else:
             print(f"Found {len(shifts)} shifts.")
 
-        return render(request, 'schedule/shifts.html', {'shifts': shifts})
+        return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': "schedule"})
 
     today = timezone.now().date()
     start_of_week = today - timedelta(days=today.weekday())
@@ -158,7 +158,8 @@ def weekly_schedule_view(request):
 
     return render(request, 'subjects/weekly_schedule.html', {
         'weekly_lessons': weekly_lessons,
-        'week_dates': week_dates
+        'week_dates': week_dates,
+        'page': "schedule"
     })
 
 @login_required
@@ -419,7 +420,7 @@ def grades_by_day_view(request):
             'teacher': teacher_info
         })
 
-    return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date})
+    return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date, 'page': 'diary'})
 @login_required
 def psy_appointment_view(request):
     return render(request, 'subjects/psy-appointment.html')

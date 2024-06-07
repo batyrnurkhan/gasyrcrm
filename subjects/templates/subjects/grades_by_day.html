@@ -5,39 +5,56 @@
 
 {% block flex-content %}
     {% include "subjects/components/crm2-student-sidebar.html" %}
-<main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
-    {% include "subjects/components/crm2-header.html" %}
-    <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-    <h1 class="diary__title font-bold text-[42px] leading-[52px] text-black-main mb-[17px]">Дневник</h1>
-    {% for date, grades in grades_by_date.items %}
-        <div class="diary__day h-[355px] rounded-md flex bg-white shadow-[0px_4px_14px_0px_#0000000A] mb-[12px]">
-            <div class="pt-[38px] pb-[32px] day bg-accent-red rounded-md w-[170px] text-center items-center flex flex-col justify-between">
-                <div class="day__texts">
-                    <h1 class="day__title text-[81px] font-semibold leading-[81px] text-white">{{ date|date:"d" }}</h1>
-                    <p class="day__subtitle text-white font-regular text-[20px] leading-[20px]">{{ date|date:"F" }}</p>
-                </div>
-                <img class="h-[91px] w-[91px]" src="./assets/fourStar.png" alt="" />
-            </div>
-            <ul class="results pl-[30px] pt-[42px] pb-[30px] w-[810px]">
-                {% for grade_info in grades %}
-                    <li class="result__item flex w-full items-center justify-between py-[12px] pl-[12px] pr-[80px] border-b-[#E5E5E5] border-b-[1px]">
-                        <p class="result__item-title w-[150px] font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.grade.lesson.subject.name }}</p>
-                        <div class="result__number text-white px-[13px] py-1 bg-[#51B812] rounded-md font-semibold text-[16px] leading-5 w-[70px] text-center">{{ grade_info.grade.grade }}</div>
-                        <a href="#" class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">Комментарий от учителя</a>
-                        {% if grade_info.teacher.profile_picture %}
-                            <img src="{{ grade_info.teacher.profile_picture }}" alt="Teacher's Profile Picture" class="w-[32px] h-[32px] rounded-full">
-                        {% else %}
-                            <img src="./assets/noProfilePic.png" alt="No Profile Picture" class="w-[32px] h-[32px] rounded-full">
-                        {% endif %}
-                        <p class="author__fullname font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.teacher.full_name }}</p>
-                    </li>
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            {% if grades_by_date.items|length > 0 %}
+                <h1 class="diary__title font-bold text-[42px] leading-[52px] text-black-main mb-[17px]">Дневник</h1>
+                {% for date, grades in grades_by_date.items %}
+                    <div class="diary__day rounded-lg flex flex-col bg-white shadow-[0px_4px_14px_0px_#0000000A] mb-[12px]">
+                        <div class="py-[5px] pl-[34px] pr-[20px] day bg-accent-red rounded-t-lg w-full text-center items-center flex flex-row justify-between"
+                             style="background: linear-gradient(270deg, #BA2025 0%, #B24145 28.5%, #C12D32 100%);">
+                            <div class="day__texts">
+                                <p class="day__subtitle text-white font-regular text-[20px] leading-[20px]">{{ date|date:"d F" }}</p>
+                            </div>
+                            <img class="h-[48px] w-[48px]" src="{% static 'core/images/crm2/stars-white.svg' %}"
+                                 alt=""/>
+                        </div>
+                        <ul class="flex flex-col results px-[30px] py-[24px] gap-y-[12px] w-full">
+                            {% for grade_info in grades %}
+                                <li class="result__item flex w-full items-center justify-between">
+                                    <p class="result__item-title min-w-[150px] font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.grade.lesson.subject.name }}</p>
+                                    <div class="result__number text-white px-[13px] py-1 bg-[#51B812] rounded-md font-semibold text-[16px] leading-5 w-[70px] text-center">{{ grade_info.grade.grade }}</div>
+                                    <a href="#"
+                                       class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">
+                                        <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
+                                        Работа с ошибками
+                                    </a>
+                                    <div class="flex flex-row items-center">
+                                        {% if grade_info.teacher.profile_picture %}
+                                            <img src="{{ grade_info.teacher.profile_picture }}"
+                                                 alt="Teacher's Profile Picture" class="w-[32px] h-[32px] rounded-full">
+                                        {% else %}
+                                            <img src="{% static 'core/images/default-user.svg' %}"
+                                                 alt="No Profile Picture"
+                                                 class="w-[32px] h-[32px] rounded-full">
+                                        {% endif %}
+                                        <p class="author__fullname font-semibold text-[16px] leading-[20px] text-black-main ml-[18px]">{{ grade_info.teacher.full_name }}</p>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 {% endfor %}
-            </ul>
+            {% else %}
+                <div class="text-center pt-[90px]">
+                    <img class="inline-block" src="{% static 'core/images/crm2/bear.png' %}" alt="">
+                    <p class="text-accent-red text-[40px] font-bold leading-[49.56px] mt-[25px]">В вашем дневнике <br>
+                        все еще пусто :(</p>
+                    <p class="text-[18px] font-light mt-[20px]">Сдавайте тесты, и может быть тут что-то появится</p>
+                </div>
+            {% endif %}
         </div>
-    {% empty %}
-        <p>No grades available.</p>
-    {% endfor %}
-</div>
 
-</main>
+    </main>
 {% endblock %}

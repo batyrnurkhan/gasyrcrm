@@ -27,7 +27,7 @@
                     <span class="font-semibold text-5 leading-[24px]">Расписание</span></a>
             </li>
             <li class="text-[#9D9E9E]">
-                <a href="{% url 'subjects:subject-list' %}"
+                <a href="{% url 'subjects:grades-by-day' %}"
                    class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                {% if page == "diary" %}
                	bg-accent-red text-white fill-white
@@ -38,7 +38,7 @@
                               d="M0 10.5C0 13.1106 0.0760043 15.3998 0.218907 17.7476C0.281093 18.7693 1.06103 19.602 2.07143 19.7045C5.95095 20.0985 9.3564 20.0985 13.2359 19.7045C14.2463 19.602 15.0263 18.7693 15.0885 17.7476C15.2314 15.3998 15.3074 13.1106 15.3074 10.5C15.3074 7.88937 15.2314 5.60014 15.0885 3.25237C15.0263 2.2307 14.2463 1.39805 13.2359 1.29545C9.3564 0.901517 5.95095 0.901517 2.07143 1.29545C1.06103 1.39805 0.281093 2.2307 0.218907 3.25237C0.0760043 5.60014 0 7.88937 0 10.5ZM5.64972 5.11156C4.87958 5.11156 4.25524 5.74486 4.25524 6.52606V7.43009C4.25524 8.21129 4.87958 8.84458 5.64972 8.84458H9.65786C10.428 8.84458 11.0523 8.21129 11.0523 7.43009V6.52606C11.0523 5.74486 10.428 5.11156 9.65786 5.11156H5.64972ZM17.396 15.0674C17.1867 15.1684 16.9697 14.9905 16.9781 14.7554C17.0258 13.3944 17.0505 11.9989 17.0505 10.5001C17.0505 10.3549 17.0503 10.2106 17.0498 10.0673C17.0492 9.87112 17.2055 9.7115 17.399 9.7115H18.5136C18.6633 9.7115 18.7978 9.80832 18.8375 9.95485C19.1518 11.1119 18.9834 12.2659 18.561 13.6964C18.3755 14.3242 17.9395 14.8049 17.396 15.0674ZM18.3748 7.94338C18.5309 7.94338 18.6685 7.83814 18.7082 7.68511C19.0912 6.21154 19.1444 5.01896 18.5806 3.756C18.3015 3.13046 17.7618 2.76377 17.1948 2.62359C16.973 2.56877 16.7963 2.7811 16.818 3.01163C16.8222 3.05538 16.8256 3.09935 16.8283 3.14351C16.9181 4.61987 16.982 6.07427 17.0176 7.59704C17.022 7.78943 17.1768 7.94338 17.3666 7.94338H18.3748Z"
                               fill="{% if page == "diary" %}white{% else %}#9D9E9E{% endif %}"/>
                     </svg>
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Дневник</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Дневник</span></a>
             </li>
             <li class="text-[#9D9E9E] ">
                 <a href="#"
@@ -53,7 +53,7 @@
                               fill="{% if page == "news" %}white{% else %}#9D9E9E{% endif %}"/>
                     </svg>
 
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Новости</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Новости</span></a>
             </li>
             <li class="text-[#9D9E9E] ">
                 <a href="{% url 'subjects:tasks' %}"
@@ -68,7 +68,7 @@
                               fill="{% if page == "tasks" %}white{% else %}#9D9E9E{% endif %}"/>
                     </svg>
 
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Задачи</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Задачи</span></a>
             </li>
             <li class="text-[#9D9E9E] ">
                 <a href="#"
@@ -89,7 +89,7 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Мессенджер</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Мессенджер</span></a>
             </li>
             <li class="text-[#9D9E9E] ">
                 <a href="#"
@@ -111,7 +111,7 @@
                         </defs>
                     </svg>
 
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Достижения</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Достижения</span></a>
             </li>
             <li class="text-[#9D9E9E] ">
                 <a href="{% url 'subjects:subject-list' %}"
@@ -164,7 +164,7 @@
                         </defs>
                     </svg>
 
-                    <span class="font-semibold text-5 leading-[24px] text-[#9d9e9e]">Курсы</span></a>
+                    <span class="font-semibold text-5 leading-[24px]">Курсы</span></a>
             </li>
         </ul>
     </div>
