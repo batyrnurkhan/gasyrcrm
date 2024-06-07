@@ -62,13 +62,14 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center bg-accent-red w-full py-[15px] text-white" href="#">Задания</a>
+                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center bg-accent-red w-full py-[15px] text-white"
+                       href="{% url 'chats:create_task' room_id=room.id %}">Задания</a>
                     <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center border border-accent-red w-full py-[15px] text-accent-red" href="#">Выставить оценки за сегодня</a>
                 </div>
                 <div class="course__content relative bg-[#FAFAFA] min-h-full w-[760px] rounded-md pt-[60px]">
                     <div id="scrollblock"
                          class="course__content-day pt-[24px] px-[40px] gap-[12px] flex flex-col h-webkit-fill overflow-scroll">
-                        {% regroup room.messages.all by timestamp|date:"d M" as objects_by_day %}
+                        {% regroup room.messages.all by timestamp|date:"d E" as objects_by_day %}
                         {% for d in objects_by_day %}
                             <h1 class="day__title text-center font-bold text-[16px] leading-[24px] text-[#9D9E9E]">
                                 {{ d.grouper }}
@@ -106,9 +107,14 @@
                                                         Срок до {{ message.task.deadline|date:"d.m.Y H:i" }}</p>
                                                 </div>
                                             </a>
+                                        {% elif message.message_type == "conf" %}
+                                            <div class="p-[6px] pl-[20px] border border-[#CCCCCC] rounded-lg flex flex-row justify-between items-center">
+                                                <p class="text-[12px] h-fit">Конференция</p>
+                                                <a href="{{ message.message }}" target="_blank" class="px-[43px] py-[11px] bg-accent-red text-white rounded-lg">Войти на урок</a>
+                                            </div>
                                         {% endif %}
                                         <div class="message__author-date text-[12px] leading-[18px] text-[#B5B5B5] font-medium">
-                                            {{ message.timestamp|date:"d M Y H:i" }}
+                                            {{ message.timestamp|date:"d E Y H:i" }}
                                         </div>
                                     </div>
                                 </div>
@@ -267,8 +273,7 @@
             };
 
             window.setLink = function () {
-                {% comment %}
-                fetch(`/appointments/api/appointments/${document.getElementById('appointmentId').value}/set-link/`, {
+                fetch(`/subjects/api/lesson/{{ lesson.id }}/update_google_meet_link/`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
@@ -278,10 +283,8 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        $('#setLinkModal').modal('hide');
-                        alert('Link set successfully!');
+                        location.reload()
                     });
-                {% endcomment %}
             };
         </script>
     {% endif %}

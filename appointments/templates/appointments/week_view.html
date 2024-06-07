@@ -31,7 +31,7 @@
                         <input onclick="selectDate('{{ day.year }}', '{{ day.month }}', '{{ day.day }}', '{{ day|date:'Y-m-d' }}');"
                                type="radio" name="radio" class="w-full h-full absolute peer opacity-0">
                         <div class="days__item rounded-[10px] pt-3 border peer-hover-psy border-accent-red text-accent-red font-bold pb-3 w-[102px] flex flex-col">
-                            <span class="text-[14px] font-bold leading-[14px] block text-center">{{ day|date:"M"|localize }}</span>
+                            <span class="text-[14px] font-bold leading-[14px] block text-center">{{ day|date:"M" }}</span>
                             <span class="block text-center text-[42px] leading-[52px] font-bold">{{ day|date:"d" }}</span>
                             <span class="block text-center text-[14px] uppercase leading-[14px] font-bold">{{ day|date:"D" }}</span>
                         </div>

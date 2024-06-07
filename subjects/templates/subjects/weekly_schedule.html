@@ -33,7 +33,7 @@
                     <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
                         <div class="lessons__texts flex justify-between mb-[18px] items-center">
                             <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">{{ day }}</h1>
-                            <h1 class="ml-auto">{{ week_dates.day|date:"d M" }}</h1>
+                            <h1 class="ml-auto">{{ week_dates.day|date:"d E" }}</h1>
                         </div>
                         {% if lessons %}
                             <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">

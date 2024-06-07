@@ -489,7 +489,7 @@ def update_google_meet_link(request, lesson_id):
 
     try:
         data = json.loads(request.body)
-        google_meet_link = data.get('google_meet_link')
+        google_meet_link = data.get('link')
         if not google_meet_link:
             return JsonResponse({'error': 'No Google Meet link provided'}, status=400)
 
@@ -501,7 +501,7 @@ def update_google_meet_link(request, lesson_id):
         Message.objects.create(
             chat_room=lesson.chat_room,
             user=request.user,
-            message=f"Google Meet link updated: {google_meet_link}",
+            message=google_meet_link,
             message_type='conf',
             timestamp=now()
         )

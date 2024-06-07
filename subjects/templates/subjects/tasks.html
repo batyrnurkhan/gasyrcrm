@@ -4,7 +4,7 @@
     <ul>
         {% for task in tasks %}
             <li>
-                {{ task.name }} - Due: {{ task.deadline|date:"d M Y H:i" }}
+                {{ task.name }} - Due: {{ task.deadline|date:"d E Y H:i" }}
                 {% if task.file %}
                     <a href="{{ task.file.url }}" class="btn btn-sm btn-secondary" download>Download File</a>
                 {% endif %}
