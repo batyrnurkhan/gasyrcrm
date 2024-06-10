@@ -15,6 +15,7 @@ class TaskForm(forms.ModelForm):
             'deadline': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M')
         }
 
+
 class LessonForm(ModelForm):
     class Meta:
         model = Lesson_crm2
@@ -60,6 +61,7 @@ class GroupTemplateForm(forms.ModelForm):
         model = GroupTemplate
         fields = ['name']
 
+
 class UserSearchForm(forms.Form):
     search = forms.CharField(label='Search by name or phone number', max_length=100, required=False)
 
@@ -83,6 +85,7 @@ class VolunteerChannelForm(forms.ModelForm):
     def clean_selected_students(self):
         user_ids = self.cleaned_data.get('selected_students')
         return CustomUser.objects.filter(id__in=user_ids)
+
 
 class GradeForm(forms.Form):
     max_grade = forms.IntegerField(label="Maximum Grade")

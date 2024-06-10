@@ -106,7 +106,9 @@ def mini_schedule_view(request):
     current_weekday = today.weekday()
     weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-    next_three_days = weeknames[current_weekday:current_weekday + 3] if current_weekday <= 4 else weeknames[current_weekday:] + weeknames[:current_weekday + 3 - 7]
+    next_three_days = weeknames[current_weekday:current_weekday + 3] if current_weekday <= 4 else weeknames[
+                                                                                                  current_weekday:] + weeknames[
+                                                                                                                      :current_weekday + 3 - 7]
     weekly_lessons = {day: [] for day in next_three_days}
 
     student_groups = GroupTemplate.objects.filter(students=user)
@@ -386,10 +388,15 @@ def search_students(request):
     student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
 
+
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
     students = lesson.group_template.students.all()
+
+    day = request.GET.get('day', datetime.date.today().strftime('%m.%d.%Y'))
+
+    day = datetime.datetime.strptime(day, '%m.%d.%Y')
 
     if request.user != lesson.teacher and not request.user.is_superuser:
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
@@ -399,6 +406,9 @@ def set_grade(request, lesson_id):
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data['file'])
             messages.success(request, "Grades successfully saved.")
+            res = redirect('subjects:set_grade', lesson_id=lesson_id)
+            res['Location'] += f"?day={day.strftime('%m.%d.%Y')}"
+            return res
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -406,10 +416,11 @@ def set_grade(request, lesson_id):
     else:
         form = GradeForm(students=students)
 
-    return render(request, 'subjects/set_grade_batyr.html', {
+    return render(request, 'subjects/set_grade.html', {
         'form': form,
         'lesson': lesson,
-        'students': students
+        'students': students,
+        'day': day  # You might want to show detailed student info in the template
     })
 
 @login_required

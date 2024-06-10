@@ -62,9 +62,12 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center bg-accent-red w-full py-[15px] text-white"
-                       href="{% url 'chats:create_task' room_id=room.id %}">Задания</a>
-                    <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center border border-accent-red w-full py-[15px] text-accent-red" href="#">Выставить оценки за сегодня</a>
+                    {% if request.user.role == "Teacher" and request.user == teacher %}
+                        <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center bg-accent-red w-full py-[15px] text-white"
+                           href="{% url 'chats:create_task' room_id=room.id %}">Задания</a>
+                        <a class="inline-block font-semibold text-[14px] mt-[4px] rounded-lg text-center border border-accent-red w-full py-[15px] text-accent-red"
+                           href="{% url 'subjects:set_grade' lesson_id=lesson.id %}">Выставить оценки за сегодня</a>
+                    {% endif %}
                 </div>
                 <div class="course__content relative bg-[#FAFAFA] min-h-full w-[760px] rounded-md pt-[60px]">
                     <div id="scrollblock"
@@ -110,7 +113,9 @@
                                         {% elif message.message_type == "conf" %}
                                             <div class="p-[6px] pl-[20px] border border-[#CCCCCC] rounded-lg flex flex-row justify-between items-center">
                                                 <p class="text-[12px] h-fit">Конференция</p>
-                                                <a href="{{ message.message }}" target="_blank" class="px-[43px] py-[11px] bg-accent-red text-white rounded-lg">Войти на урок</a>
+                                                <a href="{{ message.message }}" target="_blank"
+                                                   class="px-[43px] py-[11px] bg-accent-red text-white rounded-lg">Войти
+                                                    на урок</a>
                                             </div>
                                         {% endif %}
                                         <div class="message__author-date text-[12px] leading-[18px] text-[#B5B5B5] font-medium">
