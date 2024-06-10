@@ -139,5 +139,11 @@ class AchievementForm(forms.ModelForm):
         model = Achievement
         fields = ['name', 'difficulty']
 
-class StudentAchievementForm(forms.Form):
-    students = forms.ModelMultipleChoiceField(queryset=CustomUser.objects.filter(role='Student'), widget=forms.CheckboxSelectMultiple)
+class StudentAchievementForm(forms.ModelForm):
+    class Meta:
+        model = StudentAchievement
+        fields = ['student', 'achievement']
+        widgets = {
+            'student': forms.HiddenInput(),
+            'achievement': forms.HiddenInput(),
+        }

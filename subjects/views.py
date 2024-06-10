@@ -1,4 +1,5 @@
 import datetime
+import logging
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
@@ -379,11 +380,14 @@ def create_task(request, room_id):
     })
 
 
-@login_required
 def search_students(request):
-    search_query = request.GET.get('q', '')
-    students = CustomUser.objects.filter(role='Student', full_name__icontains=search_query).order_by('full_name')
-    student_list = [{'id': student.id, 'full_name': student.full_name} for student in students]
+    search_term = request.GET.get('search', '')
+    students = CustomUser.objects.filter(
+        role='Student',
+        full_name__icontains=search_term
+    ).order_by('full_name')[:10]
+
+    student_list = list(students.values('id', 'full_name'))
     return JsonResponse(student_list, safe=False)
 
 
@@ -603,27 +607,46 @@ def download_grade_file(request, grade_id):
     return response
 
 
-@login_required
-def set_achievement(request):
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def create_achievement(request):
+    achievement_form = AchievementForm(request.POST or None)
+    students = User.objects.filter(role='Student')
+
     if request.method == 'POST':
-        achievement_form = AchievementForm(request.POST)
-        student_achievement_form = StudentAchievementForm(request.POST)
-
-        if achievement_form.is_valid() and student_achievement_form.is_valid():
+        if achievement_form.is_valid():
             achievement = achievement_form.save()
-            students = student_achievement_form.cleaned_data['students']
-            achievement.students.set(students)
-            achievement.save()
+            students_ids = request.POST.getlist('selected_students')
+            successes = 0
+            errors = []
 
-            messages.success(request, "Achievement successfully created.")
+            for student_id in students_ids:
+                student_achievement_form = StudentAchievementForm(data={
+                    'student': student_id,
+                    'achievement': achievement.id
+                })
+
+                if student_achievement_form.is_valid():
+                    student_achievement_form.save()
+                    successes += 1
+                else:
+                    errors.append(student_achievement_form.errors)
+                    messages.error(request, f"Error creating Student Achievement for student ID {student_id}")
+
+            if successes:
+                messages.success(request, f"{successes} Student Achievements successfully created!")
+            else:
+                messages.error(request, "Failed to create any Student Achievements.")
+
             return redirect('subjects:set_achievement')
-        else:
-            messages.error(request, "There was an error creating the achievement. Please check the form and try again.")
-    else:
-        achievement_form = AchievementForm()
-        student_achievement_form = StudentAchievementForm()
 
-    return render(request, 'subjects/set_achievement.html', {
+    context = {
         'achievement_form': achievement_form,
-        'student_achievement_form': student_achievement_form,
-    })
+        'students': students,
+        'errors': errors if 'errors' in locals() else [],
+    }
+    return render(request, 'subjects/set_achievement.html', context)
+
+#subjects:set_achievement

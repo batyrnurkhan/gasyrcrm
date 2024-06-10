@@ -3,7 +3,7 @@ from .views import SubjectListView, group_template_list, LessonCreateView, Lesso
     create_volunteer_channel, set_grade, LessonListView, grades_by_day_view, home_view, \
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
     mini_schedule_view, update_google_meet_link, student_tasks_view, upload_task_view, download_task_file, \
-    download_submission_file, download_grade_file, set_achievement
+    download_submission_file, download_grade_file, create_achievement
 
 app_name = 'subjects'
 
@@ -21,14 +21,17 @@ urlpatterns = [
     path('lessons/', LessonListView.as_view(), name='lesson-list'),
     path('lessons-create/<int:time_id>/', LessonCreateView.as_view(), name='lesson-create'),
 
-    path('set-achievement/', set_achievement, name='set_achievement'),
+    path('set-achievement/', create_achievement, name='set_achievement'),
 
     path('lessons/<int:pk>/', LessonDetailView.as_view(), name='lesson-detail'),
+
     path('search/', search_students, name='search-students'),
+
     # path('volunteer_channels/create/', create_volunteer_channel, name='create_volunteer_channel'),
     path('volunteer_channels/', create_volunteer_channel, name='volunteer_channel_list'),
     path('set-grade/<int:lesson_id>/', set_grade, name='set_grade'),
     path('grades-by-day/', grades_by_day_view, name='grades-by-day'),
+
     path('search-users/', search_users, name='search-users'),
     path('api/lesson/<int:lesson_id>/update_google_meet_link/', update_google_meet_link, name='update_google_meet_link'),
 

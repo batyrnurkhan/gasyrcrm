@@ -1,6 +1,7 @@
 {% extends 'subjects/base.html' %}
 {% load static %}
 {% load l10n %}
+{% load course_tags %}
 {% load custom_filters %}
 
 {% block flex-content %}
@@ -8,69 +9,192 @@
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-            <div class="shadow-[0px_4px_20px_0px_#00000014] p-[20px] pb-[30px] rounded-md w-[390px] h-[170px] absolute z-10 -bottom-[190px] right-[0] bg-white">
-                <div class="flex justify-between items-start mb-[8px]">
-                    <img src="{% static 'core/images/catAchievement.png' %}" alt="" class="max-w-[60px] max-h-[62px]">
-                    <button><img src="{% static 'core/images/closeBlack.svg' %}" alt="" class="max-h-[24px] max-w-[24px]"></button>
+            <h1 class="font-bold text-black-main text-[42px] mb-[24px]">Выдать достижение ученику</h1>
+            <form method="post" class="bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[20px]">
+                {% csrf_token %}
+                {% if achievement_form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ achievement_form.non_field_errors }}
                 </div>
-                <h3 class="font-semibold text-[20px] leading-[28px] text-[#282827]">Достижения выданы</h3>
-                <p class="font-regular text-[16px] leading-[22px] text-[#282827]">Ученики уже получили уведомления</p>
-            </div>
-            <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="font-bold text-black-main text-[42px]">
-                    Выдать достижение ученику
-                </h1>
-            </div>
-            <div class="shadow-[0px_4px_20px_0px_#00000014] p-[24px] pb-[32px] rounded-md bg-white">
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="flex gap-[8px] mb-[8px]">
-                        <div class="space-y-[10px]">
-                            <h5 class="font-semibold text-[16px] leading-[22px] text-black-main">Название достижение</h5>
-                            {{ achievement_form.name }}
-                        </div>
-                        <div class="space-y-[10px]">
-                            <h5 class="font-semibold text-[16px] leading-[22px] text-black-main">Сложность достижения</h5>
-                            <div class="flex items-center gap-[20px] h-[75px] border-[#CDCDCD] border-[1px] rounded-sm px-[20px]">
-                                {% for i in 5|get_range %}
-                                    <input type="radio" name="difficulty" value="{{ i }}" id="difficulty_{{ i }}" {% if achievement_form.difficulty.value == i %}checked{% endif %}>
-                                    <label for="difficulty_{{ i }}" class="dot"></label>
-                                {% endfor %}
-                            </div>
-                        </div>
+                {% endif %}
+                <div class="mb-[20px]">
+                    <label class="block text-black-main font-semibold mb-[10px]" for="id_name">Название достижения</label>
+                    <input type="text" id="id_name" name="name" class="w-full h-[60px] border-[1px] border-[#CDCDCD] rounded-md pl-[16px] font-medium text-[16px] leading-[25px] text-black-main" placeholder="Введите название достижения">
+                    {{ achievement_form.name.errors }}
+                </div>
+                <div class="mb-[20px]">
+                    <label class="block text-black-main font-semibold mb-[10px]">Сложность достижения</label>
+                    <div class="flex gap-2">
+                        {% for i in 5|get_range %}
+                            <input type="radio" name="difficulty" value="{{ i }}" id="difficulty_{{ i }}" {% if i == 1 %}checked{% endif %}>
+                            <label for="difficulty_{{ i }}" class="dot"></label>
+                        {% endfor %}
                     </div>
-                    <label for="search__student" class="relative ">
-                        <input type="text" class="w-full border-[1px] border-[#CDCDCD] rounded-md h-[60px] pl-[16px] pr-[70px] font-medium text-[16px] leading-[25px] text-black-main" id="search__student" placeholder="Поиск ученика">
-                        <img src="{% static 'core/icons/searchIcon.svg' %}" alt="" class="absolute top-[0px] right-[35px]">
-                    </label>
-                    <ul class="mb-[16px] gap-[8px] flex flex-wrap mt-[12px]" id="student_list">
-                        {{ student_achievement_form.students }}
+                    {{ achievement_form.difficulty.errors }}
+                </div>
+
+
+                <div class="relative">
+                    <div class="absolute  right-[20px] top-[25px]">
+                        <img src="{% static 'core/icons/searck-gray.svg' %}" alt=""
+                             class="max-w-[24px] max-h-[24px]">
+                    </div>
+                    <input type="text" placeholder="Введите имя ученика" id="search-input"
+                                   class="w-full h-[72px] flex items-center pl-[16px] pr-[50px] border-[#CDCDCD] border-[1px] rounded-md focus:outline-none text-black-main text-[16px] font-regular leading-[22px]">
+                    <div id="suggestions"
+                                 class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden">
+                                {% comment %}
+                                    <div class="px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]"
+                                         value="{{ student.id }}">
+                                        <img src="
+
+                                                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
+                                             alt="User Image"
+                                             class="w-[32px] h-[32px] rounded-full">
+                                        <span class="text-[16px] leading-[25px] text-black-main font-semibold">Александр Овечкин</span>
+                                    </div>
+                                {% endcomment %}
+                            </div>
+                </div>
+                <div class="p-[30px] bg-[#FAFAFA] mt-[12px] hidden">
+                    <ul id="students" class="gap-[16px] max-h-[425px] overflow-y-auto px-[15px]">
+                        {% comment %}
+                        <li class="flex justify-between w-full items-center">
+                            <div class="gap-[16px] flex items-center w-[230px]">
+                                <img src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
+                                     alt=""
+                                     class="max-h-[32px] max-w-[32px] rounded-full">
+                                <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                    {{ student.full_name }}
+                                </h5>
+                            </div>
+                            <div class="flex gap-[8px] items-center w-[200px]">
+                                <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                                     class="max-w-[16px] max-h-[16px]">
+                                <span class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                    {{ student.phone_number|format_phone_number }}
+                                </span>
+                            </div>
+                            <div class="city flex gap-[8px] items-center w-[160px]">
+                                <img src="{% static "core/icons/city-fill-accent-red.svg" %}" alt=""
+                                class="max-w-[16px] max-h-[16px]">
+                                <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.user_city }}</span>
+                            </div>
+                            <a href="#"
+                               class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
+                                данные</a>
+                        </li>
+                        {% endcomment %}
                     </ul>
-                    <button type="submit" class="bg-accent-red text-white rounded-md px-[20px] py-[10px]">Сохранить достижение</button>
-                </form>
-            </div>
+                </div>
+                <button type="submit" class="bg-accent-red text-white rounded-md px-[20px] py-[10px]">Сохранить достижение</button>
+
+            </form>
         </div>
     </main>
-{% endblock %}
 
 <script>
-    document.getElementById('search__student').addEventListener('input', function() {
-        var search_query = this.value;
-        fetch(`/search/?q=${search_query}`)
-            .then(response => response.json())
-            .then(data => {
-                var studentList = document.getElementById('student_list');
-                studentList.innerHTML = '';
-                data.forEach(student => {
-                    var studentItem = document.createElement('li');
-                    studentItem.className = 'flex gap-[12px] py-[4px] px-[14px] rounded-sm items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red';
-                    studentItem.innerHTML = `
-                        <span>${student.full_name}</span>
-                        <button class="max-w-[16px] max-h-[16px] cursor-pointer">
-                            <img src="{% static 'core/icons/close.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
-                        </button>`;
-                    studentList.appendChild(studentItem);
+            function search() {
+                const searchInput = document.getElementById('search-input');
+                const suggestionsContainer = document.getElementById('suggestions');
+                const studentsContainer = document.getElementById('students');
+
+                // Массив с предложениями (может быть заменен на данные из API)
+                const suggestions = [
+                    {% for student in students %}
+                        {
+                            id: {{ student.id }},
+                            name: '{{ student.full_name }}',
+                            city: '{{ student.user_city }}',
+                            phone: '{{ student.phone_number|format_phone_number }}',
+                            photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
+                        },
+                    {% endfor %}
+                ];
+
+                searchInput.addEventListener('input', () => {
+                    const input = searchInput.value.toLowerCase();
+                    // Очищаем предыдущие предложения
+                    suggestionsContainer.innerHTML = '';
+
+                    if (input) {
+                        suggestionsContainer.classList.remove('hidden')
+                        // Фильтруем предложения на основе ввода пользователя
+                        const filteredSuggestions = suggestions.filter(suggestion =>
+                            suggestion.name.toLowerCase().includes(input)
+                        );
+
+                        // Создаем элементы для каждого подходящего предложения
+                        filteredSuggestions.forEach(suggestion => {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.classList = 'px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]';
+                            suggestionItem.innerHTML = `
+                                <img src="${suggestion.photo}"
+                                     alt="User Image"
+                                     class="w-[32px] h-[32px] rounded-full">
+                                <span class="text-[16px] leading-[25px] text-black-main font-semibold">${suggestion.name}</span>
+                            `;
+
+                            // Добавляем обработчик клика для выбора предложения
+                            suggestionItem.addEventListener('click', () => {
+                                const finder = (elem) => elem.id === suggestion.id;
+                                suggestionsContainer.classList.add('hidden')
+                                studentsContainer.parentElement.classList.remove('hidden')
+                                searchInput.value = "";
+                                const index = suggestions.findIndex(finder);
+                                console.log(index)
+                                if (index > -1) {
+                                    suggestions.splice(index, 1);
+                                }
+                                console.log(suggestions)
+                                const listItem = document.createElement('li');
+                                listItem.classList = "flex justify-between w-full items-center";
+                                listItem.innerHTML = `
+                                    <input hidden value="${suggestion.id}" name="selected_students">
+                                    <div class="gap-[16px] flex items-center w-[230px]">
+                                        <img src="${suggestion.photo}"
+                                             alt=""
+                                             class="max-h-[32px] max-w-[32px] rounded-full">
+                                        <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                            ${suggestion.name}
+                                        </h5>
+                                    </div>
+                                    <div class="flex gap-[8px] items-center w-[200px]">
+                                        <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                            ${suggestion.phone}
+                                        </span>
+                                    </div>
+                                    <div class="city flex gap-[8px] items-center w-[160px]">
+                                        <img src="{% static "core/icons/city-fill-accent-red.svg" %}" alt=""
+                                             class="max-w-[16px] max-h-[16px]">
+                                        <span class="font-semibold text-[16px] leading-[22px] text-black-main">${suggestion.city}</span>
+                                    </div>
+                                    <a href="#"
+                                       class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
+                                        данные</a>
+                                `;
+                                studentsContainer.appendChild(listItem);
+                            });
+
+                            suggestionsContainer.appendChild(suggestionItem);
+                        });
+                    } else {
+                        suggestionsContainer.classList.add('hidden')
+                    }
                 });
-            });
-    });
-</script>
+
+                // Закрываем список предложений при клике вне его
+                document.addEventListener('click', (e) => {
+                    if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+                        suggestionsContainer.innerHTML = '';
+                    }
+                });
+            }
+        </script>
+
+{% endblock %}
+{% block window_load %}
+    search()
+{% endblock %}
