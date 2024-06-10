@@ -1,0 +1,76 @@
+{% extends 'subjects/base.html' %}
+{% load static %}
+{% load l10n %}
+{% load custom_filters %}
+
+{% block flex-content %}
+    {% include "subjects/components/crm2-teacher-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="shadow-[0px_4px_20px_0px_#00000014] p-[20px] pb-[30px] rounded-md w-[390px] h-[170px] absolute z-10 -bottom-[190px] right-[0] bg-white">
+                <div class="flex justify-between items-start mb-[8px]">
+                    <img src="{% static 'core/images/catAchievement.png' %}" alt="" class="max-w-[60px] max-h-[62px]">
+                    <button><img src="{% static 'core/images/closeBlack.svg' %}" alt="" class="max-h-[24px] max-w-[24px]"></button>
+                </div>
+                <h3 class="font-semibold text-[20px] leading-[28px] text-[#282827]">Достижения выданы</h3>
+                <p class="font-regular text-[16px] leading-[22px] text-[#282827]">Ученики уже получили уведомления</p>
+            </div>
+            <div class="flex items-center justify-between mb-[24px]">
+                <h1 class="font-bold text-black-main text-[42px]">
+                    Выдать достижение ученику
+                </h1>
+            </div>
+            <div class="shadow-[0px_4px_20px_0px_#00000014] p-[24px] pb-[32px] rounded-md bg-white">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="flex gap-[8px] mb-[8px]">
+                        <div class="space-y-[10px]">
+                            <h5 class="font-semibold text-[16px] leading-[22px] text-black-main">Название достижение</h5>
+                            {{ achievement_form.name }}
+                        </div>
+                        <div class="space-y-[10px]">
+                            <h5 class="font-semibold text-[16px] leading-[22px] text-black-main">Сложность достижения</h5>
+                            <div class="flex items-center gap-[20px] h-[75px] border-[#CDCDCD] border-[1px] rounded-sm px-[20px]">
+                                {% for i in 5|get_range %}
+                                    <input type="radio" name="difficulty" value="{{ i }}" id="difficulty_{{ i }}" {% if achievement_form.difficulty.value == i %}checked{% endif %}>
+                                    <label for="difficulty_{{ i }}" class="dot"></label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <label for="search__student" class="relative ">
+                        <input type="text" class="w-full border-[1px] border-[#CDCDCD] rounded-md h-[60px] pl-[16px] pr-[70px] font-medium text-[16px] leading-[25px] text-black-main" id="search__student" placeholder="Поиск ученика">
+                        <img src="{% static 'core/icons/searchIcon.svg' %}" alt="" class="absolute top-[0px] right-[35px]">
+                    </label>
+                    <ul class="mb-[16px] gap-[8px] flex flex-wrap mt-[12px]" id="student_list">
+                        {{ student_achievement_form.students }}
+                    </ul>
+                    <button type="submit" class="bg-accent-red text-white rounded-md px-[20px] py-[10px]">Сохранить достижение</button>
+                </form>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+<script>
+    document.getElementById('search__student').addEventListener('input', function() {
+        var search_query = this.value;
+        fetch(`/search/?q=${search_query}`)
+            .then(response => response.json())
+            .then(data => {
+                var studentList = document.getElementById('student_list');
+                studentList.innerHTML = '';
+                data.forEach(student => {
+                    var studentItem = document.createElement('li');
+                    studentItem.className = 'flex gap-[12px] py-[4px] px-[14px] rounded-sm items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red';
+                    studentItem.innerHTML = `
+                        <span>${student.full_name}</span>
+                        <button class="max-w-[16px] max-h-[16px] cursor-pointer">
+                            <img src="{% static 'core/icons/close.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
+                        </button>`;
+                    studentList.appendChild(studentItem);
+                });
+            });
+    });
+</script>

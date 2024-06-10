@@ -20,8 +20,9 @@ from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm, \
-    FileUploadForm
-from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade, TaskSubmission
+    FileUploadForm, AchievementForm, StudentAchievementForm
+from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade, TaskSubmission, \
+    StudentAchievement
 from .serializers import FileUploadSerializer, TaskSubmissionSerializer
 
 
@@ -378,14 +379,11 @@ def create_task(request, room_id):
     })
 
 
+@login_required
 def search_students(request):
-    search_term = request.GET.get('search', '')
-    students = CustomUser.objects.filter(
-        role='Student',
-        full_name__icontains=search_term
-    ).order_by('full_name')[:10]
-
-    student_list = list(students.values('id', 'full_name'))
+    search_query = request.GET.get('q', '')
+    students = CustomUser.objects.filter(role='Student', full_name__icontains=search_query).order_by('full_name')
+    student_list = [{'id': student.id, 'full_name': student.full_name} for student in students]
     return JsonResponse(student_list, safe=False)
 
 
@@ -603,3 +601,29 @@ def download_grade_file(request, grade_id):
 
     response = FileResponse(grade.file.open(), as_attachment=True, filename=grade.file.name)
     return response
+
+
+@login_required
+def set_achievement(request):
+    if request.method == 'POST':
+        achievement_form = AchievementForm(request.POST)
+        student_achievement_form = StudentAchievementForm(request.POST)
+
+        if achievement_form.is_valid() and student_achievement_form.is_valid():
+            achievement = achievement_form.save()
+            students = student_achievement_form.cleaned_data['students']
+            achievement.students.set(students)
+            achievement.save()
+
+            messages.success(request, "Achievement successfully created.")
+            return redirect('subjects:set_achievement')
+        else:
+            messages.error(request, "There was an error creating the achievement. Please check the form and try again.")
+    else:
+        achievement_form = AchievementForm()
+        student_achievement_form = StudentAchievementForm()
+
+    return render(request, 'subjects/set_achievement.html', {
+        'achievement_form': achievement_form,
+        'student_achievement_form': student_achievement_form,
+    })

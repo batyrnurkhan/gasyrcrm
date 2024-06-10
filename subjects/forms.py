@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
-from .models import VolunteerChannel, Grade
+from .models import VolunteerChannel, Grade, Achievement, StudentAchievement
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
 
@@ -133,3 +133,11 @@ class GradeForm(forms.Form):
 class FileUploadForm(forms.Form):
     task_id = forms.IntegerField(widget=forms.HiddenInput())
     file = forms.FileField(label="Upload your work")
+
+class AchievementForm(forms.ModelForm):
+    class Meta:
+        model = Achievement
+        fields = ['name', 'difficulty']
+
+class StudentAchievementForm(forms.Form):
+    students = forms.ModelMultipleChoiceField(queryset=CustomUser.objects.filter(role='Student'), widget=forms.CheckboxSelectMultiple)

@@ -90,3 +90,20 @@ class Grade(models.Model):
 
     def __str__(self):
         return f"{self.grade} for {self.student.full_name} on {self.date_assigned}"
+
+
+class Achievement(models.Model):
+    name = models.CharField(max_length=255)
+    difficulty = models.PositiveIntegerField()
+    students = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='achievements')
+
+    def __str__(self):
+        return self.name
+
+class StudentAchievement(models.Model):
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'Student'})
+    achievement = models.ForeignKey(Achievement, on_delete=models.CASCADE)
+    awarded_date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.full_name} - {self.achievement.name}"
