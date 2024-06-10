@@ -86,6 +86,7 @@ class Grade(models.Model):
     date_assigned = models.DateField()
     grade = models.CharField(max_length=10)
     max_grade = models.IntegerField()
+    file = models.FileField(upload_to='grade_files/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.grade} for {self.student.full_name} on {self.date_assigned}"

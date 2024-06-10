@@ -3,7 +3,7 @@ from .views import SubjectListView, group_template_list, LessonCreateView, Lesso
     create_volunteer_channel, set_grade, LessonListView, grades_by_day_view, home_view, \
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
     mini_schedule_view, update_google_meet_link, student_tasks_view, upload_task_view, download_task_file, \
-    download_submission_file
+    download_submission_file, download_grade_file
 
 app_name = 'subjects'
 
@@ -33,5 +33,6 @@ urlpatterns = [
     path('tasks-student/', student_tasks_view, name='student_tasks_view'),
     path('api/upload_task/', upload_task_view, name='upload_task_view'),
     path('download_task_file/<int:task_id>/', download_task_file, name='download_task_file'),
+    path('download-grade-file/<int:grade_id>/', download_grade_file, name='download_grade_file'),
     path('download_submission_file/<int:submission_id>/', download_submission_file, name='download_submission_file'),
 ]

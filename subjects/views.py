@@ -395,9 +395,9 @@ def set_grade(request, lesson_id):
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
 
     if request.method == 'POST':
-        form = GradeForm(request.POST, students=students)
+        form = GradeForm(request.POST, request.FILES, students=students)
         if form.is_valid():
-            form.save_grades(lesson, form.cleaned_data['date_assigned'])
+            form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data['file'])
             messages.success(request, "Grades successfully saved.")
         else:
             for field, errors in form.errors.items():
@@ -406,7 +406,7 @@ def set_grade(request, lesson_id):
     else:
         form = GradeForm(students=students)
 
-    return render(request, 'subjects/set_grade.html', {
+    return render(request, 'subjects/set_grade_batyr.html', {
         'form': form,
         'lesson': lesson,
         'students': students
@@ -573,4 +573,14 @@ def download_submission_file(request, submission_id):
         return JsonResponse({'error': 'File not found'}, status=404)
 
     response = FileResponse(submission.file.open(), as_attachment=True, filename=submission.file.name)
+    return response
+
+
+@login_required
+def download_grade_file(request, grade_id):
+    grade = get_object_or_404(Grade, id=grade_id)
+    if not grade.file:
+        return JsonResponse({'error': 'File not found'}, status=404)
+
+    response = FileResponse(grade.file.open(), as_attachment=True, filename=grade.file.name)
     return response

@@ -25,11 +25,17 @@
                                 <li class="result__item flex w-full items-center justify-between">
                                     <p class="result__item-title min-w-[150px] font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.grade.lesson.subject.name }}</p>
                                     <div class="result__number text-white px-[13px] py-1 bg-[#51B812] rounded-md font-semibold text-[16px] leading-5 w-[70px] text-center">{{ grade_info.grade.grade }}</div>
-                                    <a href="#"
-                                       class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">
-                                        <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
-                                        Работа с ошибками
-                                    </a>
+                                    {% if grade_info.grade.file %}
+                                        <a href="{% url 'subjects:download_grade_file' grade_info.grade.id %}" class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">
+                                            <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
+                                            Работа с ошибками
+                                        </a>
+                                    {% else %}
+                                        <span class="result__link text-black-main text-[16px] leading-[20px] font-semibold">
+                                            <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
+                                            No file available
+                                        </span>
+                                    {% endif %}
                                     <div class="flex flex-row items-center">
                                         {% if grade_info.teacher.profile_picture %}
                                             <img src="{{ grade_info.teacher.profile_picture }}"
@@ -55,6 +61,5 @@
                 </div>
             {% endif %}
         </div>
-
     </main>
 {% endblock %}
