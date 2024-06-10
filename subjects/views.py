@@ -394,35 +394,43 @@ def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
     students = lesson.group_template.students.all()
 
-    day = request.GET.get('day', datetime.date.today().strftime('%m.%d.%Y'))
-
-    day = datetime.datetime.strptime(day, '%m.%d.%Y')
+    # Get the date from the query parameter, default to today if not provided
+    date_str = request.GET.get('day')
+    if date_str:
+        day = timezone.datetime.strptime(date_str, '%m.%d.%Y').date()
+    else:
+        day = timezone.now().date()
 
     if request.user != lesson.teacher and not request.user.is_superuser:
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
 
+    # Fetch existing grades for the given date
+    existing_grades = Grade.objects.filter(lesson=lesson, date_assigned=day)
+    initial_data = {}
+    if existing_grades.exists():
+        max_grade = existing_grades.first().max_grade
+        initial_data['max_grade'] = max_grade
+        for grade in existing_grades:
+            initial_data[f'grade_{grade.student.id}'] = grade.grade
+
     if request.method == 'POST':
-        form = GradeForm(request.POST, request.FILES, students=students)
+        form = GradeForm(request.POST, request.FILES, students=students, initial=initial_data)
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data['file'])
             messages.success(request, "Grades successfully saved.")
-            res = redirect('subjects:set_grade', lesson_id=lesson_id)
-            res['Location'] += f"?day={day.strftime('%m.%d.%Y')}"
-            return res
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, error)
     else:
-        form = GradeForm(students=students)
+        form = GradeForm(students=students, initial=initial_data)
 
     return render(request, 'subjects/set_grade.html', {
         'form': form,
         'lesson': lesson,
         'students': students,
-        'day': day  # You might want to show detailed student info in the template
+        'day': day
     })
-
 @login_required
 def grades_by_day_view(request):
     grades = Grade.objects.filter(student=request.user).select_related('lesson', 'lesson__teacher').order_by('date_assigned')
