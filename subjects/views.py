@@ -4,11 +4,14 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Prefetch, Q
-from django.http import JsonResponse, HttpResponseForbidden, Http404
+from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from rest_framework.utils import json
 
 from appointments.forms import AppointmentForm
@@ -16,9 +19,10 @@ from appointments.models import Appointment
 from chats.models import ChatRoom, Message
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
-from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm
-from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade
-
+from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm, \
+    FileUploadForm
+from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade, TaskSubmission
+from .serializers import FileUploadSerializer, TaskSubmissionSerializer
 
 
 @login_required
@@ -523,3 +527,51 @@ def update_google_meet_link(request, lesson_id):
         return JsonResponse({'error': f'Invalid JSON: {str(e)}'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def student_tasks_view(request):
+    user = request.user
+    if user.role != 'Student':
+        return HttpResponseForbidden("You are not authorized to view this page.")
+
+    # Get all lessons where the user is a student
+    lessons = Lesson_crm2.objects.filter(group_template__students=user).select_related('teacher', 'subject', 'chat_room')
+    tasks = Task.objects.filter(chat_room__in=[lesson.chat_room for lesson in lessons])
+
+    return render(request, 'subjects/student_tasks.html', {
+        'tasks': tasks,
+        'lessons': lessons,
+        'file_upload_form': FileUploadForm()
+    })
+
+@api_view(['POST'])
+def upload_task_view(request):
+    data = {
+        'task': request.data.get('task_id'),
+        'student': request.user.id,
+        'file': request.FILES.get('file')
+    }
+    serializer = TaskSubmissionSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'success': True}, status=status.HTTP_200_OK)
+    return Response({'success': False, 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+@login_required
+def download_task_file(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+    if not task.file:
+        return JsonResponse({'error': 'File not found'}, status=404)
+
+    response = FileResponse(task.file.open(), as_attachment=True, filename=task.file.name)
+    return response
+
+@login_required
+def download_submission_file(request, submission_id):
+    submission = get_object_or_404(TaskSubmission, id=submission_id)
+    if not submission.file:
+        return JsonResponse({'error': 'File not found'}, status=404)
+
+    response = FileResponse(submission.file.open(), as_attachment=True, filename=submission.file.name)
+    return response

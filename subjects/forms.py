@@ -122,3 +122,8 @@ class GradeForm(forms.Form):
                     date_assigned=date_assigned
                 ))
         Grade.objects.bulk_create(grades)
+
+
+class FileUploadForm(forms.Form):
+    task_id = forms.IntegerField(widget=forms.HiddenInput())
+    file = forms.FileField(label="Upload your work")

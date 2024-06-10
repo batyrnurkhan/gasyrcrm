@@ -18,6 +18,15 @@ class Task(models.Model):
     def __str__(self):
         return self.name
 
+class TaskSubmission(models.Model):
+    task = models.ForeignKey(Task, related_name='submissions', on_delete=models.CASCADE)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='submission_files/')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.student.full_name} - {self.task.name}"
+
 # Create your models here.
 class Subject(models.Model):
     name = models.CharField(max_length=255)

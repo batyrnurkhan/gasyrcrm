@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2, Task
+from .models import CustomUser, Subject, GroupTemplate, Lesson_crm2, Task, TaskSubmission
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -34,3 +34,13 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ['id', 'name', 'deadline', 'file', 'chat_room']
+
+
+class FileUploadSerializer(serializers.Serializer):
+    task_id = serializers.IntegerField()
+    file = serializers.FileField()
+
+class TaskSubmissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TaskSubmission
+        fields = ['task', 'student', 'file']

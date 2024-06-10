@@ -1,0 +1,111 @@
+{% extends 'subjects/base.html' %}
+
+{% load static %}
+{% load l10n %}
+
+{% block flex-content %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        {% include "subjects/components/crm2-student-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
+ <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+        <div class="task__inner flex gap-[10px]">
+            <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] max-w-[360px] rounded-md pb-[50px]">
+                <h1 class="tasks__list-title py-[32px] pl-[32px] font-semibold text-[20px] leading-[24px] text-black-main">
+                    Задания
+                </h1>
+                {% for lesson in lessons %}
+                    {% for task in tasks %}
+                        {% if task.chat_room == lesson.chat_room %}
+                            <div class="task__list-item border-t-[1px] border-t-[#E5E5E5] bg-[#FAFAFA] flex p-[20px] items-center task-link" data-task-id="{{ task.id }}" data-task-name="{{ task.name }}" data-task-deadline="{{ task.deadline }}" data-task-file-url="{% url 'subjects:download_task_file' task.id %}">
+                                <div class="task__author-photo">
+                                    {% if lesson.teacher.profile_picture %}
+                                        <img src="{{ lesson.teacher.profile_picture.url }}" class="w-[56px] h-[56px] rounded-full" alt="Teacher Photo">
+                                    {% else %}
+                                        <img src="{% static 'path/to/default/teacher/image.png' %}" class="w-[56px] h-[56px] rounded-full" alt="Default Teacher Photo">
+                                    {% endif %}
+                                </div>
+                                <div class="task__author-content ml-[12px]">
+                                    <h1 class="task__teacher-title font-semibold text-[16px] leading-[22px] text-black-main max-w-[200px]">
+                                        Учитель {{ lesson.teacher.full_name }}
+                                    </h1>
+                                    <h3 class="task__teacher-status font-semibold text-[16px] leading-[22px] text-black-main mb-[5px]">
+                                        добавил задание
+                                    </h3>
+                                    <p class="task__course text-[16px] leading-[22px] text-black-main font-regular">
+                                        {{ lesson.subject.name }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            <div class="about__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-[670px] pt-[32px] pl-[42px] pr-[42px]" id="task-detail" style="display: none;">
+                <p class="about__task-time font-regular text-[14px] leading-[20px] text-black-main mb-[6px]" id="task-deadline"></p>
+                <h1 class="about__task-title font-bold text-[24px] leading-[33px] text-black-main max-w-[520px] mb-[20px]" id="task-title"></h1>
+                <div class="download__task mb-[20px]">
+                    <h3 class="download__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[6px]">Задание</h3>
+                    <a id="download-task-file" class="flex py-[19px] px-[17px] gap-[17px] border-[1px] border-[#E5E5E5] rounded-md" target="_blank">
+                        <img src="{% static 'path/to/documentIconFrom.png' %}" alt="" />
+                        <span class="font-regular text-[14px] leading-[16px] text-black-main">Скачать задание</span>
+                    </a>
+                </div>
+                <div class="send__task">
+                    <h3 class="send__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[12px]">Моя работа</h3>
+                    <form id="upload-form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="task_id" id="task-id">
+                        <label class="flex gap-[14px] items-center" for="file-upload">
+                            <img src="{% static 'path/to/downloadIconFrom.png' %}" class="max-w-[20px] max-h-[18px]" alt="">
+                            <span class="font-medium text-[14px] leading-[16px] text-accent-red">Загрузить работу</span>
+                        </label>
+                        <input type="file" id="file-upload" name="file" style="display: none;">
+                        <button type="submit" class="done__task mt-[110px] py-[15px] px-[26px] rounded-sm bg-accent-red text-white text-[16px] leading-[22px] font-semibold">Сдать мою работу</button>
+                    </form>
+                </div>
+                <div id="upload-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.task-link').click(function(e){
+                e.preventDefault();
+                var taskId = $(this).data('task-id');
+                var taskName = $(this).data('task-name');
+                var taskDeadline = $(this).data('task-deadline');
+                var taskFileUrl = $(this).data('task-file-url');
+
+                $('#task-id').val(taskId);
+                $('#task-title').text(taskName);
+                $('#task-deadline').text('Deadline: ' + taskDeadline);
+                $('#download-task-file').attr('href', taskFileUrl);
+                $('#task-detail').show();
+            });
+
+            $('#upload-form').submit(function(e){
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "{% url 'subjects:upload_task_view' %}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        if(response.success){
+                            $('#upload-message').text('File uploaded successfully!');
+                        } else {
+                            $('#upload-message').text('Error uploading file: ' + JSON.stringify(response.errors));
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    </main>
+{% endblock %}
