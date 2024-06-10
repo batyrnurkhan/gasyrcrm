@@ -399,7 +399,6 @@ def set_grade(request, lesson_id):
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'])
             messages.success(request, "Grades successfully saved.")
-            return redirect('some_view_name')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
