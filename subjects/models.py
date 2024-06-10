@@ -76,6 +76,7 @@ class Grade(models.Model):
     lesson = models.ForeignKey(Lesson_crm2, on_delete=models.CASCADE)
     date_assigned = models.DateField()
     grade = models.CharField(max_length=10)
+    max_grade = models.IntegerField()
 
     def __str__(self):
         return f"{self.grade} for {self.student.full_name} on {self.date_assigned}"

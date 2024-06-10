@@ -330,6 +330,7 @@ class LessonDetailView(DetailView):
 from django.utils.timezone import localtime, localdate
 
 
+
 def create_task(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
     if request.method == 'POST':
@@ -340,8 +341,13 @@ def create_task(request, room_id):
             task.created_by = request.user
             task.save()
 
+            # Extract date and time from deadline
+            deadline_datetime = localtime(task.deadline)
+            deadline_date = deadline_datetime.strftime('%Y-%m-%d')
+            deadline_time = deadline_datetime.strftime('%H:%M')
+
             # After saving the task, also create a message in the chat
-            message_content = f"Задание от учителя: {task.name} - {localtime(task.deadline).strftime('%Y-%m-%d %H:%M')}"
+            message_content = f"Задание от учителя: {task.name} - {deadline_date} {deadline_time}"
             if task.file:
                 message_content += f" <a href='{task.file.url}'>Download</a>"
 
@@ -379,22 +385,28 @@ def search_students(request):
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
-    students = lesson.group_template.students.all()  # Fetch full student objects
+    students = lesson.group_template.students.all()
 
     if request.user != lesson.teacher and not request.user.is_superuser:
         return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
 
     if request.method == 'POST':
-        form = GradeForm(request.POST, students=students)  # Pass student objects to the form
+        form = GradeForm(request.POST, students=students)
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'])
+            messages.success(request, "Grades successfully saved.")
+            return redirect('some_view_name')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
     else:
-        form = GradeForm(students=students)  # Initialize form with student objects for GET request
+        form = GradeForm(students=students)
 
     return render(request, 'subjects/set_grade.html', {
         'form': form,
         'lesson': lesson,
-        'students': students  # You might want to show detailed student info in the template
+        'students': students
     })
 
 @login_required

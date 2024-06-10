@@ -98,14 +98,27 @@ class GradeForm(forms.Form):
                 self.fields[field_name] = forms.IntegerField(label=f'Grade for {student.full_name}', required=False)
                 self.student_fields.append((student, self[field_name]))
 
+    def clean(self):
+        cleaned_data = super().clean()
+        max_grade = cleaned_data.get('max_grade')
+        if max_grade is not None:
+            for student, field in self.student_fields:
+                grade = cleaned_data.get(field.name)
+                if grade is not None and grade > max_grade:
+                    self.add_error(field.name, ValidationError("Incorrect grade", code='invalid_grade'))
+
+        return cleaned_data
+
     def save_grades(self, lesson, date_assigned):
         grades = []
+        max_grade = self.cleaned_data['max_grade']
         for student, field in self.student_fields:
             if self.cleaned_data[field.name]:
                 grades.append(Grade(
                     student=student,
                     lesson=lesson,
                     grade=self.cleaned_data[field.name],
+                    max_grade=max_grade,
                     date_assigned=date_assigned
                 ))
         Grade.objects.bulk_create(grades)
