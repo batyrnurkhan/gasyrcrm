@@ -568,10 +568,12 @@ def student_tasks_view(request):
     # Get all lessons where the user is a student
     lessons = Lesson_crm2.objects.filter(group_template__students=user).select_related('teacher', 'subject', 'chat_room')
     tasks = Task.objects.filter(chat_room__in=[lesson.chat_room for lesson in lessons])
+    student_tasks = Task.objects.filter(submissions__student=user)
 
     return render(request, 'subjects/student_tasks.html', {
         'tasks': tasks,
         'lessons': lessons,
+        'student_tasks': student_tasks,
         'file_upload_form': FileUploadForm()
     })
 
@@ -655,6 +657,7 @@ def create_achievement(request):
     context = {
         'achievement_form': achievement_form,
         'students': students,
+        'page': 'achievements',
         'errors': errors if 'errors' in locals() else [],
     }
     return render(request, 'subjects/set_achievement.html', context)

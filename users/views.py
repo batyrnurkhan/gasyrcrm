@@ -56,7 +56,7 @@ class ShowCodeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         # Redirect teachers and superusers directly to the home page
         if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
-            return redirect('home')
+            return redirect('subjects:home')
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -85,7 +85,7 @@ class LoginView(View):
                 print(f"User authenticated: {user.phone_number}")
                 print(f"Session ID: {request.session.session_key}")
                 if user.has_access or user.role in ['Teacher', 'Superuser']:
-                    redirect_url = request.GET.get("next", "/home/")
+                    redirect_url = request.GET.get("next", "/subjects/home/")
                     return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users
                 else:
                     return redirect('users:show_code')  # Redirect to the page where users can see their access code
@@ -109,6 +109,7 @@ class GrantAccessView(View):
                 user = get_user_model().objects.get(login_code=login_code)
                 if 'grant_access' in request.POST:
                     user.has_access = True
+                    user.role = "Student"
                     user.save()
                 user_data = {
                     'full_name': user.full_name,
@@ -164,7 +165,7 @@ def change_password(request):
 class CheckAccessView(LoginRequiredMixin, View):
     def post(self, request):
         if request.user.has_access:
-            return JsonResponse({'has_access': True, 'url': reverse('home')})
+            return JsonResponse({'has_access': True, 'url': reverse('subjects:home')})
         else:
             return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
 
@@ -178,7 +179,7 @@ def log_out(request):
 def create_teacher(request):
     if not (request.user.is_superuser or request.user.role == 'Mentor'):
         messages.error(request, "Unauthorized access.")
-        return redirect('home')
+        return redirect('subjects:home')
 
     if request.method == 'POST':
         form = TeacherCreationForm(request.POST)

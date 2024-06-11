@@ -20,7 +20,7 @@
             <div class="block w-1/2 text-center p-3 bg-[#F3F3F3] rounded-lg font-semibold">
                 Пройдено: {{ completion_percentage|floatformat:'0' }}%
                 <div class="w-full bg-gray rounded-full h-4 dark:bg-gray-700">
-                    <div class="bg-math h-4 rounded-full" style="width: {{ completion_percentage }}%"></div>
+                    <div class="bg-math h-4 rounded-full" style="width: {{ completion_percentage|floatformat:'0' }}%"></div>
                 </div>
             </div>
         </div>
