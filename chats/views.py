@@ -22,6 +22,7 @@ def chat_room_detail(request, room_id):
     else:
         template_name = 'chats/chat_room_detail_subjects.html'
 
+    # Checking lesson and permissions logic
     try:
         lesson = Lesson_crm2.objects.get(chat_room=room)
         group_template_users = lesson.group_template.students.all()
@@ -34,6 +35,7 @@ def chat_room_detail(request, room_id):
         group_template_users = []
         teacher = None
 
+    # Handling messages
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
