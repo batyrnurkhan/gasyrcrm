@@ -14,6 +14,7 @@ module.exports = {
         "./schedule/**/*.{html,js}",
         "./chats/**/*.{html,js}",
         "./appointments/**/*.{html,js}",
+        "./news/**/*.{html,js}",
     ],
     theme: {
         extend: {},

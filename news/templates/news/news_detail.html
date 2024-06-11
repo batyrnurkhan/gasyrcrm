@@ -1,0 +1,66 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ news.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/font.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{% static "core/css/output.css" %}" rel="stylesheet">
+</head>
+
+<body>
+    <header class="header max-w-[1040px] mx-[auto] pt-[40px]">
+        <a href="#" class="header__logo"><img src="{% static 'images/GasyrLogoBlack.png' %}" alt=""></a>
+        <div class="header__date mt-[15px] flex gap-[15px] items-center">
+            <img src="{% static 'images/calendarArticleIcon.svg' %}" alt="">
+            <p class="header__date-text font-medium text-accent-red text-[24px] leading-[28px]">{{ news.created_at|date:"d.m.Y" }}</p>
+        </div>
+    </header>
+    <section class="article__content max-w-[1040px] mx-[auto]">
+        <h1 class="article__title font-bold text-[64px] leading-[80px] text-black-main mb-[20px]">{{ news.title }}</h1>
+        {% if news.image %}
+            <img src="{{ news.image.url }}" alt="" class="article__photo rounded-[20px] w-full h-[auto]">
+        {% endif %}
+        <div class="article__texts pt-[60px] px-[88px]">
+            {{ news.content|safe }}
+
+            {% if news.quote %}
+            <div class="article__quotes flex gap-[20px] mt-[20px]">
+                <div class="w-6 rounded-[30px] h-[auto] bg-accent-red "></div>
+                <div class="article__quotes-content pt-[20px] pb-[32px]">
+                    <img src="{% static 'images/quotesIcon.svg' %}" alt="" class="mb-[20px] max-w-[30px] max-h-[15px]">
+                    <p class="article__qoutes-qoute font-bold text-black-main leading-[24px] text-[16px]">{{ news.quote }}</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if news.advertisement %}
+            <div class="article__add bg-accent-red pt-[78px] pl-[48px] pb-[34px] text-white rounded-[20px] mt-[20px]">
+                <p class="max-w-[400px] font-bold text-[36px] leading-[46px]">{{ news.advertisement }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+    <div class="article-other max-w-[1040px] mx-[auto] mt-[50px]">
+        <h3 class="article-other__title font-bold text-[42px] leading-[52px] text-black-main mb-[20px]">Другие статьи</h3>
+        <div class="article-other__inner grid gap-[20px] mt-[20px] grid-cols-3 mb-[80px]">
+            {% for article in other_articles %}
+            <div class="article-other__item max-w-[334px]">
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" alt="" class="mb-[10px]" />
+                {% endif %}
+                <h1 class="article-other__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">{{ article.title }}</h1>
+                <a href="{% url 'news_detail' article.id %}" class="article-other__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>
+

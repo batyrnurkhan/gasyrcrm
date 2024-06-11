@@ -32,6 +32,9 @@ urlpatterns = [
     path('chats/', include('chats.urls')),
     path('subjects/', include('subjects.urls')),
     path('schedule/', include('schedule.urls')),
+    path('news/', include('news.urls')),
+
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 
     path('', WelcomePageView.as_view(), name='welcome'),
     path('home/', HomePageView.as_view(), name='home'),
