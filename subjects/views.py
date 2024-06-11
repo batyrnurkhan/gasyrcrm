@@ -472,7 +472,7 @@ def create_volunteer_channel(request):
     if 'search' in request.GET and search_form.is_valid():
         search_query = request.GET.get('search', '')
         students = CustomUser.objects.filter(
-            Q(full_name__icontains=search_query) | Q(phone_number__icontains=search_query),
+            Q(full_name__icontains=search_query) | Q(phone_number__icontains(search_query)),
             role='Student'
         ).order_by('full_name')[:8]
 
@@ -481,6 +481,15 @@ def create_volunteer_channel(request):
         if form.is_valid():
             volunteer_channel = form.save(commit=False)
             volunteer_channel.created_by = request.user  # Set the mentor who created the channel
+
+            # Create the chat room
+            chat_room = ChatRoom.objects.create(title=volunteer_channel.name)
+            chat_room.participants.add(request.user)  # Add the creator to the chat room
+            for student_id in selected_students:
+                student = CustomUser.objects.get(id=student_id)
+                chat_room.participants.add(student)
+
+            volunteer_channel.chat_room = chat_room  # Associate the chat room with the channel
             volunteer_channel.save()
             volunteer_channel.users.set(selected_students)
             return redirect('subjects:volunteer_channel_list')

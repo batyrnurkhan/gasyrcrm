@@ -36,21 +36,31 @@
                     <button type="submit" id="submitButton" name="create_template" class="mt-[24px] font-semibold text-[16px] leading-[22px] px-[100px] py-[26px] rounded-sm bg-accent-red text-white hidden">Создать канал</button>
                 </form>
             </div>
-            <h2 class="text-[32px] text-red-500 font-semibold leading-[40px] mb-[18px]">Существующие каналы волонтеров</h2>
+                        <h2 class="text-[32px] text-red-500 font-semibold leading-[40px] mb-[18px]">Существующие каналы волонтеров</h2>
             <ul class="list-items grid grid-cols-2 gap-[22px]">
                 {% for channel in channels %}
                 <li class="list-item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md p-[20px] gap-[25px]" style="display: flex;">
-                    <img src="{{ channel.image.url }}" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
-                    <div class="list-item__content flex justify-center flex-col gap-[28px]">
-                        <div class="flex flex-col gap-[6px]">
-                            <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
-                            <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
+                    {% if channel.chat_room %}
+                        <a href="{% url 'chats:chat_room_detail' channel.chat_room.id %}" class="flex gap-[25px] w-full">
+                    {% else %}
+                        <div class="flex gap-[25px] w-full">
+                    {% endif %}
+                            <img src="{{ channel.image.url }}" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
+                            <div class="list-item__content flex justify-center flex-col gap-[28px]">
+                                <div class="flex flex-col gap-[6px]">
+                                    <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
+                                    <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
+                                </div>
+                                <div class="list-item__author flex gap-[12px] items-center">
+                                    <img src="{{ channel.created_by.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                                    <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
+                                </div>
+                            </div>
+                    {% if channel.chat_room %}
+                        </a>
+                    {% else %}
                         </div>
-                        <div class="list-item__author flex gap-[12px] items-center">
-                            <img src="{{ channel.created_by.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                            <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
-                        </div>
-                    </div>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
@@ -145,3 +155,4 @@
     search();
     </script>
 {% endblock %}
+
