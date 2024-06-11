@@ -47,7 +47,7 @@
                             <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
                         </div>
                         <div class="list-item__author flex gap-[12px] items-center">
-                            <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                            <img src="{{ channel.created_by.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
                             <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
                         </div>
                     </div>

@@ -65,6 +65,7 @@ class VolunteerChannel(models.Model):
     image = models.ImageField(upload_to='volunteer_channel_images/', null=True, blank=True)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, limit_choices_to={'role': 'Mentor'})
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.SET_NULL, null=True, blank=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_channels')
 
     def __str__(self):
         return self.name

@@ -493,6 +493,7 @@ def create_volunteer_channel(request):
         'search_form': search_form,
         'channels': VolunteerChannel.objects.all()
     })
+
 #subjects/volunteer_channel_form.html
 def search_users(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
