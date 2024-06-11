@@ -480,6 +480,7 @@ def create_volunteer_channel(request):
         selected_students = request.POST.getlist('selected_students')
         if form.is_valid():
             volunteer_channel = form.save(commit=False)
+            volunteer_channel.created_by = request.user  # Set the mentor who created the channel
             volunteer_channel.save()
             volunteer_channel.users.set(selected_students)
             return redirect('subjects:volunteer_channel_list')
@@ -492,8 +493,7 @@ def create_volunteer_channel(request):
         'search_form': search_form,
         'channels': VolunteerChannel.objects.all()
     })
-
-
+#subjects/volunteer_channel_form.html
 def search_users(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         query = request.GET.get('term', '')

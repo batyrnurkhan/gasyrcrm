@@ -76,16 +76,6 @@ class VolunteerChannelForm(forms.ModelForm):
         model = VolunteerChannel
         fields = ['name', 'description']
 
-    selected_students = forms.ModelMultipleChoiceField(
-        queryset=CustomUser.objects.filter(role='Student'),
-        required=False,
-        widget=forms.HiddenInput()
-    )
-
-    def clean_selected_students(self):
-        user_ids = self.cleaned_data.get('selected_students')
-        return CustomUser.objects.filter(id__in=user_ids)
-
 
 class GradeForm(forms.Form):
     max_grade = forms.IntegerField(label="Maximum Grade")

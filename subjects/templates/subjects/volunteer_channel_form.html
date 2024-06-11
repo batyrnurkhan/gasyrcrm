@@ -1,53 +1,14 @@
+{% extends 'subjects/base.html' %}
+
 {% load static %}
+{% load l10n %}
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mentor's Canals</title>
-    <link rel="stylesheet" href="../../../font.css" />
-    <link rel="stylesheet" href="../../../style.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="../../../tailwindCDNmodule.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-</head>
-
-<body class="bg-[#fafafa] flex">
-    <div class="bg-white w-[285px] py-[42px] pl-[15px] pr-[10px] h-full shadow-[0px_4px_14px_0px_#0000000A]" style="height: auto">
-        <a href="#" class="pl-[30px] text-red-500 text-lg font-bold mb-[55px] block"><img src="../../assets/GasyrLogoBlack.png" alt="" /></a>
-        <ul class="">
-            <!-- Navigation items -->
-        </ul>
-        <div class="mt-[40px]">
-            <button class="text-[#9D9E9E] text-5 font-semibold p-5 bg-[#F8F8F8] w-[260px] border-[1px] border-[#D3D3D3] rounded-md flex gap-[15px]">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- SVG content -->
-                </svg>
-                <span>Служба поддержки</span>
-            </button>
-        </div>
-    </div>
-    <main class="main flex-1 pb-[100px] font-[Qanelas]">
-        <header class="header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center" style="justify-content:right; border-left: 1px solid #c6c6c6">
-            <div class="header__author">
-                <div class="header__avatar border-l-[1px] border-[#C6C6C6] pl-[20px] pr-[75px] flex h-[90px] items-center">
-                    <img src="../assets/avatarAuthor.png" alt="" class="avatar-photo w-[60px] h-[60px] mr-[13px]" />
-                    <div class="avatar__info mr-[30px]">
-                        <div class="avatar__name text-black-main text-[20px] leading-[24px] font-bold">Акбота Ж.</div>
-                        <div class="avatar__role leading-[20px] text-black-main font-medium text-[16px]">Ментор</div>
-                    </div>
-                    <button class="avatar__more">
-                        <img src="../../assets/moreAboutAvatar.png" alt="" class="avatar__more-icon w-[24px] h-[24px]" />
-                    </button>
-                </div>
-            </div>
-        </header>
+{% block flex-content %}
+    {% include "subjects/components/crm2-mentor-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid gap-[24px]">
-            <h1 class="text-[42px] text-red-500 font-semibold leading-[52px]">Каналы</h1>
+            <h1 class="text-[42px] text-black-main font-semibold leading-[52px]">Каналы</h1>
             <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[36px] px-[36px] pb-[41px]">
                 <h3 class="text-red-500 font-semibold text-[32px] leading-[40px] mb-[18px]">Создать канал для менторских дел</h3>
                 <form method="post" enctype="multipart/form-data">
@@ -62,10 +23,10 @@
                         {{ form.description }}
                     </div>
                     <div class="relative">
-                        <div class="absolute  right-[20px] top-[25px]">
+                        <div class="absolute right-[20px] top-[25px]">
                             <img src="{% static 'core/icons/searck-gray.svg' %}" alt="" class="max-w-[24px] max-h-[24px]">
                         </div>
-                        <input type="text" placeholder="Введите имя ученика" id="search-input" class="w-full h-[72px] flex items-center pl-[16px] pr-[50px] border-[#CDCDCD] border-[1px] rounded-md focus:outline-none text-black-main text-[16px] font-regular leading-[22px]">
+                        <input type="text" placeholder="Введите имя ученика" id="search-input" name="search" class="w-full h-[72px] flex items-center pl-[16px] pr-[50px] border-[#CDCDCD] border-[1px] rounded-md focus:outline-none text-black-main text-[16px] font-regular leading-[22px]">
                         <div id="suggestions" class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden"></div>
                     </div>
                     <div class="p-[30px] bg-[#FAFAFA] mt-[12px] hidden">
@@ -79,15 +40,15 @@
             <ul class="list-items grid grid-cols-2 gap-[22px]">
                 {% for channel in channels %}
                 <li class="list-item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md p-[20px] gap-[25px]" style="display: flex;">
-                    <img src="./assets/canals1.png" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
+                    <img src="{{ channel.image.url }}" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
                     <div class="list-item__content flex justify-center flex-col gap-[28px]">
                         <div class="flex flex-col gap-[6px]">
                             <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
                             <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
                         </div>
                         <div class="list-item__author flex gap-[12px] items-center">
-                            <img src="./assets/authorCanal.png" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                            <p class="text-red-500 font-semibold text-[16px] leading-[20px]">Акбота Жоламан</p>
+                            <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                            <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
                         </div>
                     </div>
                 </li>
@@ -183,6 +144,4 @@
 
     search();
     </script>
-</body>
-
-</html>
+{% endblock %}

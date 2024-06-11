@@ -72,12 +72,11 @@ class VolunteerChannel(models.Model):
     def save(self, *args, **kwargs):
         if not self.image:
             image_filenames = [
-                'кот 1.svg', 'кот 1-1.svg', 'кот 1-2.svg',
-                'кот 1-3.svg', 'кот 1-4.svg', 'кот 1-5.svg'
+                'cat1.svg', 'cat2.svg', 'cat3.svg',
+                'cat4.svg', 'cat5.svg', 'cat6.svg'
             ]
-            image_path = os.path.join(settings.CATS_VOLUNTEER_IMAGES, random.choice(image_filenames))
-            with open(image_path, 'rb') as f:
-                self.image.save(os.path.basename(image_path), File(f), save=False)
+            image_filename = random.choice(image_filenames)
+            self.image.name = os.path.join(settings.CATS_VOLUNTEER_IMAGES, image_filename)
         super(VolunteerChannel, self).save(*args, **kwargs)
 
 class Grade(models.Model):
