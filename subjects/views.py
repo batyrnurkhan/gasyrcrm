@@ -23,7 +23,7 @@ from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm, \
     FileUploadForm, AchievementForm, StudentAchievementForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade, TaskSubmission, \
-    StudentAchievement
+    StudentAchievement, Achievement
 from .serializers import FileUploadSerializer, TaskSubmissionSerializer
 
 
@@ -666,6 +666,14 @@ def create_achievement(request):
 
 @login_required
 def achievements_list(request):
+    total_achievements = Achievement.objects.count()
+    user_achievements = StudentAchievement.objects.filter(student=request.user).count()
+
+    if total_achievements > 0:
+        achievement_percentage = (user_achievements / total_achievements) * 100
+    else:
+        achievement_percentage = 0
+
     achievements = StudentAchievement.objects.select_related('achievement').filter(student=request.user)
 
     # Initialize counts
@@ -682,6 +690,7 @@ def achievements_list(request):
 
     context = {
         'achievements': achievements,
-        'counts': counts
+        'counts': counts,
+        'achievement_percentage': achievement_percentage
     }
     return render(request, 'subjects/achievements_list.html', context)

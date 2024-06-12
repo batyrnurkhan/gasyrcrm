@@ -70,6 +70,7 @@
             </div>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         const getChartOptions = (color1, color2, text, value) => {
             return {
@@ -138,7 +139,7 @@
 
         const chart = new ApexCharts(document.querySelector("#chart"), getChartOptions("#50B521", "#BA2025", 'Посещаемость', 75));
         chart.render();
-        const chart1 = new ApexCharts(document.querySelector("#chart1"), getChartOptions("#26BBEA", "#7A48E4", 'Ачивки пройдены', 25));
+        const chart1 = new ApexCharts(document.querySelector("#chart1"), getChartOptions("#26BBEA", "#7A48E4", 'Ачивки пройдены', {{ achievement_percentage|default:0 }}));
         chart1.render();
     </script>
 {% endblock %}
