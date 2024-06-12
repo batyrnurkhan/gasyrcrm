@@ -14,7 +14,7 @@
                     <div class="w-1/4 text-center">
                         <img class="mx-auto mb-5 w-[210px] h-[210px] object-cover rounded-full"
                              src="{% if user.profile_picture %}
-                                /{{ user.profile_picture }}
+                                /media/{{ user.profile_picture }}
                                 {% else %}
                                 {% static "core/images/default-user.svg" %}
                             {% endif %}"
