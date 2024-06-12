@@ -3,7 +3,7 @@ from .views import SubjectListView, group_template_list, LessonCreateView, Lesso
     create_volunteer_channel, set_grade, LessonListView, grades_by_day_view, home_view, \
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
     mini_schedule_view, update_google_meet_link, student_tasks_view, upload_task_view, download_task_file, \
-    download_submission_file, download_grade_file, create_achievement
+    download_submission_file, download_grade_file, create_achievement, achievements_list
 
 app_name = 'subjects'
 
@@ -22,6 +22,7 @@ urlpatterns = [
     path('lessons-create/<int:time_id>/', LessonCreateView.as_view(), name='lesson-create'),
 
     path('set-achievement/', create_achievement, name='set_achievement'),
+    path('achievements/', achievements_list, name='achievements_list'),
 
     path('lessons/<int:pk>/', LessonDetailView.as_view(), name='lesson-detail'),
 

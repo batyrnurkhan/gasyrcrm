@@ -663,3 +663,25 @@ def create_achievement(request):
     return render(request, 'subjects/set_achievement.html', context)
 
 #subjects:set_achievement
+
+@login_required
+def achievements_list(request):
+    achievements = StudentAchievement.objects.select_related('achievement').filter(student=request.user)
+
+    # Initialize counts
+    counts = {'diamond': 0, 'gold': 0, 'iron': 0}
+
+    # Count achievements based on difficulty
+    for achievement in achievements:
+        if achievement.achievement.difficulty == 5:
+            counts['diamond'] += 1
+        elif 3 <= achievement.achievement.difficulty <= 4:
+            counts['gold'] += 1
+        elif 1 <= achievement.achievement.difficulty <= 2:
+            counts['iron'] += 1
+
+    context = {
+        'achievements': achievements,
+        'counts': counts
+    }
+    return render(request, 'subjects/achievements_list.html', context)
