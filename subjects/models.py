@@ -76,9 +76,24 @@ class VolunteerChannel(models.Model):
                 'cat1.svg', 'cat2.svg', 'cat3.svg',
                 'cat4.svg', 'cat5.svg', 'cat6.svg'
             ]
+            # Select a random filename
             image_filename = random.choice(image_filenames)
-            self.image.name = os.path.join(settings.CATS_VOLUNTEER_IMAGES, image_filename)
+            image_path = os.path.join(settings.CATS_VOLUNTEER_IMAGES, image_filename)
+
+            # Open the file and save it correctly under the MEDIA_ROOT
+            with open(image_path, 'rb') as f:
+                self.image.save(image_filename, File(f), save=False)
+        print("Saving image with path:", self.image.path)
         super(VolunteerChannel, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.chat_room:
+            print(f"Deleting ChatRoom with ID: {self.chat_room.id}")
+            self.chat_room.delete()
+        else:
+            print("No ChatRoom to delete.")
+        super(VolunteerChannel, self).delete(*args, **kwargs)
+
 
 class Grade(models.Model):
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'Student'})
