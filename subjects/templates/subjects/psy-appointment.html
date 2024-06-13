@@ -1,5 +1,4 @@
 {% extends 'subjects/base.html' %}
-
 {% load static %}
 {% load l10n %}
 
@@ -55,12 +54,9 @@
             </div>
         </div>
     </main>
-{% endblock %}
-
-{% block extra-js %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        window.selectDate = function(year, month, day, fullDate) {
+        window.selectDate = function (year, month, day, fullDate) {
             fetch(`/appointments/api/appointments/${year}/${month}/${day}/`)
                 .then(response => response.json())
                 .then(data => {
@@ -92,9 +88,9 @@
                     }
                     document.getElementById('appointmentDate').value = fullDate;
                 });
-        }
+        };
 
-        window.bookAppointment = function() {
+        window.bookAppointment = function () {
             const selectedAppointment = document.querySelector('input[name="appointment"]:checked');
             if (!selectedAppointment) {
                 alert('Please select an appointment time.');
@@ -123,7 +119,7 @@
                 console.error('Error in network request:', error);
                 alert('A network error occurred. Please try again.');
             });
-        }
+        };
     });
 </script>
 {% endblock %}
