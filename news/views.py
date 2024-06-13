@@ -5,7 +5,8 @@ from .models import News
 def news_list(request):
     news_articles = News.objects.all().order_by('-created_at')
     context = {
-        'news_articles': news_articles
+        'news_articles': news_articles,
+        'page': 'news'
     }
     return render(request, 'news/news_list.html', context)
 

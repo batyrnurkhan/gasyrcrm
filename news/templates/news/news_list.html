@@ -5,61 +5,48 @@
 
 {% block flex-content %}
     {% include "subjects/components/crm2-student-sidebar.html" %}
-<main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-      <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-        <div
-          class="news__title font-bold text-[42px] leading-[52px] text-black-main mb-[24px]"
-        >
-          Новости
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="news__title font-bold text-[42px] leading-[52px] text-black-main mb-[24px]">
+                Новости
+            </div>
+            {% if news_articles %}
+                <div class="news__main flex items-end h-[420px]" style="
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        background-size: cover;
+                        background-image: url('{{ news_articles.first.image.url }}');
+                        ">
+                    <div class="p-[42px] items-end flex justify-between h-[210px] w-full bg-gradient-to-t from-black bg-opacity-50 z-10 rounded-[20px]">
+                        <h1 class="news__main max-w-[380px] text-white text-[32px] leading-[44px] font-bold">
+                            {{ news_articles.first.title }}
+                        </h1>
+                        <a href="{% url 'news_detail' news_articles.first.id %}"
+                           class="py-[12px] px-[74px] border-[1px] border-white rounded-sm text-white hover:bg-white hover:text-black">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+                <div class="news__inner grid gap-[20px] mt-[20px] grid-cols-3 mb-[80px]">
+                    {% for news in news_articles|slice:"1:" %}
+                        <div class="news__item max-w-[334px]">
+                            <img src="{{ news.image.url }}" alt="" class="mb-[10px]"/>
+                            <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
+                                {{ news.title }}
+                            </h1>
+                            <a href="{% url 'news_detail' news.id %}"
+                               class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No news articles found.</p>
+            {% endif %}
+            <div class="news__pagination text-center">
+                <!-- Add pagination controls here -->
+            </div>
         </div>
-        {% if news_articles %}
-        <div
-          class="news__main p-[42px] flex justify-between h-[420px] w-full rounded-[20px] items-end"
-          style="
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-image: url('{{ news_articles.first.image.url }}');
-          "
-        >
-          <h1
-            class="news__main max-w-[380px] text-white text-[32px] leading-[44px] font-bold"
-          >
-            {{ news_articles.first.title }}
-          </h1>
-          <a href="{% url 'news_detail' news_articles.first.id %}"
-            class="py-[12px] px-[74px] border-[1px] border-white rounded-sm text-white hover:bg-white hover:text-black"
-          >
-            Подробнее
-          </a>
-        </div>
-        <div
-          class="news__inner grid gap-[20px] mt-[20px] grid-cols-3 mb-[80px]"
-        >
-          {% for news in news_articles|slice:"1:" %}
-          <div class="news__item max-w-[334px]">
-            <img src="{{ news.image.url }}" alt="" class="mb-[10px]" />
-            <h1
-              class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main"
-            >
-              {{ news.title }}
-            </h1>
-            <a
-              href="{% url 'news_detail' news.id %}"
-              class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline"
-              >Подробнее</a
-            >
-          </div>
-          {% endfor %}
-        </div>
-        {% else %}
-        <p>No news articles found.</p>
-        {% endif %}
-        <div class="news__pagination text-center">
-          <!-- Add pagination controls here -->
-        </div>
-      </div>
     </main>
 
 {% endblock %}

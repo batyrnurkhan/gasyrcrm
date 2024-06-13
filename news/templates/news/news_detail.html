@@ -15,20 +15,19 @@
 
 <body>
     <header class="header max-w-[1040px] mx-[auto] pt-[40px]">
-        <a href="#" class="header__logo"><img src="{% static 'images/GasyrLogoBlack.png' %}" alt=""></a>
+        <a href="{% url 'subjects:home' %}" class="header__logo"><img src="{% static 'core/images/logo.svg' %}" alt=""></a>
         <div class="header__date mt-[15px] flex gap-[15px] items-center">
-            <img src="{% static 'images/calendarArticleIcon.svg' %}" alt="">
+            <img src="{% static 'core/icons/calendar-accent-red.svg' %}" alt="">
             <p class="header__date-text font-medium text-accent-red text-[24px] leading-[28px]">{{ news.created_at|date:"d.m.Y" }}</p>
         </div>
     </header>
     <section class="article__content max-w-[1040px] mx-[auto]">
         <h1 class="article__title font-bold text-[64px] leading-[80px] text-black-main mb-[20px]">{{ news.title }}</h1>
         {% if news.image %}
-            <img src="{{ news.image.url }}" alt="" class="article__photo rounded-[20px] w-full h-[auto]">
+            <img src="{{ news.image.url }}" alt="" class="article__photo rounded-[20px] w-full h-[auto] max-h-[500px] object-contain">
         {% endif %}
-        <div class="article__texts pt-[60px] px-[88px]">
+        <div class="article__texts text-black-main pt-[60px] px-[88px]">
             {{ news.content|safe }}
-
             {% if news.quote %}
             <div class="article__quotes flex gap-[20px] mt-[20px]">
                 <div class="w-6 rounded-[30px] h-[auto] bg-accent-red "></div>

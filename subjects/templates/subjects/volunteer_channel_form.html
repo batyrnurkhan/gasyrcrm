@@ -10,149 +10,157 @@
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid gap-[24px]">
             <h1 class="text-[42px] text-black-main font-semibold leading-[52px]">Каналы</h1>
             <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[36px] px-[36px] pb-[41px]">
-                <h3 class="text-red-500 font-semibold text-[32px] leading-[40px] mb-[18px]">Создать канал для менторских дел</h3>
+                <h3 class="text-red-500 font-semibold text-[32px] leading-[40px] mb-[18px]">
+                    Создать канал для менторских дел
+                </h3>
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
                     <div class="mb-[8px] flex gap-[8px]">
-                        {{ form.name.errors }}
-                        <label class="text-red-500" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                        {{ form.name }}
-                        {{ form.description.errors }}
-                        <label class="text-red-500" for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-                        {{ form.description }}
+                        <input type="text" value="{{ form.name.value|default_if_none:'' }}" name="name" id=""
+                               placeholder="Название канала"
+                               class="outline-none border-[1px] border-[#CDCDCD] rounded-[5px] h-[72px] flex items-center px-[16px] w-[320px] text-[16px] font-regular leading-[22px] text-black-main">
+                        <input type="text" value="{{ form.description.value|default_if_none:'' }}" name="description"
+                               id="" placeholder="Название группы учеников"
+                               class="outline-none border-[1px] border-[#CDCDCD] rounded-[5px] h-[72px] flex items-center px-[16px] w-[320px] text-[16px] font-regular leading-[22px] text-black-main">
                     </div>
-                    <div class="relative">
-                        <div class="absolute right-[20px] top-[25px]">
-                            <img src="{% static 'core/icons/searck-gray.svg' %}" alt="" class="max-w-[24px] max-h-[24px]">
+                    <div class="border-[1px] border-[#CDCDCD] p-[24px] rounded-sm mb-[12px]">
+                        <h5 class="text-black-main text-[16px] leading-[22px] font-medium mb-[16px]">
+                            Добавьте учеников
+                        </h5>
+                        <div class="hidden">
+                            <ul id="students" class="mb-[16px] gap-[8px] flex flex-wrap"></ul>
                         </div>
-                        <input type="text" placeholder="Введите имя ученика" id="search-input" name="search" class="w-full h-[72px] flex items-center pl-[16px] pr-[50px] border-[#CDCDCD] border-[1px] rounded-md focus:outline-none text-black-main text-[16px] font-regular leading-[22px]">
-                        <div id="suggestions" class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden"></div>
+                        <div class="relative">
+                            <img src="{% static 'core/icons/searck-gray.svg' %}"
+                                 class="absolute max-w-[24px] max-h-[24px] left-[15px] top-[17px]" alt="">
+                            <input type="text" id="search-input"
+                                   class="w-full border-[#CDCDCD] outline-none border-[1px] h-[56px] flex items-center rounded-sm pl-[52px] pr-[20px] font-medium text-[16px] leading-[22px] text-black-main"
+                                   placeholder="Введите имя ученика">
+                            <div id="suggestions"
+                                 class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden"></div>
+                        </div>
                     </div>
-                    <div class="p-[30px] bg-[#FAFAFA] mt-[12px] hidden">
-                        <ul id="students" class="gap-[16px] max-h-[425px] overflow-y-auto px-[15px]"></ul>
-                    </div>
-                    <input type="hidden" id="id_users" name="selected_students" value="">
-                    <button type="submit" id="submitButton" name="create_template" class="mt-[24px] font-semibold text-[16px] leading-[22px] px-[100px] py-[26px] rounded-sm bg-accent-red text-white hidden">Создать канал</button>
+                    <button type="submit" id="submitButton" name="create_template"
+                            class="mt-[24px] font-semibold text-[16px] leading-[22px] px-[100px] py-[26px] rounded-sm bg-accent-red text-white hidden">
+                        Создать канал
+                    </button>
                 </form>
             </div>
-                        <h2 class="text-[32px] text-red-500 font-semibold leading-[40px] mb-[18px]">Существующие каналы волонтеров</h2>
             <ul class="list-items grid grid-cols-2 gap-[22px]">
                 {% for channel in channels %}
-                <li class="list-item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md p-[20px] gap-[25px]" style="display: flex;">
-                    {% if channel.chat_room %}
-                        <a href="{% url 'chats:chat_room_detail' channel.chat_room.id %}" class="flex gap-[25px] w-full">
-                    {% else %}
-                        <div class="flex gap-[25px] w-full">
-                    {% endif %}
-                            <img src="{{ channel.image.url }}" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
-                            <div class="list-item__content flex justify-center flex-col gap-[28px]">
-                                <div class="flex flex-col gap-[6px]">
-                                    <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
-                                    <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
-                                </div>
-                                <div class="list-item__author flex gap-[12px] items-center">
-                                    <img src="{{ channel.created_by.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="">
-                                    <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
-                                </div>
+                    <li class="list-item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md p-[20px] gap-[25px]"
+                        style="display: flex;">
+                        {% if channel.chat_room %}
+                            <a href="{% url 'chats:chat_room_detail' channel.chat_room.id %}"
+                               class="flex gap-[25px] w-full">
+                        {% else %}
+                            <div class="flex gap-[25px] w-full">
+                        {% endif %}
+                        <img src="{{ channel.image.url }}" alt="" class="max-w-[160px] max-h-[160px] rounded-sm">
+                        <div class="list-item__content flex justify-center flex-col gap-[28px]">
+                            <div class="flex flex-col gap-[6px]">
+                                <p class="text-red-500 font-semibold text-[24px] leading-[30px]">{{ channel.name }}</p>
+                                <p class="text-red-500 font-medium text-[16px] leading-[20px]">{{ channel.description }}</p>
                             </div>
-                    {% if channel.chat_room %}
-                        </a>
-                    {% else %}
+                            <div class="list-item__author flex gap-[12px] items-center">
+                                {% if channel.created_by.profile_picture %}
+                                    <img src="{{ channel.created_by.profile_picture.url }}"
+                                         class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                                {% else %}
+                                    <img src="{% static 'core/images/default-user.svg' %}"
+                                         class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                                {% endif %}
+                                <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
+                            </div>
                         </div>
-                    {% endif %}
-                </li>
+                        {% if channel.chat_room %}
+                            </a>
+                        {% else %}
+                            </div>
+                        {% endif %}
+                    </li>
                 {% endfor %}
-            </ul>
+        </ul>
         </div>
     </main>
 
     <script>
-    function search() {
-        const searchInput = document.getElementById('search-input');
-        const suggestionsContainer = document.getElementById('suggestions');
-        const studentsContainer = document.getElementById('students');
-        const selectedUsersInput = document.getElementById('id_users');
+        function search() {
+            const searchInput = document.getElementById('search-input');
+            const suggestionsContainer = document.getElementById('suggestions');
+            const studentsContainer = document.getElementById('students');
+            const selectedUsersInput = document.getElementById('id_users');
 
-        const suggestions = [
-            {% for student in students %}
-                {
-                    id: {{ student.id }},
-                    name: '{{ student.full_name }}',
-                    city: '{{ student.user_city }}',
-                    phone: '{{ student.phone_number }}',
-                    photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
-                },
-            {% endfor %}
-        ];
+            const suggestions = [
+                {% for student in students %}
+                    {
+                        id: {{ student.id }},
+                        name: '{{ student.full_name }}',
+                        city: '{{ student.user_city }}',
+                        phone: '{{ student.phone_number }}',
+                        photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
+                    },
+                {% endfor %}
+            ];
 
-        searchInput.addEventListener('input', () => {
-            const input = searchInput.value.toLowerCase();
-            suggestionsContainer.innerHTML = '';
-
-            if (input) {
-                suggestionsContainer.classList.remove('hidden');
-                const filteredSuggestions = suggestions.filter(suggestion => suggestion.name.toLowerCase().includes(input));
-
-                filteredSuggestions.forEach(suggestion => {
-                    const suggestionItem = document.createElement('div');
-                    suggestionItem.classList = 'px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]';
-                    suggestionItem.innerHTML = `
-                        <img src="${suggestion.photo}" alt="User Image" class="w-[32px] h-[32px] rounded-full">
-                        <span class="text-[16px] leading-[25px] text-black-main font-semibold">${suggestion.name}</span>
-                    `;
-
-                    suggestionItem.addEventListener('click', () => {
-                        const finder = elem => elem.id === suggestion.id;
-                        suggestionsContainer.classList.add('hidden');
-                        studentsContainer.parentElement.classList.remove('hidden');
-                        document.getElementById('submitButton').classList.remove('hidden');
-                        searchInput.value = "";
-                        const index = suggestions.findIndex(finder);
-                        if (index > -1) {
-                            suggestions.splice(index, 1);
-                        }
-                        const listItem = document.createElement('li');
-                        listItem.classList = "flex justify-between w-full items-center";
-                        listItem.innerHTML = `
-                            <input type="hidden" value="${suggestion.id}" name="selected_students">
-                            <div class="gap-[16px] flex items-center w-[230px]">
-                                <img src="${suggestion.photo}" alt="" class="max-h-[32px] max-w-[32px] rounded-full">
-                                <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">${suggestion.name}</h5>
-                            </div>
-                            <div class="flex gap-[8px] items-center w-[200px]">
-                                <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt="" class="max-w-[16px] max-h-[16px]">
-                                <span class="font-semibold text-[16px] leading-[22px] text-black-main">${suggestion.phone}</span>
-                            </div>
-                            <div class="city flex gap-[8px] items-center w-[160px]">
-                                <img src="{% static 'core/icons/city-fill-accent-red.svg' %}" alt="" class="max-w-[16px] max-h-[16px]">
-                                <span class="font-semibold text-[16px] leading-[22px] text-black-main">${suggestion.city}</span>
-                            </div>
-                            <a href="#" class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать данные</a>
-                        `;
-                        studentsContainer.appendChild(listItem);
-
-                        // Add the selected student's ID to the hidden input field
-                        let currentValues = selectedUsersInput.value ? selectedUsersInput.value.split(',') : [];
-                        currentValues.push(suggestion.id.toString());
-                        selectedUsersInput.value = currentValues.join(',');
-                    });
-
-                    suggestionsContainer.appendChild(suggestionItem);
-                });
-            } else {
-                suggestionsContainer.classList.add('hidden');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+            searchInput.addEventListener('input', () => {
+                const input = searchInput.value.toLowerCase();
                 suggestionsContainer.innerHTML = '';
-            }
-        });
-    }
 
-    search();
+                if (input) {
+                    suggestionsContainer.classList.remove('hidden');
+                    const filteredSuggestions = suggestions.filter(suggestion => suggestion.name.toLowerCase().includes(input));
+
+                    filteredSuggestions.forEach(suggestion => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.classList = 'px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]';
+                        suggestionItem.innerHTML = `
+                            <span class="text-[16px] leading-[25px] text-black-main font-semibold">${suggestion.name}</span>
+                        `;
+
+                        suggestionItem.addEventListener('click', () => {
+                            const finder = elem => elem.id === suggestion.id;
+                            suggestionsContainer.classList.add('hidden');
+                            studentsContainer.parentElement.classList.remove('hidden');
+                            document.getElementById('submitButton').classList.remove('hidden');
+                            searchInput.value = "";
+                            const index = suggestions.findIndex(finder);
+                            if (index > -1) {
+                                suggestions.splice(index, 1);
+                            }
+                            const listItem = document.createElement('li');
+                            listItem.classList = "flex gap-[12px] py-[4px] px-[14px] rounded-lg items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red";
+                            listItem.innerHTML = `
+                                <input hidden value="${suggestion.id}" name="selected_students">
+                                <span>${suggestion.name}</span>
+                                <button class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
+                                    <img src="{% static 'core/icons/close-fill-white.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
+                                </button>
+                        `;
+                            studentsContainer.appendChild(listItem);
+
+                            // Add the selected student's ID to the hidden input field
+                            let currentValues = selectedUsersInput.value ? selectedUsersInput.value.split(',') : [];
+                            currentValues.push(suggestion.id.toString());
+                            selectedUsersInput.value = currentValues.join(',');
+                        });
+
+                        suggestionsContainer.appendChild(suggestionItem);
+                    });
+                } else {
+                    suggestionsContainer.classList.add('hidden');
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+        }
+
+        search();
     </script>
 {% endblock %}
 

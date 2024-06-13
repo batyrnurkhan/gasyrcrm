@@ -499,6 +499,7 @@ def create_volunteer_channel(request):
     return render(request, 'subjects/volunteer_channel_form.html', {
         'form': form,
         'students': students,
+        'page': 'channels',
         'search_form': search_form,
         'channels': VolunteerChannel.objects.all()
     })
@@ -572,6 +573,7 @@ def student_tasks_view(request):
 
     return render(request, 'subjects/student_tasks.html', {
         'tasks': tasks,
+        'page': 'tasks',
         'lessons': lessons,
         'student_tasks': student_tasks,
         'file_upload_form': FileUploadForm()

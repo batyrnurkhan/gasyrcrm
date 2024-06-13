@@ -58,6 +58,27 @@
         display:none;
     }
 
+    .article__texts p {
+        @apply font-normal text-[16px] leading-[24px]
+    }
+
+    .article__texts blockquote p {
+        @apply font-bold leading-[24px] text-[16px]
+    }
+
+    .article__texts blockquote {
+        @apply border-l-[6px] border-accent-red pl-[18px] pb-[24px] pt-[51px]
+    }
+
+    .article__texts blockquote::before {
+        content:url('/static/core/icons/quotes.svg'); /* with class ModalCarrot ??*/
+        position:relative; /*or absolute*/
+        top: -35px;
+        display: block;
+        width: 28px;
+        height: 10px;
+    }
+
     .without-spin::-webkit-outer-spin-button,
     .without-spin::-webkit-inner-spin-button {
         -webkit-appearance: none;

@@ -22,7 +22,7 @@
                         <label class="block font-semibold text-[16px] leading-[22px] text-black-main" for="id_name">
                             Название достижения
                         </label>
-                        <input type="text" id="id_name" name="name"
+                        <input type="text" id="id_name" name="name" required
                                class="border-[1px] rounded-lg border-[#CDCDCD] w-[555px] h-[75px] px-[16px] font-medium text-[16px] leading-[25px] text-black-main"
                                placeholder="Введите название достижения">
                         {{ achievement_form.name.errors }}
@@ -33,35 +33,35 @@
                         <div class="flex gap-2">
                             <div class="my-container max-h-[75px]">
                                 <div class="container__items border py-[25px] px-4 border-gray w-full rounded-lg rotate-180">
-                                    <input value="5"
+                                    <input value="5" required
                                            type="radio" name="difficulty" id="Very Hard">
                                     <label for="Very Hard">
                                         <div style="width: 32px" class="star-stroke">
                                             <div class="star-fill"></div>
                                         </div>
                                     </label>
-                                    <input value="4"
+                                    <input value="4" required
                                            type="radio" name="difficulty" id="Hard">
                                     <label for="Hard">
                                         <div style="width: 32px" class="star-stroke">
                                             <div class="star-fill"></div>
                                         </div>
                                     </label>
-                                    <input value="3"
+                                    <input value="3" required
                                            type="radio" name="difficulty" id="Medium">
                                     <label for="Medium">
                                         <div style="width: 32px" class="star-stroke">
                                             <div class="star-fill"></div>
                                         </div>
                                     </label>
-                                    <input value="2"
+                                    <input value="2" required
                                            type="radio" name="difficulty" id="Easy">
                                     <label for="Easy">
                                         <div style="width: 32px" class="star-stroke">
                                             <div class="star-fill"></div>
                                         </div>
                                     </label>
-                                    <input value="1"
+                                    <input value="1" required
                                            type="radio" name="difficulty" id="Very Easy">
                                     <label for="Very Easy">
                                         <div style="width: 32px" class="star-stroke">
@@ -72,7 +72,6 @@
                             </div>
                         </div>
                     </div>
-                    {{ achievement_form.difficulty.errors }}
                 </div>
                 <div class="relative">
                     <div class="absolute  right-[20px] top-[25px]">
