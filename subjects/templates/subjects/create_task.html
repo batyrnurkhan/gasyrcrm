@@ -7,47 +7,49 @@
         {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] gap-[20px] grid relative">
             <div class="shadow-[0px_4px_20px_0px_#00000014] border-white rounded-md p-[42px] pt-[48px] bg-white">
-                <div class="flex justify-between items-center mb-[20px]">
-                    <h4 class="text-black-main font-semibold text-[32px] leading-[45px]">Создать задание</h4>
-                    <p class="font-regular text-[14px] leading-[20px] text-[#959595]">Макс: 60 симв</p>
-                </div>
-                <input type="text" placeholder="Название задания" name="name" required
-                       class="mb-[24px] font-regular text-[20px] leading-[32px] text-black-main border-[#CDCDCD] border-[1px] rounded-md w-full h-[80px] py-[24px] px-[32px]">
-                <div class="flex gap-[42px]">
-                    <div class="">
-                        <h5 class="font-semibold text-[20px] leading-[32px] text-black-main mb-[12px]">Сроки сдачи</h5>
-                        <div class="flex gap-[12px] mb-[18px]">
-                            <input type="date" hidden id="id_deadline" name="deadline" required>
-                            <label for="task_day" class="relative">
-                                <img src="{% static 'core/icons/calendar-accent-red.svg' %}" alt=""
-                                     class="max-w-[24px] absolute left-[16px] top-[24px]">
-                                <input id="task_day" type="date" placeholder="__.__.____ г."
-                                       class="h-[70px] font-regular text-[14px] leading-[16px] text-[#000000] p-[26px] pl-[53px] border-[#CDCDCD] border-[1px] rounded-sm w-[200px]">
-                            </label>
-                            <label for="task_time" class="relative">
-                                <img src="{% static 'core/icons/time-accent-red.svg' %}" alt=""
-                                     class="max-w-[24px] absolute left-[16px] top-[24px]">
-                                <input id="task_time" type="time" placeholder="__:__"
-                                       class="h-[70px] font-regular text-[14px] leading-[16px] text-[#000000] p-[26px] pl-[53px] border-[#CDCDCD] border-[1px] rounded-sm w-[150px]">
-                            </label>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="flex justify-between items-center mb-[20px]">
+                        <h4 class="text-black-main font-semibold text-[32px] leading-[45px]">Создать задание</h4>
+                        <p class="font-regular text-[14px] leading-[20px] text-[#959595]">Макс: 60 симв</p>
+                    </div>
+                    <input type="text" placeholder="Название задания" name="name" required
+                           class="mb-[24px] font-regular text-[20px] leading-[32px] text-black-main border-[#CDCDCD] border-[1px] rounded-md w-full h-[80px] py-[24px] px-[32px]">
+                    <div class="flex gap-[42px]">
+                        <div>
+                            <h5 class="font-semibold text-[20px] leading-[32px] text-black-main mb-[12px]">Сроки сдачи</h5>
+                            <div class="flex gap-[12px] mb-[18px]">
+                                <label for="task_day" class="relative">
+                                    <img src="{% static 'core/icons/calendar-accent-red.svg' %}" alt=""
+                                         class="max-w-[24px] absolute left-[16px] top-[24px]">
+                                    <input id="task_day" type="date" name="deadline_date" required
+                                           class="h-[70px] font-regular text-[14px] leading-[16px] text-[#000000] p-[26px] pl-[53px] border-[#CDCDCD] border-[1px] rounded-sm w-[200px]">
+                                </label>
+                                <label for="task_time" class="relative">
+                                    <img src="{% static 'core/icons/time-accent-red.svg' %}" alt=""
+                                         class="max-w-[24px] absolute left-[16px] top-[24px]">
+                                    <input id="task_time" type="time" name="deadline_time" required
+                                           class="h-[70px] font-regular text-[14px] leading-[16px] text-[#000000] p-[26px] pl-[53px] border-[#CDCDCD] border-[1px] rounded-sm w-[150px]">
+                                </label>
+                            </div>
+                            <button type="submit" class="h-[65px] w-[340px] rounded-sm bg-accent-red text-white font-semibold text-[20px] leading-[25px]">
+                                Опубликовать задание
+                            </button>
                         </div>
-                        <button class="h-[65px] w-[340px] rounded-sm bg-accent-red text-white font-semibold text-[20px] leading-[25px]">
-                            Опубликовать задание
-                        </button>
+                        <div>
+                            <h5 class="font-semibold text-[20px] leading-[32px] text-black-main mb-[12px]">
+                                Загрузить задание
+                            </h5>
+                            <label for="download_task" class="flex gap-[15px] cursor-pointer">
+                                <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
+                                     class="max-w-[24px] max-h-[24px]">
+                                <p id="file" class="text-[#5E8BFF] text-[16px] leading-[22px] font-semibold">Загрузить
+                                    файл</p>
+                            </label>
+                            <input name="file" type="file" id="download_task" style="display: none;">
+                        </div>
                     </div>
-                    <div class="">
-                        <h5 class="font-semibold text-[20px] leading-[32px] text-black-main mb-[12px]">
-                            Загрузить задание
-                        </h5>
-                        <label for="download_task" class="flex gap-[15px] cursor-pointer">
-                            <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
-                                 class="max-w-[24px] max-h-[24px]">
-                            <p id="file" class="text-[#5E8BFF] text-[16px] leading-[22px] font-semibold">Загрузить
-                                файл</p>
-                        </label>
-                        <input name="file" type="file" id="id_file" style="display: none;">
-                    </div>
-                </div>
+                </form>
             </div>
             <div class="shadow-[0px_4px_20px_0px_#00000014] rounded-md bg-white p-[42px]">
                 <h5 class="text-black-main font-bold text-[24px] leading-[34px] mb-[12px]">Задания канала</h5>
@@ -62,34 +64,13 @@
                                      class="max-w-[16px] max-h-[16px]">
                                 <p class="font-bold text-black-main leading-[22px] text-[16px]">{{ task.deadline|date:"d.m.Y" }}</p>
                             </div>
-                            <a href="#" class="underline hover:no-underline font-medium ">Просмотреть сданные работы</a>
+                            <a href="{% url 'subjects:task_submissions_view' task.id %}" class="underline hover:no-underline font-medium">
+                                Просмотреть сданные работы
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
-            {% comment %}
-                <h1>Create Task in {{ room.title }}</h1>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit">Publish Task</button>
-                </form>
-
-                <h2>Existing Tasks</h2>
-                <ul>
-                    {% for task in tasks %}
-                        <li>
-                            {{ task.name }} - Due: {{ task.deadline|date:"Y-m-d H:i" }}
-                            {% if task.file %}
-                                <a href="{{ task.file.url }}">Download</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                    {% if not tasks %}
-                        <li>No tasks have been created yet.</li>
-                    {% endif %}
-                </ul>
-            {% endcomment %}
         </div>
     </main>
 {% endblock %}

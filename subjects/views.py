@@ -335,40 +335,45 @@ class LessonDetailView(DetailView):
         # Optionally, check permissions here
         return lesson
 
-from django.utils.timezone import localtime, localdate
+from django.utils.timezone import make_aware
+from datetime import datetime
 
 
-
+@login_required
 def create_task(request, room_id):
     room = get_object_or_404(ChatRoom, id=room_id)
     if request.method == 'POST':
-        form = TaskForm(request.POST, request.FILES)
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.chat_room = room
-            task.created_by = request.user
-            task.save()
+        name = request.POST.get('name')
+        deadline_date = request.POST.get('deadline_date')
+        deadline_time = request.POST.get('deadline_time')
+        file = request.FILES.get('file')
 
-            # Extract date and time from deadline
-            deadline_datetime = localtime(task.deadline)
-            deadline_date = deadline_datetime.strftime('%Y-%m-%d')
-            deadline_time = deadline_datetime.strftime('%H:%M')
+        deadline_str = f"{deadline_date} {deadline_time}"
+        deadline = make_aware(datetime.strptime(deadline_str, '%Y-%m-%d %H:%M'))
 
-            # After saving the task, also create a message in the chat
-            message_content = f"Задание от учителя: {task.name} - {deadline_date} {deadline_time}"
-            if task.file:
-                message_content += f" <a href='{task.file.url}'>Download</a>"
+        task = Task.objects.create(
+            name=name,
+            deadline=deadline,
+            file=file,
+            chat_room=room,
+            created_by=request.user
+        )
 
-            Message.objects.create(
-                chat_room=room,
-                user=request.user,  # or a system user if you have one
-                message=message_content,
-                message_type='task',
-                file=task.file if task.file else None,
-                task=task  # Link the message to the task
-            )
+        # Create a message in the chat
+        message_content = f"Задание от учителя: {task.name} - {task.deadline.strftime('%Y-%m-%d %H:%M')}"
+        if task.file:
+            message_content += f" <a href='{task.file.url}'>Download</a>"
 
-            return redirect('chats:chat_room_detail', room_id=room_id)
+        Message.objects.create(
+            chat_room=room,
+            user=request.user,
+            message=message_content,
+            message_type='task',
+            file=task.file if task.file else None,
+            task=task
+        )
+
+        return redirect('chats:chat_room_detail', room_id=room_id)
     else:
         form = TaskForm()
 
@@ -575,6 +580,18 @@ def student_tasks_view(request):
         'lessons': lessons,
         'student_tasks': student_tasks,
         'file_upload_form': FileUploadForm()
+    })
+
+@login_required
+def task_submissions_view(request, task_id):
+    task = get_object_or_404(Task, id=task_id)
+
+    # Get all submissions for the specified task
+    submissions = TaskSubmission.objects.filter(task=task).select_related('student')
+
+    return render(request, 'subjects/task_submissions.html', {
+        'task': task,
+        'submissions': submissions
     })
 
 @api_view(['POST'])

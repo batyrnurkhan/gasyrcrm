@@ -1,0 +1,55 @@
+{% extends "subjects/base.html" %}
+{% load static %}
+
+{% block flex-content %}
+    {% include "subjects/components/crm2-teacher-sidebar.html" %}
+    <main class="main flex-1 pb-[100px]">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] gap-[20px] grid relative">
+            <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[48px] px-[14px] pb-[20px]">
+                <h3 class="font-semibold text-[32px] leading-[45px] text-black-main mb-[12px] pl-[30px]">
+                    Сданные работы для задания: {{ task.name }}
+                </h3>
+                {% if submissions %}
+                    <ul class="bg-[#FAFAFA] p-[30px] pr-[34px] h-[430px] overflow-auto space-y-[16px]">
+                        {% for submission in submissions %}
+                            <li class="flex justify-between items-center">
+                                <div class="flex gap-[16px] items-center max-w-[220px] w-full">
+                                    {% if submission.student.profile_picture %}
+                                        <img src="{{ submission.student.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Profile Picture">
+                                    {% else %}
+                                        <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Default Profile Picture">
+                                    {% endif %}
+                                    <p class="font-semibold text-[16px] leading-[20px] text-black-main">
+                                        {{ submission.student.full_name }}
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-[24px] max-w-[200px] w-full">
+                                    <img src="{% static 'core/images/phoneIcon.svg' %}" alt="Phone Icon" class="max-w-[16px] max-h-[16px]">
+                                    <p class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                        {{ submission.student.phone_number }}
+                                    </p>
+                                </div>
+                                <div class="flex items-center gap-[8px] max-w-[140px] w-full">
+                                    <img src="{% static 'core/images/cityIcon.svg' %}" alt="City Icon" class="max-w-[16px] max-h-[16px]">
+                                    <p class="font-semibold text-[16px] leading-[22px] text-black-main">
+                                        {{ submission.student.user_city }}
+                                    </p>
+                                </div>
+                                <div class="flex justify-end gap-[12px] items-center max-w-[150px] w-full items-center">
+                                    <img src="{% static 'core/images/downloadIconred.svg' %}" alt="Download Icon" class="max-w-[16px] max-h-[16px]">
+                                    <a href="{{ submission.file.url }}" class="text-black-main font-semibold text-[16px] leading-[22px] underline hover:no-underline">
+                                        Скачать работу
+                                    </a>
+                                    <p class="text-[14px] text-[#959595]">{{ submission.submission_date|date:"d.m.Y H:i" }}</p>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-[16px] text-[#959595]">Нет сданных работ.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% endblock %}
