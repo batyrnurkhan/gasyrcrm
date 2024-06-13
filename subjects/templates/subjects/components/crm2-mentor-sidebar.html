@@ -58,7 +58,7 @@
                     <span class="font-semibold text-5 leading-[24px]">Расписания</span></a>
             </li>
             <li class="text-[#9D9E9E]">
-                <a href="#" class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 items-center
+                <a href="{% url 'subjects:volunteer_channel_list' %}" class="mr-[35px] pl-[30px] rounded-lg flex gap-[14px] width-[210px] py-4 items-center
                {% if page == "channels" %}
                	bg-accent-red text-white fill-white
                {% endif %}">
