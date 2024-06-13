@@ -464,7 +464,14 @@ def grades_by_day_view(request):
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date, 'page': 'diary'})
 @login_required
 def psy_appointment_view(request):
-    return render(request, 'subjects/psy-appointment.html')
+    today = datetime.now().date()
+    start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
+    dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
+
+    context = {
+        'dates_of_week': dates_of_week,
+    }
+    return render(request, 'subjects/psy-appointment.html', context)
 
 
 @login_required
@@ -587,13 +594,29 @@ def student_tasks_view(request):
 @login_required
 def task_submissions_view(request, task_id):
     task = get_object_or_404(Task, id=task_id)
+    group_template = task.chat_room.lessons.first().group_template
+
+    # Get all students in the group template associated with the task
+    students = group_template.students.all()
 
     # Get all submissions for the specified task
     submissions = TaskSubmission.objects.filter(task=task).select_related('student')
 
+    # Create a dictionary to map submissions to students
+    submissions_dict = {submission.student.id: submission for submission in submissions}
+
+    # Create a list to store students and their submissions status
+    student_submissions = []
+    for student in students:
+        submission = submissions_dict.get(student.id, None)
+        student_submissions.append({
+            'student': student,
+            'submission': submission
+        })
+
     return render(request, 'subjects/task_submissions.html', {
         'task': task,
-        'submissions': submissions
+        'student_submissions': student_submissions
     })
 
 @api_view(['POST'])

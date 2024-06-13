@@ -149,25 +149,27 @@
 
     <script>
         function setStartHr(hr) {
-            var time = document.getElementById('startTime')
-            var [hours, mins] = (time.value+'').split(':')
-            time.value = `${hr}:${mins}`
+            var time = document.getElementById('startTime');
+            var mins = time.value.split(':')[1] || '00';
+            time.value = `${hr.padStart(2, '0')}:${mins}`;
         }
-        function setStartMin(min) {
-            var time = document.getElementById('startTime')
-            var [hours, mins] = (time.value+'').split(':')
-            time.value = `${hours}:${min}`
-        }
+
+function setStartMin(min) {
+    var time = document.getElementById('startTime');
+    var hours = time.value.split(':')[0] || '00';
+    time.value = `${hours}:${min.padStart(2, '0')}`;
+}
         function setEndHr(hr) {
-            var time = document.getElementById('endTime')
-            var [hours, mins] = (time.value+'').split(':')
-            time.value = `${hr}:${mins}`
-        }
-        function setEndMin(min) {
-            var time = document.getElementById('endTime')
-            var [hours, mins] = (time.value+'').split(':')
-            time.value = `${hours}:${min}`
-        }
+    var time = document.getElementById('endTime');
+    var mins = time.value.split(':')[1] || '00';
+    time.value = `${hr.padStart(2, '0')}:${mins}`;
+}
+
+function setEndMin(min) {
+    var time = document.getElementById('endTime');
+    var hours = time.value.split(':')[0] || '00';
+    time.value = `${hours}:${min.padStart(2, '0')}`;
+}
 
         function closeSetLinkModal() {
             console.log("Sdsd")
@@ -248,25 +250,40 @@
             };
 
             window.createAppointment = function () {
-                fetch('/appointments/api/appointments/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        date: document.getElementById('appointmentDate').value,
-                        start_time: document.getElementById('startTime').value,
-                        end_time: document.getElementById('endTime').value,
-                        link: document.getElementById('appointmentLink').value
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        $('#createAppointmentModal').modal('hide');
-                        selectDate(data.date.split('-')[0], data.date.split('-')[1], data.date.split('-')[2], data.date);
-                    });
-            };
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+
+    fetch('/appointments/api/appointments/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({
+            date: document.getElementById('appointmentDate').value,
+            start_time: startTime,
+            end_time: endTime,
+            link: document.getElementById('appointmentLink').value
+        })
+    })
+    .then(response => {
+        return response.json().then(data => {
+            if (response.ok) {
+                $('#createAppointmentModal').modal('hide');
+                const dateParts = data.date.split('-');
+                selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
+            } else {
+                console.error('Failed to create appointment:', data);
+                alert('Failed to create appointment: ' + JSON.stringify(data));
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error in network request:', error);
+        alert('A network error occurred. Please try again.');
+    });
+};
+
 
             window.showSetLinkModal = function (appointmentId, currentLink) {
                 document.getElementById('appointmentId').value = appointmentId;

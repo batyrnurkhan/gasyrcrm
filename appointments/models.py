@@ -16,10 +16,10 @@ class Appointment(models.Model):
 
     def clean(self):
         if Appointment.objects.filter(
-            user=self.user,
-            date=self.date,
-            start_time__lt=self.end_time,
-            end_time__gt=self.start_time
+                user=self.user,
+                date=self.date,
+                start_time__lt=self.end_time,
+                end_time__gt=self.start_time
         ).exists():
             raise ValidationError('There is an overlap with another appointment.')
 

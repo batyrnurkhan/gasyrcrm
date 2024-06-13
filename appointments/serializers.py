@@ -8,13 +8,18 @@ class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Appointment
         fields = ['date', 'start_time', 'end_time', 'link', 'is_booked', 'user']
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
 
     def validate(self, data):
-        appointment = Appointment(**data)
-
-        if 'user' not in data:
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            data['user'] = request.user
+        else:
             raise serializers.ValidationError("User must be specified.")
-        appointment.user = self.context['request'].user
+
+        appointment = Appointment(**data)
 
         try:
             appointment.clean()

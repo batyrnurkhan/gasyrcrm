@@ -10,38 +10,42 @@
                 <h3 class="font-semibold text-[32px] leading-[45px] text-black-main mb-[12px] pl-[30px]">
                     Сданные работы для задания: {{ task.name }}
                 </h3>
-                {% if submissions %}
+                {% if student_submissions %}
                     <ul class="bg-[#FAFAFA] p-[30px] pr-[34px] h-[430px] overflow-auto space-y-[16px]">
-                        {% for submission in submissions %}
+                        {% for entry in student_submissions %}
                             <li class="flex justify-between items-center">
                                 <div class="flex gap-[16px] items-center max-w-[220px] w-full">
-                                    {% if submission.student.profile_picture %}
-                                        <img src="{{ submission.student.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Profile Picture">
+                                    {% if entry.student.profile_picture %}
+                                        <img src="{{ entry.student.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Profile Picture">
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Default Profile Picture">
                                     {% endif %}
                                     <p class="font-semibold text-[16px] leading-[20px] text-black-main">
-                                        {{ submission.student.full_name }}
+                                        {{ entry.student.full_name }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-[24px] max-w-[200px] w-full">
                                     <img src="{% static 'core/images/phoneIcon.svg' %}" alt="Phone Icon" class="max-w-[16px] max-h-[16px]">
                                     <p class="font-semibold text-[16px] leading-[22px] text-black-main">
-                                        {{ submission.student.phone_number }}
+                                        {{ entry.student.phone_number }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-[8px] max-w-[140px] w-full">
                                     <img src="{% static 'core/images/cityIcon.svg' %}" alt="City Icon" class="max-w-[16px] max-h-[16px]">
                                     <p class="font-semibold text-[16px] leading-[22px] text-black-main">
-                                        {{ submission.student.user_city }}
+                                        {{ entry.student.user_city }}
                                     </p>
                                 </div>
                                 <div class="flex justify-end gap-[12px] items-center max-w-[150px] w-full items-center">
-                                    <img src="{% static 'core/images/downloadIconred.svg' %}" alt="Download Icon" class="max-w-[16px] max-h-[16px]">
-                                    <a href="{{ submission.file.url }}" class="text-black-main font-semibold text-[16px] leading-[22px] underline hover:no-underline">
-                                        Скачать работу
-                                    </a>
-                                    <p class="text-[14px] text-[#959595]">{{ submission.submission_date|date:"d.m.Y H:i" }}</p>
+                                    {% if entry.submission %}
+                                        <img src="{% static 'core/images/downloadIconred.svg' %}" alt="Download Icon" class="max-w-[16px] max-h-[16px]">
+                                        <a href="{{ entry.submission.file.url }}" class="text-black-main font-semibold text-[16px] leading-[22px] underline hover:no-underline">
+                                            Скачать работу
+                                        </a>
+                                        <p class="text-[14px] text-[#959595]">{{ entry.submission.submission_date|date:"d.m.Y H:i" }}</p>
+                                    {% else %}
+                                        <p class="text-red-600 font-semibold text-[16px] leading-[22px]">Не сдано</p>
+                                    {% endif %}
                                 </div>
                             </li>
                         {% endfor %}
