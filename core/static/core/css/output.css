@@ -2405,6 +2405,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-width: 24rem;
 }
 
+.max-w-\[150px\] {
+  max-width: 150px;
+}
+
+.max-w-\[407px\] {
+  max-width: 407px;
+}
+
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -2501,6 +2509,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .items-center {
   align-items: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
 }
 
 .justify-center {
@@ -2685,6 +2697,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   --tw-space-y-reverse: 0;
   margin-top: calc(8px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(8px * var(--tw-space-y-reverse));
+}
+
+.space-y-\[16px\] > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(16px * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(16px * var(--tw-space-y-reverse));
 }
 
 .overflow-auto {
