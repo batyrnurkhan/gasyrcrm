@@ -732,6 +732,7 @@ def achievements_list(request):
 
     context = {
         'achievements': achievements,
+        'page': 'achievements',
         'counts': counts,
         'achievement_percentage': achievement_percentage
     }
