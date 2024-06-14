@@ -93,7 +93,7 @@
                                         <div class="gap-[16px] flex items-center w-[230px]">
                                             <img src="{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}"
                                                  alt=""
-                                                 class="max-h-[32px] max-w-[32px] rounded-full">
+                                                 class="max-h-[32px] max-w-[32px] object-cover rounded-full">
                                             <h5 class="font-semibold text-[16px] leading-[20px] text-black-main">
                                                 {{ student.full_name }}
                                             </h5>

@@ -1,4 +1,5 @@
 {% extends "subjects/base.html" %}
+{% load custom_tags %}
 {% load static %}
 
 {% block flex-content %}
@@ -16,35 +17,35 @@
                             <li class="flex justify-between items-center">
                                 <div class="flex gap-[16px] items-center max-w-[220px] w-full">
                                     {% if entry.student.profile_picture %}
-                                        <img src="{{ entry.student.profile_picture.url }}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Profile Picture">
+                                        <img src="{{ entry.student.profile_picture.url }}" class="max-w-[32px] max-h-[32px] object-cover rounded-full" alt="Profile Picture">
                                     {% else %}
-                                        <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] rounded-full" alt="Default Profile Picture">
+                                        <img src="{% static 'core/images/default-user.svg' %}" class="max-w-[32px] max-h-[32px] object-cover rounded-full" alt="Default Profile Picture">
                                     {% endif %}
                                     <p class="font-semibold text-[16px] leading-[20px] text-black-main">
                                         {{ entry.student.full_name }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-[24px] max-w-[200px] w-full">
-                                    <img src="{% static 'core/images/phoneIcon.svg' %}" alt="Phone Icon" class="max-w-[16px] max-h-[16px]">
+                                    <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt="Phone Icon" class="max-w-[16px] max-h-[16px]">
                                     <p class="font-semibold text-[16px] leading-[22px] text-black-main">
                                         {{ entry.student.phone_number }}
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-[8px] max-w-[140px] w-full">
-                                    <img src="{% static 'core/images/cityIcon.svg' %}" alt="City Icon" class="max-w-[16px] max-h-[16px]">
+                                    <img src="{% static 'core/icons/city-fill-accent-red.svg' %}" alt="City Icon" class="max-w-[16px] max-h-[16px]">
                                     <p class="font-semibold text-[16px] leading-[22px] text-black-main">
                                         {{ entry.student.user_city }}
                                     </p>
                                 </div>
-                                <div class="flex justify-end gap-[12px] items-center max-w-[150px] w-full items-center">
+                                <div class="flex justify-end gap-[12px] max-w-[150px] w-full items-center">
                                     {% if entry.submission %}
-                                        <img src="{% static 'core/images/downloadIconred.svg' %}" alt="Download Icon" class="max-w-[16px] max-h-[16px]">
+                                        <img src="{% static 'core/icons/download-accent-red.svg' %}" alt="Download Icon" class="w-[16px] h-[16px]">
                                         <a href="{{ entry.submission.file.url }}" class="text-black-main font-semibold text-[16px] leading-[22px] underline hover:no-underline">
-                                            Скачать работу
+                                            {{ entry.submission|filename }}
                                         </a>
-                                        <p class="text-[14px] text-[#959595]">{{ entry.submission.submission_date|date:"d.m.Y H:i" }}</p>
                                     {% else %}
-                                        <p class="text-red-600 font-semibold text-[16px] leading-[22px]">Не сдано</p>
+                                        <img src="{% static 'core/icons/close-fill-accent-red.svg' %}" alt="Download Icon" class="w-[16px] h-[16px]">
+                                        <p class="text-accent-red font-semibold text-[16px] leading-[22px]">Не сдано</p>
                                     {% endif %}
                                 </div>
                             </li>

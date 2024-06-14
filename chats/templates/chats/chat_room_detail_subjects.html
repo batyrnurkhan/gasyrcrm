@@ -30,10 +30,10 @@
                         {% if teacher %}
                             {% if teacher.profile_picture %}
                                 <img src="{{ teacher.profile_picture.url }}" alt=""
-                                     class="w-[32px] h-[32px] rounded-full"/>
+                                     class="w-[32px] h-[32px] object-cover rounded-full"/>
                             {% else %}
                                 <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                     class="w-[32px] h-[32px] rounded-full"/>
+                                     class="w-[32px] h-[32px] object-cover rounded-full"/>
                             {% endif %}
                             <div class="course__info-avatar--fullname font-semibold text-[16px] leading-[20px] text-black-main">
                                 {{ teacher.full_name }}
@@ -47,10 +47,10 @@
                                 <div class="course__info-avatar flex gap-[12px] items-center">
                                     {% if student.profile_picture %}
                                         <img src="{{ student.profile_picture.url }}" alt=""
-                                             class="w-[32px] h-[32px] rounded-full"/>
+                                             class="w-[32px] h-[32px] object-cover rounded-full"/>
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                             class="w-[32px] h-[32px] rounded-full"/>
+                                             class="w-[32px] h-[32px] object-cover rounded-full"/>
                                     {% endif %}
                                     <div class="course__info-avatar--fullname font-semibold text-[16px] leading-[20px] text-black-main">
                                         {{ student.full_name }}
@@ -92,7 +92,7 @@
                                                 {{ message.message|safe }}
                                             </p>
                                         {% elif message.message_type == "task" and message.task %}
-                                            <a href="#"
+                                            <a href="{% url 'subjects:student_tasks_view' %}"
                                                class="message__task flex items-center py-[16px] px-[12px] border-[1px] border-[#CCCCCC] rounded-sm gap-[16px]">
                                                 <img src="{% static 'core/images/crm2/task-circle-accent-red.png' %}"
                                                      alt=""

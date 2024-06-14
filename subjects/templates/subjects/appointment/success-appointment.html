@@ -9,13 +9,13 @@
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
             <div class="accepted bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[56px]">
                 <h1 class="accepted__title text-black-main font-bold text-[42px] leading-[52px] mb-[16px]">Ваша запись принята!</h1>
-                <div class="accepted__item border border-[1px] border-[#D8D8D8] rounded-md px-[22px] h-[116px] flex items-center justify-between mb-6">
+                <div class="accepted__item border border-[#D8D8D8] rounded-md px-[22px] h-[116px] flex items-center justify-between mb-6">
                     <div class="accepted__item-who flex gap-[24px] items-center">
                         <div class="who__img">
                             {% if user_profile_pic_url %}
-                            <img src="{{ user_profile_pic_url }}" alt="Profile Picture" style="width:100px; height:100px;">
+                            <img class="rounded-full size-[72px] object-cover" src="{{ user_profile_pic_url }}" alt="Profile Picture">
                             {% else %}
-                            <img src="{% static 'assets/avatar.png' %}" alt="Default Avatar">
+                            <img class="rounded-full size-[72px] object-cover" src="{% static 'core/images/default-user.svg' %}" alt="Default Avatar">
                             {% endif %}
                         </div>
                         <div class="who__name">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 {% if appointment_link %}
-    <a href="{{ appointment_link }}" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold" target="_blank">Присоединиться к конференции</a>
+                    <a href="{{ appointment_link }}" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold" target="_blank">Присоединиться к конференции</a>
                 {% else %}
                     <!-- Cancel Button Form -->
                     <form action="{% url 'appointments:cancel_appointment' appointment.id %}" method="post" style="margin-bottom: 20px;">

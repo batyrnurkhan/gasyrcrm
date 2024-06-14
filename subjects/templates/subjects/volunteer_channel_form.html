@@ -66,10 +66,10 @@
                             <div class="list-item__author flex gap-[12px] items-center">
                                 {% if channel.created_by.profile_picture %}
                                     <img src="{{ channel.created_by.profile_picture.url }}"
-                                         class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                                         class="max-w-[32px] max-h-[32px] object-cover rounded-full" alt="">
                                 {% else %}
                                     <img src="{% static 'core/images/default-user.svg' %}"
-                                         class="max-w-[32px] max-h-[32px] rounded-full" alt="">
+                                         class="max-w-[32px] max-h-[32px] object-cover rounded-full" alt="">
                                 {% endif %}
                                 <p class="text-red-500 font-semibold text-[16px] leading-[20px]">{{ channel.created_by.full_name }}</p>
                             </div>

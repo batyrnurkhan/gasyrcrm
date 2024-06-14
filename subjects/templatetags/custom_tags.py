@@ -1,4 +1,7 @@
+import os
+
 from django import template
+
 register = template.Library()
 
 
@@ -16,3 +19,7 @@ def format_phone_number(number):
 def key(d, k):
     return d[k]
 
+
+@register.filter
+def filename(value):
+    return os.path.basename(value.file.name)

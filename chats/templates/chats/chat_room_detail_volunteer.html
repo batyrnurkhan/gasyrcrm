@@ -33,10 +33,10 @@
                         {% if volunteer_channel.created_by %}
                             {% if volunteer_channel.created_by.profile_picture %}
                                 <img src="{{ volunteer_channel.created_by.profile_picture.url }}" alt=""
-                                     class="w-[32px] h-[32px] rounded-full"/>
+                                     class="w-[32px] h-[32px] object-cover rounded-full"/>
                             {% else %}
                                 <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                     class="w-[32px] h-[32px] rounded-full"/>
+                                     class="w-[32px] h-[32px] object-cover rounded-full"/>
                             {% endif %}
                             <div class="course__info-avatar--fullname font-semibold text-[16px] leading-[20px] text-black-main">
                                 {{ volunteer_channel.created_by.full_name }}
@@ -50,10 +50,10 @@
                                 <div class="course__info-avatar flex gap-[12px] items-center">
                                     {% if participant.profile_picture %}
                                         <img src="{{ participant.profile_picture.url }}" alt=""
-                                             class="w-[32px] h-[32px] rounded-full"/>
+                                             class="w-[32px] h-[32px] object-cover rounded-full"/>
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                             class="w-[32px] h-[32px] rounded-full"/>
+                                             class="w-[32px] h-[32px] object-cover rounded-full"/>
                                     {% endif %}
                                     <div class="course__info-avatar--fullname font-semibold text-[16px] leading-[20px] text-black-main">
                                         {{ participant.full_name }}
@@ -79,10 +79,10 @@
                                 <div class="course__content-message flex gap-[12px]">
                                     {% if message.user.profile_picture %}
                                         <img src="{{ message.user.profile_picture.url }}" alt=""
-                                             class="w-[42px] h-[42px] rounded-full"/>
+                                             class="w-[42px] h-[42px] object-cover rounded-full"/>
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                             class="w-[42px] h-[42px] rounded-full"/>
+                                             class="w-[42px] h-[42px] object-cover rounded-full"/>
                                     {% endif %}
                                     <div class="course__content-message--content bg-[#FFFFFF] shadow-[0px_4px_24px_0px_#0000000A] rounded-md p-[20px] w-full grid gap-[6px]">
                                         <h1 class="message__author-fullname text-[12px] leading-[14px] font-semibold text-[#583ACF] ">

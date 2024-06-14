@@ -26,10 +26,10 @@
                                         <div class="task__author-photo">
                                             {% if lesson.teacher.profile_picture %}
                                                 <img src="{{ lesson.teacher.profile_picture.url }}"
-                                                     class="w-[56px] h-[56px] rounded-full" alt="Teacher Photo">
+                                                     class="w-[56px] h-[56px] object-cover rounded-full" alt="Teacher Photo">
                                             {% else %}
                                                 <img src="{% static 'core/images/default-user.svg' %}"
-                                                     class="w-[56px] h-[56px] rounded-full" alt="Default Teacher Photo">
+                                                     class="w-[56px] h-[56px] object-cover rounded-full" alt="Default Teacher Photo">
                                             {% endif %}
                                         </div>
                                         <div class="task__author-content ml-[12px]">

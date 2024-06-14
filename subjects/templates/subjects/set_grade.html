@@ -59,10 +59,10 @@
                                 <div class="flex gap-[16px] items-center max-w-[220px] w-full">
                                     {% if student.profile_picture %}
                                         <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}"
-                                             class="max-w-[32px] max-h-[32px] rounded-full">
+                                             class="max-w-[32px] max-h-[32px] object-cover rounded-full">
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" alt="No profile picture"
-                                             class="max-w-[32px] max-h-[32px] rounded-full">
+                                             class="max-w-[32px] max-h-[32px] object-cover rounded-full">
                                     {% endif %}
                                     <p class="font-semibold text-[16px] leading-[20px] text-black-main">{{ student.full_name }}</p>
                                 </div>

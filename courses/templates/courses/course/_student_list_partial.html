@@ -4,9 +4,7 @@
 {% for student in students %}
     <div class="relative w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
         <img class="w-[60px] h-[60px] object-cover rounded-full mr-6" src="
-
-
-                {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/anonymous-user-image.png' %}{% endif %}">
+             {% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/anonymous-user-image.png' %}{% endif %}">
         <p class="w-[30%]">{{ student.full_name }}</p>
         <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
         <p class="w-[15%]">12.12.2024</p>
