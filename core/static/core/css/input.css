@@ -79,6 +79,10 @@
         height: 10px;
     }
 
+    .appointment-text {
+        @apply group-hover:text-white
+    }
+
     .without-spin::-webkit-outer-spin-button,
     .without-spin::-webkit-inner-spin-button {
         -webkit-appearance: none;

@@ -37,7 +37,7 @@ def home_view(request):
     elif user.role == 'Teacher':
         template_name = 'subjects/teacher-home.html'
     elif user.role == 'Psychologist':
-        today = datetime.datetime.now().date()
+        today = datetime.now().date()
         start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
         dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
 
@@ -150,7 +150,7 @@ def weekly_schedule_view(request):
 
     today = timezone.now().date()
     start_of_week = today - timedelta(days=today.weekday())
-    weeknames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    weeknames = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресение']
 
     weekly_lessons = {day: [] for day in weeknames}
 

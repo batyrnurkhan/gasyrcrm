@@ -11,3 +11,8 @@ def is_user_enrolled(course, user):
 def format_phone_number(number):
     return f"+{number[0:1]} ({number[1:4]}) {number[4:7]} {number[7:9]} {number[9:11]}"
 
+
+@register.filter
+def key(d, k):
+    return d[k]
+

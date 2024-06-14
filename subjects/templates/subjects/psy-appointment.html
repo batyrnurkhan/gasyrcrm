@@ -39,7 +39,8 @@
                     {% endfor %}
                 </div>
             </div>
-            <div id="details" class="choose__day shadow-[0px_4px_20px_0px_#0000000A] bg-white rounded-md p-[52px] text-center mb-[36px] hidden">
+            <div id="details"
+                 class="choose__day shadow-[0px_4px_20px_0px_#0000000A] bg-white rounded-md p-[52px] text-center mb-[36px] hidden">
                 <h1 class="choose__day-title font-bold text-[20px] text-black-main leading-6 mb-3">
                     Выберите удобное время в этот день
                 </h1>
@@ -48,78 +49,79 @@
                 </div>
             </div>
             <div class="button">
-                <button class="bg-accent-red text-[20px] leading-[28px] font-bold py-[26px] px-[64px] text-white rounded-md" onclick="bookAppointment()">
+                <button class="bg-accent-red text-[20px] leading-[28px] font-bold py-[26px] px-[64px] text-white rounded-md"
+                        onclick="bookAppointment()">
                     Записаться к проф. ориентологу
                 </button>
             </div>
         </div>
     </main>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        window.selectDate = function (year, month, day, fullDate) {
-            fetch(`/appointments/api/appointments/${year}/${month}/${day}/`)
-                .then(response => response.json())
-                .then(data => {
-                    const appointments = data.appointments;
-                    const detailsContainer = document.getElementById('details');
-                    const timeList = detailsContainer.querySelector('.time__list');
-                    detailsContainer.classList.remove("hidden");
-                    timeList.innerHTML = '';
-                    if (appointments.length > 0) {
-                        appointments.forEach(appointment => {
-                            const label = document.createElement('label');
-                            label.classList = "border border-[1px] w-[230px] border-[#D8D8D8] rounded-sm answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer";
-                            label.innerHTML = `
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            window.selectDate = function (year, month, day, fullDate) {
+                fetch(`/appointments/api/appointments/${year}/${month}/${day}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const appointments = data.appointments;
+                        const detailsContainer = document.getElementById('details');
+                        const timeList = detailsContainer.querySelector('.time__list');
+                        detailsContainer.classList.remove("hidden");
+                        timeList.innerHTML = '';
+                        if (appointments.length > 0) {
+                            appointments.forEach(appointment => {
+                                const label = document.createElement('label');
+                                label.classList = "border border-[1px] w-[230px] border-[#D8D8D8] rounded-sm answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer group hover:bg-accent-red";
+                                label.innerHTML = `
                                 <input
                                     type="radio"
                                     name="appointment"
                                     value="${appointment.id}"
-                                    class="appearance-none border border-[#D8D8D8] rounded-full checked:bg-accent-red checked:border-none w-5 h-5 mr-[26px]"
+                                    class="border border-[#D8D8D8] rounded-full bg-white checked:accent-accent-red w-5 h-5 mr-[26px] peer"
                                     ${appointment.is_booked ? 'disabled' : ''}
                                 />
-                                <span class="font-regular text-[18px] leading-[25px] ${appointment.is_booked ? 'text-[#9D9E9E]' : 'text-black-main'}">
-                                    ${appointment.start_time} - ${appointment.end_time}
+                                <span class="font-regular text-[18px] leading-[25px] ${appointment.is_booked ? 'text-[#9D9E9E]' : 'text-black-main'} appointment-text">
+                                    ${appointment.start_time.substr(0,5)} - ${appointment.end_time.substr(0,5)}
                                 </span>
                             `;
-                            timeList.appendChild(label);
-                        });
-                    } else {
-                        timeList.innerHTML = `<div class="text-center text-[18px]">Нет доступных окошек на этот день</div>`;
+                                timeList.appendChild(label);
+                            });
+                        } else {
+                            timeList.innerHTML = `<div class="text-center text-[18px]">Нет доступных окошек на этот день</div>`;
+                        }
+                        document.getElementById('appointmentDate').value = fullDate;
+                    });
+            };
+
+            window.bookAppointment = function () {
+                const selectedAppointment = document.querySelector('input[name="appointment"]:checked');
+                if (!selectedAppointment) {
+                    alert('Please select an appointment time.');
+                    return;
+                }
+
+                fetch(`/appointments/api/appointments/${selectedAppointment.value}/book/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
                     }
-                    document.getElementById('appointmentDate').value = fullDate;
-                });
-        };
-
-        window.bookAppointment = function () {
-            const selectedAppointment = document.querySelector('input[name="appointment"]:checked');
-            if (!selectedAppointment) {
-                alert('Please select an appointment time.');
-                return;
-            }
-
-            fetch(`/appointments/api/appointments/${selectedAppointment.value}/book/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Appointment booked successfully!');
-                    const dateParts = data.date.split('-');
-                    selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
-                } else {
-                    console.error('Failed to book appointment:', data);
-                    alert('Failed to book appointment: ' + JSON.stringify(data));
-                }
-            })
-            .catch(error => {
-                console.error('Error in network request:', error);
-                alert('A network error occurred. Please try again.');
-            });
-        };
-    });
-</script>
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Appointment booked successfully!');
+                            const dateParts = data.date.split('-');
+                            selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
+                        } else {
+                            console.error('Failed to book appointment:', data);
+                            alert('Failed to book appointment: ' + JSON.stringify(data));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error in network request:', error);
+                        alert('A network error occurred. Please try again.');
+                    });
+            };
+        });
+    </script>
 {% endblock %}

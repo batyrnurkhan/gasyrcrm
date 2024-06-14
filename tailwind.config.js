@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-const defaultTheme = require('tailwindcss/defaultTheme')
-const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme');
+const colors = require('tailwindcss/colors');
 /* Tailwind command:
 npm install -D tailwindcss
 npx tailwindcss -i .\core\static\core\css\input.css -o .\core\static\core\css\output.css --watch

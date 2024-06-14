@@ -32,6 +32,7 @@ def appointments_for_day_api(request, year, month, day):
             'start_time': appointment.start_time.strftime('%H:%M'),
             'end_time': appointment.end_time.strftime('%H:%M'),
             'is_booked': appointment.is_booked,
+            'link': appointment.link,
             'user_full_name': appointment.user.full_name if appointment.is_booked else None,
             'user_profile_pic_url': appointment.user.profile_picture.url if appointment.is_booked and appointment.user.profile_picture else None
         }

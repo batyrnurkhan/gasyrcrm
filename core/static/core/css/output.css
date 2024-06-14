@@ -697,6 +697,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   height: 10px;
 }
 
+.group:hover .appointment-text {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
 .without-spin::-webkit-outer-spin-button,
     .without-spin::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -1498,6 +1503,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-right: 78px;
 }
 
+.mr-\[8px\] {
+  margin-right: 8px;
+}
+
 .mr-auto {
   margin-right: auto;
 }
@@ -1676,6 +1685,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .h-\[100px\] {
   height: 100px;
+}
+
+.h-\[116px\] {
+  height: 116px;
 }
 
 .h-\[135px\] {
@@ -1937,10 +1950,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .max-h-\[75px\] {
   max-height: 75px;
-}
-
-.max-h-\[210px\] {
-  max-height: 210px;
 }
 
 .min-h-60 {
@@ -2265,6 +2274,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-width: 140px;
 }
 
+.max-w-\[150px\] {
+  max-width: 150px;
+}
+
 .max-w-\[15px\] {
   max-width: 15px;
 }
@@ -2403,14 +2416,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .max-w-sm {
   max-width: 24rem;
-}
-
-.max-w-\[150px\] {
-  max-width: 150px;
-}
-
-.max-w-\[407px\] {
-  max-width: 407px;
 }
 
 .flex-1 {
@@ -2687,6 +2692,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: calc(10px * var(--tw-space-y-reverse));
 }
 
+.space-y-\[16px\] > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(16px * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(16px * var(--tw-space-y-reverse));
+}
+
 .space-y-\[36px\] > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(36px * calc(1 - var(--tw-space-y-reverse)));
@@ -2697,12 +2708,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   --tw-space-y-reverse: 0;
   margin-top: calc(8px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(8px * var(--tw-space-y-reverse));
-}
-
-.space-y-\[16px\] > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(16px * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(16px * var(--tw-space-y-reverse));
 }
 
 .overflow-auto {
@@ -2855,11 +2860,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .border-\[\#8D8D8D\] {
   --tw-border-opacity: 1;
   border-color: rgb(141 141 141 / var(--tw-border-opacity));
-}
-
-.border-\[\#9D9E9E\] {
-  --tw-border-opacity: 1;
-  border-color: rgb(157 158 158 / var(--tw-border-opacity));
 }
 
 .border-\[\#C6C6C6\] {
@@ -3044,10 +3044,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   --tw-gradient-to: #E2A344 var(--tw-gradient-to-position);
 }
 
-.to-0\% {
-  --tw-gradient-to-position: 0%;
-}
-
 .bg-cover {
   background-size: cover;
 }
@@ -3189,6 +3185,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .p-\[52px\] {
   padding: 52px;
+}
+
+.p-\[56px\] {
+  padding: 56px;
 }
 
 .p-\[6px\] {
@@ -3563,6 +3563,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .py-\[32px\] {
   padding-top: 32px;
   padding-bottom: 32px;
+}
+
+.py-\[3px\] {
+  padding-top: 3px;
+  padding-bottom: 3px;
 }
 
 .py-\[42px\] {
@@ -4529,15 +4534,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .placeholder\:opacity-60::placeholder {
   opacity: 0.6;
-}
-
-.checked\:border-none:checked {
-  border-style: none;
-}
-
-.checked\:bg-accent-red:checked {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
 }
 
 .checked\:accent-\[\#289e29\]:checked {
