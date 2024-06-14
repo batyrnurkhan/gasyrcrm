@@ -76,7 +76,7 @@ class AppointmentBookAPIView(APIView):
             appointment.is_booked = True
             appointment.user = request.user
             appointment.save()
-            return redirect('subjects:success-appointment')  # Redirect to success page
+            return redirect('appointments:success-appointment')  # Redirect to success page
         except Appointment.DoesNotExist:
             return Response({"error": "Appointment does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -113,8 +113,8 @@ def cancel_appointment(request, appointment_id):
         appointment.user = None
         appointment.save()
         messages.success(request, "Your appointment has been successfully cancelled.")
-        return redirect('appointments:view')  # Redirect to the appointment view or another relevant page
+        return redirect('subjects:psy-appointment')  # Redirect to the appointment view or another relevant page
     else:
         # Prevent accidental GET requests from cancelling the appointment
         messages.error(request, "Invalid request method.")
-        return redirect('subjects:psy-appointment')
+        return redirect('appointments:success-appointment')
