@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.forms import model_to_dict
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime, timedelta
 
 from django.utils.dateformat import DateFormat
@@ -101,3 +102,19 @@ def success_appointment_view(request):
     }
 
     return render(request, 'subjects/appointment/success-appointment.html', context)
+
+
+@login_required
+def cancel_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id, user=request.user)
+
+    if request.method == 'POST':
+        appointment.is_booked = False
+        appointment.user = None
+        appointment.save()
+        messages.success(request, "Your appointment has been successfully cancelled.")
+        return redirect('appointments:view')  # Redirect to the appointment view or another relevant page
+    else:
+        # Prevent accidental GET requests from cancelling the appointment
+        messages.error(request, "Invalid request method.")
+        return redirect('subjects:psy-appointment')

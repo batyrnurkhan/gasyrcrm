@@ -28,6 +28,13 @@
                         <div class="time py-[3px] px-[18px] bg-accent-red rounded-lg inline-block text-white text-[18px] leading-[26px] font-regular">{{ appointment_time }}</div>
                     </div>
                 </div>
+                <!-- Cancel Button Form -->
+                <form action="{% url 'appointments:cancel_appointment' appointment.id %}" method="post" style="margin-bottom: 20px;">
+    {% csrf_token %}
+    <button type="submit" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">
+        Отменить запись
+    </button>
+</form>
                 <a href="/" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">Вернуться на главную</a>
             </div>
         </div>
