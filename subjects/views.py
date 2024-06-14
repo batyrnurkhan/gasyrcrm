@@ -322,6 +322,7 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             chat_room.participants.add(self.object.teacher)
 
         return response
+
     def get_success_url(self):
         # Redirects back to the shifts page after successful creation
         return reverse('schedule:shifts')

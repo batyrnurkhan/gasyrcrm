@@ -1,9 +1,72 @@
+{% load static %}
 {% block flex-content %}
-  <h1>Create a New Lesson</h1>
-<form method="post" action="{% url 'subjects:lesson-create' time_id=time_id %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="hidden" name="time_slot" value="{{ time_id }}" id="id_time_slot">
-    <button type="submit">Save</button>
-  </form>
+    <form method="post" action="{% url 'subjects:lesson-create' time_id=time_id %}" class="flex flex-col gap-[8.5px]">
+        {% csrf_token %}
+        <input id="id_teacher" name="teacher" type="text" hidden>
+        <div class="relative px-[16px] py-[25px] border border-[#CDCDCD] rounded-lg flex flex-row"
+             onclick="()=>{myDropdown('teachers')}">
+            <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+            <p class="text-[16px]">Выберите учителя</p>
+            <ul id="teachers"
+                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                {% for key, teacher in form.fields.teacher.choices %}
+                    <li onclick="selectTeacher({{ key }})"
+                        class="flex flex-row gap-[8px] items-center cursor-pointer hover:bg-gray">
+                        {% if teacher.1 %}
+                            <img class="w-[32px] h-[32px] rounded-full" alt=""
+                                 src="{{ teacher.1 }}">
+                        {% else %}
+                            <img class="w-[32px] h-[32px] rounded-full" alt=""
+                                 src="{% static 'core/images/default-user.svg' %}">
+                        {% endif %}
+                        <p class="text-[16px] font-semibold">{{ teacher.0 }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <input placeholder="Введите название группы" class="px-[22px] py-[27px] border border-[#CDCDCD] rounded-lg"
+               id="id_group_name" name="group_name" type="text">
+        <input id="id_subject" name="subject" type="text" hidden>
+        <div class="relative px-[16px] py-[25px] border border-[#CDCDCD] rounded-lg flex flex-row"
+             onclick="()=>{myDropdown('subjects')}">
+            <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+            <p class="text-[16px]">Выберите предмет</p>
+            <ul id="subjects"
+                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                {% for key, value in form.fields.subject.choices %}
+                    {% if not forloop.first %}
+                        <li onclick="selectSubject({{ key }})"
+                            class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
+                            <img class="w-[53px] h-[53px] object-cover rounded-[9px]"
+                                 src="{% static 'core/images/signup-guy.png' %}" alt="">
+                            <p class="text-[16px] font-semibold">{{ value }}</p>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <input id="id_group_template" name="group_template" type="text" hidden>
+        <div class="relative px-[16px] py-[25px] border border-[#CDCDCD] rounded-lg flex flex-row">
+            <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+            <p class="text-[16px]">Выберите шаблон группы</p>
+            <ul class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                {% for key, value in form.fields.group_template.choices %}
+                    <li onclick="selectGroupTemplate({{ key }})"
+                        class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
+                        <p class="text-[16px] font-semibold opacity-50">{{ value }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <input type="hidden" name="time_slot" value="{{ time_id }}" id="id_time_slot">
+        <button type="submit">Save</button>
+    </form>
+    <script>
+        function myDropdown(id) {
+            console.log(id)
+            var elem = document.getElementById(id);
+            if (elem.classList.contains('hidden')) elem.classList.remove('hidden')
+            else elem.classList.add('hidden');
+        }
+    </script>
 {% endblock %}

@@ -17,6 +17,8 @@ class TaskForm(forms.ModelForm):
 
 
 class LessonForm(ModelForm):
+    teacher = forms.ChoiceField()
+
     class Meta:
         model = Lesson_crm2
         fields = ['group_name', 'subject', 'group_template', 'teacher', 'time_slot']
@@ -25,11 +27,8 @@ class LessonForm(ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['group_name'].widget.attrs.update({'class': 'form-control'})
-        self.fields['subject'].widget.attrs.update({'class': 'form-control'})
-        self.fields['group_template'].widget.attrs.update({'class': 'form-control'})
-        self.fields['teacher'].widget.attrs.update({'class': 'form-control'})
+        super(LessonForm, self).__init__(*args, **kwargs)
+        self.fields['teacher'].choices = [(e.id, (e.full_name, e.profile_picture.url if e.profile_picture else '')) for e in CustomUser.objects.all()]
 
     def clean(self):
         cleaned_data = super().clean()
