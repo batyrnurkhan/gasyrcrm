@@ -196,6 +196,7 @@ function setEndMin(min) {
                         times.innerHTML = '';
                         if (appointments.length > 0) {
                             appointments.forEach(appointment => {
+                                console.log(appointment);
                                 const li = document.createElement('li');
                                 li.classList = "w-full mb-[6px] border-[1px] border-[#D8D8D8] rounded-lg h-[55px] flex items-center pl-[40px] pr-[30px] justify-between" +
                                     " hover:bg-accent-red hover:text-white group";
@@ -209,10 +210,10 @@ function setEndMin(min) {
                                             <span class="font-semibold text-[16px] leading-[20px]">${appointment.user_full_name}</span>
                                         </div>
                                         <button onclick="showSetLinkModal(${appointment.id}, '${appointment.link}')"
-                                            class="flex flex-row items-center border-[1px] border-white rounded-sm py-[12px] px-[15px] gap-[18px] hidden group-hover:block">
-                                            <img src="{% static "core/images/crm2/camera.svg" %}" alt="" class="max-w-[25px] max-h-[20px]">
-                                            <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
-                                        </button>
+                class="flex flex-row items-center border-[1px] border-white rounded-sm py-[12px] px-[15px] gap-[18px] hidden group-hover:block">
+                <img src="{% static "core/images/crm2/camera.svg" %}" alt="" class="max-w-[25px] max-h-[20px]">
+                <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
+            </button>
                                     `;
                                     li.appendChild(appointmentUser);
                                 } else {
@@ -285,6 +286,7 @@ function setEndMin(min) {
 
 
             window.showSetLinkModal = function (appointmentId, currentLink) {
+                    console.log("showSetLinkModal called with ID:", appointmentId); // Debugging output
                 document.getElementById('appointmentId').value = appointmentId;
                 document.getElementById('appointmentLinkModal').value = currentLink || '';
                 $('#setLinkModal').show();

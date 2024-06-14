@@ -9,13 +9,12 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
-        fields = ['date', 'start_time', 'end_time', 'link', 'is_booked', 'user', 'user_full_name']
+        fields = ['id', 'date', 'start_time', 'end_time', 'link', 'is_booked', 'user', 'user_full_name']  # Include 'id' here
         extra_kwargs = {
             'user': {'read_only': True}
         }
 
     def get_user_full_name(self, obj):
-        # Ensure you return the actual attribute that holds the user's full name
         return obj.user.full_name if obj.user else None
 
     def validate(self, data):

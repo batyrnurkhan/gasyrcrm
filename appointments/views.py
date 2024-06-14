@@ -25,17 +25,19 @@ def week_view(request):
 
 def appointments_for_day_api(request, year, month, day):
     date = datetime(year, month, day).date()
-    appointments = Appointment.objects.filter(date=date).select_related('user')  # Assuming that the Appointment model has a 'user' ForeignKey
+    appointments = Appointment.objects.filter(date=date).select_related('user')
     appointment_list = [
         {
+            'id': appointment.id,  # Ensure this is being included
             'start_time': appointment.start_time.strftime('%H:%M'),
             'end_time': appointment.end_time.strftime('%H:%M'),
             'is_booked': appointment.is_booked,
             'user_full_name': appointment.user.full_name if appointment.is_booked else None,
-            'user_profile_pic_url': appointment.user.profile_picture.url if appointment.is_booked and appointment.user.profile_picture else None  # Handle cases where the profile picture may not exist
+            'user_profile_pic_url': appointment.user.profile_picture.url if appointment.is_booked and appointment.user.profile_picture else None
         }
         for appointment in appointments
     ]
+    print(appointment_list)  # Debug print
     return JsonResponse({'appointments': appointment_list, 'date': date.strftime("%Y-%m-%d")})
 
 
@@ -93,21 +95,16 @@ class AppointmentBookAPIView(APIView):
 
 @login_required
 def success_appointment_view(request):
-    # Fetch the latest booked appointment for the current user
     latest_appointment = Appointment.objects.filter(user=request.user, is_booked=True).order_by('-date', '-start_time').first()
     if not latest_appointment:
-        # Handle the case where there is no appointment found
-        return redirect('subjects:psy-appointment')  # Redirect back to the appointment booking page
-
-    # Format the date to include day and month name
-    day_month_format = DateFormat(latest_appointment.date).format('j F')
-    time_format = DateFormat(latest_appointment.start_time).format(get_format('TIME_FORMAT'))
+        return redirect('subjects:psy-appointment')  # Redirect back if no appointment
 
     context = {
         'user_full_name': request.user.full_name,
         'user_profile_pic_url': request.user.profile_picture.url if request.user.profile_picture else None,
-        'appointment_date': day_month_format,
-        'appointment_time': time_format,
+        'appointment_date': latest_appointment.date.strftime("%d %B %Y"),
+        'appointment_time': latest_appointment.start_time.strftime("%H:%M"),
+        'appointment_link': latest_appointment.link,  # Ensure this is included
         'appointment': latest_appointment
     }
 
