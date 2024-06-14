@@ -206,7 +206,11 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             window.selectDate = function (year, month, day, fullDate) {
-                fetch(`/appointments/api/appointments/${year}/${month}/${day}/`)
+                // Fetch user role dynamically
+                const userRole = "{{ user_role }}";
+                const type = userRole === 'Psychologist' ? 'psy' : 'ori';
+
+                fetch(`/appointments/api/appointments/${type}/${year}/${month}/${day}/`)
                     .then(response => response.json())
                     .then(data => {
                         const appointments = data.appointments;
@@ -295,13 +299,15 @@
                                 selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
                             } else {
                                 console.error('Failed to create appointment:', data);
-                                alert('Failed to create appointment: ' + JSON.stringify(data));
+                                // Remove alert here
+                                // alert('Failed to create appointment: ' + JSON.stringify(data));
                             }
                         });
                     })
                     .catch(error => {
                         console.error('Error in network request:', error);
-                        alert('A network error occurred. Please try again.');
+                        // Remove alert here
+                        // alert('A network error occurred. Please try again.');
                     });
             };
 
@@ -325,7 +331,7 @@
                     .then(response => response.json())
                     .then(data => {
                         $('#setLinkModal').modal('hide');
-                        alert('Link set successfully!');
+                        // alert('Link set successfully!');
                     });
             };
         });

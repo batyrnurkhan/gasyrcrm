@@ -32,6 +32,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('Teacher', 'Teacher'),
         ('Mentor', 'Mentor'),
         ('Psychologist', 'Psychologist'),
+        ('Orientologist', 'Orientologist'),
+
     )
 
     full_name = models.CharField(max_length=255)

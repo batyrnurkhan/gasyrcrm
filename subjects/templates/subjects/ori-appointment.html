@@ -9,7 +9,7 @@
         <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
             <div class="flex items-center justify-between mb-[24px]">
                 <h1 class="font-bold text-black-main text-[42px]">
-                    Запись к психологу
+                    Запись к профориентологу
                 </h1>
                 <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
                     <button class="previous__date">
@@ -59,7 +59,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             window.selectDate = function (year, month, day, fullDate) {
-                const type = 'psy';
+                const type = 'ori';
                 fetch(`/appointments/api/appointments/${type}/${year}/${month}/${day}/`)
                     .then(response => response.json())
                     .then(data => {

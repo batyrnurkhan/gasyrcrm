@@ -18,6 +18,16 @@ class AppointmentSerializer(serializers.ModelSerializer):
     def get_user_full_name(self, obj):
         return obj.user.full_name if obj.user else None
 
+    def create(self, validated_data):
+        # Access the user from the request context
+        user = self.context['request'].user
+        validated_data['user'] = user
+        if user.role == 'Psychologist':
+            validated_data['type'] = 'psy'
+        elif user.role == 'Orientologist':
+            validated_data['type'] = 'ori'
+        return Appointment.objects.create(**validated_data)
+
     def validate(self, data):
         # Ensure a description is provided when booking an appointment
         if data.get('is_booked') and not data.get('description'):
