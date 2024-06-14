@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import model_to_dict
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime, timedelta
 
@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Appointment
 
+@login_required
 def week_view(request):
     today = datetime.now().date()
     start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
@@ -18,17 +19,17 @@ def week_view(request):
 
     context = {
         'dates_of_week': dates_of_week,
+        'user_role': request.user.role,
     }
     return render(request, 'appointments/week_view.html', context)
 
 
-
-def appointments_for_day_api(request, year, month, day):
+def appointments_for_day_api(request, type, year, month, day):
     date = datetime(year, month, day).date()
-    appointments = Appointment.objects.filter(date=date).select_related('user')
+    appointments = Appointment.objects.filter(date=date, type=type).select_related('user')
     appointment_list = [
         {
-            'id': appointment.id,  # Ensure this is being included
+            'id': appointment.id,
             'start_time': appointment.start_time.strftime('%H:%M'),
             'end_time': appointment.end_time.strftime('%H:%M'),
             'is_booked': appointment.is_booked,
@@ -38,9 +39,7 @@ def appointments_for_day_api(request, year, month, day):
         }
         for appointment in appointments
     ]
-    print(appointment_list)  # Debug print
     return JsonResponse({'appointments': appointment_list, 'date': date.strftime("%Y-%m-%d")})
-
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

@@ -3,7 +3,8 @@ from .views import SubjectListView, group_template_list, LessonCreateView, Lesso
     create_volunteer_channel, set_grade, LessonListView, grades_by_day_view, home_view, \
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
     mini_schedule_view, update_google_meet_link, student_tasks_view, upload_task_view, download_task_file, \
-    download_submission_file, download_grade_file, create_achievement, achievements_list, task_submissions_view
+    download_submission_file, download_grade_file, create_achievement, achievements_list, task_submissions_view, \
+    ori_appointment_view
 
 app_name = 'subjects'
 
@@ -13,6 +14,9 @@ urlpatterns = [
     path('weekly-schedule/', weekly_schedule_view, name='weekly-schedule'),
     path('mini-schedule/', mini_schedule_view, name='mini-schedule'),
     path('psy-appointment/', psy_appointment_view, name='psy-appointment'),
+    path('ori-appointment/', ori_appointment_view, name='ori-appointment'),
+
+
     path('subject-list/', SubjectListView.as_view(), name='subject-list'),
     path('grouptemplate-create/', group_template_list, name='grouptemplate-list'),
     path('group-templates/', group_templates_view, name='group_templates_view'),
