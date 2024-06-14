@@ -7,7 +7,7 @@ class AppointmentForm(ModelForm):
         model = Appointment
         fields = ['date', 'start_time', 'end_time']
         widgets = {
-            'date': forms.HiddenInput(),  # Make date a hidden field
+            'date': forms.HiddenInput(),
         }
 
     def clean(self):
