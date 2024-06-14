@@ -464,15 +464,23 @@ def grades_by_day_view(request):
     return render(request, 'subjects/grades_by_day.html', {'grades_by_date': grades_by_date, 'page': 'diary'})
 @login_required
 def psy_appointment_view(request):
-    today = datetime.now().date()
-    start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
-    dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
+    print("Current Date:", now().date())
+    print("Logged in User:", request.user.id)
+
+    booked_appointments = Appointment.objects.filter(user=request.user, is_booked=True, date__gte=now().date()).order_by('-date', '-start_time')
+    print("Booked Appointments Found:", booked_appointments.count())
+
+    if booked_appointments.exists():
+        return redirect('appointments:success-appointment')
+
+    today = now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]
 
     context = {
         'dates_of_week': dates_of_week,
     }
     return render(request, 'subjects/psy-appointment.html', context)
-
 
 @login_required
 def create_volunteer_channel(request):

@@ -1,8 +1,11 @@
+from django.contrib.auth.decorators import login_required
 from django.forms import model_to_dict
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from datetime import datetime, timedelta
 
+from django.utils.dateformat import DateFormat
+from django.utils.formats import get_format
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Appointment
@@ -72,8 +75,29 @@ class AppointmentBookAPIView(APIView):
             appointment.is_booked = True
             appointment.user = request.user
             appointment.save()
-            return Response(
-                {"success": "Appointment booked successfully.", "date": appointment.date.strftime("%Y-%m-%d")},
-                status=status.HTTP_200_OK)
+            return redirect('subjects:success-appointment')  # Redirect to success page
         except Appointment.DoesNotExist:
             return Response({"error": "Appointment does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+
+@login_required
+def success_appointment_view(request):
+    # Fetch the latest booked appointment for the current user
+    latest_appointment = Appointment.objects.filter(user=request.user, is_booked=True).order_by('-date', '-start_time').first()
+    if not latest_appointment:
+        # Handle the case where there is no appointment found
+        return redirect('subjects:psy-appointment')  # Redirect back to the appointment booking page
+
+    # Format the date to include day and month name
+    day_month_format = DateFormat(latest_appointment.date).format('j F')
+    time_format = DateFormat(latest_appointment.start_time).format(get_format('TIME_FORMAT'))
+
+    context = {
+        'user_full_name': request.user.full_name,
+        'user_profile_pic_url': request.user.profile_picture.url if request.user.profile_picture else None,
+        'appointment_date': day_month_format,
+        'appointment_time': time_format,
+        'appointment': latest_appointment
+    }
+
+    return render(request, 'subjects/appointment/success-appointment.html', context)

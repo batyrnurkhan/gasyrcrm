@@ -1,0 +1,35 @@
+{% extends 'subjects/base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block flex-content %}
+    {% include "subjects/components/crm2-student-sidebar.html" %}
+    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+        {% include "subjects/components/crm2-header.html" %}
+        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+            <div class="accepted bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[56px]">
+                <h1 class="accepted__title text-black-main font-bold text-[42px] leading-[52px] mb-[16px]">Ваша запись принята!</h1>
+                <div class="accepted__item border border-[1px] border-[#D8D8D8] rounded-md px-[22px] h-[116px] flex items-center justify-between mb-6">
+                    <div class="accepted__item-who flex gap-[24px] items-center">
+                        <div class="who__img">
+                            {% if user_profile_pic_url %}
+                            <img src="{{ user_profile_pic_url }}" alt="Profile Picture" style="width:100px; height:100px;">
+                            {% else %}
+                            <img src="{% static 'assets/avatar.png' %}" alt="Default Avatar">
+                            {% endif %}
+                        </div>
+                        <div class="who__name">
+                            <h3 class="who__fullname text-[24px] leading-[30px] font-semibold text-black-main mb-2">{{ user_full_name }}</h3>
+                            <p class="who__text text-[16px] leading-[20px] text-black-main font-regular">Запись к психологу</p>
+                        </div>
+                    </div>
+                    <div class="accepted__item-time text-right">
+                        <p class="time__day font-regular text-[16px] leading-[20px] mb-2 text-black-main">{{ appointment_date }}</p>
+                        <div class="time py-[3px] px-[18px] bg-accent-red rounded-lg inline-block text-white text-[18px] leading-[26px] font-regular">{{ appointment_time }}</div>
+                    </div>
+                </div>
+                <a href="/" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">Вернуться на главную</a>
+            </div>
+        </div>
+    </main>
+{% endblock %}
