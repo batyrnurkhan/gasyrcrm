@@ -205,8 +205,8 @@ function setEndMin(min) {
                                     appointmentUser.classList = "flex gap-[50px] items-center";
                                     appointmentUser.innerHTML = `
                                         <div class="flex gap-[8px] items-center">
-                                            <img src="{% static 'core/images/default-user.svg' %}" alt="" class="max-w-[32px] max-h-[32px] rounded-full">
-                                            <span class="font-semibold text-[16px] leading-[20px]">Ернур Алкашев</span>
+            <img src="${appointment.user_profile_pic_url || '{% static 'core/images/default-user.svg' %}'}" alt="" class="max-w-[32px] max-h-[32px] rounded-full">
+                                            <span class="font-semibold text-[16px] leading-[20px]">${appointment.user_full_name}</span>
                                         </div>
                                         <button onclick="showSetLinkModal(${appointment.id}, '${appointment.link}')"
                                             class="flex flex-row items-center border-[1px] border-white rounded-sm py-[12px] px-[15px] gap-[18px] hidden group-hover:block">

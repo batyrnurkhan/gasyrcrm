@@ -25,9 +25,19 @@ def week_view(request):
 
 def appointments_for_day_api(request, year, month, day):
     date = datetime(year, month, day).date()
-    appointments = Appointment.objects.filter(date=date)
-    appointment_list = [model_to_dict(appointment) for appointment in appointments]  # Convert queryset to list of dicts
+    appointments = Appointment.objects.filter(date=date).select_related('user')  # Assuming that the Appointment model has a 'user' ForeignKey
+    appointment_list = [
+        {
+            'start_time': appointment.start_time.strftime('%H:%M'),
+            'end_time': appointment.end_time.strftime('%H:%M'),
+            'is_booked': appointment.is_booked,
+            'user_full_name': appointment.user.full_name if appointment.is_booked else None,
+            'user_profile_pic_url': appointment.user.profile_picture.url if appointment.is_booked and appointment.user.profile_picture else None  # Handle cases where the profile picture may not exist
+        }
+        for appointment in appointments
+    ]
     return JsonResponse({'appointments': appointment_list, 'date': date.strftime("%Y-%m-%d")})
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
