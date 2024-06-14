@@ -192,6 +192,7 @@ def create_teacher(request):
             return redirect('users:create-teacher')
         else:
             messages.error(request, 'Please correct the errors below.')
+            print(form.errors)
     else:
         form = TeacherCreationForm()
 

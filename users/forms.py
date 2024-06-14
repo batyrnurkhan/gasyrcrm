@@ -74,18 +74,26 @@ class ProfileUpdateForm(forms.ModelForm):
 class TeacherCreationForm(forms.ModelForm):
     first_name = forms.CharField(max_length=255, required=True)
     last_name = forms.CharField(max_length=255, required=True)
+    phone_number = forms.CharField(max_length=22, required=True)  # Make sure to capture this in the form fields if you want to normalize it in the form
 
     class Meta:
         model = CustomUser
         fields = ['phone_number']
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data['phone_number']
+        normalized_phone_number = re.sub(r'\D', '', phone_number)
+        if not normalized_phone_number.startswith('7'):
+            normalized_phone_number = '7' + normalized_phone_number
+        return normalized_phone_number
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.full_name = f"{self.cleaned_data['first_name']} {self.cleaned_data['last_name']}"
         user.role = 'Teacher'
         user.user_city = "Almaty"  # Default city
-        password = CustomUser.objects.make_random_password()  # Generate a random password
-        user.set_password(password)  # Set the generated password
+        password = CustomUser.objects.make_random_password()
+        user.set_password(password)
         if commit:
             user.save()
         return user, password
