@@ -7,28 +7,27 @@
     <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-top"
          style="background-image: url('{% static "core/images/background-stars.png" %}')"></div>
     <div class="container content mx-auto relative font-[Qanelas]">
-        <div class="absolute left-15 top-0 -bottom-10 -z-10">
+        <div class="absolute left-15 -top-[50px] -bottom-10 -z-10">
             <img class="h-full" src="{% static "core/images/signup-guy.png" %}" alt="">
         </div>
-        <div class="absolute bg-white rounded-lg bottom-36 left-36 py-6 px-8 text-center">
-            <h2 class="text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
-            <p class="text-sm text-black-main font-medium">Основатель школы</p>
+        <div class="absolute bg-white rounded-lg 2xl:bottom-36 2xl:left-36 bottom-20 left-20 py-6 px-8 text-center">
+            <h2 class="2xl:text-2xl text-lg text-black-main font-bold">Халыкбердиев Якуб</h2>
+            <p class="2xl:text-sm text-xs text-black-main font-medium">Основатель школы</p>
         </div>
-        <div class="absolute top-0 bottom-0 right-32">
-            <div class="bg-light-gray rounded-lg text-center px-7 pb-11 pt-12">
-                <h2 class="font-bold text-2xl mb-5 text-black-main">Давайте знакомиться!</h2>
+        <div class="absolute top-0 bottom-0 2xl:right-32 right-16 flex flex-col justify-center">
+            <div class="bg-light-gray rounded-lg text-center px-7 2xl:pb-11 2xl:pt-12 pb-7 pt-7">
+                <h2 class="font-bold 2xl:text-2xl text-lg mb-5 text-black-main">Давайте знакомиться!</h2>
                 <form class="mb-7" method="post" action="{% url 'users:signup' %}" id="signup-form">
                     {% csrf_token %}
-                    <input class="pl-4 py-4 mb-1.5 border rounded-lg placeholder:text-black-main placeholder:text-text-base placeholder:opacity-60"
-                           style="width: 340px" placeholder="Имя и Фамилия" type="text" name="full_name"
+                    <input class="pl-4 2xl:py-6 py-3 mb-1.5 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm placeholder:opacity-60"
+                           style="width: 19vw" placeholder="Имя и Фамилия" type="text" name="full_name"
                            id="id_full_name" required><br>
-
                     <div class="relative mb-1.5">
-                        <input class="pl-14 py-6 border rounded-lg placeholder:text-black-main placeholder:text-lg placeholder:opacity-60"
-                               style="width: 340px"
+                        <input class="pl-14 2xl:py-6 py-3 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm placeholder:opacity-60"
+                               style="width: 19vw"
                                type="text" name="phone_number"
                                id="id_phone_number" value="+7 (___) ___ __ __" required>
-                        <div class="absolute top-7 left-2 pl-3
+                        <div class="absolute top-0 bottom-0 left-2 pl-3
                                     flex items-center
                                     pointer-events-none">
                             <img src="{% static "core/icons/kz.png" %}" alt="">
@@ -36,8 +35,8 @@
                     </div>
 
                     <div class="relative mb-1.5">
-                        <select class="pl-14 py-4 mb-1.5 border rounded-lg placeholder:text-black-main placeholder:text-text-base appearance-none"
-                                style="width: 340px" name="user_city" id="id_user_city" required>
+                        <select class="pl-14 2xl:py-6 py-3 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm appearance-none"
+                                style="width: 19vw" name="user_city" id="id_user_city" required>
                             <option selected value="_">Ваш город</option>
                             <option value="Astana">Astana</option>
                             <option value="Almaty">Almaty</option>
@@ -50,33 +49,33 @@
                             <option value="Semey">Semey</option>
                             <option value="Atyrau">Atyrau</option>
                         </select><br>
-                        <div class="absolute top-4 left-1 pl-3
+                        <div class="absolute top-0 bottom-0 left-1 pl-3
                                     flex items-center
                                     pointer-events-none">
                             <img src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
                         </div>
                     </div>
 
-                    <input class="pl-4 py-4 mb-1.5 border rounded-lg placeholder:text-black-main placeholder:text-text-base placeholder:opacity-60"
-                           style="width: 340px" placeholder="Пароль" type="password" name="password" id="id_password"
+                    <input class="pl-4 2xl:py-6 py-3 mb-1.5 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm placeholder:opacity-60"
+                           style="width: 19vw" placeholder="Пароль" type="password" name="password" id="id_password"
                            required><br>
 
-                    <input class="pl-4 py-4 mb-4 border rounded-lg placeholder:text-black-main placeholder:text-text-base placeholder:opacity-60"
-                           style="width: 340px" placeholder="Повторите пароль" type="password" name="re_password"
+                    <input class="pl-4 2xl:py-6 py-3 mb-4 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm placeholder:opacity-60"
+                           style="width: 19vw" placeholder="Повторите пароль" type="password" name="re_password"
                            id="id_password" required><br>
 
-                    <button class="bg-accent-red rounded-lg py-4 font-semibold text-white"
-                            style="width: 340px; letter-spacing: 0.01rem" type="submit">Стать частью Gasyr
+                    <button class="bg-accent-red rounded-lg 2xl:py-6 py-3 font-semibold text-white 2xl:text-base text-sm"
+                            style="width: 19vw; letter-spacing: 0.01rem" type="submit">Стать частью Gasyr
                     </button>
                 </form>
                 <div>
-                    <h4 class="text-black-main font-semibold text-lg mb-2.5">Зарегистрироваться через соц. сети</h4>
+                    <h4 class="text-black-main font-semibold 2xl:text-lg text-base mb-2.5 text-wrap" style="width: 19vw;">Зарегистрироваться через соц. сети</h4>
                     <div>
-                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                            <img src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
+                        <a class="2xl:p-6 p-4 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="2xl:size-[28px] size-[18px]" src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
                         </a>
-                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                            <img src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
+                        <a class="2xl:p-6 p-4 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="2xl:size-[28px] size-[18px]" src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
                         </a>
                     </div>
                 </div>

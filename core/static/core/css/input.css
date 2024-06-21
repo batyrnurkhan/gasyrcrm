@@ -98,7 +98,7 @@
     }
 
     .content {
-        min-height: calc(100vh - 203px)
+        min-height: calc(100vh - 75px)
     }
 
     .active-link {

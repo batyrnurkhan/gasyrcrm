@@ -7,43 +7,44 @@
     <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-top"
          style="background-image: url('{% static "core/images/background-stars.png" %}')"></div>
     <div class="container content mx-auto relative font-[Qanelas]">
-        <div class="absolute left-24 top-0 -bottom-5 -z-10">
+        <div class="absolute left-24 -top-[50px] -bottom-5 -z-10">
             <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
         </div>
-        <div class="absolute bg-white rounded-lg bottom-36 left-36 py-6 px-8 text-center">
-            <h2 class="text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
-            <p class="text-sm text-black-main font-medium">Основатель школы</p>
+        <div class="absolute bg-white rounded-lg 2xl:bottom-36 2xl:left-36 bottom-20 left-20 py-6 px-8 text-center">
+            <h2 class="2xl:text-2xl text-lg text-black-main font-bold">Халыкбердиев Якуб</h2>
+            <p class="2xl:text-sm text-xs text-black-main font-medium">Основатель школы</p>
         </div>
-        <div class="absolute top-16 bottom-0 right-32">
-            <div class="bg-light-gray rounded-lg text-center px-7 pb-11 pt-12">
-                <h2 class="font-bold text-2xl mb-5 text-black-main">Вход на платформу</h2>
+        <div class="absolute top-0 bottom-0 2xl:right-32 right-16 flex flex-col justify-center">
+            <div class="bg-light-gray rounded-lg text-center px-7 2xl:pb-11 2xl:pt-12 pb-7 pt-7">
+                <h2 class="font-bold 2xl:text-2xl text-lg mb-5 text-black-main">Вход на платформу</h2>
                 <form class="mb-7" method="post">
                     {% csrf_token %}
                     <div class="relative mb-1.5">
-                        <input class="pl-14 py-6 border rounded-lg placeholder:text-black-main placeholder:text-lg" style="width: 340px"
+                        <input class="pl-14 2xl:py-6 py-3 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm" style="width: 19vw"
                                type="text" name="phone_number"
                                id="id_phone_number" value="+7 (___) ___ __ __" required>
-                        <div class="absolute top-7 left-2 pl-3
+                        <div class="absolute top-0 bottom-0 left-2 pl-3
                                     flex items-center
                                     pointer-events-none">
                             <img src="{% static "core/icons/kz.png" %}" alt="">
                         </div>
                     </div>
-                    <input class="pl-4 py-6 border rounded-lg placeholder:text-black-main placeholder:text-base" style="width: 340px"
+                    <input class="pl-4 2xl:py-6 py-3 border rounded-lg placeholder:text-black-main 2xl:text-base text-sm" style="width: 19vw"
                            type="password" name="password" id="id_password" placeholder="Введите ваш пароль" required><br><br>
-                    <button class="bg-accent-red rounded-lg py-6 font-semibold text-white" style="width: 340px; letter-spacing: 0.01rem" type="submit">Войти на платформу</button>
+                    <button class="bg-accent-red rounded-lg 2xl:py-6 py-3 font-semibold text-white 2xl:text-base text-sm"
+                            style="width: 19vw; letter-spacing: 0.01rem;" type="submit">Войти на платформу</button>
                 </form>
                 <div>
-                    <h4 class="text-black-main font-semibold text-lg mb-2.5">Войти через соц. сети</h4>
+                    <h4 class="text-black-main font-semibold 2xl:text-lg text-base mb-2.5">Войти через соц. сети</h4>
                     <div>
-                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                            <img src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
+                        <a class="2xl:p-6 p-4 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="2xl:size-[28px] size-[18px]" src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
                         </a>
-                        <a class="p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                            <img src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
+                        <a class="2xl:p-6 p-4 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="2xl:size-[28px] size-[18px]" src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
                         </a>
                     </div>
-                    <a class="text-black-main font-light underline" href="#">
+                    <a class="text-black-main font-light underline 2xl:text-base text-sm" href="#">
                         Проблемы со входом?
                     </a>
                 </div>
