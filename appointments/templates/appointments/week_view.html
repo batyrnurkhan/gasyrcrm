@@ -11,11 +11,11 @@
                 Календарь консультации
             </h1>
             <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
-                <button class="previous__date">
+                <button class="previous__date" onclick="updateWeek(-1)">
                     <img src="{% static 'core/images/crm2/prev-accent-red.png' %}" alt=""/>
                 </button>
-                <div class="switch__date-text">20-26 марта</div>
-                <button class="previous__date">
+                <div class="switch__date-text" id="date-range">Loading...</div>
+                <button class="previous__date" onclick="updateWeek(1)">
                     <img src="{% static 'core/images/crm2/next-accent-red.png' %}" alt=""/>
                 </button>
             </div>
@@ -24,7 +24,7 @@
             <h1 class="days__choose text-[32px] leading-[40px] text-black-main font-bold">
                 Выберите день
             </h1>
-            <div class="days__items flex gap-[10px]">
+            <div class="days__items flex gap-[10px]" id="days-items">
                 {% for day in dates_of_week %}
                     <div class="relative">
                         <input onclick="selectDate('{{ day.year }}', '{{ day.month }}', '{{ day.day }}', '{{ day|date:'Y-m-d' }}');"
@@ -37,7 +37,6 @@
                     </div>
                 {% endfor %}
             </div>
-
         </div>
         <div id="details"
              class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px] hidden">
@@ -57,7 +56,6 @@
             </ul>
         </div>
     </main>
-    <!-- Modal for Creating Appointments -->
     <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade"
          id="createAppointmentModal" tabindex="-1"
          aria-labelledby="createAppointmentModalLabel"
@@ -124,8 +122,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal for Setting Link -->
     <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
          tabindex="-1"
          style="display: none"
@@ -159,12 +155,51 @@
         </div>
     </div>
 
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        let weekOffset = 0;
+
+        function updateWeek(offset) {
+            weekOffset += offset;
+            fetchWeekDates();
+        }
+
+        function fetchWeekDates() {
+            fetch(`/api/week-dates/?week_offset=${weekOffset}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
+                    document.getElementById('date-range').textContent = dateRange;
+                    updateDays(data.dates_of_week);
+                })
+                .catch(error => {
+                    console.error('Error fetching week dates:', error);
+                });
+        }
+
+        function updateDays(dates) {
+            const daysContainer = document.getElementById('days-items');
+            daysContainer.innerHTML = '';
+            dates.forEach(date => {
+                const day = new Date(date);
+                const dayElement = `
+                    <div class="relative">
+                        <input onclick="selectDate('${day.getFullYear()}', '${day.getMonth() + 1}', '${day.getDate()}', '${date}');"
+                               type="radio" name="radio" class="w-full h-full absolute peer opacity-0">
+                        <div class="days__item rounded-[10px] pt-3 border peer-hover-psy border-accent-red text-accent-red font-bold pb-3 w-[102px] flex flex-col">
+                            <span class="text-[14px] font-bold leading-[14px] block text-center">${day.toLocaleString('default', { month: 'short' })}</span>
+                            <span class="block text-center text-[42px] leading-[52px] font-bold">${day.getDate()}</span>
+                            <span class="block text-center text-[14px] uppercase leading-[14px] font-bold">${day.toLocaleString('default', { weekday: 'short' })}</span>
+                        </div>
+                    </div>
+                `;
+                daysContainer.innerHTML += dayElement;
+            });
+        }
+
         function setStartHr(hr) {
             var time = document.getElementById('startTime');
             var mins = time.value.split(':')[1] || '00';
@@ -206,10 +241,8 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             window.selectDate = function (year, month, day, fullDate) {
-                // Fetch user role dynamically
                 const userRole = "{{ user_role }}";
                 const type = userRole === 'Psychologist' ? 'psy' : 'ori';
-
                 fetch(`/appointments/api/appointments/${type}/${year}/${month}/${day}/`)
                     .then(response => response.json())
                     .then(data => {
@@ -299,18 +332,13 @@
                                 selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
                             } else {
                                 console.error('Failed to create appointment:', data);
-                                // Remove alert here
-                                // alert('Failed to create appointment: ' + JSON.stringify(data));
                             }
                         });
                     })
                     .catch(error => {
                         console.error('Error in network request:', error);
-                        // Remove alert here
-                        // alert('A network error occurred. Please try again.');
                     });
             };
-
 
             window.showSetLinkModal = function (appointmentId, currentLink) {
                 console.log("showSetLinkModal called with ID:", appointmentId); // Debugging output
@@ -331,9 +359,12 @@
                     .then(response => response.json())
                     .then(data => {
                         $('#setLinkModal').modal('hide');
-                        // alert('Link set successfully!');
                     });
             };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                fetchWeekDates();
+            });
         });
     </script>
 {% endblock %}

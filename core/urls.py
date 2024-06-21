@@ -20,7 +20,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from core.views import HomePageView, WelcomePageView, MyCoursesPageView, CompletedCoursesPageView, CoursePageView
+from core.views import HomePageView, WelcomePageView, MyCoursesPageView, CompletedCoursesPageView, CoursePageView, \
+    get_week_dates
 
 app_name = 'core'
 
@@ -40,7 +41,8 @@ urlpatterns = [
     path('home/', HomePageView.as_view(), name='home'),
     path('my-courses/', MyCoursesPageView.as_view(), name='my-courses'),
     path('completed-courses/', CompletedCoursesPageView.as_view(), name='completed-courses'),
-    
+
+    path('api/week-dates/', get_week_dates, name='week_dates'),
 
 ]
 

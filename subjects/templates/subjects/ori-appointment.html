@@ -12,20 +12,20 @@
                     Запись к профориентологу
                 </h1>
                 <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
-                    <button class="previous__date">
+                    <button class="previous__date" onclick="updateWeek(-1)">
                         <img src="{% static 'core/images/crm2/prev-accent-red.png' %}" alt=""/>
                     </button>
-                    <div class="switch__date-text">20-26 марта</div>
-                    <button class="previous__date">
+                    <div class="switch__date-text" id="date-range">Loading...</div>
+                    <button class="previous__date" onclick="updateWeek(1)">
                         <img src="{% static 'core/images/crm2/next-accent-red.png' %}" alt=""/>
                     </button>
                 </div>
             </div>
-            <div class="days flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3">
+            <div class="days flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3" id="days-container">
                 <h1 class="days__choose text-[32px] leading-[40px] text-black-main font-bold">
                     Выберите день
                 </h1>
-                <div class="days__items flex gap-[10px]">
+                <div class="days__items flex gap-[10px]" id="days-items">
                     {% for day in dates_of_week %}
                         <div class="relative">
                             <input onclick="selectDate('{{ day.year }}', '{{ day.month }}', '{{ day.day }}', '{{ day|date:'Y-m-d' }}');"
@@ -45,7 +45,6 @@
                     Выберите удобное время в этот день
                 </h1>
                 <div class="time__list grid grid-cols-4 gap-[6px]">
-                    <!-- Appointments will be dynamically inserted here -->
                 </div>
             </div>
             <div class="button">
@@ -57,22 +56,65 @@
         </div>
     </main>
     <script>
+        let weekOffset = 0;
+
         document.addEventListener('DOMContentLoaded', function () {
-            window.selectDate = function (year, month, day, fullDate) {
-                const type = 'ori';
-                fetch(`/appointments/api/appointments/${type}/${year}/${month}/${day}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        const appointments = data.appointments;
-                        const detailsContainer = document.getElementById('details');
-                        const timeList = detailsContainer.querySelector('.time__list');
-                        detailsContainer.classList.remove("hidden");
-                        timeList.innerHTML = '';
-                        if (appointments.length > 0) {
-                            appointments.forEach(appointment => {
-                                const label = document.createElement('label');
-                                label.classList = "border border-[1px] w-[230px] border-[#D8D8D8] rounded-sm answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer group hover:bg-accent-red";
-                                label.innerHTML = `
+            fetchWeekDates();
+        });
+
+        function updateWeek(offset) {
+            weekOffset += offset;
+            fetchWeekDates();
+        }
+
+        function fetchWeekDates() {
+            fetch(`/api/week-dates/?week_offset=${weekOffset}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
+                    document.getElementById('date-range').textContent = dateRange;
+                    updateDays(data.dates_of_week);
+                })
+                .catch(error => {
+                    console.error('Error fetching week dates:', error);
+                });
+        }
+
+        function updateDays(dates) {
+            const daysContainer = document.getElementById('days-items');
+            daysContainer.innerHTML = '';
+            dates.forEach(date => {
+                const day = new Date(date);
+                const dayElement = `
+                    <div class="relative">
+                        <input onclick="selectDate('${day.getFullYear()}', '${day.getMonth() + 1}', '${day.getDate()}', '${date}');"
+                               type="radio" name="radio" class="w-full h-full absolute peer opacity-0">
+                        <div class="days__item rounded-[10px] pt-3 border peer-hover-psy border-accent-red text-accent-red font-bold pb-3 w-[102px] flex flex-col">
+                            <span class="text-[14px] font-bold leading-[14px] block text-center">${day.toLocaleString('default', { month: 'short' })}</span>
+                            <span class="block text-center text-[42px] leading-[52px] font-bold">${day.getDate()}</span>
+                            <span class="block text-center text-[14px] uppercase leading-[14px] font-bold">${day.toLocaleString('default', { weekday: 'short' })}</span>
+                        </div>
+                    </div>
+                `;
+                daysContainer.innerHTML += dayElement;
+            });
+        }
+
+        window.selectDate = function (year, month, day, fullDate) {
+            const type = 'ori';
+            fetch(`/appointments/api/appointments/${type}/${year}/${month}/${day}/`)
+                .then(response => response.json())
+                .then(data => {
+                    const appointments = data.appointments;
+                    const detailsContainer = document.getElementById('details');
+                    const timeList = detailsContainer.querySelector('.time__list');
+                    detailsContainer.classList.remove("hidden");
+                    timeList.innerHTML = '';
+                    if (appointments.length > 0) {
+                        appointments.forEach(appointment => {
+                            const label = document.createElement('label');
+                            label.classList = "border border-[1px] w-[230px] border-[#D8D8D8] rounded-sm answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 px-4 block cursor-pointer group hover:bg-accent-red";
+                            label.innerHTML = `
                                 <input
                                     type="radio"
                                     name="appointment"
@@ -84,41 +126,45 @@
                                     ${appointment.start_time.substr(0,5)} - ${appointment.end_time.substr(0,5)}
                                 </span>
                             `;
-                                timeList.appendChild(label);
-                            });
-                        } else {
-                            timeList.innerHTML = `<div class="text-center text-[18px]">Нет доступных окошек на этот день</div>`;
-                        }
-                        document.getElementById('appointmentDate').value = fullDate;
-                    });
-            };
-
-            window.bookAppointment = function () {
-                const selectedAppointment = document.querySelector('input[name="appointment"]:checked');
-                if (!selectedAppointment) {
-                    return;
-                }
-
-                fetch(`/appointments/api/appointments/${selectedAppointment.value}/book/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
+                            timeList.appendChild(label);
+                        });
+                    } else {
+                        timeList.innerHTML = `<div class="text-center text-[18px]">Нет доступных окошек на этот день</div>`;
+                    }
+                    const appointmentDate = document.getElementById('appointmentDate');
+                    if (appointmentDate) {
+                        appointmentDate.value = fullDate;
                     }
                 })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            const dateParts = data.date.split('-');
-                            selectDate(dateParts[0], dateParts[1], dateParts[2], data.date);
-                        } else {
-                            console.error('Failed to book appointment:', data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error in network request:', error);
-                    });
-            };
-        });
+                .catch(error => {
+                    console.error('Error fetching appointments:', error);
+                });
+        };
+
+        window.bookAppointment = function () {
+            const selectedAppointment = document.querySelector('input[name="appointment"]:checked');
+            if (!selectedAppointment) {
+                return;
+            }
+
+            fetch(`/appointments/api/appointments/${selectedAppointment.value}/book/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        console.error('Failed to book appointment:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error in network request:', error);
+                });
+        };
     </script>
 {% endblock %}

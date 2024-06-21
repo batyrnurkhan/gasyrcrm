@@ -7,6 +7,28 @@ from django.urls import reverse_lazy, reverse
 from django.db.models import Prefetch, Q
 
 from courses.models import Course, Module, Lesson, TestSubmission, Test
+from django.http import JsonResponse
+from datetime import date, timedelta
+import locale
+
+#locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+
+def get_week_dates(request):
+    week_offset = int(request.GET.get('week_offset', 0))  # Get the week offset from the request
+    today = date.today()
+    start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=week_offset)
+    end_of_week = start_of_week + timedelta(days=6)
+
+    month_name = end_of_week.strftime('%B')  # Get the month name in the current locale
+
+    response_data = {
+        'start_day': start_of_week.day,
+        'end_day': end_of_week.day,
+        'month_name': month_name,
+        'dates_of_week': [(start_of_week + timedelta(days=i)).isoformat() for i in range(7)]
+    }
+
+    return JsonResponse(response_data)
 
 
 class HomePageView(LoginRequiredMixin, TemplateView):

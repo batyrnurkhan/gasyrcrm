@@ -466,6 +466,11 @@ def grades_by_day_view(request):
 
 @login_required
 def psy_appointment_view(request):
+    week_offset = int(request.GET.get('week_offset', 0))  # Get the week offset from the request
+    today = now().date()
+    start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=week_offset)
+    dates_of_week = [start_of_week + timedelta(days=i) for i in range(7)]  # Get Monday to Sunday
+
     booked_appointments = Appointment.objects.filter(
         user=request.user, is_booked=True, date__gte=now().date(), type='psy'
     ).order_by('-date', '-start_time')
@@ -473,12 +478,9 @@ def psy_appointment_view(request):
     if booked_appointments.exists():
         return redirect('appointments:success-appointment')
 
-    today = now().date()
-    start_of_week = today - timedelta(days=today.weekday())
-    dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]
-
     context = {
         'dates_of_week': dates_of_week,
+        'week_offset': week_offset,
     }
     return render(request, 'subjects/psy-appointment.html', context)
 
