@@ -11,9 +11,14 @@ from django.utils.formats import get_format
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Appointment
+from django.utils.timezone import now
 
 @login_required
 def week_view(request):
+    # Delete expired appointments before rendering the week view
+    expired_appointments = Appointment.objects.filter(date__lt=now().date())
+    expired_appointments.delete()
+
     week_offset = int(request.GET.get('week_offset', 0))
     today = datetime.now().date()
     start_of_week = today - timedelta(days=today.weekday()) + timedelta(weeks=week_offset)
