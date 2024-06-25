@@ -316,7 +316,7 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         chat_room.save()
 
         # Add users to chat room
-        for student in self.object.group_template.students.all():
+        for student in self.object.students.all():
             chat_room.participants.add(student)
         if self.object.teacher:
             chat_room.participants.add(self.object.teacher)

@@ -4,9 +4,8 @@ import os
 import random
 from django.core.files import File
 from chats.models import ChatRoom
-from schedule.models import Shift, ShiftTime
+from schedule.models import ShiftTime
 from users.models import CustomUser
-from django.apps import apps
 
 class Task(models.Model):
     chat_room = models.ForeignKey('chats.ChatRoom', related_name='tasks', on_delete=models.CASCADE)
@@ -51,7 +50,8 @@ class Lesson_crm2(models.Model):
     teacher = models.ForeignKey(CustomUser, related_name='assigned_lessons', on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'Teacher'})
     group_name = models.CharField(max_length=255)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    group_template = models.ForeignKey(GroupTemplate, on_delete=models.CASCADE)
+    group_template = models.ForeignKey(GroupTemplate, on_delete=models.CASCADE, null=True, blank=True)
+    students = models.ManyToManyField(CustomUser, related_name='lessons', limit_choices_to={'role': 'Student'}, blank=True)
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='lessons')
     time_slot = models.ForeignKey(ShiftTime, related_name='lessons', on_delete=models.CASCADE)
     google_meet_link = models.URLField(max_length=200, blank=True, null=True)

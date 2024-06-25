@@ -18,34 +18,48 @@ class TaskForm(forms.ModelForm):
 
 class LessonForm(ModelForm):
     teacher = forms.ChoiceField()
+    students = forms.ModelMultipleChoiceField(queryset=CustomUser.objects.filter(role='Student'), widget=forms.CheckboxSelectMultiple, required=False)
 
     class Meta:
         model = Lesson_crm2
-        fields = ['group_name', 'subject', 'group_template', 'teacher', 'time_slot']
+        fields = ['group_name', 'subject', 'group_template', 'teacher', 'students', 'time_slot', 'google_meet_link']
         widgets = {
             'time_slot': forms.HiddenInput()  # Assuming you handle the time_slot input elsewhere in your logic
         }
 
     def __init__(self, *args, **kwargs):
         super(LessonForm, self).__init__(*args, **kwargs)
-        self.fields['teacher'].choices = [(e.id, (e.full_name, e.profile_picture.url if e.profile_picture else '')) for e in CustomUser.objects.all()]
+        self.fields['teacher'].choices = [(e.id, e.full_name) for e in CustomUser.objects.filter(role='Teacher')]
+        self.fields['group_template'].queryset = GroupTemplate.objects.all()
 
     def clean(self):
         cleaned_data = super().clean()
         group_template = cleaned_data.get('group_template')
+        students = cleaned_data.get('students')
         teacher = cleaned_data.get('teacher')
         time_slot = cleaned_data.get('time_slot')
 
         # Validate that no student in the group template has a conflicting lesson
         if group_template and time_slot:
-            students = group_template.students.all()
+            students_in_template = group_template.students.all()
             overlapping_lessons = Lesson_crm2.objects.filter(
-                group_template__students__in=students,
+                group_template__students__in=students_in_template,
                 time_slot=time_slot
             ).distinct()
 
             if overlapping_lessons.exists():
                 raise ValidationError("A student in the selected group template already has a lesson during this time slot.")
+
+        # Validate that no individual student has a conflicting lesson
+        if students and time_slot:
+            for student in students:
+                overlapping_lessons = Lesson_crm2.objects.filter(
+                    students=student,
+                    time_slot=time_slot
+                ).distinct()
+
+                if overlapping_lessons.exists():
+                    raise ValidationError(f"Student {student.full_name} already has a lesson during this time slot.")
 
         # Check if the selected teacher is already booked for the given time slot
         if teacher and time_slot:
