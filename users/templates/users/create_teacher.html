@@ -118,9 +118,9 @@
                                              class="max-w-[16px] max-h-[16px]">
                                         <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ teacher.user_city }}</span>
                                     </div>
-                                    <a class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
-                                        данные</a>
-                                    <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ passwords|get_item:teacher.phone_number }}</span>
+                                    <a href="{% url 'users:create-teacher' %}?phone={{ teacher.phone_number }}" class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">
+                                        Редактировать данные
+                                    </a>
 
                                 </li>
                             {% empty %}
