@@ -50,7 +50,7 @@ def chat_room_detail(request, room_id):
     messages = room.messages.all().order_by('-timestamp')
     context = {
         'room': room,
-        'messages': messages,
+        'all_messages': messages,
         'lesson': lesson,
         'form': form,
         'group_template_users': group_template_users,

@@ -9,10 +9,10 @@
     {% else %}
         {% include "subjects/components/crm2-student-sidebar.html" %}
     {% endif %}
-    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+    <main class="main flex-1 w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
-            <div class="course w-full h-block flex bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-lg">
+        <div class="pt-[50px] ml-[40px] mr-[78px]">
+            <div class="course w-full h-chat flex bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-lg">
                 <div class="course__info w-[280px] text-center items-center flex flex-col p-[14px] pt-[40px] border-r border-[#E5E5E5]">
                     <div class="course__info-img mb-[20px]">
                         {% if lesson.subject.image %}
@@ -66,7 +66,7 @@
                            href="{% url 'subjects:set_grade' lesson_id=lesson.id %}">Выставить оценки за сегодня</a>
                     {% endif %}
                 </div>
-                <div class="course__content relative bg-[#FAFAFA] min-h-full w-[760px] rounded-md pt-[60px]">
+                <div class="course__content relative bg-[#FAFAFA] min-h-full w-webkit-fill rounded-md pt-[60px]">
                     <div id="scrollblock"
                          class="course__content-day pt-[24px] px-[40px] gap-[12px] flex flex-col h-webkit-fill overflow-scroll">
                         {% regroup room.messages.all by timestamp|date:"d E" as objects_by_day %}
@@ -77,11 +77,11 @@
                             {% for message in d.list %}
                                 <div class="course__content-message flex gap-[12px]">
                                     {% if message.user.profile_picture %}
-                                        <img src="{{ message.user.profile_picture }}" alt=""
-                                             class="w-[42px] h-[42px] rounded-full"/>
+                                        <img src="/media/{{ message.user.profile_picture }}" alt=""
+                                             class="w-[42px] h-[42px] rounded-full object-cover"/>
                                     {% else %}
                                         <img src="{% static 'core/images/default-user.svg' %}" alt=""
-                                             class="w-[42px] h-[42px] rounded-full"/>
+                                             class="w-[42px] h-[42px] rounded-full object-cover"/>
                                     {% endif %}
                                     <div class="course__content-message--content bg-[#FFFFFF] shadow-[0px_4px_24px_0px_#0000000A] rounded-md p-[20px] w-full grid gap-[6px]">
                                         <h1 class="message__author-fullname text-[12px] leading-[14px] font-semibold text-[#583ACF] ">

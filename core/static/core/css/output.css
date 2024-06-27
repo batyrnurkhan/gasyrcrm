@@ -779,6 +779,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   width: calc(100vw - 284px);
 }
 
+.w-webkit-fill {
+  width: -webkit-fill-available;
+}
+
 .h-full-4 {
   height: calc(100% - 1rem);
 }
@@ -797,6 +801,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .h-block {
   height: calc(100vh - 300px);
+}
+
+.h-chat {
+  height: calc(100vh - 180px);
 }
 
 .peer:focus ~ .peer-focus-hidden {
@@ -1169,6 +1177,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: 30px;
 }
 
+.my-\[3px\] {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
 .my-\[8px\] {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -1177,11 +1190,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .my-auto {
   margin-top: auto;
   margin-bottom: auto;
-}
-
-.my-\[3px\] {
-  margin-top: 3px;
-  margin-bottom: 3px;
 }
 
 .mb-1 {
@@ -2254,6 +2262,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .w-\[90\%\] {
   width: 90%;
+}
+
+.w-auto {
+  width: auto;
 }
 
 .w-full {
@@ -3553,6 +3565,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 21px;
 }
 
+.py-\[22px\] {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+
 .py-\[23px\] {
   padding-top: 23px;
   padding-bottom: 23px;
@@ -3631,11 +3648,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .py-\[9px\] {
   padding-top: 9px;
   padding-bottom: 9px;
-}
-
-.py-\[22px\] {
-  padding-top: 22px;
-  padding-bottom: 22px;
 }
 
 .pb-10 {

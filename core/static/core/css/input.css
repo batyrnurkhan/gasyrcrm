@@ -141,6 +141,10 @@
         width: calc(100vw - 284px);
     }
 
+    .w-webkit-fill {
+        width: -webkit-fill-available;
+    }
+
     .h-full-4 {
         height: calc(100% - 1rem);
     }
@@ -159,6 +163,10 @@
 
     .h-block {
         height: calc(100vh - 300px);
+    }
+
+    .h-chat {
+        height: calc(100vh - 180px);
     }
 
     .peer-focus-hidden {
