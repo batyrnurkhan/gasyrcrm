@@ -1,0 +1,43 @@
+{% load shift_extras %}
+
+{% if shifts %}
+    {% for shift in shifts %}
+        <div class="item min-w-full">
+            <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">{{ shift.name }}</p>
+            <div class="rounded-lg border-[1px] border-[#CACACA] overflow-x-auto">
+                {% for time in shift.times.all %}
+                    <div class="item p-[16px] flex item-start min-w-max flex-grow {% if not forloop.last %}border-b border-[#CACACA]{% endif %}">
+                        <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">{{ time.start_time|time:"H:i" }} - {{ time.end_time|time:"H:i" }}</p>
+                        <div class="flex items-center gap-[17px]">
+                            {% with shift_times_dict|get_item:shift.id as shift_times %}
+                                {% if shift_times %}
+                                    {% for shift_time in shift_times %}
+                                        {% if shift_time.start_time == time.start_time and shift_time.end_time == time.end_time %}
+                                            {% for lesson in shift_time.lessons.all %}
+                                                <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA]">
+                                                    <div class="flex items-center gap-[8px]">
+                                                        <p class="font-semibold text-[16px] leading-20px text-black-main">{{ lesson.teacher.full_name }}</p>
+                                                    </div>
+                                                    <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">{{ lesson.subject.name }}</h3>
+                                                    <h5 class="font-regular text-[14px] leading-[16px] text-black-main">{{ lesson.group_template.name|default:"Шаблон группы" }}</h5>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <p>No lessons scheduled for this time.</p>
+                                {% endif %}
+                            {% endwith %}
+                            <button class="add-lesson-btn w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red"
+                                    data-time-id="{{ time.id }}">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No shifts available for {{ selected_day }}.</p>
+{% endif %}

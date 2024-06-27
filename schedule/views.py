@@ -1,26 +1,30 @@
-from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, UpdateView
-from django.http import HttpResponseForbidden
-
-
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
+from .models import Shift, ShiftTime
+import calendar
 
-from users.models import CustomUser
-from .models import Shift
 
-
+@require_GET
 def shifts_view(request):
-    # Fetch all shifts and related data in an optimized manner
-    shifts = Shift.objects.prefetch_related(
-        'times__lessons',
-        'times__lessons__teacher',
-        'times__lessons__subject',
-        'times__lessons__group_template'
-    ).all()
+    shifts = Shift.objects.all()
+    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule'})
 
-    if not shifts:
-        print("No shifts found.")
-    else:
-        print(f"Found {len(shifts)} shifts.")
 
-    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule', 'students': CustomUser.objects.filter(role="Student")})
+@require_GET
+def lessons_by_day_view(request, day):
+    day_index = list(calendar.day_name).index(day)
+    shifts = Shift.objects.all()
+    shift_times = ShiftTime.objects.filter(date__week_day=day_index + 1).prefetch_related(
+        'lessons',
+        'lessons__teacher',
+        'lessons__subject',
+        'lessons__group_template'
+    )
+    shift_times_dict = {}
+    for shift_time in shift_times:
+        if shift_time.shift_id not in shift_times_dict:
+            shift_times_dict[shift_time.shift_id] = []
+        shift_times_dict[shift_time.shift_id].append(shift_time)
+
+    return render(request, 'schedule/lessons_list.html',
+                  {'shifts': shifts, 'shift_times_dict': shift_times_dict, 'selected_day': day})
