@@ -4,6 +4,8 @@ from django.http import HttpResponseForbidden
 
 
 from django.shortcuts import render
+
+from users.models import CustomUser
 from .models import Shift
 
 
@@ -21,4 +23,4 @@ def shifts_view(request):
     else:
         print(f"Found {len(shifts)} shifts.")
 
-    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule'})
+    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule', 'students': CustomUser.objects.filter(role="Student")})

@@ -22,7 +22,7 @@
                 const type = types["{{ message.tags }}"]
                 document.getElementById('message-cat').src = "{% static 'core/images/cats/student-sit.png' %}"
                 document.getElementById('message-title').innerText = `Системное уведомление ${type}`
-                document.getElementById('message-text').innerText = "{{ message }}"
+                document.getElementById('message-text').innerHTML = `{{ message }}`
                 document.getElementById('accessMessage').classList.remove("hidden");
             {% endfor %}
         }

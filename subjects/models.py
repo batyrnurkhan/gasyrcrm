@@ -38,12 +38,12 @@ class Subject(models.Model):
 
 class GroupTemplate(models.Model):
     name = models.CharField(max_length=255)
-    students = models.ManyToManyField(CustomUser, limit_choices_to={'role': 'Student'})
+    students = models.ManyToManyField(CustomUser, related_name='group_template', limit_choices_to={'role': 'Student'})
     created_at = models.DateTimeField(auto_now_add=True)
-
 
     def __str__(self):
         return self.name
+
 
 class Lesson_crm2(models.Model):
     mentor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'Mentor'})

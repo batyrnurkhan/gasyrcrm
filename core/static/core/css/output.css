@@ -924,6 +924,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   top: -35px;
 }
 
+.-top-\[50px\] {
+  top: -50px;
+}
+
 .-top-\[7px\] {
   top: -7px;
 }
@@ -936,8 +940,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   bottom: 2.5rem;
 }
 
-.bottom-36 {
-  bottom: 9rem;
+.bottom-20 {
+  bottom: 5rem;
 }
 
 .bottom-5 {
@@ -964,16 +968,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   left: 0.5rem;
 }
 
+.left-20 {
+  left: 5rem;
+}
+
 .left-24 {
   left: 6rem;
 }
 
 .left-3 {
   left: 0.75rem;
-}
-
-.left-36 {
-  left: 9rem;
 }
 
 .left-5 {
@@ -996,12 +1000,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   right: 0px;
 }
 
-.right-2 {
-  right: 0.5rem;
+.right-16 {
+  right: 4rem;
 }
 
-.right-32 {
-  right: 8rem;
+.right-2 {
+  right: 0.5rem;
 }
 
 .right-5 {
@@ -1038,10 +1042,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .top-11 {
   top: 2.75rem;
-}
-
-.top-16 {
-  top: 4rem;
 }
 
 .top-4 {
@@ -1086,26 +1086,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .top-\[30px\] {
   top: 30px;
-}
-
-.-top-\[75px\] {
-  top: -75px;
-}
-
-.-top-\[50px\] {
-  top: -50px;
-}
-
-.bottom-20 {
-  bottom: 5rem;
-}
-
-.left-20 {
-  left: 5rem;
-}
-
-.right-16 {
-  right: 4rem;
 }
 
 .-z-10 {
@@ -1197,6 +1177,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .my-auto {
   margin-top: auto;
   margin-bottom: auto;
+}
+
+.my-\[3px\] {
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 .mb-1 {
@@ -1659,34 +1644,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   display: none;
 }
 
-.size-\[72px\] {
-  width: 72px;
-  height: 72px;
-}
-
-.size-\[\] {
-  width: ;
-  height: ;
-}
-
-.size-\[28px\] {
-  width: 28px;
-  height: 28px;
-}
-
-.size-\[18\] {
-  width: 18;
-  height: 18;
-}
-
 .size-\[18px\] {
   width: 18px;
   height: 18px;
 }
 
-.size-\[14px\] {
-  width: 14px;
-  height: 14px;
+.size-\[72px\] {
+  width: 72px;
+  height: 72px;
 }
 
 .h-1 {
@@ -3668,12 +3633,13 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 9px;
 }
 
-.pb-10 {
-  padding-bottom: 2.5rem;
+.py-\[22px\] {
+  padding-top: 22px;
+  padding-bottom: 22px;
 }
 
-.pb-11 {
-  padding-bottom: 2.75rem;
+.pb-10 {
+  padding-bottom: 2.5rem;
 }
 
 .pb-20 {
@@ -3698,6 +3664,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .pb-6 {
   padding-bottom: 1.5rem;
+}
+
+.pb-7 {
+  padding-bottom: 1.75rem;
 }
 
 .pb-\[100px\] {
@@ -3936,10 +3906,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-top: 2.5rem;
 }
 
-.pt-12 {
-  padding-top: 3rem;
-}
-
 .pt-14 {
   padding-top: 3.5rem;
 }
@@ -3954,6 +3920,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .pt-6 {
   padding-top: 1.5rem;
+}
+
+.pt-7 {
+  padding-top: 1.75rem;
 }
 
 .pt-9 {
@@ -4026,14 +3996,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .pt-\[90px\] {
   padding-top: 90px;
-}
-
-.pb-7 {
-  padding-bottom: 1.75rem;
-}
-
-.pt-7 {
-  padding-top: 1.75rem;
 }
 
 .text-left {
@@ -4564,26 +4526,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 26px;
 }
 
-.placeholder\:text-base::-moz-placeholder {
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
-.placeholder\:text-base::placeholder {
-  font-size: 1rem;
-  line-height: 1.5rem;
-}
-
-.placeholder\:text-lg::-moz-placeholder {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
-.placeholder\:text-lg::placeholder {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-}
-
 .placeholder\:text-black-main::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(79 79 79 / var(--tw-text-opacity));
@@ -4677,106 +4619,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   display: block;
 }
 
-@media (min-width: 768px) {
-  .md\:text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-  }
-
-  .md\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-}
-
 @media (min-width: 1024px) {
   .lg\:w-10\/12 {
     width: 83.333333%;
   }
-
-  .lg\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
-  .lg\:text-base {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
 }
 
 @media (min-width: 1280px) {
-  .xl\:bottom-36 {
-    bottom: 9rem;
-  }
-
-  .xl\:left-36 {
-    left: 9rem;
-  }
-
-  .xl\:right-32 {
-    right: 8rem;
-  }
-
-  .xl\:size-\[28px\] {
-    width: 28px;
-    height: 28px;
-  }
-
   .xl\:w-3\/4 {
     width: 75%;
-  }
-
-  .xl\:p-6 {
-    padding: 1.5rem;
-  }
-
-  .xl\:px-7 {
-    padding-left: 1.75rem;
-    padding-right: 1.75rem;
-  }
-
-  .xl\:py-6 {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-  }
-
-  .xl\:pb-11 {
-    padding-bottom: 2.75rem;
-  }
-
-  .xl\:pt-12 {
-    padding-top: 3rem;
-  }
-
-  .xl\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
-  .xl\:text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-  }
-
-  .xl\:text-base {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-
-  .xl\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
-  .xl\:placeholder\:text-lg::-moz-placeholder {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
-  }
-
-  .xl\:placeholder\:text-lg::placeholder {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
   }
 }
 

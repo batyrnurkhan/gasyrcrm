@@ -18,6 +18,7 @@ from rest_framework.utils import json
 from appointments.forms import AppointmentForm
 from appointments.models import Appointment
 from chats.models import ChatRoom, Message
+from core.decorators import role_required
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm, \
@@ -281,6 +282,7 @@ class LessonListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         context['now'] = timezone.now()  # if you need the current time
         return context
 
+
 class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Lesson_crm2
     form_class = LessonForm
@@ -320,12 +322,29 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             chat_room.participants.add(student)
         if self.object.teacher:
             chat_room.participants.add(self.object.teacher)
+        print("Here too!")
 
         return response
 
     def get_success_url(self):
         # Redirects back to the shifts page after successful creation
         return reverse('schedule:shifts')
+
+    def form_invalid(self, form):
+        print(form.errors.as_data())
+        errors = form.errors.as_data()
+        error_messages = []
+
+        for key, error_list in errors.items():
+            for error in error_list:
+                error_messages.extend(error.messages)
+
+        for message in error_messages:
+            print(message)
+        messages.error(self.request, '<br/>'.join(error_messages))
+        print(form.errors)
+        return redirect(self.get_success_url())
+
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2

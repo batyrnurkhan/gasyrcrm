@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
-from .models import VolunteerChannel, Grade, Achievement, StudentAchievement
+from .models import VolunteerChannel, Grade, Achievement, StudentAchievement, Subject
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
 
@@ -29,15 +29,26 @@ class LessonForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(LessonForm, self).__init__(*args, **kwargs)
-        self.fields['teacher'].choices = [(e.id, e.full_name) for e in CustomUser.objects.filter(role='Teacher')]
-        self.fields['group_template'].queryset = GroupTemplate.objects.all()
+        self.teachers_info = [(e.id, e.full_name, e.profile_picture.url if e.profile_picture else '') for e in CustomUser.objects.filter(role="Teacher")]
+        self.subjects_info = [(e.id, e.name, e.image.url if e.image else '') for e in Subject.objects.all()]
+        self.group_templates_info = [('', 'Пустой шаблон', {})] + [(i.id, i.name, {e.id: e.full_name for e in CustomUser.objects.filter(group_template=i)}) for i in GroupTemplate.objects.all()]
+
+        self.fields['teacher'].choices = [(e.id, e.full_name) for e in CustomUser.objects.filter(role="Teacher")]
+        self.fields['subject'].choices = [(e.id, e.name) for e in Subject.objects.all()]
 
     def clean(self):
+        print(list(self.fields['group_template'].choices))
         cleaned_data = super().clean()
-        group_template = cleaned_data.get('group_template')
+        group_template = cleaned_data.get('group_template', None)
+        if not group_template:
+            cleaned_data['group_template'] = group_template = None
+        print(list(cleaned_data))
+        print(cleaned_data['group_template'])
+        teacher = CustomUser.objects.get(id=cleaned_data.get('teacher'))
+        cleaned_data['teacher'] = teacher
         students = cleaned_data.get('students')
-        teacher = cleaned_data.get('teacher')
         time_slot = cleaned_data.get('time_slot')
+        print(students)
 
         # Validate that no student in the group template has a conflicting lesson
         if group_template and time_slot:
@@ -65,7 +76,6 @@ class LessonForm(ModelForm):
         if teacher and time_slot:
             if Lesson_crm2.objects.filter(teacher=teacher, time_slot=time_slot).exists():
                 raise ValidationError(f"Учитель уже занят в это время: {teacher.full_name} has a lesson at {time_slot.start_time} to {time_slot.end_time}.")
-
         return cleaned_data
 
 

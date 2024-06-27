@@ -18,8 +18,14 @@
         {% endblock %}
     </div>
 {% endblock %}
+{% include "core/components/cookies.html" %}
+{% include "core/components/message.html" %}
 <script>
     window.onload = () => {
+        cookiesOnLoad()
+        {% if messages %}
+        messagesOnLoad()
+        {% endif %}
         {% block window_load %}
 
         {% endblock %}
@@ -31,10 +37,8 @@
         var dropdownButton = document.getElementById("dropdownButton");
         if (dropdownMenu.classList.contains("hidden")) {
             dropdownMenu.classList.remove("hidden");
-            dropdownButton.classList.add("-rotate-90");
         } else {
             dropdownMenu.classList.add("hidden");
-            dropdownButton.classList.remove("-rotate-90");
         }
     }
 
