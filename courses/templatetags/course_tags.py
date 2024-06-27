@@ -35,3 +35,9 @@ def addstr(arg1, arg2):
 def calculate_completion_percentage(course, user):
     """concatenate arg1 & arg2"""
     return course.calculate_completion_percentage(user)
+
+
+@register.filter
+def get_pass(phone, request):
+    print(phone, request)
+    return request.session[phone]

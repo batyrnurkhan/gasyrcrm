@@ -56,51 +56,47 @@
                                     Create Account
                                 </button>
                             </div>
-                            {% if messages %}
-                                <ul>
-                                    {% for message in messages %}
-                                        <li {% if message.tags %}class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
                         </form>
                     </div>
-                    <div class="w-[650px] rounded-r-md flex justify-center items-end bg-center bg-no-repeat"
-                         style="background-image: url({% static 'core/images/crm2/teacherBG.png' %});">
-                        {% if user_created %}
-                                <div class="bg-white w-[450px] rounded-md pt-[40px] pl-[32px] pr-[77px] pb-[46px] grid gap-[12px]">
-                                    <div class="grid gap-[2px]">
-                                        <label for="number"
-                                               class="text-black-main text-[24px] leading-[33px] font-semibold">Вход по
-                                            номеру
-                                            телефона</label>
-                                        <div class="flex items-center relative">
-                                            <img src="{% static 'assets/kzIcon.png' %}" alt="Kazakhstan Flag"
-                                                 class="max-w-[20px] max-h-[25px] absolute left-[20px]">
-                                            <input type="text" id="number" value="{{ new_teacher_phone }}"
-                                                   class="h-[56px] pl-[52px] pr-[14px] border-[1px] border-[#CDCDCD] rounded-md w-full focus:outline-none text-[18px] leading-[26px] font-semibold text-black-main"
-                                                   readonly>
-                                        </div>
-                                    </div>
-                                    <div class="grid gap-[2px]">
-                                        <label for="password"
-                                               class="text-black-main text-[24px] leading-[33px] font-semibold mb-[2px]">Пароль</label>
-                                        <div class="flex items-center relative">
-                                            <input type="text" id="password" value="{{ new_teacher_password }}"
-                                                   class="h-[56px] px-[14px] border-[1px] border-[#CDCDCD] rounded-md w-full focus:outline-none text-[18px] leading-[26px] font-medium text-black-main"
-                                                   readonly>
-                                            <button onclick="copyPassword()"
-                                                    class="absolute -right-[35px] max-w-[20px] max-h-[22px] focus:outline-none">
-                                                <img src="{% static 'assets/copyIcon.svg' %}" alt="">
-                                            </button>
-                                        </div>
+                    {% if phone %}
+                        <div class="w-[650px] rounded-r-md flex justify-center items-center bg-center bg-no-repeat"
+                             style="background-image: url({% static 'core/images/crm2/teacherBG.png' %});">
+                            <div class="bg-white w-[450px] rounded-md pt-[40px] pl-[32px] pr-[77px] pb-[46px] grid gap-[12px]">
+                                <div class="grid gap-[2px]">
+                                    <label for="number"
+                                           class="text-black-main text-[24px] leading-[33px] font-semibold">Вход по
+                                        номеру
+                                        телефона</label>
+                                    <div class="flex items-center relative">
+                                        <img src="{% static 'core/icons/kz.png' %}" alt="Kazakhstan Flag"
+                                             class="max-w-[20px] max-h-[25px] absolute left-[20px]">
+                                        <input type="text" id="id_phone_number" value="{{ phone|format_phone_number }}"
+                                               class="h-[56px] pl-[52px] pr-[14px] border-[1px] border-[#CDCDCD] rounded-md w-full focus:outline-none text-[18px] leading-[26px] font-semibold text-black-main"
+                                               readonly>
                                     </div>
                                 </div>
-                        {% else %}
-                        <img src="{% static 'core/images/cats/suit.png' %}" id="cat_img"
-                             class="max-h-[555px] max-w-[534px]">
-                        {% endif %}
-                    </div>
+                                <div class="grid gap-[2px]">
+                                    <label for="password"
+                                           class="text-black-main text-[24px] leading-[33px] font-semibold mb-[2px]">Пароль</label>
+                                    <div class="flex items-center relative">
+                                        <input type="text" id="password" value="{{ phone|get_pass:request }}"
+                                               class="h-[56px] px-[14px] border-[1px] border-[#CDCDCD] rounded-md w-full focus:outline-none text-[18px] leading-[26px] font-medium text-black-main"
+                                               readonly>
+                                        <button onclick="copyPassword()"
+                                                class="absolute -right-[35px] max-w-[20px] max-h-[22px] focus:outline-none">
+                                            <img src="{% static 'assets/copyIcon.svg' %}" alt="">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="w-[650px] rounded-r-md flex justify-center items-end bg-center bg-no-repeat"
+                             style="background-image: url({% static 'core/images/crm2/teacherBG.png' %});">
+                            <img src="{% static 'core/images/cats/suit.png' %}" id="cat_img"
+                                 class="max-h-[555px] max-w-[534px]">
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md p-[14px]">
                     <div class="numberOfStudents pt-[33px] px-[30px] pb-[37px] bg-[#FAFAFA] rounded-sm mt-[10px]">
@@ -124,7 +120,7 @@
                                     </div>
                                     <a class="underline font-semibold text-[16px] w-[200px] leading-[22px] text-black-main hover:no-underline">Редактировать
                                         данные</a>
-        <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ passwords|get_item:teacher.phone_number }}</span>
+                                    <span class="font-semibold text-[16px] leading-[22px] text-black-main">{{ passwords|get_item:teacher.phone_number }}</span>
 
                                 </li>
                             {% empty %}

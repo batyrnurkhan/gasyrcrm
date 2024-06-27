@@ -187,9 +187,11 @@ def create_teacher(request):
             user, password = form.save()  # Save the user and get the generated password
             # Store the password temporarily in the session using phone_number
             request.session[user.phone_number] = password
-            success_message = f'Teacher created successfully! Phone: {user.phone_number}'
+            success_message = f'Учитель успешно создан!'
             messages.success(request, success_message)
-            return redirect('users:create-teacher')
+            response = redirect('users:create-teacher')
+            response['Location'] += f'?phone={user.phone_number}'
+            return response
         else:
             messages.error(request, 'Please correct the errors below.')
             print(form.errors)
@@ -204,4 +206,6 @@ def create_teacher(request):
         'passwords': passwords,
         'page': 'teachers',
     }
+    phone = request.GET.get('phone')
+    if phone: context['phone'] = phone
     return render(request, 'users/create_teacher.html', context)
