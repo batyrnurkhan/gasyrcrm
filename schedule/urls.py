@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import shifts_view, lessons_by_day_view
+from .views import shifts_view, get_shifts_for_day
 
 app_name = "schedule"
 
 urlpatterns = [
     path('shifts/', shifts_view, name='shifts'),
-    path('lessons/<str:day>/', lessons_by_day_view, name='lessons-by-day'),
-
+    path('get-shifts/<str:day>/', get_shifts_for_day, name='get_shifts_for_day'),
 ]

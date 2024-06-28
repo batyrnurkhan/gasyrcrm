@@ -1,30 +1,65 @@
+from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView, UpdateView
+from django.http import HttpResponseForbidden
+
+
 from django.shortcuts import render
-from django.views.decorators.http import require_GET
+
+from users.models import CustomUser
 from .models import Shift, ShiftTime
-import calendar
+from django.http import JsonResponse
+from subjects.models import Lesson_crm2
 
+def get_shifts_for_day(request, day):
+    day_name_map = {
+        'monday': 2,
+        'tuesday': 3,
+        'wednesday': 4,
+        'thursday': 5,
+        'friday': 6,
+        'saturday': 7
+    }
 
-@require_GET
-def shifts_view(request):
-    shifts = Shift.objects.all()
-    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule'})
+    weekday = day_name_map.get(day.lower())
 
+    if weekday is None:
+        return JsonResponse({'error': 'Invalid day'}, status=400)
 
-@require_GET
-def lessons_by_day_view(request, day):
-    day_index = list(calendar.day_name).index(day)
-    shifts = Shift.objects.all()
-    shift_times = ShiftTime.objects.filter(date__week_day=day_index + 1).prefetch_related(
-        'lessons',
-        'lessons__teacher',
-        'lessons__subject',
-        'lessons__group_template'
-    )
-    shift_times_dict = {}
+    shift_times = ShiftTime.objects.filter(date__week_day=weekday)
+    shift_data = []
+
     for shift_time in shift_times:
-        if shift_time.shift_id not in shift_times_dict:
-            shift_times_dict[shift_time.shift_id] = []
-        shift_times_dict[shift_time.shift_id].append(shift_time)
+        lessons = Lesson_crm2.objects.filter(time_slot=shift_time)
+        lesson_data = [{
+            'mentor': lesson.mentor.full_name,
+            'teacher': lesson.teacher.full_name if lesson.teacher else 'No teacher assigned',
+            'group_name': lesson.group_name,
+            'subject': lesson.subject.name,
+            'students': [student.full_name for student in lesson.students.all()],
+            'time_slot': f"{lesson.time_slot.start_time.strftime('%H:%M')} - {lesson.time_slot.end_time.strftime('%H:%M')}",
+            'google_meet_link': lesson.google_meet_link,
+        } for lesson in lessons]
 
-    return render(request, 'schedule/lessons_list.html',
-                  {'shifts': shifts, 'shift_times_dict': shift_times_dict, 'selected_day': day})
+        shift_data.append({
+            'shift_name': shift_time.shift.name,
+            'start_time': shift_time.start_time.strftime('%H:%M'),
+            'end_time': shift_time.end_time.strftime('%H:%M'),
+            'lessons': lesson_data
+        })
+
+    return JsonResponse(shift_data, safe=False)
+def shifts_view(request):
+    # Fetch all shifts and related data in an optimized manner
+    shifts = Shift.objects.prefetch_related(
+        'times__lessons',
+        'times__lessons__teacher',
+        'times__lessons__subject',
+        'times__lessons__group_template'
+    ).all()
+
+    if not shifts:
+        print("No shifts found.")
+    else:
+        print(f"Found {len(shifts)} shifts.")
+
+    return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule', 'students': CustomUser.objects.filter(role="Student")})
