@@ -24,7 +24,7 @@
     <section class="article__content max-w-[1040px] mx-[auto]">
         <h1 class="article__title font-bold text-[64px] leading-[80px] text-black-main mb-[20px]">{{ news.title }}</h1>
         {% if news.image %}
-            <img src="{{ news.image.url }}" alt="" class="article__photo rounded-[20px] w-full h-[auto] max-h-[500px] object-contain">
+            <img src="{{ news.image.url }}" alt="" class="article__photo rounded-[20px] w-full h-[auto] max-h-[420px] object-contain">
         {% endif %}
         <div class="article__texts text-black-main pt-[60px] px-[88px]">
             {{ news.content|safe }}

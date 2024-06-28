@@ -864,6 +864,27 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background: #BA2025;
 }
 
+.day-button {
+  --tw-border-opacity: 1;
+  border-color: rgb(186 32 37 / var(--tw-border-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(186 32 37 / var(--tw-text-opacity));
+}
+
+.day-button:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.day-button.active {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
 .pointer-events-none {
   pointer-events: none;
 }
@@ -1979,6 +2000,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-height: 75px;
 }
 
+.max-h-\[420px\] {
+  max-height: 420px;
+}
+
 .min-h-60 {
   min-height: 15rem;
 }
@@ -2256,16 +2281,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   width: 75%;
 }
 
-.w-\[760px\] {
-  width: 760px;
-}
-
 .w-\[90\%\] {
   width: 90%;
-}
-
-.w-auto {
-  width: auto;
 }
 
 .w-full {
@@ -2701,6 +2718,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .gap-y-\[12px\] {
   row-gap: 12px;
+}
+
+.gap-x-\[20px\] {
+  -moz-column-gap: 20px;
+       column-gap: 20px;
+}
+
+.gap-y-\[40px\] {
+  row-gap: 40px;
 }
 
 .space-y-3 > :not([hidden]) ~ :not([hidden]) {
