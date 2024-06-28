@@ -7,7 +7,7 @@
     {% include "subjects/components/crm2-mentor-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] flex flex-col gap-[20px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px] flex flex-col gap-[20px]">
             <div class="add__user bg-white shadow-[0px_4px_20px_0px_#00000014]  rounded-md p-[32px] pt-[42px]">
                 <h3 class=" font-semibold mb-[24px] text-black-main text-[32px] leading-[40px]">
                     Добавить ученика в систему Gasyr
@@ -27,32 +27,35 @@
                 </div>
 
             </div>
-            <div class="h-[280px] pt-[62px] pl-[32px] pb-[32px] rounded-md"
-                 style="background-position: center; background-repeat: no-repeat; background-image: url('{% static "core/images/crm2/mainBg1.png" %}');">
-                <h1 class="max-w-[350px] text-white text-[32px] leading-[45px] font-semibold">Начнем составлять
-                    расписание?</h1>
-                <button
-                        class="px-[54px] py-[26px] border-[1px] border-white rounded-sm mt-[22px] text-[20px] font-semibold leading-[28px] hover:text-accent-red hover:bg-white text-white"
-                        onclick="window.location.href='{% url 'schedule:shifts' %}';">
-                    Составить расписание
-                </button>
+            <div class="block overflow-hidden h-[280px] rounded-md bg-no-repeat bg-right bg-[#BA2025]"
+                 style="background-image: url('{% static "core/images/crm2/mainBg1.png" %}');">
+                <div class="pt-[62px] pl-[32px] pb-[32px]">
+                    <h1 class="max-w-[350px] text-white text-[32px] leading-[45px] font-semibold">Начнем составлять
+                        расписание?</h1>
+                    <button
+                            class="px-[54px] py-[26px] border-[1px] border-white rounded-sm mt-[22px] text-[20px] font-semibold leading-[28px] hover:text-accent-red hover:bg-white text-white"
+                            onclick="window.location.href='{% url 'schedule:shifts' %}';">
+                        Составить расписание
+                    </button>
+                </div>
             </div>
             <div class="flex gap-[20px] ">
-                <div class="w-[450px] pt-[62px] pl-[32px] pb-[32px]  h-[260px] rounded-md"
-                     style="background-image: url('{% static "core/images/crm2/mainBg2.png" %}'); background-position: center;  background-size:coverl; background-repeat:  no-repeat;">
+                <div class="w-2/5 pt-[62px] pl-[32px] pb-[32px] h-[286px] rounded-md bg-[#662CE2] bg-no-repeat bg-right bg-contain"
+                     style="background-image: url('{% static "core/images/crm2/mainBg2.png" %}');">
                     <h3 class="text-white max-w-[300px] text-[32px] leading-[45px] font-semibold mb-[16px]">
                         Создать шаблон группы учеников</h3>
-                    <button
+                    <button onclick="window.location.href='{% url 'subjects:group_templates_view' %}';"
                             class="px-[61px] py-[26px] border-[1px] border-white rounded-sm text-white text-[20px] leading-[28px] font-semibold hover:text-[#662CE2] hover:bg-white">
                         Создать шаблон
                     </button>
                 </div>
-                <div class="w-[570px] h-[260px] rounded-md pt-[62px] pl-[32px] pb-[32px]"
-                     style="background-repeat: no-repeat; background-position: center; background-image: url('{% static "core/images/crm2/mainBg3.png" %}');">
+                <div class="w-3/5 h-[286px] rounded-md pt-[62px] pl-[32px] pb-[32px] bg-blue-ielts bg-no-repeat bg-right bg-contain"
+                     style="background-image: url('{% static "core/images/crm2/mainBg3.png" %}');">
                     <h3 class="text-white max-w-[270px] text-[32px] leading-[45px] font-semibold mb-[16px]">
                         Появился новый учитель?
                     </h3>
-                    <button class="border-[1px] border-white rounded-sm py-[26px] px-[25px] text-[20px] leading-[28px] font-semibold text-white hover:text-[#7A48E4] hover:bg-white">
+                    <button onclick="window.location.href='{% url 'users:create-teacher' %}';"
+                            class="border-[1px] border-white rounded-sm py-[26px] px-[25px] text-[20px] leading-[28px] font-semibold text-white hover:text-[#7A48E4] hover:bg-white">
                         Добавить в систему
                     </button>
                 </div>

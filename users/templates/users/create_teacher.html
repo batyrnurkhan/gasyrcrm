@@ -9,16 +9,16 @@
     {% include "subjects/components/crm2-mentor-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid ">
+        <div class="pt-[50px] ml-[40px] mr-[78px] grid ">
             <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Учителя</h1>
             <div class="grid gap-[16px]">
-                <div class="bg-white flex rounded-md shadow-[0px_4px_20px_0px_#00000014] h-[630px]">
-                    <div class="input w-[390px] pt-[48px] pl-[42px] pr-[28px]">
-                        <h3 class="max-w-[300px] text-black-main text-[32px] leading-[45px] font-semibold mb-[12px]">
+                <div class="bg-white flex justify-between rounded-md shadow-[0px_4px_20px_0px_#00000014] h-[630px]">
+                    <div class="flex flex-col justify-center pl-[42px] pr-[28px] w-2/5">
+                        <h3 class="text-black-main text-[32px] leading-[45px] font-semibold mb-[12px]">
                             Добавить учителя в систему
                         </h3>
                         <form method="post" action="{% url 'users:create-teacher' %}"
-                              class="w-full max-w-sm space-y-[8px]">
+                              class="w-full space-y-[8px]">
                             {% csrf_token %}
                             <div>
                                 <input type="text" name="first_name" required
@@ -53,13 +53,13 @@
                             <div>
                                 <button type="submit"
                                         class="w-full bg-accent-red text-white rounded-md h-[75px] flex items-center justify-center text-[16px] leading-[22px] font-semibold">
-                                    Create Account
+                                    Создать аккаунт
                                 </button>
                             </div>
                         </form>
                     </div>
                     {% if phone %}
-                        <div class="w-[650px] rounded-r-md flex justify-center items-center bg-center bg-no-repeat"
+                        <div class="w-3/5 rounded-r-md flex justify-center items-center bg-center bg-no-repeat bg-cover"
                              style="background-image: url({% static 'core/images/crm2/teacherBG.png' %});">
                             <div class="bg-white w-[450px] rounded-md pt-[40px] pl-[32px] pr-[77px] pb-[46px] grid gap-[12px]">
                                 <div class="grid gap-[2px]">
@@ -91,7 +91,7 @@
                             </div>
                         </div>
                     {% else %}
-                        <div class="w-[650px] rounded-r-md flex justify-center items-end bg-center bg-no-repeat"
+                        <div class="w-3/5 rounded-r-md flex justify-center items-end bg-center bg-no-repeat bg-cover"
                              style="background-image: url({% static 'core/images/crm2/teacherBG.png' %});">
                             <img src="{% static 'core/images/cats/suit.png' %}" id="cat_img"
                                  class="max-h-[555px] max-w-[534px]">

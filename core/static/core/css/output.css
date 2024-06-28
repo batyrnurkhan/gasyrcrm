@@ -864,27 +864,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background: #BA2025;
 }
 
-.day-button {
-  --tw-border-opacity: 1;
-  border-color: rgb(186 32 37 / var(--tw-border-opacity));
-  --tw-text-opacity: 1;
-  color: rgb(186 32 37 / var(--tw-text-opacity));
-}
-
-.day-button:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.day-button.active {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
 .pointer-events-none {
   pointer-events: none;
 }
@@ -1892,6 +1871,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   height: 100vh;
 }
 
+.h-\[286px\] {
+  height: 286px;
+}
+
 .max-h-0 {
   max-height: 0px;
 }
@@ -2281,6 +2264,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   width: 100%;
 }
 
+.w-4\/5 {
+  width: 80%;
+}
+
 .min-w-\[150px\] {
   min-width: 150px;
 }
@@ -2304,6 +2291,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .min-w-max {
   min-width: -moz-max-content;
   min-width: max-content;
+}
+
+.min-w-\[100px\] {
+  min-width: 100px;
+}
+
+.min-w-\[120px\] {
+  min-width: 120px;
 }
 
 .max-w-14 {
@@ -3069,6 +3064,24 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: rgba(250, 250, 250, 1);
 }
 
+.bg-\[\#BA2025\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#662CE2\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(102 44 226 / var(--tw-bg-opacity));
+}
+
+.bg-\[\] {
+  background-color: ;
+}
+
+.bg-blue-ielts {
+  background-color: rgba(122, 72, 228, 1);
+}
+
 .bg-opacity-40 {
   --tw-bg-opacity: 0.4;
 }
@@ -3105,12 +3118,24 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-size: cover;
 }
 
+.bg-contain {
+  background-size: contain;
+}
+
 .bg-center {
   background-position: center;
 }
 
 .bg-top {
   background-position: top;
+}
+
+.bg-right {
+  background-position: right;
+}
+
+.bg-right-bottom {
+  background-position: right bottom;
 }
 
 .bg-no-repeat {

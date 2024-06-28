@@ -7,7 +7,7 @@
     {% include "subjects/components/crm2-mentor-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] grid gap-[24px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px] grid gap-[24px]">
             <h1 class="text-[42px] text-black-main font-semibold leading-[52px]">Каналы</h1>
             <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[36px] px-[36px] pb-[41px]">
                 <h3 class="text-red-500 font-semibold text-[32px] leading-[40px] mb-[18px]">
@@ -86,23 +86,27 @@
     </main>
 
     <script>
+        const suggestions = [
+            {% for student in students %}
+                {
+                    id: {{ student.id }},
+                    name: '{{ student.full_name }}',
+                },
+            {% endfor %}
+        ];
+
+        function removeStudent(event) {
+            suggestions.push({
+                id: event.target.parentElement.previousElementSibling.previousElementSibling.value,
+                name: event.target.parentElement.previousElementSibling.textContent,
+            })
+            event.target.parentElement.parentElement.remove()
+        }
+
         function search() {
             const searchInput = document.getElementById('search-input');
             const suggestionsContainer = document.getElementById('suggestions');
             const studentsContainer = document.getElementById('students');
-            const selectedUsersInput = document.getElementById('id_users');
-
-            const suggestions = [
-                {% for student in students %}
-                    {
-                        id: {{ student.id }},
-                        name: '{{ student.full_name }}',
-                        city: '{{ student.user_city }}',
-                        phone: '{{ student.phone_number }}',
-                        photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
-                    },
-                {% endfor %}
-            ];
 
             searchInput.addEventListener('input', () => {
                 const input = searchInput.value.toLowerCase();
@@ -134,16 +138,11 @@
                             listItem.innerHTML = `
                                 <input hidden value="${suggestion.id}" name="selected_students">
                                 <span>${suggestion.name}</span>
-                                <button class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
+                                <button onclick="removeStudent(event)" class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
                                     <img src="{% static 'core/icons/close-fill-white.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
                                 </button>
                             `;
                             studentsContainer.appendChild(listItem);
-
-                            // Add the selected student's ID to the hidden input field
-                            let currentValues = selectedUsersInput.value ? selectedUsersInput.value.split(',') : [];
-                            currentValues.push(suggestion.id.toString());
-                            selectedUsersInput.value = currentValues.join(',');
                         });
 
                         suggestionsContainer.appendChild(suggestionItem);
