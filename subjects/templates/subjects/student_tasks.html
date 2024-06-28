@@ -2,6 +2,7 @@
 
 {% load static %}
 {% load l10n %}
+{% load custom_tags %}
 
 {% block flex-content %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -9,10 +10,10 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px]">
             {% if tasks %}
                 <div class="task__inner flex gap-[10px] h-block">
-                    <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] max-w-[360px] rounded-md pb-[50px]">
+                    <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] min-w-[360px] rounded-md pb-[50px]">
                         <h1 class="tasks__list-title py-[32px] pl-[32px] font-semibold text-[20px] leading-[24px] text-black-main overflow-y-auto">
                             Задания
                         </h1>
@@ -22,14 +23,18 @@
                                     <div class="task__list-item border-t border-t-[#E5E5E5] bg-[#FAFAFA] flex p-[20px] items-center task-link"
                                          data-task-id="{{ task.id }}" data-task-name="{{ task.name }}"
                                          data-task-deadline="{{ task.deadline }}"
+                                         data-task-file-name="{{ task|filename }}"
+                                         data-submission-file-name="{{ task|submission_filename:user }}"
                                          data-task-file-url="{% url 'subjects:download_task_file' task.id %}">
                                         <div class="task__author-photo">
                                             {% if lesson.teacher.profile_picture %}
                                                 <img src="{{ lesson.teacher.profile_picture.url }}"
-                                                     class="w-[56px] h-[56px] object-cover rounded-full" alt="Teacher Photo">
+                                                     class="w-[56px] h-[56px] object-cover rounded-full"
+                                                     alt="Teacher Photo">
                                             {% else %}
                                                 <img src="{% static 'core/images/default-user.svg' %}"
-                                                     class="w-[56px] h-[56px] object-cover rounded-full" alt="Default Teacher Photo">
+                                                     class="w-[56px] h-[56px] object-cover rounded-full"
+                                                     alt="Default Teacher Photo">
                                             {% endif %}
                                         </div>
                                         <div class="task__author-content ml-[12px]">
@@ -54,41 +59,45 @@
                             {% endfor %}
                         {% endfor %}
                     </div>
-                    <div class="about__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-[670px] pt-[32px] pl-[42px] pr-[42px]"
-                         id="task-detail" style="display: none;">
-                        <p class="about__task-time font-regular text-[14px] leading-[20px] text-black-main mb-[6px]"
-                           id="task-deadline"></p>
-                        <h1 class="about__task-title font-bold text-[24px] leading-[33px] text-black-main max-w-[520px] mb-[20px]"
-                            id="task-title"></h1>
-                        <div class="download__task mb-[20px]">
-                            <h3 class="download__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[6px]">
-                                Задание</h3>
-                            <a id="download-task-file"
-                               class="flex py-[19px] px-[17px] gap-[17px] border border-[#E5E5E5] rounded-md"
-                               target="_blank">
-                                <img src="{% static 'core/images/crm2/file-upload-line-accent-red.svg' %}" alt=""/>
-                                <span class="font-regular text-[14px] leading-[16px] text-black-main">Скачать задание</span>
-                            </a>
-                        </div>
-                        <div class="send__task">
-                            <h3 class="send__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[12px]">
-                                Моя
-                                работа</h3>
-                            <form id="upload-form" method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="hidden" name="task_id" id="task-id">
-                                <label class="flex gap-[14px] items-center" for="file-upload">
-                                    <img src="{% static 'core/icons/upload-red.svg' %}"
-                                         class="max-w-[20px] max-h-[18px]"
-                                         alt="">
-                                    <span class="font-medium text-[14px] leading-[16px] text-accent-red">Загрузить работу</span>
-                                </label>
-                                <input type="file" id="file-upload" name="file" style="display: none;">
-                                <button type="submit"
-                                        class="done__task mt-[110px] py-[15px] px-[26px] rounded-lg bg-accent-red text-white text-[16px] leading-[22px] font-semibold">
-                                    Сдать мою работу
-                                </button>
-                            </form>
+                    <div class="about__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-webkit-fill pt-[32px] pl-[42px] pr-[42px]">
+                        <div id="task-detail" style="display: none">
+                            <p class="about__task-time font-regular text-[14px] leading-[20px] text-black-main mb-[6px]"
+                               id="task-deadline"></p>
+                            <h1 class="about__task-title font-bold text-[24px] leading-[33px] text-black-main max-w-[520px] mb-[20px]"
+                                id="task-title"></h1>
+                            <div class="download__task mb-[20px]">
+                                <h3 class="download__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[6px]">
+                                    Задание
+                                </h3>
+                                <a id="download-task-file"
+                                   class="flex py-[19px] px-[17px] gap-[17px] border border-[#E5E5E5] rounded-md"
+                                   target="_blank">
+                                    <img src="{% static 'core/images/crm2/file-upload-line-accent-red.svg' %}" alt=""/>
+                                    <span id="file-name"
+                                          class="font-regular text-[14px] leading-[16px] text-black-main">Скачать задание</span>
+                                </a>
+                            </div>
+                            <div class="send__task">
+                                <h3 class="send__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[12px]">
+                                    Моя
+                                    работа</h3>
+                                <form id="upload-form" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input onchange="newFile(event)" type="hidden" name="task_id" id="task-id">
+                                    <label class="flex gap-[14px] items-center cursor-pointer" for="file-upload">
+                                        <img src="{% static 'core/icons/upload-red.svg' %}"
+                                             class="max-w-[20px] max-h-[18px]"
+                                             alt="">
+                                        <span id="my-work"
+                                              class="font-medium text-[14px] leading-[16px] text-accent-red">Загрузить работу</span>
+                                    </label>
+                                    <input type="file" id="file-upload" name="file" style="display: none;">
+                                    <button type="submit"
+                                            class="done__task mt-[110px] py-[15px] px-[26px] rounded-lg bg-accent-red text-white text-[16px] leading-[22px] font-semibold">
+                                        Сдать мою работу
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,6 +115,11 @@
         </div>
 
         <script>
+            function newFile(event) {
+                console.log(event.target.value)
+                document.getElementById('my-work').text = event.target.value
+            }
+
             $(document).ready(function () {
                 $('.task-link').click(function (e) {
                     e.preventDefault();
@@ -113,12 +127,18 @@
                     var taskName = $(this).data('task-name');
                     var taskDeadline = $(this).data('task-deadline');
                     var taskFileUrl = $(this).data('task-file-url');
+                    var taskFileName = $(this).data('task-file-name');
+                    var submissionFileName = $(this).data('submission-file-name');
                     let dot_id = taskDeadline.indexOf('.') + 1
 
                     $('#task-id').val(taskId);
                     $('#task-title').text(taskName);
                     $('#task-deadline').text('Срок заканчивается ' + taskDeadline.substr(0, dot_id) + ' в ' + taskDeadline.substr(dot_id));
                     $('#download-task-file').attr('href', taskFileUrl);
+                    if (submissionFileName) $('#my-work').text(submissionFileName)
+                    else $('#my-work').text("Загрузить работу")
+                    if (taskFileName) $('#file-name').text(taskFileName)
+                    else $('#file-name').text("Скачать задание")
                     $('#task-detail').show();
                 });
 

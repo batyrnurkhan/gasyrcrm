@@ -23,3 +23,12 @@ def key(d, k):
 @register.filter
 def filename(value):
     return os.path.basename(value.file.name)
+
+
+@register.filter
+def submission_filename(value, user):
+    submission = value.submissions.filter(student=user).first()
+    print(submission)
+    if submission:
+        return os.path.basename(submission.file.name)
+    return ""
