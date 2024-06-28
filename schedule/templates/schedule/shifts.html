@@ -1,4 +1,5 @@
 {% extends 'subjects/base.html' %}
+
 {% load static %}
 {% load l10n %}
 
@@ -25,27 +26,46 @@
             </div>
             <div class="pt-[50px] pl-[40px] pr-[78px] pb-[32px] max-w-[1040px] grid bg-white rounded-lg">
                 <div class="flex gap-[4px] mb-[30px] text-center font-bold">
-                    <button class="bg-accent-red text-white py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Monday">
-                        Понедельник
-                    </button>
-                    <button class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Tuesday">
-                        Вторник
-                    </button>
-                    <button class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Wednesday">
-                        Среда
-                    </button>
-                    <button class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Thursday">
-                        Четверг
-                    </button>
-                    <button class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Friday">
-                        Пятница
-                    </button>
-                    <button class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]" data-day="Saturday">
-                        Суббота
-                    </button>
-                </div>
-                <div id="lessons-container" class="grid gap-[40px]">
-                    {% include 'schedule/lessons_list.html' %}
+    <button id="monday" class="bg-accent-red text-white py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Понедельник</button>
+    <button id="tuesday" class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Вторник</button>
+    <button id="wednesday" class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Среда</button>
+    <button id="thursday" class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Четверг</button>
+    <button id="friday" class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Пятница</button>
+    <button id="saturday" class="border border-accent-red text-accent-red py-[7px] font-semibold text-[20px] leading-[24px] px-[34px] rounded-[40px]">Суббота</button>
+</div>
+                <div class="grid gap-[40px]">
+                    {% for shift in shifts %}
+                        <div class="item min-w-full">
+                            <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">{{ shift.name }}</p>
+                            <div class="rounded-lg border-[1px] border-[#CACACA] overflow-x-auto">
+                                {% for time in shift.times.all %}
+                                    <div class="item p-[16px] flex item-start min-w-max flex-grow {% if not forloop.last %}border-b border-[#CACACA]{% endif %}">
+                                        <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] w-[100px]">{{ time.start_time|time:"H:i" }}
+                                            - {{ time.end_time|time:"H:i" }}</p>
+                                        <div class="flex items-center gap-[17px]">
+                                            {% for lesson in time.lessons.all %}
+                                                <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA]">
+                                                    <div class="flex items-center gap-[8px]">
+                                                        <p class="font-semibold text-[16px] leading-20px text-black-main">{{ lesson.teacher.full_name }}</p>
+                                                    </div>
+                                                    <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">{{ lesson.subject.name }}</h3>
+                                                    <h5 class="font-regular text-[14px] leading-[16px] text-black-main">{{ lesson.group_template.name|default:"Шаблон группы" }}</h5>
+                                                </div>
+                                            {% empty %}
+                                                <p>No lessons scheduled for this time.</p>
+                                            {% endfor %}
+                                            <button class="add-lesson-btn w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red"
+                                                    data-time-id="{{ time.id }}">
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No shifts available.</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -56,6 +76,7 @@
             <span class="close float-right text-3xl font-bold cursor-pointer">&times;</span>
             <h1 class="text-[25px] font-semibold mb-4">Добавить урок</h1>
             <div id="lessonFormContainer">
+                <!-- The form will be loaded here via AJAX -->
             </div>
         </div>
     </div>
@@ -77,7 +98,7 @@
             document.querySelectorAll('.add-lesson-btn').forEach(button => {
                 button.addEventListener('click', function () {
                     const timeId = this.getAttribute("data-time-id");
-                    const urlTemplate = `{% url 'subjects:lesson-create' '999' %}`;
+                    const urlTemplate = `{% url 'subjects:lesson-create' '999' %}`;  // '999' is a placeholder
                     const url = urlTemplate.replace('999', timeId);
                     fetch(url)
                         .then(response => response.text())
@@ -87,22 +108,238 @@
                         });
                 });
             });
-
-            document.querySelectorAll('button[data-day]').forEach(button => {
-                button.addEventListener('click', function () {
-                    const day = this.getAttribute('data-day');
-                    fetchLessonsForDay(day);
-                });
-            });
-
-            function fetchLessonsForDay(day) {
-                const url = `{% url 'schedule:lessons-by-day' 'DAY' %}`.replace('DAY', day);
-                fetch(url)
-                    .then(response => response.text())
-                    .then(html => {
-                        document.getElementById('lessons-container').innerHTML = html;
-                    });
-            }
         });
+
+        function dropDown(id) {
+            var subjects = document.getElementById('subjects');
+            var teachers = document.getElementById('teachers');
+            var group_templates = document.getElementById('group_templates');
+            switch (id) {
+                case 'group_templates':
+                    if (group_templates.classList.contains('hidden')) group_templates.classList.remove('hidden')
+                    else group_templates.classList.add('hidden');
+                    teachers.classList.add('hidden');
+                    subjects.classList.add('hidden');
+                    break;
+                case 'teachers':
+                    if (teachers.classList.contains('hidden')) teachers.classList.remove('hidden')
+                    else teachers.classList.add('hidden');
+                    group_templates.classList.add('hidden');
+                    subjects.classList.add('hidden');
+                    break;
+                case 'subjects':
+                    if (subjects.classList.contains('hidden')) subjects.classList.remove('hidden')
+                    else subjects.classList.add('hidden');
+                    teachers.classList.add('hidden');
+                    group_templates.classList.add('hidden');
+                    break;
+            }
+        }
+        const suggestions = [
+            {% for student in students %}
+                {
+                    id: {{ student.id }},
+                    name: '{{ student.full_name }}',
+                    city: '{{ student.user_city }}',
+                    phone: '{{ student.phone_number }}',
+                    photo: '{% if student.profile_picture %}{{ student.profile_picture.url }}{% else %}{% static 'core/images/default-user.svg' %}{% endif %}',
+                },
+            {% endfor %}
+        ];
+
+        function searchInput(event) {
+            const input = event.target.value.toLowerCase();
+            const suggestionsContainer = document.getElementById('suggestions');
+            const studentsContainer = document.getElementById('students');
+            const selectedUsersInput = document.getElementById('id_users');
+            suggestionsContainer.innerHTML = '';
+
+            if (input) {
+                suggestionsContainer.classList.remove('hidden');
+                const filteredSuggestions = suggestions.filter(suggestion => suggestion.name.toLowerCase().includes(input));
+
+                filteredSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.classList = 'px-[24px] py-[4px] flex items-center cursor-pointer hover:bg-gray-100 gap-[4px]';
+                    suggestionItem.innerHTML = `
+                        <span class="text-[16px] leading-[25px] text-black-main font-semibold">${suggestion.name}</span>
+                    `;
+
+                    suggestionItem.addEventListener('click', () => {
+                        const finder = elem => elem.id === suggestion.id;
+                        suggestionsContainer.classList.add('hidden');
+                        studentsContainer.parentElement.classList.remove('hidden');
+                        searchInput.value = "";
+                        const index = suggestions.findIndex(finder);
+                        const listItem = document.createElement('li');
+                        listItem.classList = "flex gap-[12px] py-[4px] px-[14px] rounded-lg items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red";
+                        listItem.innerHTML = `
+                            <input hidden value="${suggestion.id}" name="students">
+                            <span>${suggestion.name}</span>
+                            <button class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
+                                <img src="{% static 'core/icons/close-fill-white.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
+                            </button>
+                        `;
+                        studentsContainer.appendChild(listItem);
+
+                        // Add the selected student's ID to the hidden input field
+                        let currentValues = selectedUsersInput.value ? selectedUsersInput.value.split(',') : [];
+                        currentValues.push(suggestion.id.toString());
+                        selectedUsersInput.value = "";
+                    });
+
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+            } else {
+                suggestionsContainer.classList.add('hidden');
+            }
+        }
+        function search() {
+            const searchInput = document.getElementById('search-input');
+
+            searchInput.addEventListener('input', );
+
+            document.addEventListener('click', (e) => {
+                if (!suggestionsContainer.contains(e.target) && e.target !== searchInput) {
+                    suggestionsContainer.innerHTML = '';
+                }
+            });
+        }
+
+
+        function selectGroupTemplate(id, name, students) {
+            document.getElementById('id_group_template').value = parseInt(id);
+            let selectedSubject = document.getElementById('selectedGroupTemplate');
+            selectedSubject.previousElementSibling.classList.add("hidden");
+            selectedSubject.parentElement.onclick = null;
+            document.getElementById('group_templates').classList.add('hidden');
+            let students_div = '';
+            console.log(students)
+            for (let s in students)
+                students_div += `
+                <li class="flex gap-[12px] py-[4px] px-[14px] rounded-lg items-center leading-[22px] text-[16px] text-white font-medium bg-accent-red">
+                    <input hidden value="${s}" name="students">
+                    <span>${students[s]}</span>
+                    <button class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
+                        <img src="{% static 'core/icons/close-fill-white.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
+                    </button>
+                </li>`;
+            selectedSubject.innerHTML = `
+                <h5 class="text-black-main text-[16px] leading-[22px] font-medium mb-[16px]">
+                    Добавьте учеников
+                </h5>
+                <ul id="students" class="mb-[16px] gap-[8px] flex flex-wrap">${students_div}</ul>
+                <div class="relative">
+                    <img src="{% static 'core/icons/searck-gray.svg' %}"
+                         class="absolute max-w-[24px] max-h-[24px] left-[15px] top-[17px]" alt="">
+                    <input type="text" oninput="searchInput(event)" id="id_users"
+                           class="w-full border-[#CDCDCD] outline-none border-[1px] h-[56px] flex items-center rounded-md pl-[52px] pr-[20px] font-medium text-[16px] leading-[22px] text-black-main"
+                           placeholder="Введите имя ученика">
+                    <div id="suggestions"
+                         class="w-full bg-white border-[#C6C6C6] border-[1px] rounded-md max-h-[365px] pt-[20px] pb-[25px] hidden"></div>
+                </div>`;
+        }
+        /*
+        *
+                    <ul id="students" class="mb-[16px] gap-[8px] flex flex-wrap">
+                        <input hidden value="${student.id}" name="selected_students">
+                        <span>${student.name}</span>
+                        <button class="max-w-[16px] max-h-[16px] cursor-pointer" type="button">
+                            <img src="{% static 'core/icons/close-fill-white.svg' %}" alt="" class="max-w-[16px] max-h-[16px]" />
+                        </button>
+                    </ul>
+        * */
+
+        function removeSubject() {
+            document.getElementById('id_subject').value = null;
+            document.getElementById('selectedSubject').innerHTML = '<p class="text-[16px] my-[14px]">Выберите учителя</p>';
+            document.getElementById('selectedSubject').previousElementSibling.classList.remove("hidden");
+        }
+
+        function selectSubject(id, name, img) {
+            document.getElementById('id_subject').value = parseInt(id);
+            let selectedSubject = document.getElementById('selectedSubject');
+            selectedSubject.previousElementSibling.classList.add("hidden");
+            selectedSubject.innerHTML = `
+                <li class="flex flex-row items-center justify-between">
+                    <div class="flex flex-row gap-[16px] items-center">
+                        <img class="w-[53px] h-[53px] object-cover rounded-[9px]"
+                             src="${img}" alt="">
+                        <p class="text-[16px] font-semibold">${name}</p>
+                    </div>
+                    <img onclick="removeSubject()" src="{% static 'core/icons/close-fill-black-main.svg' %}">
+                </li>
+            `;
+        }
+
+        function removeTeacher() {
+            document.getElementById('id_teacher').value = null;
+            document.getElementById('selectedTeacher').innerHTML = '<p class="text-[16px] my-[3px]">Выберите учителя</p>';
+            document.getElementById('selectedTeacher').previousElementSibling.classList.remove("hidden");
+        }
+
+        function selectTeacher(id, name, img) {
+            if (!img) img = '{% static 'core/images/default-user.svg' %}';
+            document.getElementById('id_teacher').value = parseInt(id);
+            let selectedTeacher = document.getElementById('selectedTeacher');
+            selectedTeacher.previousElementSibling.classList.add("hidden");
+            selectedTeacher.innerHTML = `
+                <li class="relative flex flex-row items-center justify-between">
+                    <div class="flex flex-row gap-[8px] items-center">
+                        <img class="w-[32px] h-[32px] rounded-full" alt=""
+                             src="${img}">
+                        <p class="text-[16px] font-semibold">${name}</p>
+                    </div>
+                    <img onclick="removeTeacher()" src="{% static 'core/icons/close-fill-black-main.svg' %}">
+                </li>
+            `;
+        }
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.flex button');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const day = button.id;
+                fetchShiftDetails(day);
+            });
+        });
+    });
+
+    function fetchShiftDetails(day) {
+        fetch(`/schedule/get-shifts/${day}/`)
+            .then(response => response.json())
+            .then(data => {
+                const shiftDetails = document.getElementById('shift-details');
+                shiftDetails.innerHTML = '';
+                data.forEach(shift => {
+                    const shiftElement = document.createElement('div');
+                    shiftElement.innerHTML = `<h3>${shift.shift_name} from ${shift.start_time} to ${shift.end_time}</h3>`;
+
+                    if (shift.lessons.length > 0) {
+                        shift.lessons.forEach(lesson => {
+                            const lessonElement = document.createElement('div');
+                            lessonElement.innerHTML = `
+                                <p><strong>Group:</strong> ${lesson.group_name}</p>
+                                <p><strong>Subject:</strong> ${lesson.subject}</p>
+                                <p><strong>Mentor:</strong> ${lesson.mentor}</p>
+                                <p><strong>Teacher:</strong> ${lesson.teacher}</p>
+                                <p><strong>Time Slot:</strong> ${lesson.time_slot}</p>
+                                <p><strong>Google Meet Link:</strong> <a href="${lesson.google_meet_link}" target="_blank">${lesson.google_meet_link}</a></p>
+                                <p><strong>Students:</strong> ${lesson.students.join(', ')}</p>
+                            `;
+                            shiftElement.appendChild(lessonElement);
+                        });
+                    } else {
+                        shiftElement.innerHTML += '<p>No lessons available for this shift.</p>';
+                    }
+
+                    shiftDetails.appendChild(shiftElement);
+                });
+            })
+            .catch(error => console.error('Error fetching shift details:', error));
+    }
+</script>
+
 {% endblock %}
