@@ -20,7 +20,7 @@
             return cookies[item];
         },
         setItem: (item, value) => {
-            document.cookie = `${item}=${value};`
+            document.cookie = `${item}=${value};max-age=${31556926};path=/`
         }
     }
 
