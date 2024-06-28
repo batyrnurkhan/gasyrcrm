@@ -174,7 +174,7 @@ def weekly_schedule_view(request):
 
     weekly_lessons = {day: [] for day in weeknames}
 
-    lessons = Lesson_crm2.objects.filter(students__in=[user])
+    lessons = Lesson_crm2.objects.filter(Q(students__in=[user]) | Q(teacher=user))
 
     for lesson in lessons:
         lesson_weekday = lesson.time_slot.date.weekday()

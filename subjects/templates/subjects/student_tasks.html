@@ -74,24 +74,22 @@
                                    target="_blank">
                                     <img src="{% static 'core/images/crm2/file-upload-line-accent-red.svg' %}" alt=""/>
                                     <span id="file-name"
-                                          class="font-regular text-[14px] leading-[16px] text-black-main">Скачать задание</span>
+                                          class="font-regular text-[14px] text-black-main">Скачать задание</span>
                                 </a>
                             </div>
                             <div class="send__task">
                                 <h3 class="send__task-title font-bold text-[16px] leading-[22px] text-black-main mb-[12px]">
-                                    Моя
-                                    работа</h3>
+                                    Моя работа</h3>
                                 <form id="upload-form" method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <input onchange="newFile(event)" type="hidden" name="task_id" id="task-id">
-                                    <label class="flex gap-[14px] items-center cursor-pointer" for="file-upload">
+                                    <input type="hidden" name="task_id" id="task-id">
+                                    <label class="flex gap-[14px] items-center cursor-pointer">
                                         <img src="{% static 'core/icons/upload-red.svg' %}"
                                              class="max-w-[20px] max-h-[18px]"
                                              alt="">
-                                        <span id="my-work"
-                                              class="font-medium text-[14px] leading-[16px] text-accent-red">Загрузить работу</span>
+                                        <span id="my-work" class="font-medium text-[14px] leading-[16px] text-accent-red">Загрузить работу</span>
+                                        <input onchange="newFile(event)" type="file" name="file" style="display: none;">
                                     </label>
-                                    <input type="file" id="file-upload" name="file" style="display: none;">
                                     <button type="submit"
                                             class="done__task mt-[110px] py-[15px] px-[26px] rounded-lg bg-accent-red text-white text-[16px] leading-[22px] font-semibold">
                                         Сдать мою работу
@@ -116,8 +114,7 @@
 
         <script>
             function newFile(event) {
-                console.log(event.target.value)
-                document.getElementById('my-work').text = event.target.value
+                document.getElementById('my-work').innerText = event.target.files[0].name
             }
 
             $(document).ready(function () {

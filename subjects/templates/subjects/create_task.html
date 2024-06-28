@@ -5,7 +5,7 @@
     {% include "subjects/components/crm2-teacher-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px] gap-[20px] grid relative">
+        <div class="pt-[50px] ml-[40px] mr-[78px] gap-[20px] grid relative">
             <div class="shadow-[0px_4px_20px_0px_#00000014] border-white rounded-md p-[42px] pt-[48px] bg-white">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -40,13 +40,14 @@
                             <h5 class="font-semibold text-[20px] leading-[32px] text-black-main mb-[12px]">
                                 Загрузить задание
                             </h5>
-                            <label for="download_task" class="flex gap-[15px] cursor-pointer">
+                            <label class="flex gap-[15px] cursor-pointer">
                                 <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
                                      class="max-w-[24px] max-h-[24px]">
-                                <p id="file" class="text-[#5E8BFF] text-[16px] leading-[22px] font-semibold">Загрузить
-                                    файл</p>
+                                <span id="file" class="text-[#5E8BFF] text-[16px] leading-[22px] font-semibold">
+                                    Загрузить файл
+                                </span>
+                                <input onchange="new_file(event)" required name="file" type="file" style="display: none;">
                             </label>
-                            <input required name="file" type="file" id="download_task" style="display: none;">
                         </div>
                     </div>
                 </form>
@@ -71,6 +72,11 @@
                     {% endfor %}
                 </ul>
             </div>
+            <script>
+                function new_file(event) {
+                    document.getElementById("file").innerText = event.target.files[0].name
+                }
+            </script>
         </div>
     </main>
 {% endblock %}
