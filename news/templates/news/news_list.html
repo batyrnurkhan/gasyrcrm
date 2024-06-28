@@ -7,7 +7,7 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px]">
             {% if news_articles %}
                 <div class="news__title font-bold text-[42px] leading-[52px] text-black-main mb-[24px]">
                     Новости
@@ -30,31 +30,7 @@
                 </div>
                 <div class="news__inner grid gap-x-[20px] gap-y-[40px] mt-[20px] grid-cols-3 mb-[80px]">
                     {% for news in news_articles|slice:"1:" %}
-                        <div class="news__item max-w-[334px]">
-                            <img src="{{ news.image.url }}" alt="" class="h-[270px] w-full rounded-[10px] object-cover mb-[10px]"/>
-                            <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
-                                {{ news.title }}
-                            </h1>
-                            <a href="{% url 'news_detail' news.id %}"
-                               class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
-                        </div>
-                       <div class="news__item max-w-[334px]">
-                            <img src="{{ news.image.url }}" alt="" class="h-[270px] w-full rounded-[10px] object-cover mb-[10px]"/>
-                            <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
-                                {{ news.title }}
-                            </h1>
-                            <a href="{% url 'news_detail' news.id %}"
-                               class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
-                        </div>
-                       <div class="news__item max-w-[334px]">
-                            <img src="{{ news.image.url }}" alt="" class="h-[270px] w-full rounded-[10px] object-cover mb-[10px]"/>
-                            <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
-                                {{ news.title }}
-                            </h1>
-                            <a href="{% url 'news_detail' news.id %}"
-                               class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
-                        </div>
-                       <div class="news__item max-w-[334px]">
+                        <div class="news__item">
                             <img src="{{ news.image.url }}" alt="" class="h-[270px] w-full rounded-[10px] object-cover mb-[10px]"/>
                             <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
                                 {{ news.title }}

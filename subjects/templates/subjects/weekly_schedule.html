@@ -12,14 +12,12 @@
     {% endif %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px]">
             <div class="flex items-center justify-between mb-[24px]">
                 <h1 class="font-bold text-black-main text-[42px]">
                     Расписание уроков
                 </h1>
-                <div
-                        class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md"
-                >
+                <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
                     <button class="previous__date">
                         <img src="{% static 'core/images/crm2/prev-accent-red.png' %}" alt=""/>
                     </button>
@@ -44,7 +42,7 @@
                                             {{ lesson.subject.name }}
                                         </p>
                                         <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                                            {{ lesson.time_slot.start_time }} - {{ lesson.time_slot.end_time }}
+                                            {{ lesson.time_slot.start_time|time:"H:i" }} - {{ lesson.time_slot.end_time|time:"H:i" }}
                                         </p>
                                         <div class="flex gap-[8px] items-center">
                                             {% if lesson.teacher.profile_picture %}

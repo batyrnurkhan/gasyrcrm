@@ -25,14 +25,14 @@ def chat_room_detail(request, room_id):
     # Checking lesson and permissions logic
     try:
         lesson = Lesson_crm2.objects.get(chat_room=room)
-        group_template_users = lesson.group_template.students.all()
+        students = lesson.students.all()
         teacher = lesson.teacher
 
-        if not (request.user.is_superuser or request.user == lesson.mentor or request.user in group_template_users):
+        if not (request.user.is_superuser or request.user == lesson.mentor or request.user in students):
             return HttpResponseForbidden("You are not allowed to view this chat room.")
     except ObjectDoesNotExist:
         lesson = None
-        group_template_users = []
+        students = []
         teacher = None
 
     # Handling messages
@@ -53,7 +53,7 @@ def chat_room_detail(request, room_id):
         'all_messages': messages,
         'lesson': lesson,
         'form': form,
-        'group_template_users': group_template_users,
+        'group_template_users': students,
         'teacher': teacher,
         'volunteer_channel': volunteer_channel
     }

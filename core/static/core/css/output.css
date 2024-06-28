@@ -3082,6 +3082,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: rgba(122, 72, 228, 1);
 }
 
+.bg-\[\#5B6AF4\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(91 106 244 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#2EB123\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(46 177 35 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-40 {
   --tw-bg-opacity: 0.4;
 }
@@ -3136,6 +3146,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .bg-right-bottom {
   background-position: right bottom;
+}
+
+.bg-left {
+  background-position: left;
 }
 
 .bg-no-repeat {

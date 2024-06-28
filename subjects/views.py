@@ -67,12 +67,31 @@ def home_view(request):
             task_teacher = None
             creator_profile_pic_url = None
             subject_name = "No Subject"
+
+        lessons = Lesson_crm2.objects.filter(students__in=[user], time_slot__date__week_day=datetime.today().weekday()+2)
+
         template_name = 'subjects/home.html'
+
+        achievements = StudentAchievement.objects.select_related('achievement').filter(student=user)
+
+        counts = {'diamond': 0, 'gold': 0, 'iron': 0}
+
+        for achievement in achievements:
+            if achievement.achievement.difficulty == 5:
+                counts['diamond'] += 1
+            elif 3 <= achievement.achievement.difficulty <= 4:
+                counts['gold'] += 1
+            elif 1 <= achievement.achievement.difficulty <= 2:
+                counts['iron'] += 1
+
         context = {
             'task_teacher': task_teacher,
             'creator_profile_pic_url': creator_profile_pic_url,
             'subject_name': subject_name,
-            'last_task': last_task
+            'last_task': last_task,
+            'lessons': lessons,
+            'counts': counts,
+            'achievement': achievements.last()
         }
 
     return render(request, template_name, context)
@@ -155,8 +174,7 @@ def weekly_schedule_view(request):
 
     weekly_lessons = {day: [] for day in weeknames}
 
-    student_groups = GroupTemplate.objects.filter(students=user)
-    lessons = Lesson_crm2.objects.filter(group_template__in=student_groups)
+    lessons = Lesson_crm2.objects.filter(students__in=[user])
 
     for lesson in lessons:
         lesson_weekday = lesson.time_slot.date.weekday()

@@ -8,10 +8,11 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px] max-w-[1040px]">
+        <div class="pt-[50px] ml-[40px] mr-[78px]">
             <div class="items-main text-black-main">
                 <h1 class="items__title font-semibold text-[42px] leading-[52px] text-black-main mb-[20px]">
-                    Предметы</h1>
+                    Предметы
+                </h1>
                 <div class="items__inner grid grid-cols-2 gap-[20px]">
                     {% for lesson in lessons %}
                         <div class="item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-lg flex p-[20px] items-center">
@@ -43,43 +44,6 @@
                     {% empty %}
                         <p class="text-center">No lessons scheduled.</p>
                     {% endfor %}
-                </div>
-            </div>
-            <div class="items-additionally mt-[56px]">
-                <h1 class="items__title font-semibold text-[42px] leading-[52px] text-black-main mb-[20px]">
-                    Дополнительные
-                    предметы</h1>
-                <div class="items__inner grid grid-cols-2 gap-[20px]">
-                    <div class="item__item bg-white shadow-[0px_4px_24px_0px_#00000014] items-center max-w-[510px] rounded-md flex p-[20px]">
-                        <div class="item__item-img mr-[25px]"><img src="./assets/основыМаркетингаФото.png" alt=""></div>
-                        <div class="item__content">
-                            <h3 class="item__title text-[24px] leading-[30px] font-semibold text-black-main mb-[6px]">
-                                Основы
-                                маркетинга</h3>
-                            <p class="item__text font-medium text-[16px] leading-[20px] text-black-main">Отряд
-                                “Ястребы”</p>
-                            <div class="item__avatar mt-[28px] flex items-center gap-[12px]">
-                                <img src="./assets/елнурАватарФото.png" alt=""
-                                     class="max-w-[32px] max-h-[32px] rounded-full">
-                                <span class="text-[16px] leading-[20px] font-semibold text-black-main">Ернур Алкашев</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item__item bg-white shadow-[0px_4px_24px_0px_#00000014] items-center max-w-[510px] rounded-md flex p-[20px]">
-                        <div class="item__item-img mr-[25px]"><img src="./assets/ораторскоеИскусствоФото.png" alt="">
-                        </div>
-                        <div class="item__content">
-                            <h3 class="item__title text-[24px] leading-[30px] font-semibold text-black-main mb-[6px]">
-                                Ораторское искусство</h3>
-                            <p class="item__text font-medium text-[16px] leading-[20px] text-black-main">Отряды
-                                отрядов</p>
-                            <div class="item__avatar mt-[28px] flex items-center gap-[12px]">
-                                <img src="./assets/елнурАватарФото.png" alt=""
-                                     class="max-w-[32px] max-h-[32px] rounded-full">
-                                <span class="text-[16px] leading-[20px] font-semibold text-black-main">Ернур Алкашев</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
