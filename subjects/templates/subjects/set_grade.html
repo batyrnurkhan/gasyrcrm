@@ -34,58 +34,59 @@
                     {% endwith %}
                 </div>
             </div>
-            <form method="post">
-                {% csrf_token %}
-                <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[12px] px-[14px] pb-[20px]">
-                    <div class="flex flex-row justify-between items-center py-[12px] pl-[16px] pr-[34px]">
-                        <label>
-                            <span class="font-semibold text-[16px] leading-[22px] mr-[32px]">Введите максимальный балл за этот день:</span>
-                            <input placeholder="Макс. балл" value="{{ form.max_grade.value }}"
-                                   class="w-[135px] h-[50px] rounded-lg border-[#CDCDCD] border text-center px-[10px]"
-                                   name="max_grade" required type="number" min="0">
-                        </label>
-                        <input type="date" name="date_assigned" value="{{ day|date:'Y-m-d' }}" hidden>
-                        <label class="flex items-center gap-[16px]">
-                            <span class="font-semibold text-[16px] leading-[22px]">Загрузить работу с ошибками</span>
-                            <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
-                                 class="max-w-[24px] max-h-[24px]">
-                            <span class="text-[#5E8BFF] font-semibold text-[16px] leading-[22px]">Загрузить файл</span>
-                            <input type="file" name="{{ form.file.name }}" value="{{ form.file.value }}" style="display: none;">
-                        </label>
+            <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md pt-[12px] px-[14px] pb-[20px]">
+        <div class="flex flex-row justify-between items-center py-[12px] pl-[16px] pr-[34px]">
+            <label>
+                <span class="font-semibold text-[16px] leading-[22px] mr-[32px]">Введите максимальный балл за этот день:</span>
+                <input placeholder="Макс. балл" value="{{ form.max_grade.value }}"
+                       class="w-[135px] h-[50px] rounded-lg border-[#CDCDCD] border text-center px-[10px]"
+                       name="max_grade" required type="number" min="0">
+            </label>
+            <input type="date" name="date_assigned" value="{{ day|date:'Y-m-d' }}" hidden>
+            <label class="flex items-center gap-[16px] cursor-pointer">
+                <span class="font-semibold text-[16px] leading-[22px]">Загрузить работу с ошибками</span>
+                <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
+                     class="max-w-[24px] max-h-[24px]">
+                <span class="text-[#5E8BFF] font-semibold text-[16px] leading-[22px]">Загрузить файл</span>
+                <input type="file" name="file" style="display: none;">
+            </label>
+        </div>
+        <ul class="bg-[#FAFAFA] p-[30px] pr-[34px] h-[430px] overflow-auto space-y-[8px]">
+            {% for student, field in form.student_fields %}
+                <li class="flex justify-between items-center">
+                    <div class="flex gap-[16px] items-center max-w-[220px] w-full">
+                        {% if student.profile_picture %}
+                            <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}"
+                                 class="max-w-[32px] max-h-[32px] object-cover rounded-full">
+                        {% else %}
+                            <img src="{% static 'core/images/default-user.svg' %}" alt="No profile picture"
+                                 class="max-w-[32px] max-h-[32px] object-cover rounded-full">
+                        {% endif %}
+                        <p class="font-semibold text-[16px] leading-[20px] text-black-main">{{ student.full_name }}</p>
                     </div>
-                    <ul class="bg-[#FAFAFA] p-[30px] pr-[34px] h-[430px] overflow-auto space-y-[8px]">
-                        {% for student, field in form.student_fields %}
-                            <li class="flex justify-between items-center">
-                                <div class="flex gap-[16px] items-center max-w-[220px] w-full">
-                                    {% if student.profile_picture %}
-                                        <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}"
-                                             class="max-w-[32px] max-h-[32px] object-cover rounded-full">
-                                    {% else %}
-                                        <img src="{% static 'core/images/default-user.svg' %}" alt="No profile picture"
-                                             class="max-w-[32px] max-h-[32px] object-cover rounded-full">
-                                    {% endif %}
-                                    <p class="font-semibold text-[16px] leading-[20px] text-black-main">{{ student.full_name }}</p>
-                                </div>
-                                <div class="flex items-center gap-[24px] max-w-[200px] w-full">
-                                    <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
-                                         class="max-w-[16px] max-h-[16px]">
-                                    <p class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.phone_number }}</p>
-                                </div>
-                                <div class="flex items-center gap-[8px] max-w-[140px] w-full">
-                                    <img src="{% static 'core/icons/city-fill-accent-red.svg' %}" alt=""
-                                         class="max-w-[16px] max-h-[16px]">
-                                    <p class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.user_city }}</p>
-                                </div>
-                                <input type="number" placeholder="Оценка" name="{{ field.name }}" value="{{ field.value }}"
-                                       class="h-[45px] font-regular text-[16px] text-black-main leading-[22px] text-center w-[135px] border-[#CDCDCD] border rounded-lg px-[30px] py-[11px]">
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <button class="text-white bg-accent-red w-[275px] rounded-lg mt-[20px] h-[65px] font-semibold text-[16px] leading-[22px]">
-                        Выставить оценки
-                    </button>
-                </div>
-            </form>
+                    <div class="flex items-center gap-[24px] max-w-[200px] w-full">
+                        <img src="{% static 'core/icons/phone-fill-accent-red.svg' %}" alt=""
+                             class="max-w-[16px] max-h-[16px]">
+                        <p class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.phone_number }}</p>
+                    </div>
+                    <div class="flex items-center gap-[8px] max-w-[140px] w-full">
+                        <img src="{% static 'core/icons/city-fill-accent-red.svg' %}" alt=""
+                             class="max-w-[16px] max-h-[16px]">
+                        <p class="font-semibold text-[16px] leading-[22px] text-black-main">{{ student.user_city }}</p>
+                    </div>
+                    <input type="number" placeholder="Оценка" name="{{ field.name }}" value="{{ field.value }}"
+                           class="h-[45px] font-regular text-[16px] text-black-main leading-[22px] text-center w-[135px] border-[#CDCDCD] border rounded-lg px-[30px] py-[11px]">
+                </li>
+            {% endfor %}
+        </ul>
+        <button class="text-white bg-accent-red w-[275px] rounded-lg mt-[20px] h-[65px] font-semibold text-[16px] leading-[22px]">
+            Выставить оценки
+        </button>
+    </div>
+</form>
+
         </div>
     </main>
 {% endblock %}

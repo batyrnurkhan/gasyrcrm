@@ -461,7 +461,7 @@ def set_grade(request, lesson_id):
     if request.method == 'POST':
         form = GradeForm(request.POST, request.FILES, students=students, initial=initial_data)
         if form.is_valid():
-            form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data['file'])
+            form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data.get('file'))
             messages.success(request, "Grades successfully saved.")
         else:
             for field, errors in form.errors.items():
@@ -476,6 +476,8 @@ def set_grade(request, lesson_id):
         'students': students,
         'day': day
     })
+
+
 @login_required
 def grades_by_day_view(request):
     grades = Grade.objects.filter(student=request.user).select_related('lesson', 'lesson__teacher').order_by('date_assigned')
