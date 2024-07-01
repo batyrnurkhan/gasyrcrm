@@ -16,6 +16,8 @@ def add_days(value, days):
 
 @register.filter
 def get_range(value):
+    if value is None:
+        value = 0  # Default to 0 if the value is None
     return range(1, value + 1)
 
 @register.filter

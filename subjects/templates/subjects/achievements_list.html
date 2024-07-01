@@ -46,33 +46,35 @@
                 </div>
                 {% if achievements %}
                     <ul class="achievements__list bg-[#FAFAFA] pt-[24px] pl-[40px] pr-[36px] pb-[34px] rounded-[20px]">
-                        <li class="achievements__list-item flex items-center justify-between py-[18px] border-b-[#E5E5E5] border-b-[1px]">
-                            <div class="lastAchieve__main-texts">
-                                <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">
-                                    {{ achievement.achievement.name }}
-                                </h3>
-                                <div class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
-                                    <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
-                                    <ul class="lastAchieve__main-circles flex gap-1">
-                                        {% for i in achievement.achievement.difficulty|get_range %}
-                                            <li class="w-3 h-3 rounded-full bg-accent-red"></li>
-                                        {% endfor %}
-                                        {% for i in 5|subtract:achievement.achievement.difficulty|get_range %}
-                                            <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                                        {% endfor %}
-                                    </ul>
+                        {% for achievement in achievements %}
+                            <li class="achievements__list-item flex items-center justify-between py-[18px] border-b-[#E5E5E5] border-b-[1px]">
+                                <div class="lastAchieve__main-texts">
+                                    <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">
+                                        {{ achievement.achievement.name }}
+                                    </h3>
+                                    <div class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
+                                        <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
+                                        <ul class="lastAchieve__main-circles flex gap-1">
+                                            {% for i in achievement.achievement.difficulty|get_range %}
+                                                <li class="w-3 h-3 rounded-full bg-accent-red"></li>
+                                            {% endfor %}
+                                            {% for i in 5|subtract:achievement.achievement.difficulty|get_range %}
+                                                <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="img w-[55px] max-h-[40px] flex justify-center">
-                                {% if achievement.achievement.difficulty == 1 or achievement.achievement.difficulty == 2 %}
-                                    <img src="{% static 'core/images/achievements/iron.svg' %}" alt="Iron">
-                                {% elif achievement.achievement.difficulty == 3 or achievement.achievement.difficulty == 4 %}
-                                    <img src="{% static 'core/images/achievements/gold.svg' %}" alt="Gold">
-                                {% elif achievement.achievement.difficulty == 5 %}
-                                    <img src="{% static 'core/images/achievements/diamond.svg' %}" alt="Diamond">
-                                {% endif %}
-                            </div>
-                        </li>
+                                <div class="img w-[55px] max-h-[40px] flex justify-center">
+                                    {% if achievement.achievement.difficulty == 1 or achievement.achievement.difficulty == 2 %}
+                                        <img src="{% static 'core/images/achievements/iron.svg' %}" alt="Iron">
+                                    {% elif achievement.achievement.difficulty == 3 or achievement.achievement.difficulty == 4 %}
+                                        <img src="{% static 'core/images/achievements/gold.svg' %}" alt="Gold">
+                                    {% elif achievement.achievement.difficulty == 5 %}
+                                        <img src="{% static 'core/images/achievements/diamond.svg' %}" alt="Diamond">
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
                     </ul>
                 {% endif %}
             </div>
