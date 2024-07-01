@@ -16,6 +16,14 @@ def format_phone_number(number):
 
 
 @register.filter
+def divide(value, arg):
+    try:
+        return int(value) / int(arg)
+    except (ValueError, ZeroDivisionError):
+        return None
+
+
+@register.filter
 def key(d, k):
     return d[k]
 

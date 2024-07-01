@@ -11,4 +11,4 @@ class IsMentorSuperuserOrGroupMember(permissions.BasePermission):
             return True
 
         # Check if the user is part of the group template associated with the lesson
-        return obj.group_template.students.filter(id=request.user.id).exists()
+        return obj.students.filter(id=request.user.id).exists()

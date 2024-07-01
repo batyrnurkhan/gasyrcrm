@@ -1,4 +1,5 @@
 {% extends 'subjects/base.html' %}
+{% load custom_tags %}
 
 {% load static %}
 {% load l10n %}
@@ -24,7 +25,12 @@
                             {% for grade_info in grades %}
                                 <li class="result__item flex w-full items-center justify-between">
                                     <p class="result__item-title min-w-[150px] font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.grade.lesson.subject.name }}</p>
-                                    <div class="result__number text-white px-[13px] py-1 bg-[#51B812] rounded-md font-semibold text-[16px] leading-5 w-[70px] text-center">{{ grade_info.grade.grade }}</div>
+                                    {% with grade_info.grade.grade|divide:grade_info.grade.max_grade as percent %}
+                                        <div class="result__number text-white px-[13px] py-1 rounded-md font-semibold text-[16px] leading-5 text-center
+                                                    {% if percent >= 0.7 %}bg-[#51B812]{% elif percent >= 0.5 %}bg-[#D59822]{% else %}bg-[#C91D1D]{% endif %}">
+                                            {{ grade_info.grade.grade }}/{{ grade_info.grade.max_grade }}
+                                        </div>
+                                    {% endwith %}
                                     {% if grade_info.grade.file %}
                                         <a href="{% url 'subjects:download_grade_file' grade_info.grade.id %}" class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">
                                             <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">

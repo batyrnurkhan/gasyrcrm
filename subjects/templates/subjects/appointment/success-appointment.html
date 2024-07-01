@@ -31,14 +31,16 @@
                 {% if appointment_link %}
                     <a href="{{ appointment_link }}" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold" target="_blank">Присоединиться к конференции</a>
                 {% else %}
-                    <!-- Cancel Button Form -->
-                    <form action="{% url 'appointments:cancel_appointment' appointment.id %}" method="post" style="margin-bottom: 20px;">
-                        {% csrf_token %}
-                        <button type="submit" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">
-                            Отменить запись
-                        </button>
-                    </form>
-                    <a href="/" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">Вернуться на главную</a>
+                    <div class="flex gap-[4px]">
+                        <a href="{% url 'subjects:home' %}" class="px-[64px] py-[26px] bg-accent-red rounded-sm text-white text-[20px] leading-[28px] font-semibold">Вернуться на главную</a>
+                        <!-- Cancel Button Form -->
+                        <form action="{% url 'appointments:cancel_appointment' appointment.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="px-[64px] py-[26px] border border-accent-red rounded-sm text-accent-red text-[20px] leading-[28px] font-semibold">
+                                Отменить запись
+                            </button>
+                        </form>
+                    </div>
                 {% endif %}
             </div>
         </div>

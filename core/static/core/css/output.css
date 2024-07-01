@@ -2212,10 +2212,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   width: 60px;
 }
 
-.w-\[70px\] {
-  width: 70px;
-}
-
 .w-\[75\%\] {
   width: 75%;
 }
@@ -2968,6 +2964,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .bg-\[\#BA2025\] {
   --tw-bg-opacity: 1;
   background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#C91D1D\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(201 29 29 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#D59822\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(213 152 34 / var(--tw-bg-opacity));
 }
 
 .bg-\[\#F3F3F3\] {

@@ -37,13 +37,17 @@ def home_view(request):
         template_name = 'subjects/mentor-home.html'
     elif user.role == 'Teacher':
         template_name = 'subjects/teacher-home.html'
-    elif user.role == 'Psychologist':
+    elif user.role == 'Psychologist' or user.role == 'Orientologist':
         today = datetime.now().date()
         start_of_week = today - timedelta(days=today.weekday())  # Ensure Monday is day 0
         dates_of_week = [start_of_week + timedelta(days=i) for i in range(6)]  # Get Monday to Saturday
 
+        week_offset = int(request.GET.get('week_offset', 0))
+
         context = {
             'dates_of_week': dates_of_week,
+            'user_role': request.user.role,  # Pass user role to the context
+            'week_offset': week_offset,
         }
         template_name = 'appointments/week_view.html'
     else:
@@ -437,7 +441,7 @@ def search_students(request):
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
-    students = lesson.group_template.students.all()
+    students = lesson.students.all()
 
     # Get the date from the query parameter, default to today if not provided
     date_str = request.GET.get('day')
@@ -467,6 +471,7 @@ def set_grade(request, lesson_id):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, error)
+        return redirect('subjects:set_grade', lesson_id=lesson_id)
     else:
         form = GradeForm(students=students, initial=initial_data)
 
@@ -662,10 +667,9 @@ def student_tasks_view(request):
 @login_required
 def task_submissions_view(request, task_id):
     task = get_object_or_404(Task, id=task_id)
-    group_template = task.chat_room.lessons.first().group_template
 
     # Get all students in the group template associated with the task
-    students = group_template.students.all()
+    students = task.chat_room.lessons.first().students.all()
 
     # Get all submissions for the specified task
     submissions = TaskSubmission.objects.filter(task=task).select_related('student')

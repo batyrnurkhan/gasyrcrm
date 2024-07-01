@@ -19,7 +19,7 @@
                         {% with prev_day|date:'m.d.Y' as date_str %}
                             <a href="{% url 'subjects:set_grade' lesson_id=lesson.id %}?day={{ date_str }}"
                                class="previous__date">
-                                <img src="{% static 'core/images/crm2/prev-accent-red.png' %}" alt=""/>
+                                <img src="{% static 'core/images/crm2/prev-accent-red.svg' %}" alt=""/>
                             </a>
                         {% endwith %}
                     {% endwith %}
@@ -28,7 +28,7 @@
                         {% with next_day|date:'m.d.Y' as date_str %}
                             <a href="{% url 'subjects:set_grade' lesson_id=lesson.id %}?day={{ date_str }}"
                                class="previous__date">
-                                <img src="{% static 'core/images/crm2/next-accent-red.png' %}" alt=""/>
+                                <img src="{% static 'core/images/crm2/next-accent-red.svg' %}" alt=""/>
                             </a>
                         {% endwith %}
                     {% endwith %}
@@ -45,13 +45,20 @@
                                    name="max_grade" required type="number" min="0">
                         </label>
                         <input type="date" name="date_assigned" value="{{ day|date:'Y-m-d' }}" hidden>
-                        <label class="flex items-center gap-[16px]">
+                        <div class="flex items-center gap-[16px]">
                             <span class="font-semibold text-[16px] leading-[22px]">Загрузить работу с ошибками</span>
-                            <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
-                                 class="max-w-[24px] max-h-[24px]">
-                            <span class="text-[#5E8BFF] font-semibold text-[16px] leading-[22px]">Загрузить файл</span>
-                            <input type="file" name="{{ form.file.name }}" value="{{ form.file.value }}" style="display: none;">
-                        </label>
+                            <label class="flex items-center gap-[16px] cursor-pointer">
+                                <img src="{% static 'core/icons/upload-ielts.svg' %}" alt=""
+                                     class="max-w-[24px] max-h-[24px]">
+                                <span id="file" class="text-[#5E8BFF] font-semibold text-[16px] leading-[22px]">Загрузить файл</span>
+                                <input onchange="new_file(event)" type="file" name="{{ form.file.name }}" value="{{ form.file.value }}" style="display: none;">
+                            </label>
+                            <script>
+                                function new_file(event) {
+                                    document.getElementById("file").innerText = event.target.files[0].name
+                                }
+                            </script>
+                        </div>
                     </div>
                     <ul class="bg-[#FAFAFA] p-[30px] pr-[34px] h-[430px] overflow-auto space-y-[8px]">
                         {% for student, field in form.student_fields %}
