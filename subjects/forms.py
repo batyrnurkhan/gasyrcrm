@@ -123,25 +123,23 @@ class GradeForm(forms.Form):
                 grade = cleaned_data.get(field.name)
                 if grade is not None and grade > max_grade:
                     self.add_error(field.name, ValidationError("Incorrect grade, it cannot be higher than the maximum grade."))
-
         return cleaned_data
 
     def save_grades(self, lesson, date_assigned, file):
-        grades = []
         max_grade = self.cleaned_data['max_grade']
         for student, field in self.student_fields:
-            if self.cleaned_data[field.name]:
-                grade = Grade(
+            grade_value = self.cleaned_data.get(field.name)
+            if grade_value is not None:
+                grade, created = Grade.objects.update_or_create(
                     student=student,
                     lesson=lesson,
-                    grade=self.cleaned_data[field.name],
-                    max_grade=max_grade,
                     date_assigned=date_assigned,
-                    file=file
+                    defaults={'grade': grade_value, 'max_grade': max_grade}
                 )
-                grades.append(grade)
-        Grade.objects.bulk_create(grades)
-
+                # Update the file only if a new one is provided
+                if file:
+                    grade.file = file
+                    grade.save()
 
 class FileUploadForm(forms.Form):
     task_id = forms.IntegerField(widget=forms.HiddenInput())

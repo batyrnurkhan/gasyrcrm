@@ -22,7 +22,7 @@
                         <h1 class="news__main max-w-[380px] text-white text-[32px] leading-[44px] font-bold">
                             {{ news_articles.first.title }}
                         </h1>
-                        <a href="{% url 'news_detail' news_articles.first.id %}"
+                        <a href="{% url 'news_detail' news_articles.first.id %}" target="_blank"
                            class="py-[12px] px-[74px] border-[1px] border-white rounded-sm text-white hover:bg-white hover:text-black">
                             Подробнее
                         </a>
@@ -35,7 +35,7 @@
                             <h1 class="news__item-title mb-[20px] font-semibold text-[20px] leading-[28px] text-black-main">
                                 {{ news.title }}
                             </h1>
-                            <a href="{% url 'news_detail' news.id %}"
+                            <a href="{% url 'news_detail' news.id %}" target="_blank"
                                class="news__item-link text-[16px] leading-[22px] text-black-main font-medium underline">Подробнее</a>
                         </div>
                     {% endfor %}
