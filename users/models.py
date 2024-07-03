@@ -1,18 +1,13 @@
 import re
-
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import EmailValidator
-
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, phone_number, password=None, **extra_fields):
         if not phone_number:
             raise ValueError('The Phone Number is mandatory')
-
-        # Remove all non-digit characters from phone_number before saving
         formatted_phone_number = re.sub(r'\D', '', phone_number)
-
         user = self.model(phone_number=formatted_phone_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -21,9 +16,7 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         return self.create_user(phone_number, password, **extra_fields)
-
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
@@ -33,7 +26,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ('Mentor', 'Mentor'),
         ('Psychologist', 'Psychologist'),
         ('Orientologist', 'Orientologist'),
-
     )
 
     full_name = models.CharField(max_length=255)
@@ -41,14 +33,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     user_city = models.CharField(max_length=100, choices=[(city, city) for city in
                                                           ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe',
                                                            'Taraz', 'Pavlodar', 'Oskemen', 'Semey', 'Atyrau']])
-    role = models.CharField(max_length=13, choices=ROLE_CHOICES, blank=True, null=True,
-                            default='Anonymous')
+    role = models.CharField(max_length=13, choices=ROLE_CHOICES, blank=True, null=True, default='Anonymous')
     login_code = models.CharField(max_length=7, blank=True, null=True, unique=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     has_access = models.BooleanField(default=False)
     email = models.EmailField(max_length=255, unique=True, validators=[EmailValidator()], null=True, blank=True)
+
+    last_opened_content_id = models.PositiveIntegerField(null=True, blank=True)
 
     objects = CustomUserManager()
 

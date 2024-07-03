@@ -301,49 +301,46 @@
     </script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const buttons = document.querySelectorAll('.flex button');
-        buttons.forEach(button => {
-            button.addEventListener('click', function() {
-                const day = button.id;
-                fetchShiftDetails(day);
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.flex button');
+    buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const day = button.id; // Each button ID corresponds to a day
+            fetchShiftDetails(day);
         });
     });
+});
 
-    function fetchShiftDetails(day) {
-        fetch(`/schedule/get-shifts/${day}/`)
-            .then(response => response.json())
-            .then(data => {
-                const shiftDetails = document.getElementById('shift-details');
-                shiftDetails.innerHTML = '';
-                data.forEach(shift => {
-                    const shiftElement = document.createElement('div');
-                    shiftElement.innerHTML = `<h3>${shift.shift_name} from ${shift.start_time} to ${shift.end_time}</h3>`;
-
-                    if (shift.lessons.length > 0) {
-                        shift.lessons.forEach(lesson => {
-                            const lessonElement = document.createElement('div');
-                            lessonElement.innerHTML = `
-                                <p><strong>Group:</strong> ${lesson.group_name}</p>
-                                <p><strong>Subject:</strong> ${lesson.subject}</p>
-                                <p><strong>Mentor:</strong> ${lesson.mentor}</p>
-                                <p><strong>Teacher:</strong> ${lesson.teacher}</p>
-                                <p><strong>Time Slot:</strong> ${lesson.time_slot}</p>
-                                <p><strong>Google Meet Link:</strong> <a href="${lesson.google_meet_link}" target="_blank">${lesson.google_meet_link}</a></p>
-                                <p><strong>Students:</strong> ${lesson.students.join(', ')}</p>
-                            `;
-                            shiftElement.appendChild(lessonElement);
-                        });
-                    } else {
-                        shiftElement.innerHTML += '<p>No lessons available for this shift.</p>';
-                    }
-
-                    shiftDetails.appendChild(shiftElement);
+function fetchShiftDetails(day) {
+    fetch(`/schedule/get-shifts/${day}/`)
+        .then(response => response.json())
+        .then(data => {
+            const shiftDetails = document.getElementById('shift-details');
+            shiftDetails.innerHTML = ''; // Clear previous details
+            data.forEach(shift => {
+                const shiftElement = document.createElement('div');
+                shiftElement.innerHTML = `<h3>${shift.shift_name} from ${shift.start_time} to ${shift.end_time}</h3>`;
+                shift.lessons.forEach(lesson => {
+                    const lessonElement = document.createElement('div');
+                    lessonElement.innerHTML = `
+                        <p><strong>Group:</strong> ${lesson.group_name}</p>
+                        <p><strong>Subject:</strong> ${lesson.subject}</p>
+                        <p><strong>Mentor:</strong> ${lesson.mentor}</p>
+                        <p><strong>Teacher:</strong> ${lesson.teacher}</p>
+                        <p><strong>Time Slot:</strong> ${lesson.time_slot}</p>
+                        <p><strong>Google Meet Link:</strong> <a href="${lesson.google_meet_link}" target="_blank">${lesson.google_meet_link}</a></p>
+                        <p><strong>Students:</strong> ${lesson.students.join(', ')}</p>
+                    `;
+                    shiftElement.appendChild(lessonElement);
                 });
-            })
-            .catch(error => console.error('Error fetching shift details:', error));
-    }
+                if (shift.lessons.length === 0) {
+                    shiftElement.innerHTML += '<p>No lessons available for this shift.</p>';
+                }
+                shiftDetails.appendChild(shiftElement);
+            });
+        })
+        .catch(error => console.error('Error fetching shift details:', error));
+}
 </script>
 
 {% endblock %}

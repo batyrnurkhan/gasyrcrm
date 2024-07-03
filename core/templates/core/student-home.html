@@ -7,12 +7,13 @@
     {% include 'core/components/navbar-main.html' %}
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
         {% if user.is_authenticated %}
+        {% if last_opened_content_id %}
             <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
             <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-row mb-12"
                  style="background-image: url('{% static "core/images/gasyr-red-row.png" %}')">
                 <div class="p-3 text-start mr-auto">
                     <h4 class="text-2xl font-semibold">Вы остановились!</h4>
-                    <h2 class="text-[32px] font-bold mb-[20px]">Курс по SAT:MATH для начинающих</h2>
+                    <h2 class="text-[32px] font-bold mb-[20px]">{{ course_name }}</h2>
                     <a class="inline-block text-white font-semibold py-5 px-16 border-white border-2 rounded-lg"
                        href="#">Продолжить курс</a>
                 </div>
@@ -38,12 +39,13 @@
                                 fill="transparent"
                                 stroke-dasharray="251.2"
                                 transform="rotate(90, 50, 50)"
-                                stroke-dashoffset="calc(251.2 - (251.2 * 70) / 100)"
+                                stroke-dashoffset="calc(251.2 - (251.2 * {{ test_completion_percentage|floatformat:0 }}) / 100)"
                         ></circle>
                     </svg>
-                    <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">100%</h2>
+                    <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">{{ test_completion_percentage|floatformat:0 }}%</h2>
                 </div>
             </div>
+{% endif %}
             <h1 class="text-[42px] font-bold mb-3">Все курсы</h1>
         {% endif %}
         <div class="grid grid-cols-2 gap-5 mb-10">

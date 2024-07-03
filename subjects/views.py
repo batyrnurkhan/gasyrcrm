@@ -441,7 +441,7 @@ def search_students(request):
 @login_required
 def set_grade(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
-    students = lesson.students.all()
+    students = lesson.group_template.students.all()
 
     # Get the date from the query parameter, default to today if not provided
     date_str = request.GET.get('day')
@@ -471,7 +471,6 @@ def set_grade(request, lesson_id):
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, error)
-        return redirect('subjects:set_grade', lesson_id=lesson_id)
     else:
         form = GradeForm(students=students, initial=initial_data)
 
@@ -481,6 +480,8 @@ def set_grade(request, lesson_id):
         'students': students,
         'day': day
     })
+
+
 
 
 @login_required
