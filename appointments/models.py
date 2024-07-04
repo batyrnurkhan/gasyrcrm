@@ -21,11 +21,12 @@ class Appointment(models.Model):
         super(Appointment, self).save(*args, **kwargs)
 
     def clean(self):
-        # Check for overlapping appointments for the same user on the same date
+        # Check for overlapping appointments for the same type on the same date
         overlapping_appointments = Appointment.objects.filter(
             date=self.date,
             start_time__lt=self.end_time,
-            end_time__gt=self.start_time
+            end_time__gt=self.start_time,
+            type=self.type
         ).exclude(id=self.id)
 
         if overlapping_appointments.exists():
