@@ -56,72 +56,112 @@
             </ul>
         </div>
     </main>
-    <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade"
-         id="createAppointmentModal" tabindex="-1"
-         aria-labelledby="createAppointmentModalLabel"
-         style="display: none"
-         aria-hidden="true">
-        <div class="w-2/3 mx-auto bg-white mt-[140px] rounded-lg">
-            <div class="p-[40px] font-[Qanelas] text-black-main">
-                <div class="flex flex-row justify-between mb-[22px]">
-                    <h5 class="font-bold text-[32px]">Создание окошек</h5>
-                    <button type="button" onclick="closeNewAppModal()" class="btn-close" data-dismiss="modal"
-                            aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
-                    </button>
+<div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="createAppointmentModal" tabindex="-1"
+     aria-labelledby="createAppointmentModalLabel" style="display: none" aria-hidden="true">
+    <div class="w-2/3 mx-auto bg-white mt-[140px] rounded-lg">
+        <div class="p-[40px] font-[Qanelas] text-black-main">
+            <div class="flex flex-row justify-between mb-[22px]">
+                <h5 class="font-bold text-[32px]">Создание окошек</h5>
+                <button type="button" onclick="closeNewAppModal()" class="btn-close" data-dismiss="modal"
+                        aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+                </button>
+            </div>
+                        <div id="modalMessageContainer" class="hidden"></div> <!-- Message container in modal -->
+
+            <div class="flex flex-row justify-between">
+                <div class="modal-body">
+                    <form id="createAppointmentForm">
+                        <span class="font-semibold text-[18px]">Введите время консультации</span>
+                        <input type="date" class="form-control" hidden id="appointmentDate" name="date" required>
+                        <div class="flex flex-row justify-around items-center gap-[18px] rounded-none text-black mb-[18px]">
+                            <h2 class="font-bold h-full">От</h2>
+                            <label for="startHr"
+                                   class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
+                                <input type="time" value="00:00" class="form-control" hidden id="startTime"
+                                       name="start_time" required>
+                                <div class="">
+                                    <input id="startHr" type="number" onchange="setStartHr(event.target.value)"
+                                           min="0" max="23" class="without-spin" placeholder="__"
+                                           oninput="moveToNextInput(this, 'startMin')"/>
+                                </div>
+                                <div class="separator">:</div>
+                                <div class="minute">
+                                    <input id="startMin" type="number" onchange="setStartMin(event.target.value)" min="0" max="59"
+                                           class="without-spin" placeholder="__" oninput="moveToNextInput(this, 'endHr')">
+                                </div>
+                            </label>
+                            <h2 class="font-bold h-full">До</h2>
+                            <label for="endHr"
+                                   class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
+                                <input type="time" value="00:00" class="form-control" hidden id="endTime"
+                                       name="end_time" required>
+                                <div class="">
+                                    <input id="endHr" type="number" onchange="setEndHr(event.target.value)" min="0"
+                                           max="23" class="without-spin" placeholder="__"
+                                           oninput="moveToNextInput(this, 'endMin')"/>
+                                </div>
+                                <div class="separator">:</div>
+                                <div class="minute">
+                                    <input id="endMin" type="number" onchange="setEndMin(event.target.value)" min="0" max="59"
+                                           class="without-spin" placeholder="__" oninput="limitDigits(this)">
+                                </div>
+                            </label>
+                        </div>
+                        <input type="url" class="form-control" id="appointmentLink" name="link" hidden>
+                        <button type="button"
+                                class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px]"
+                                onclick="createAppointment()">
+                            <img src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt=""
+                                 class="max-w-[20px] max-h-[20px] rounded-full">
+                            <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить окошко</span>
+                        </button>
+                    </form>
                 </div>
-                <div class="flex flex-row justify-between">
-                    <div class="modal-body">
-                        <form id="createAppointmentForm">
-                            <span class="font-semibold text-[18px]">Введите время консультации</span>
-                            <input type="date" class="form-control" hidden id="appointmentDate" name="date" required>
-                            <div class="flex flex-row justify-around items-center gap-[18px] rounded-none text-black mb-[18px]">
-                                <h2 class="font-bold h-full">От</h2>
-                                <label for="startHr"
-                                       class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
-                                    <input type="time" value="00:00" class="form-control" hidden id="startTime"
-                                           name="start_time" required>
-                                    <div class="">
-                                        <input id="startHr" type="number" onchange="setStartHr(event.target.value)"
-                                               min="0" max="23" class="without-spin" placeholder="__"/>
-                                    </div>
-                                    <div class="separator">:</div>
-                                    <div class="minute">
-                                        <input type="number" onchange="setStartMin(event.target.value)" min="0" max="59"
-                                               class="without-spin" placeholder="__">
-                                    </div>
-                                </label>
-                                <h2 class="font-bold h-full">До</h2>
-                                <label for="endHr"
-                                       class="border border-[#CDCDCD] rounded-lg flex flex-row text-[16px] px-[16px] py-[25px]">
-                                    <input type="time" value="00:00" class="form-control" hidden id="endTime"
-                                           name="end_time" required>
-                                    <div class="">
-                                        <input id="endHr" type="number" onchange="setEndHr(event.target.value)" min="0"
-                                               max="23" class="without-spin" placeholder="__"/>
-                                    </div>
-                                    <div class="separator">:</div>
-                                    <div class="minute">
-                                        <input type="number" onchange="setEndMin(event.target.value)" min="0" max="59"
-                                               class="without-spin" placeholder="__">
-                                    </div>
-                                </label>
-                            </div>
-                            <input type="url" class="form-control" id="appointmentLink" name="link" hidden>
-                            <button type="button"
-                                    class="flex p-[16px] pr-[30px] rounded-sm border-[1px] border-accent-red items-center gap-[15px]"
-                                    onclick="createAppointment()">
-                                <img src="{% static 'core/icons/add-circle-accent-red.svg' %}" alt=""
-                                     class="max-w-[20px] max-h-[20px] rounded-full">
-                                <span class="font-semibold text-[16px] leading-[24px] text-accent-red">Добавить окошко</span>
-                            </button>
-                        </form>
-                    </div>
-                    <div id="times"
-                         class="border border-[#CDCDCD] w-[590px] min-h-max overflow-y-auto rounded-lg grid grid-cols-3 grid-rows-4 gap-[6px] p-[12px]"></div>
-                </div>
+                <div id="times"
+                     class="border border-[#CDCDCD] w-[590px] min-h-max overflow-y-auto rounded-lg grid grid-cols-3 grid-rows-4 gap-[6px] p-[12px]"></div>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    function moveToNextInput(currentInput, nextInputId) {
+        if (currentInput.value.length >= 2) {
+            currentInput.value = currentInput.value.slice(0, 2); // Ensure only two digits are allowed
+            document.getElementById(nextInputId).focus();
+        }
+    }
+
+    function limitDigits(input) {
+        if (input.value.length > 2) {
+            input.value = input.value.slice(0, 2); // Ensure only two digits are allowed
+        }
+    }
+
+    function setStartHr(hr) {
+        var time = document.getElementById('startTime');
+        var mins = time.value.split(':')[1] || '00';
+        time.value = `${hr.padStart(2, '0')}:${mins}`;
+    }
+
+    function setStartMin(min) {
+        var time = document.getElementById('startTime');
+        var hours = time.value.split(':')[0] || '00';
+        time.value = `${hours}:${min.padStart(2, '0')}`;
+    }
+
+    function setEndHr(hr) {
+        var time = document.getElementById('endTime');
+        var mins = time.value.split(':')[1] || '00';
+        time.value = `${hr.padStart(2, '0')}:${mins}`;
+    }
+
+    function setEndMin(min) {
+        var time = document.getElementById('endTime');
+        var hours = time.value.split(':')[0] || '00';
+        time.value = `${hours}:${min.padStart(2, '0')}`;
+    }
+</script>
     <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
          tabindex="-1"
          style="display: none"
@@ -306,7 +346,26 @@
                         document.getElementById('appointmentDate').value = fullDate;
                     });
             };
+            function showMessage(message, type) {
+        const types = {
+            "error": "ошибка",
+            "success": "",
+            "warning": "",
+            "info": "",
+        };
+        document.getElementById('message-cat').src = "{% static 'core/images/cats/student-sit.png' %}";
+        document.getElementById('message-title').innerText = `Системное уведомление ${types[type]}`;
+        document.getElementById('message-text').innerHTML = message;
+        document.getElementById('accessMessage').classList.remove("hidden");
 
+        setTimeout(() => {
+            document.getElementById('accessMessage').classList.add("hidden");
+        }, 5000);
+    }
+
+    function closeMessage() {
+        document.getElementById('accessMessage').classList.add("hidden");
+    }
             window.createAppointment = function () {
                 const startTime = document.getElementById('startTime').value;
                 const endTime = document.getElementById('endTime').value;

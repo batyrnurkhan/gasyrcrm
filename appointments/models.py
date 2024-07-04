@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
 
+
 class Appointment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField()
@@ -16,18 +17,18 @@ class Appointment(models.Model):
         return f"{self.date} from {self.start_time} to {self.end_time}"
 
     def save(self, *args, **kwargs):
-        if self.user:
-            if self.user.role == 'Psychologist':
-                self.type = 'psy'
-            elif self.user.role == 'Orientologist':
-                self.type = 'ori'
+        self.clean()  # Ensure clean is called before saving
         super(Appointment, self).save(*args, **kwargs)
 
     def clean(self):
-        if Appointment.objects.filter(
-            user=self.user,
+        # Check for overlapping appointments for the same user on the same date
+        overlapping_appointments = Appointment.objects.filter(
             date=self.date,
             start_time__lt=self.end_time,
             end_time__gt=self.start_time
-        ).exclude(id=self.id).exists():
-            raise ValidationError('There is an overlap with another appointment.')
+        ).exclude(id=self.id)
+
+        if overlapping_appointments.exists():
+            raise ValidationError('Вы не можете создавать пересекающие графики.')
+
+        super(Appointment, self).clean()
