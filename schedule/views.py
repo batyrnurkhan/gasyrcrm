@@ -11,7 +11,6 @@ from django.http import JsonResponse
 from subjects.models import Lesson_crm2
 
 def get_shifts_for_day(request, day):
-    print(f"Requested day: {day}")  # Debugging output
     day_name_map = {
         'monday': 2, 'tuesday': 3, 'wednesday': 4,
         'thursday': 5, 'friday': 6, 'saturday': 7
@@ -19,16 +18,13 @@ def get_shifts_for_day(request, day):
 
     weekday = day_name_map.get(day.lower())
     if weekday is None:
-        print("Invalid day requested.")  # Debugging output
         return JsonResponse({'error': 'Invalid day'}, status=400)
 
     shift_times = ShiftTime.objects.filter(date__week_day=weekday)
-    print(f"Shift times found: {shift_times.count()}")  # Debugging output
 
     shift_data = []
     for shift_time in shift_times:
         lessons = Lesson_crm2.objects.filter(time_slot=shift_time)
-        print(f"Lessons found for shift {shift_time.shift.name}: {lessons.count()}")  # Debugging output
         lesson_data = [{
             'mentor': lesson.mentor.full_name,
             'teacher': lesson.teacher.full_name if lesson.teacher else 'No teacher assigned',
@@ -46,7 +42,6 @@ def get_shifts_for_day(request, day):
             'lessons': lesson_data
         })
 
-    print(f"Response data: {shift_data}")  # Debugging output
     return JsonResponse(shift_data, safe=False)
 
 def shifts_view(request):
@@ -57,10 +52,5 @@ def shifts_view(request):
         'times__lessons__subject',
         'times__lessons__group_template'
     ).all()
-
-    if not shifts:
-        print("No shifts found.")
-    else:
-        print(f"Found {len(shifts)} shifts.")
 
     return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': 'schedule', 'students': CustomUser.objects.filter(role="Student")})

@@ -31,8 +31,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=22, unique=True)
     user_city = models.CharField(max_length=100, choices=[(city, city) for city in
-                                                          ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe',
-                                                           'Taraz', 'Pavlodar', 'Oskemen', 'Semey', 'Atyrau']])
+                                                          ['Астана', 'Алматы', 'Шымкенг', 'Караганда', 'Актобе',
+                                                           'Тараз', 'Павлодар', 'Оскемен', 'Семей', 'Атырау']])
     role = models.CharField(max_length=13, choices=ROLE_CHOICES, blank=True, null=True, default='Anonymous')
     login_code = models.CharField(max_length=7, blank=True, null=True, unique=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)

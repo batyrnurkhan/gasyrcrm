@@ -52,7 +52,7 @@
                                                     <h5 class="font-regular text-[14px] leading-[16px] text-black-main">{{ lesson.group_template.name|default:"Шаблон группы" }}</h5>
                                                 </div>
                                             {% empty %}
-                                                <p>No lessons scheduled for this time.</p>
+                                                <p>Нету расписание на это время</p>
                                             {% endfor %}
                                             <button class="add-lesson-btn w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red"
                                                     data-time-id="{{ time.id }}">
