@@ -24,7 +24,7 @@ class LessonForm(ModelForm):
         model = Lesson_crm2
         fields = ['group_name', 'subject', 'group_template', 'teacher', 'students', 'time_slot', 'google_meet_link']
         widgets = {
-            'time_slot': forms.HiddenInput()  # Assuming you handle the time_slot input elsewhere in your logic
+            'time_slot': forms.HiddenInput()
         }
 
     def __init__(self, *args, **kwargs):
@@ -59,7 +59,7 @@ class LessonForm(ModelForm):
             ).distinct()
 
             if overlapping_lessons.exists():
-                raise ValidationError("A student in the selected group template already has a lesson during this time slot.")
+                raise ValidationError("Студент из шаблона уже имеет урок в указанном времени.")
 
         # Validate that no individual student has a conflicting lesson
         if students and time_slot:
@@ -70,7 +70,7 @@ class LessonForm(ModelForm):
                 ).distinct()
 
                 if overlapping_lessons.exists():
-                    raise ValidationError(f"Student {student.full_name} already has a lesson during this time slot.")
+                    raise ValidationError(f"Студент {student.full_name} уже имеет урок в этом промежутке времени.")
 
         # Check if the selected teacher is already booked for the given time slot
         if teacher and time_slot:
@@ -122,7 +122,7 @@ class GradeForm(forms.Form):
             for student, field in self.student_fields:
                 grade = cleaned_data.get(field.name)
                 if grade is not None and grade > max_grade:
-                    self.add_error(field.name, ValidationError("Incorrect grade, it cannot be higher than the maximum grade."))
+                    self.add_error(field.name, ValidationError("Неправильная оценка, оценка не может быть выше максимальной оцени."))
         return cleaned_data
 
     def save_grades(self, lesson, date_assigned, file):
@@ -136,7 +136,6 @@ class GradeForm(forms.Form):
                     date_assigned=date_assigned,
                     defaults={'grade': grade_value, 'max_grade': max_grade}
                 )
-                # Update the file only if a new one is provided
                 if file:
                     grade.file = file
                     grade.save()

@@ -82,8 +82,6 @@ class LoginView(View):
 
             if user is not None:
                 login(request, user)
-                print(f"User authenticated: {user.phone_number}")
-                print(f"Session ID: {request.session.session_key}")
                 if user.has_access or user.role in ['Teacher', 'Superuser']:
                     redirect_url = request.GET.get("next", "/subjects/home/")
                     return redirect(redirect_url)  # Redirect to a home page or dashboard suitable for privileged users
@@ -120,9 +118,9 @@ class GrantAccessView(View):
                 }
                 return JsonResponse({'status': 'success', 'user': user_data}, status=200)
             except get_user_model().DoesNotExist:
-                return JsonResponse({'status': 'error', 'message': 'No user found with this login code.'}, status=404)
+                return JsonResponse({'status': 'error', 'message': 'Нет такого пользователя с такким кодом'}, status=404)
         else:
-            return JsonResponse({'status': 'error', 'message': 'Invalid data.'}, status=400)
+            return JsonResponse({'status': 'error', 'message': 'Неправильные данные'}, status=400)
 
 
 class ProfileView(LoginRequiredMixin, View):
@@ -137,9 +135,9 @@ class ProfileView(LoginRequiredMixin, View):
         form = self.form_class(request.POST, request.FILES, instance=request.user, user=request.user)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Your profile has been updated successfully!')
+            messages.success(request, 'Профиль успешно обновлен')
             return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
-        messages.error(request, 'Form is invalid')
+        messages.error(request, 'Неправильно заполнены данные')
         return render(request, self.template_name, {'form': form})
 
 
@@ -178,7 +176,7 @@ def log_out(request):
 @login_required
 def create_teacher(request):
     if not (request.user.is_superuser or request.user.role == 'Mentor'):
-        messages.error(request, "Unauthorized access.")
+        messages.error(request, "Неавторизованный")
         return redirect('subjects:home')
 
     if request.method == 'POST':
@@ -193,8 +191,7 @@ def create_teacher(request):
             response['Location'] += f'?phone={user.phone_number}'
             return response
         else:
-            messages.error(request, 'Please correct the errors below.')
-            print(form.errors)
+            messages.error(request, 'Пожалуйста убедитесь что ввели правильно')
     else:
         form = TeacherCreationForm()
 

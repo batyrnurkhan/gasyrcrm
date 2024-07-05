@@ -54,14 +54,10 @@ def home_view(request):
         user_lessons = Lesson_crm2.objects.filter(
             group_template__students=user
         ).select_related('teacher', 'subject', 'chat_room')
-        print("Debug - User Lessons with Chat Rooms:",
-              [(lesson.group_name, lesson.chat_room) for lesson in user_lessons])
 
         last_task = Task.objects.filter(
             chat_room__in=[lesson.chat_room for lesson in user_lessons]
         ).select_related('created_by').order_by('-deadline').first()
-
-        print("Debug - Last Task Details:", last_task)
 
         if last_task:
             task_teacher = last_task.created_by
@@ -121,11 +117,6 @@ def mini_schedule_view(request):
             'times__lessons__teacher'
         ).all()
 
-        if not shifts:
-            print("No shifts found.")
-        else:
-            print(f"Found {len(shifts)} shifts.")
-
         return render(request, 'schedule/shifts.html', {'shifts': shifts})
 
     today = timezone.now().date()
@@ -148,8 +139,6 @@ def mini_schedule_view(request):
 
     week_dates = {weeknames[i]: today + timedelta(days=i - current_weekday) for i in range(current_weekday, current_weekday + 3) if i < 7}
 
-    print(week_dates)
-    print(weekly_lessons)
     return render(request, 'subjects/mini_schedule.html', {
         'weekly_lessons': weekly_lessons,
         'week_dates': week_dates
@@ -164,11 +153,6 @@ def weekly_schedule_view(request):
             'times__lessons',
             'times__lessons__teacher'
         ).all()
-
-        if not shifts:
-            print("No shifts found.")
-        else:
-            print(f"Found {len(shifts)} shifts.")
 
         return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': "schedule"})
 
@@ -262,9 +246,7 @@ def group_template_list(request):
 
     # If the form is submitted to create a new group template
     if request.method == 'POST' and 'create_template' in request.POST:
-        print("Here")
         if form.is_valid():
-            print("Here")
             group_template = form.save(commit=False)
             selected_students = request.POST.getlist('selected_students')
             group_template.save()
@@ -344,7 +326,6 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             chat_room.participants.add(student)
         if self.object.teacher:
             chat_room.participants.add(self.object.teacher)
-        print("Here too!")
 
         return response
 
@@ -353,7 +334,6 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return reverse('schedule:shifts')
 
     def form_invalid(self, form):
-        print(form.errors.as_data())
         errors = form.errors.as_data()
         error_messages = []
 
@@ -361,10 +341,7 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             for error in error_list:
                 error_messages.extend(error.messages)
 
-        for message in error_messages:
-            print(message)
         messages.error(self.request, '<br/>'.join(error_messages))
-        print(form.errors)
         return redirect(self.get_success_url())
 
 
@@ -451,7 +428,7 @@ def set_grade(request, lesson_id):
         day = timezone.now().date()
 
     if request.user != lesson.teacher and not request.user.is_superuser:
-        return HttpResponseForbidden("You are not authorized to set grades for this lesson.")
+        return HttpResponseForbidden("Вы не авторизованы чтобы ставить оценки в этом уроке")
 
     # Fetch existing grades for the given date
     existing_grades = Grade.objects.filter(lesson=lesson, date_assigned=day)
@@ -466,7 +443,7 @@ def set_grade(request, lesson_id):
         form = GradeForm(request.POST, request.FILES, students=students, initial=initial_data)
         if form.is_valid():
             form.save_grades(lesson, form.cleaned_data['date_assigned'], form.cleaned_data.get('file'))
-            messages.success(request, "Grades successfully saved.")
+            messages.success(request, "Оценки выставлены.")
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -581,8 +558,6 @@ def create_volunteer_channel(request):
             volunteer_channel.save()
             volunteer_channel.users.set(selected_students)
             return redirect('subjects:volunteer_channel_list')
-        else:
-            print(form.errors)
 
     return render(request, 'subjects/volunteer_channel_form.html', {
         'form': form,
@@ -626,7 +601,7 @@ def update_google_meet_link(request, lesson_id):
         data = json.loads(request.body)
         google_meet_link = data.get('link')
         if not google_meet_link:
-            return JsonResponse({'error': 'No Google Meet link provided'}, status=400)
+            return JsonResponse({'error': 'Нету ссылки на Google Meets'}, status=400)
 
         # Update the lesson with the new Google Meet link
         lesson.google_meet_link = google_meet_link
@@ -641,7 +616,7 @@ def update_google_meet_link(request, lesson_id):
             timestamp=now()
         )
 
-        return JsonResponse({'message': 'Google Meet link updated successfully'}, status=200)
+        return JsonResponse({'message': 'Ссылка на Google Meets вставлена успешна'}, status=200)
     except json.JSONDecodeError as e:
         return JsonResponse({'error': f'Invalid JSON: {str(e)}'}, status=400)
     except Exception as e:
@@ -762,12 +737,12 @@ def create_achievement(request):
                     successes += 1
                 else:
                     errors.append(student_achievement_form.errors)
-                    messages.error(request, f"Error creating Student Achievement for student ID {student_id}")
+                    messages.error(request, f"Ошибка при выдаче достижение пользователю с ID {student_id}")
 
             if successes:
-                messages.success(request, f"{successes} Student Achievements successfully created!")
+                messages.success(request, f"{successes} Достжение для студента выставлена")
             else:
-                messages.error(request, "Failed to create any Student Achievements.")
+                messages.error(request, "Ошибка в выдаче достижениях")
 
             return redirect('subjects:set_achievement')
 

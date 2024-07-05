@@ -55,6 +55,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Appointment
 from .serializers import AppointmentSerializer, AppointmentLinkSerializer
+from django.core.exceptions import ValidationError
 
 
 class AppointmentListCreateAPIView(APIView):
@@ -68,10 +69,15 @@ class AppointmentListCreateAPIView(APIView):
     def post(self, request):
         serializer = AppointmentSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save()  # Automatically use the logged-in user
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+                serializer.save()  # Automatically use the logged-in user
+                messages.success(request._request, 'Appointment created successfully.')
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except ValidationError as e:
+                error_message = ' '.join([str(err) for err in e])
+                messages.error(request._request, f'Ошибка: {error_message}')
+                return Response({'errors': error_message}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class AppointmentSetLinkAPIView(APIView):

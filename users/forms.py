@@ -41,7 +41,7 @@ class PasswordChangeForm(forms.Form):
 
         if new_password and re_new_password:
             if new_password != re_new_password:
-                raise ValidationError("The new passwords must match.")
+                raise ValidationError("Пароли должны совпадать")
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -58,7 +58,7 @@ class ProfileUpdateForm(forms.ModelForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email and CustomUser.objects.exclude(pk=self.user.pk).filter(email=email).exists():
-            raise forms.ValidationError("This email is already in use.")
+            raise forms.ValidationError("Почта уже используется")
         return email
 
     def clean_phone_number(self):
@@ -67,7 +67,7 @@ class ProfileUpdateForm(forms.ModelForm):
 
         if formatted_phone_number and self.user and self.user.phone_number != formatted_phone_number:
             if CustomUser.objects.filter(phone_number=formatted_phone_number).exists():
-                raise forms.ValidationError("This phone number is already in use.")
+                raise forms.ValidationError("Этот номер телефона уже используется")
         return formatted_phone_number
 
 
