@@ -157,7 +157,7 @@ def change_password(request):
             messages.error(request, "Неправильный пароль")
     else:
         messages.error(request, form.errors)
-    return redirect('users:profile')  # Redirect to the same profile page or a confirmation page
+    return redirect('users:profile')
 
 
 class CheckAccessView(LoginRequiredMixin, View):

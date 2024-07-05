@@ -17,17 +17,17 @@
                 <h1 class="font-bold text-black-main text-[42px]">
                     Расписание уроков
                 </h1>
-                <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
-                    <button class="previous__date">
+                 <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
+                    <button class="previous__date" onclick="updateWeek(-1)">
                         <img src="{% static 'core/images/crm2/prev-accent-red.svg' %}" alt=""/>
                     </button>
-                    <div class="switch__date-text">10-17 марта</div>
-                    <button class="previous__date">
+                    <div class="switch__date-text" id="date-range">Загрузка</div>
+                    <button class="previous__date" onclick="updateWeek(1)">
                         <img src="{% static 'core/images/crm2/next-accent-red.svg' %}" alt=""/>
                     </button>
                 </div>
             </div>
-            <div>
+<div>
                 {% for day, lessons in weekly_lessons.items %}
                     <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
                         <div class="lessons__texts flex justify-between mb-[18px] items-center">
@@ -44,13 +44,13 @@
                                         <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
                                             {{ lesson.time_slot.start_time|time:"H:i" }} - {{ lesson.time_slot.end_time|time:"H:i" }}
                                         </p>
-                                        <div class="flex gap-[8px] items-center">
+                                        <div class="flex gap-[8px] items-center overflow-hidden">
                                             {% if lesson.teacher.profile_picture %}
                                                 <img src="{{ lesson.teacher.profile_picture.url }}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
                                             {% else %}
                                                 <img src="{% static 'core/images/default-user.svg' %}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
                                             {% endif %}
-                                            <span class="font-semibold text-[16px] leading-[20px]">{{ lesson.teacher.full_name }}</span>
+                                            <span class="font-semibold text-[16px] leading-[20px] truncate max-w-[150px]">{{ lesson.teacher.full_name }}</span>
                                         </div>
                                         <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}"
                                            class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">
@@ -85,4 +85,36 @@
             </div>
         </div>
     </main>
+
+<script>
+    let weekOffset = 0;
+
+    function updateWeek(offset) {
+        weekOffset += offset;
+        fetchWeekDates();
+    }
+
+    function fetchWeekDates() {
+        fetch(`/api/week-dates/?week_offset=${weekOffset}`)
+            .then(response => response.json())
+            .then(data => {
+                const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
+                document.getElementById('date-range').textContent = dateRange;
+                updateLessons(data.dates_of_week);
+            })
+            .catch(error => {
+                console.error('Error fetching week dates:', error);
+            });
+    }
+
+    function updateLessons(dates) {
+        // This function should update the lessons based on the new dates
+        // You might need to implement an additional endpoint to fetch lessons for the new dates
+        // Here you would add code to fetch and display lessons for the updated week
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchWeekDates();
+    });
+</script>
 {% endblock %}

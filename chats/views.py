@@ -28,7 +28,8 @@ def chat_room_detail(request, room_id):
         students = lesson.students.all()
         teacher = lesson.teacher
 
-        if not (request.user.is_superuser or request.user == lesson.mentor or request.user in students):
+        # Check if the logged-in user is the teacher, mentor, superuser, or a student of the lesson
+        if not (request.user.is_superuser or request.user == lesson.mentor or request.user == lesson.teacher or request.user in students):
             return HttpResponseForbidden("You are not allowed to view this chat room.")
     except ObjectDoesNotExist:
         lesson = None
