@@ -19,7 +19,7 @@ from rest_framework.views import APIView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
-    AnswerForm, QuestionForm
+    AnswerForm, QuestionForm, SuccessVideoLinkForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
 from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer
 
@@ -631,9 +631,13 @@ class CourseFinalTestView(DetailView):
     template_name = 'courses/course/final-test-edit.html'
 
 
-class SuccessVideoLinkEditView(DetailView):
+class SuccessVideoLinkEditView(UpdateView):
     model = Course
+    form_class = SuccessVideoLinkForm
     template_name = 'courses/course/success-video-link-edit.html'
+
+    def get_success_url(self):
+        return reverse('courses:course_detail_edit', kwargs={'pk': self.object.pk})
 
 
 @csrf_exempt

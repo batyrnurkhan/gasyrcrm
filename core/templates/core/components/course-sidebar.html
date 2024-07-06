@@ -2,22 +2,22 @@
 {% load static %}
 <div class="w-[25%]"></div>
 <div class="h-without-navbar w-[20%] flex flex-col pt-[60px] pb-5 bg-white space-y-6 fixed">
-    {% for m in course.modules.all %} <!-- Ensure you are iterating over 'modules' context variable -->
+    {% for m in modules %}
         <div class="relative overflow-hidden">
             <input {% if module.id == m.id %}checked{% endif %} type="checkbox"
-                   {% if m in blocked_modules %}disabled{% endif %}
+                   {% if not m.accessible %}disabled{% endif %}
                    class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
             <div class="bg-white rounded-lg text-accent-red text-start font-bold px-6">
-                {% if m in blocked_modules %}
+                {% if not m.accessible %}
                     <img class="inline-block mr-3"
                          src="{% static 'core/icons/folder-fill-gray.svg' %}" alt="">
                 {% else %}
                     <img class="inline-block mr-3"
                          src="{% static 'core/icons/folder-fill-accent-red.svg' %}" alt="">
                 {% endif %}
-                <span class="mr-auto {% if m in blocked_modules %}text-gray{% endif %}">Модуль {{ forloop.counter }}</span>
+                <span class="mr-auto {% if not m.accessible %}text-gray{% endif %}">Модуль {{ forloop.counter }}</span>
             </div>
-            {% if m in modules %}
+            {% if m.accessible %}
                 <img class="absolute right-6 top-0 accordion-red block h-[24px]"
                      src="{% static 'core/icons/arrow-right-button-accent-red.svg' %}" alt="">
                 <img class="absolute right-6 top-0 accordion-gray hidden h-[24px]"
@@ -26,7 +26,7 @@
                 <img class="absolute right-6 top-0 block h-[24px]"
                      src="{% static 'core/icons/lock-gray.svg' %}" alt="">
             {% endif %}
-            {% if m in modules %}
+            {% if m.accessible %}
                 <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px] text-black-main">
                     <div class="px-6 py-3 space-y-5">
                         {% for l in m.lessons.all %}
@@ -70,17 +70,16 @@
         </div>
     {% endfor %}
     <div class="relative overflow-hidden">
-        <a href="
-                {% if blocked_modules.empty %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
+        <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
            class="bg-white rounded-lg text-start font-bold px-6">
-            {% if blocked_modules.empty %}
+            {% if all_tests_passed %}
                 <img class="inline-block mr-3"
                      src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
             {% else %}
                 <img class="inline-block mr-3"
                      src="{% static 'core/icons/trophy-fill-gray.svg' %}" alt="">
             {% endif %}
-            <span class="{% if blocked_modules.empty %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
+            <span class="{% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
         </a>
     </div>
 </div>

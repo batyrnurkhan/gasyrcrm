@@ -116,3 +116,9 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rating
         fields = ['rating']
+
+
+class SuccessVideoLinkForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['course_success_video']

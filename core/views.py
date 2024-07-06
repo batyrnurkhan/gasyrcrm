@@ -476,7 +476,20 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
                 context['lessons_count'] = lessons_count
             context['submission'] = submission.first()
 
-        # Use course (single object) instead of course (QuerySet)
+        # Calculate if all tests are passed
+        course_tests = Test.objects.filter(object_id=course.id, content_type=ContentType.objects.get_for_model(Course))
+        module_tests = Test.objects.filter(object_id__in=course.modules.values_list('id', flat=True),
+                                           content_type=ContentType.objects.get_for_model(Module))
+        lesson_tests = Test.objects.filter(
+            object_id__in=Lesson.objects.filter(module__course=course).values_list('id', flat=True),
+            content_type=ContentType.objects.get_for_model(Lesson))
+
+        all_tests = list(course_tests) + list(module_tests) + list(lesson_tests)
+        passed_tests = TestSubmission.objects.filter(user=user, test__in=all_tests, score__gte=50).values_list('test',
+                                                                                                               flat=True).distinct()
+
+        all_tests_passed = all(test.id in passed_tests for test in all_tests)
+
         modules = course.modules.prefetch_related(
             Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
         )
@@ -510,7 +523,9 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 
         context['modules'] = accessible_modules
         context['blocked_modules'] = blocked_modules
+        context['all_tests_passed'] = all_tests_passed
         return context
+
 
 class WelcomePageView(TemplateView):
     template_name = 'core/welcome.html'
