@@ -38,7 +38,7 @@
                             </div>
                             <br>
                             <label>
-                                <input id="input-file" class="hidden" type="file" name="{{ form.course_picture.name }}" value="/{{ course.course_picture }}">
+                                <input id="input-file" class="hidden" accept="image/*" type="file" name="{{ form.course_picture.name }}" value="/{{ course.course_picture }}">
 
                                 <img class="inline align-middle" src="{% static 'core/icons/upload-ielts.svg' %}"
                                      alt="">
