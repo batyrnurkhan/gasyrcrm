@@ -45,17 +45,17 @@
                 <div class="congratulation__achievement-title font-bold text-black-main text-[36px] text-center leading-[58px]">
                     Вы справились со всем
                 </div>
-                <div class="congratulation__achievement-content flex flex-wrap gap-3 mt-2">
-                    <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
-                        <img src="{% static 'core/icons/time-line-accent-red.svg' %}" alt=""><span
-                            class="text-[20px] text-accent-red leading-[32px] font-medium">128 часов</span></div>
-                    <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
-                        <img src="{% static 'core/icons/book-open-line-accent-red.svg' %}" alt=""><span
-                            class="text-[20px] text-accent-red leading-[32px] font-medium">12 модулей</span></div>
-                    <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
-                        <img src="{% static 'core/icons/pencil-line-accent-red.svg' %}" alt=""><span
-                            class="text-[20px] text-accent-red leading-[32px] font-medium">60 уроков</span></div>
-                </div>
+                 <div class="congratulation__achievement-content flex flex-wrap gap-3 mt-2">
+                        <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
+                            <img src="{% static 'core/icons/time-line-accent-red.svg' %}" alt=""><span
+                                class="text-[20px] text-accent-red leading-[32px] font-medium">{{ course_data.course_hours }} часов</span></div>
+                        <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
+                            <img src="{% static 'core/icons/book-open-line-accent-red.svg' %}" alt=""><span
+                                class="text-[20px] text-accent-red leading-[32px] font-medium">{{ course_data.modules_count }} модулей</span></div>
+                        <div class="congratulation__achievement-item px-5 h-[76px] w-[270px] rounded-md flex items-center gap-5 border border-[#C6C6C6]">
+                            <img src="{% static 'core/icons/pencil-line-accent-red.svg' %}" alt=""><span
+                                class="text-[20px] text-accent-red leading-[32px] font-medium">{{ course_data.lessons_count }} уроков</span></div>
+                    </div>
             </div>
             <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
                 <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">

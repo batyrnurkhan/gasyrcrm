@@ -6,14 +6,11 @@
     {% include 'core/components/navbar-main.html' %}
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
         <h1 class="text-[42px] font-bold mb-3">Пройденные курсы</h1>
-        {% if False %}
+        {% if completed_courses %}
             <div class="grid grid-cols-2 gap-5 mb-10">
-                {% include 'core/components/course-card-start.html' %}
-                {% include 'core/components/course-card-payed.html' %}
-                {% include 'core/components/course-card-progress.html' %}
-                {% include 'core/components/course-card-completed.html' %}
-                {% include 'core/components/course-card-edit.html' %}
-                {% include 'core/components/course-card-continue-create.html' %}
+                {% for course in completed_courses %}
+                {% include 'core/components/course-card-completed.html' with course=course %}
+                {% endfor %}
             </div>
         {% else %}
             <div class="w-full text-center bg-white pb-32 pt-6">

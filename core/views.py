@@ -117,6 +117,20 @@ class MyCoursesPageView(LoginRequiredMixin, TemplateView):
 class CompletedCoursesPageView(LoginRequiredMixin, TemplateView):
     template_name = 'core/completed-courses.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        completed_courses = []
+
+        courses = user.courses.all()
+        for course in courses:
+            if course.calculate_completion_percentage(user) >= 100:
+                completed_courses.append(course)
+
+        context['completed_courses'] = completed_courses
+
+        return context
+
 
 class CoursePageView(LoginRequiredMixin, DetailView):
     model = Course
@@ -402,10 +416,13 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
             course = Course.objects.filter(pk=self.kwargs['pk']).first()
             if course:
                 test = course.tests.first()
-                submission = TestSubmission.objects.filter(user=user, test=test)
-                if submission.exists():
+                if test:
+                    submission = TestSubmission.objects.filter(user=user, test=test)
+                    if submission.exists():
+                        return "core/student/course_test_results.html"
+                    return "core/student/course_test.html"
+                else:
                     return "core/student/course_test_results.html"
-                return "core/student/course_test.html"
 
         return self.template_name
 
@@ -521,6 +538,13 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 
             previous_module_passed = user_passed_all_tests
 
+        course_data = {
+            'course_name': course.course_name,
+            'course_hours': course.course_time,
+            'modules_count': course.modules.count(),
+            'lessons_count': sum(module.lessons.count() for module in course.modules.all()),
+        }
+        context['course_data'] = course_data
         context['modules'] = accessible_modules
         context['blocked_modules'] = blocked_modules
         context['all_tests_passed'] = all_tests_passed

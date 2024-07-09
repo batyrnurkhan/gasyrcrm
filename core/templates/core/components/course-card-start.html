@@ -4,7 +4,7 @@
     <div id="course_img" class="block bg-cover bg-center h-36 w-full p-3 mb-6 rounded-lg"
          style="background-image: url(
                  {% if course.course_picture %}
-                     '/{{ course.course_picture }}'
+                     '/media/{{ course.course_picture }}'
                  {% else %}
                      '{% static "core/images/course-default-bg.png" %}'
                  {% endif %})">
