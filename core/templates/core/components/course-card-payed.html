@@ -1,8 +1,10 @@
 {% load static %}
 
 <div class="block bg-white rounded-lg p-8 text-start" >
-    <div class="block bg-cover h-36 w-full p-3 mb-6 rounded-lg" style="background-image: url({% static "core/images/course-default-bg.png" %})">
-        <div class="float-left bg-cover w-8 h-8 rounded-full border-2 border-white" style="background-image: url({% static "core/images/anonymous-user-image.png" %})"></div>
+    <div class="block bg-cover bg-center h-36 w-full p-3 mb-6 rounded-lg"
+         style="background-image: url('{% if course.course_picture %}/media/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
+        <div class="float-left bg-cover bg-center w-8 h-8 rounded-full border-2 border-white"
+             style="background-image: url('{% if course.created_by.profile_picture %}/media/{{ course.created_by.profile_picture }}{% else %}{% static "core/images/anonymous-user-image.png" %}{% endif %}')"></div>
         <div class="float-right bg-green text-white text-sm font-semibold py-1 px-4 rounded-full">Доступен к покупке</div>
     </div>
     <div class="flex flex-row">

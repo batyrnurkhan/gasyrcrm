@@ -2,16 +2,11 @@
 
 <div class="block bg-white rounded-lg p-8 text-start">
     <div id="course_img" class="block bg-cover bg-center h-36 w-full p-3 mb-6 rounded-lg"
-         style="background-image: url(
-                 {% if course.course_picture %}
-                     '/media/{{ course.course_picture }}'
-                 {% else %}
-                     '{% static "core/images/course-default-bg.png" %}'
-                 {% endif %})">
-        <div class="float-left bg-cover w-8 h-8 rounded-full border-2 border-white"
+         style="background-image: url('{% if course.course_picture %}/media/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
+        <div class="float-left bg-cover bg-center w-8 h-8 rounded-full border-2 border-white"
              style="background-image:{% if course %}
                  url({% if course.created_by.profile_picture %}
-                     '/{{ course.created_by.profile_picture }}'
+                     '/media/{{ course.created_by.profile_picture }}'
                  {% else %}
                      '{% static "core/images/anonymous-user-image.png" %}'
                  {% endif %});
