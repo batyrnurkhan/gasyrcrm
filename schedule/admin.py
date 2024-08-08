@@ -7,5 +7,5 @@ class ShiftAdmin(admin.ModelAdmin):
 
 @admin.register(ShiftTime)
 class ShiftTimeAdmin(admin.ModelAdmin):
-    list_display = ['shift', 'start_time', 'end_time']
+    list_display = ['shift', 'start_time', 'end_time', 'weekday']
     list_filter = ['shift']

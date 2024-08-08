@@ -147,13 +147,11 @@ def mini_schedule_view(request):
 @login_required
 def weekly_schedule_view(request):
     user = request.user
-    # еСЛИ ЮЗЕР СУПЕРАДМИН ИЛИ МЕНТОР ЕГО ПЕРЕНАПРАВЛЯЮТ В SUBJECS/VIEWS.PY
     if user.role == 'Mentor':
         shifts = Shift.objects.prefetch_related(
             'times__lessons',
             'times__lessons__teacher'
         ).all()
-
         return render(request, 'schedule/shifts.html', {'shifts': shifts, 'page': "schedule"})
 
     today = timezone.now().date()
@@ -165,7 +163,8 @@ def weekly_schedule_view(request):
     lessons = Lesson_crm2.objects.filter(Q(students__in=[user]) | Q(teacher=user))
 
     for lesson in lessons:
-        lesson_weekday = lesson.time_slot.date.weekday()
+        lesson_time_slot = lesson.time_slot  # Assuming lesson.time_slot is a ShiftTime object
+        lesson_weekday = lesson_time_slot.weekday  # Use the weekday field directly
         lesson_day_name = weeknames[lesson_weekday]
         weekly_lessons[lesson_day_name].append(lesson)
 
@@ -293,7 +292,6 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     template_name = 'subjects/lesson_create.html'
 
     def test_func(self):
-        # Check if the user is authenticated and is a mentor
         return self.request.user.is_authenticated and self.request.user.role == 'Mentor'
 
     def get_context_data(self, **kwargs):
@@ -304,33 +302,31 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
         try:
             time_slot = ShiftTime.objects.get(pk=self.kwargs['time_id'])
+            print(f"Time Slot: {time_slot}")  # Debug print
         except ShiftTime.DoesNotExist:
             raise Http404("Time slot does not exist")
+
         form.instance.time_slot = time_slot
+        form.instance.mentor = self.request.user
+        form.instance.time_slot_id = self.kwargs['time_id']
 
-        form.instance.mentor = self.request.user  # Set the mentor as the current user
-        form.instance.time_slot_id = self.kwargs['time_id']  # Set the time_slot from the URL parameter
-
-        # Create a chat room for the lesson
         chat_room = ChatRoom.objects.create(title="Temporary Title")
-        form.instance.chat_room = chat_room  # Associate the chat room with the lesson
+        form.instance.chat_room = chat_room
 
-        response = super().form_valid(form)  # Save the lesson and form data
+        response = super().form_valid(form)
 
-        # Update the chat room title and save it
         chat_room.title = f"Lesson {self.object.id} Chat"
         chat_room.save()
 
-        # Add users to chat room
         for student in self.object.students.all():
             chat_room.participants.add(student)
         if self.object.teacher:
             chat_room.participants.add(self.object.teacher)
 
+        print(f"Lesson Created: {self.object}")  # Debug print to check the created lesson details
         return response
 
     def get_success_url(self):
-        # Redirects back to the shifts page after successful creation
         return reverse('schedule:shifts')
 
     def form_invalid(self, form):
@@ -343,7 +339,6 @@ class LessonCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
         messages.error(self.request, '<br/>'.join(error_messages))
         return redirect(self.get_success_url())
-
 
 class LessonDetailView(DetailView):
     model = Lesson_crm2

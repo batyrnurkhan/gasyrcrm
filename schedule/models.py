@@ -1,7 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
-import datetime
 
 class Shift(models.Model):
     name = models.CharField(max_length=100)
@@ -12,13 +10,20 @@ class Shift(models.Model):
         return f"{self.name} from {self.start_time} to {self.end_time}"
 
 class ShiftTime(models.Model):
+    WEEKDAYS = [
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    ]
+
     shift = models.ForeignKey(Shift, related_name='times', on_delete=models.CASCADE)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    date = models.DateField()
-
-    def day_of_week(self):
-        return self.date.strftime('%A')  # Returns the full weekday name
+    weekday = models.IntegerField(choices=WEEKDAYS)
 
     def __str__(self):
-        return f"{self.shift.name} on {self.date} - {self.start_time} to {self.end_time}"
+        return f"{self.shift.name} on {self.get_weekday_display()} - {self.start_time} to {self.end_time}"

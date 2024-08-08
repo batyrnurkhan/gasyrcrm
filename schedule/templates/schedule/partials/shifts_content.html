@@ -1,0 +1,63 @@
+{% load static %}
+
+{% for shift in shifts %}
+    <div class="item min-w-full">
+        <p class="text-black-main font-semibold text-[20px] leading-[24px] mb-[8px]">{{ shift.shift_name }}</p>
+        <div class="rounded-lg border-[1px] border-[#CACACA] overflow-x-auto">
+            <div class="item p-[16px] flex item-start min-w-max flex-grow border-b border-[#CACACA]">
+                <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] min-w-[100px]">{{ shift.start_time }} - {{ shift.end_time }}</p>
+                <div class="flex items-center gap-[17px] w-webkit-fill overflow-scroll">
+                    {% for lesson in shift.lessons %}
+                        <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA]">
+                            <div class="flex items-center gap-[8px]">
+                                <p class="font-semibold text-[16px] leading-20px text-black-main">{{ lesson.teacher }}</p>
+                            </div>
+                            <h3 class="font-semibold text-[20px] leading-[24px] text-black-main">{{ lesson.subject }}</h3>
+                            <h5 class="font-regular text-[14px] leading-[16px] text-black-main">{{ lesson.group_name|default:"Шаблон группы" }}</h5>
+                        </div>
+                    {% empty %}
+                        <p>Нету расписание на это время</p>
+                    {% endfor %}
+                    <button class="add-lesson-btn w-[53px] h-[53px] rounded-full border-[1px] border-accent-red text-[34px] text-accent-red"
+                            data-time-id="{{ shift.time_id }}">
+                        +
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <p>No shifts available.</p>
+{% endfor %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modal = document.getElementById("lessonModal");
+        var closeBtn = document.querySelector(".close");
+
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Event delegation for dynamically added buttons
+        document.body.addEventListener('click', function (event) {
+            if (event.target.classList.contains('add-lesson-btn')) {
+                const timeId = event.target.getAttribute("data-time-id");
+                const urlTemplate = `{% url 'subjects:lesson-create' '999' %}`;  // '999' is a placeholder
+                const url = urlTemplate.replace('999', timeId);
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('lessonFormContainer').innerHTML = html;
+                        modal.style.display = "block";
+                    });
+            }
+        });
+    });
+</script>

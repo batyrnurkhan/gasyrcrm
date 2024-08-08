@@ -1,6 +1,5 @@
 {% extends 'subjects/base.html' %}
 {% load custom_tags %}
-
 {% load static %}
 {% load l10n %}
 
@@ -27,7 +26,7 @@
                     </button>
                 </div>
             </div>
-<div>
+            <div>
                 {% for day, lessons in weekly_lessons.items %}
                     <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
                         <div class="lessons__texts flex justify-between mb-[18px] items-center">
@@ -85,36 +84,75 @@
             </div>
         </div>
     </main>
+    <script>
+        let weekOffset = 0;
 
-<script>
-    let weekOffset = 0;
+        function updateWeek(offset) {
+            weekOffset += offset;
+            fetchWeekDates();
+        }
 
-    function updateWeek(offset) {
-        weekOffset += offset;
-        fetchWeekDates();
-    }
+        function fetchWeekDates() {
+            fetch(`/api/week-dates/?week_offset=${weekOffset}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
+                    document.getElementById('date-range').textContent = dateRange;
+                    updateLessons(data.dates_of_week);
+                })
+                .catch(error => {
+                    console.error('Error fetching week dates:', error);
+                });
+        }
 
-    function fetchWeekDates() {
-        fetch(`/api/week-dates/?week_offset=${weekOffset}`)
-            .then(response => response.json())
-            .then(data => {
-                const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
-                document.getElementById('date-range').textContent = dateRange;
-                updateLessons(data.dates_of_week);
-            })
-            .catch(error => {
-                console.error('Error fetching week dates:', error);
-            });
-    }
+        function updateLessons(dates) {
+            fetch(`/api/lessons/?dates=${dates.join(',')}`)
+                .then(response => response.json())
+                .then(data => {
+                    const lessonsContainer = document.getElementById('lessons-container');
+                    lessonsContainer.innerHTML = ''; // Clear previous lessons
 
-    function updateLessons(dates) {
-        // This function should update the lessons based on the new dates
-        // You might need to implement an additional endpoint to fetch lessons for the new dates
-        // Here you would add code to fetch and display lessons for the updated week
-    }
+                    for (const [day, lessons] of Object.entries(data)) {
+                        let dayLessons = `<div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
+                            <div class="lessons__texts flex justify-between mb-[18px] items-center">
+                                <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">${day}</h1>
+                                <h1 class="ml-auto text-[#9D9E9E]"><img src="{% static 'core/icons/calendar-line-gray.svg' %}" class="inline-block mr-[8px] align-middle" alt=""/>${lessons.date}</h1>
+                            </div>`;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        fetchWeekDates();
-    });
-</script>
+                        if (lessons.items.length > 0) {
+                            dayLessons += '<ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">';
+                            lessons.items.forEach(lesson => {
+                                dayLessons += `
+                                    <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
+                                        <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">${lesson.subject}</p>
+                                        <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">${lesson.start_time} - ${lesson.end_time}</p>
+                                        <div class="flex gap-[8px] items-center overflow-hidden">
+                                            <img src="${lesson.teacher_profile_picture}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
+                                            <span class="font-semibold text-[16px] leading-[20px] truncate max-w-[150px]">${lesson.teacher}</span>
+                                        </div>
+                                        <a href="${lesson.chat_room_url}" class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">Присоединиться к уроку</a>
+                                    </li>`;
+                            });
+                            dayLessons += '</ul>';
+                        } else {
+                            dayLessons += `
+                                <div class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
+                                    <img src="{% static 'core/images/cats/papers.png' %}" alt="" class="max-w-[215px] max-h-[215px]">
+                                    <p class="empty-text max-w-[310px] font-bold text-[24px] leading-[36px] text-black-main">Расписание на этот день еще не назначено.<br/>Скоро все будет :)</p>
+                                </div>`;
+                        }
+
+                        dayLessons += '</div>';
+                        lessonsContainer.innerHTML += dayLessons;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching lessons:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetchWeekDates();
+        });
+    </script>
 {% endblock %}
