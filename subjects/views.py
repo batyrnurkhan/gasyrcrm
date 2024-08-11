@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Prefetch, Q
+from django.db.models.functions import TruncDate
 from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -51,6 +52,7 @@ def home_view(request):
         }
         template_name = 'appointments/week_view.html'
     else:
+        # Fetch lessons for the user
         user_lessons = Lesson_crm2.objects.filter(
             group_template__students=user
         ).select_related('teacher', 'subject', 'chat_room')
@@ -67,8 +69,6 @@ def home_view(request):
             task_teacher = None
             creator_profile_pic_url = None
             subject_name = "No Subject"
-
-        lessons = Lesson_crm2.objects.filter(students__in=[user], time_slot__date__week_day=datetime.today().weekday()+2)
 
         template_name = 'subjects/home.html'
 
@@ -89,7 +89,7 @@ def home_view(request):
             'creator_profile_pic_url': creator_profile_pic_url,
             'subject_name': subject_name,
             'last_task': last_task,
-            'lessons': lessons,
+            'lessons': user_lessons,
             'counts': counts,
             'achievement': achievements.last()
         }
