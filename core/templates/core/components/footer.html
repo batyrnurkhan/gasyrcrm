@@ -1,24 +1,25 @@
+
 {% load static %}
 
 <footer class="bg-black mt-auto text-white z-10 font-[Qanelas]">
-    <ul class="container flex flex-row items-center text-xl mx-auto h-32 font-light">
-        <li class="w-1/5">
+    <ul class="container flex flex-col items-center text-xl mx-auto md:h-32 p-16 font-light sm:flex-row">
+        <li class="w-full md:w-1/5">
             <img class="inline h-full align-middle"
                  src="{% static "core/images/logo-white.svg" %}" alt="">
         </li>
-        <li class="w-2/5">
-            <a class="border border-white rounded-full inline-block py-4 px-7" href="{% url "subjects:home" %}">
+        <li class="w-full md:w-2/5">
+            <a class="border  hidden md:inline-block border-white rounded-full  py-4 px-7" href="{% url "subjects:home" %}">
                 Перейти на главный сайт
                 <img class="inline h-full align-middle ml-8"
                      src="{% static "core/icons/right-arrow-white.svg" %}" alt="">
             </a>
         </li>
-        <li class="w-1/5">
+        <li class="w-full md:w-1/5">
             <a class="underline" href="#">
                 Политика конфиденциальности
             </a>
         </li>
-        <li class="w-1/5">
+        <li class="w-full md:w-1/5">
             <div class="float-right">© Все права защищены</div>
         </li>
     </ul>

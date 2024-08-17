@@ -1,3 +1,4 @@
+
 {% extends "core/base.html" %}
 {% load static %}
 
@@ -7,30 +8,36 @@
     <div class="absolute top-0 bottom-0 left-0 right-0 -z-10 bg-no-repeat bg-cover bg-center"
          style="background-image: url('{% static "core/images/background-light.png" %}')"></div>
     <div class="container content mx-auto relative font-[Qanelas] text-center text-white">
-        <h2 class="text-[93px] font-bold leading-[102.3px] mb-6">Регистрация<br/> прошла успешно!</h2>
-        <p class="text-2xl font-light mb-8">Сообщите этот код своему ментору или менеджеру</p>
-        <div class="flex flex-row text-accent-red font-bold text-[123px] justify-center gap-[8px] mb-14">
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.0 }}</div>
+        <h2 class="text-[42px] md:text-[93px] leading-[46.2px] md:leading-[102.3px] font-bold mb-6">
+            Регистрация<br/> прошла успешно!
+        </h2>
+        <p class=" text-[18px] md:text-2xl font-light mb-8">Сообщите этот код своему ментору или менеджеру</p>
+        <div class="flex flex-col md:flex-row text-accent-red font-bold text-[103px] md:text-[123px] justify-center gap-[8px] mb-14">
+            <div class="flex flex-row items-center justify-center">
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.0 }}</div>
+                </div>
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.1 }}</div>
+                </div>
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.2 }}</div>
+                </div>
             </div>
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.1 }}</div>
-            </div>
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.2 }}</div>
-            </div>
-            <div class="text-white opacity-50 my-[30px]">{{ login_code.3 }}</div>
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.4 }}</div>
-            </div>
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.5 }}</div>
-            </div>
-            <div class="border-2 border-white rounded-lg p-1.5">
-                <div class="bg-white border-[#EC565B] py-[30px] w-36 rounded-lg">{{ login_code.6 }}</div>
+            <div class="text-white opacity-50 my-[-20px] md:my-[30px]">{{ login_code.3 }}</div>
+            <div class="flex flex-row items-center justify-center">
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.4 }}</div>
+                </div>
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.5 }}</div>
+                </div>
+                <div class="border-2 border-white rounded-lg p-1 md:p-1.5">
+                    <div class="bg-white border-[#EC565B] py-[30px] w-24 md:w-36 rounded-lg">{{ login_code.6 }}</div>
+                </div>
             </div>
         </div>
-        <button id="checkAccessBtn" class="inline-block border border-white text-white text-xl px-11 py-7 rounded-lg">
+        <button id="checkAccessBtn" class="inline-block border border-white text-white text-xl mb-5 px-11 py-7 rounded-lg">
             Мой аккаунт подтвердили
         </button>
     </div>

@@ -1,43 +1,35 @@
+
 {% extends "core/base.html" %}
 {% load static %}
 
 {% block title %}Gasyr - foundation school{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-welcome.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center"
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center max-w-full px-4"
          style="background-image: url('{% static 'core/images/background.png' %}'); background-size: 100%">
-        <div class="border rounded-lg border-accent-red text-center inline-block py-16 px-12 mt-14 mb-64 bg-white">
-            <h1 class="text-black-main font-semibold" style="font-size: 64px; line-height: 76.8px">
-                Добро пожаловать <br/>в сообщество <span style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
+        <div class="border rounded-lg border-accent-red text-center inline-block py-16 px-6 mt-14 mb-64 bg-white sm:py-8 sm:px-4 sm:mt-6 sm:mb-32 max-w-full">
+            <h1 class="text-black-main  font-semibold text-[32px] md:text-[64px] leading-[38px] md:leading-[76.8px] sm:text-3xl sm:leading-tight break-words">
+                Добро пожаловать <br class="hidden sm:inline"/>в сообщество <span style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
             </h1>
-            <p class="text-base text-black-main mb-10" style="letter-spacing: 0.01rem">
+            <p class="text-base text-black-main mb-10 sm:text-sm sm:mb-6" style="letter-spacing: 0.01rem">
                 Платформа по подготовке в зарубежные ВУЗы от Gasyr Foundation School
             </p>
-            <div class="flex flex-row items-center justify-center">
-                <a class="bg-accent-red rounded-lg p-6 text-white mr-2.5" href="{% url 'users:login' %}">
-                    Войти на платформу
-                    <img class="inline ml-14" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}" alt=""/>
-                </a>
-                <div class="border border-gray border-2 rounded-lg p-2.5 pl-5 flex flex-row items-center">
-                    <p class="mr-8">Впервые у нас?</p>
-                    <a class="border border-accent-red border-2 rounded-lg py-4 px-12 text-accent-red block font-semibold" href="{% url 'users:signup' %}">
-                        Регистрация
-                    </a>
-                </div>
-            </div>
+						<div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 w-full md:w-3/4 mx-auto">
+							<a class="bg-accent-red  rounded-lg p-6 text-white w-full md:w-1/2 flex sm:block text-center" href="{% url 'users:login' %}">
+									Войти на платформу
+									<img class="inline ml-14 sm:ml-4" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}" alt=""/>
+							</a>
+							<div class="border border-gray border-2 rounded-lg p-2.5 flex flex-col sm:flex-row items-center w-full md:w-1/2">
+								<p class="w-full sm:w-1/2 mb-4 sm:mb-0 sm:mr-2 text-center">Впервые у нас?</p>
+								<a class="w-full sm:w-1/2 border border-accent-red border-2 rounded-lg py-4 px-4 text-accent-red block font-semibold text-center" href="{% url 'users:signup' %}">
+										Регистрация
+								</a>
+						</div>
+					</div>
         </div>
     </div>
+
     {% csrf_token %}
     {% include 'core/components/footer.html' %}
-{% comment %}
-<h2>Welcome to the Home Page</h2>
-<p>This is your home page. Navigate through the site from here.</p>
-
-{% if request.user.role == "Teacher" or request.user.is_superuser %}
-HI TEQACHER/ADMIN
-    <a href="{% url 'users:grant_access' %}">Give Access</a>
-
-{% endif %}
-{% endcomment %}
 
 {% endblock %}
