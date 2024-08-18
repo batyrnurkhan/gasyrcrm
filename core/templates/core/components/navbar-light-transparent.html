@@ -1,10 +1,8 @@
 
 {% load static %}
 <div class="fixed z-50 w-full">
-    <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
-        <div class="mr-auto">
-            <a href="{% url "welcome" %}"><img src="{% static 'core/images/logo-white.svg' %}" alt=""></a>
-        </div>
+    <nav class="container items-center justify-between mx-auto flex font-[Qanelas] px-5 md:bg-none bg-[#BA2025]">
+        <a class="mt-4" href="{% url "welcome" %}"><img src="{% static 'core/images/logo-white.svg' %}" alt=""></a>
         <ul class="flex flex-row items-center text-xl">
             <li class="text-white tracking-widest hover:underline ">
                 <a href="tel:8 777 123 12 12" >

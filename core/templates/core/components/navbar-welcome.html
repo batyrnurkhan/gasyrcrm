@@ -1,12 +1,12 @@
 
 {% load static %}
 <div class="fixed w-full bg-white">
-    <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 75px;">
+    <nav class="container py-3 items-center mx-auto flex font-[Qanelas] px-5" style="height: 75px;">
         <div class="mr-auto">
             <a href="{% url "welcome" %}"><img src="{% static 'core/images/logo.svg' %}" alt=""></a>
         </div>
         <ul class="flex flex-row items-center text-xl">
-            <li class="text-black-main tracking-widest hover:underline">
+            <li class="text-black-main tracking-widest hover:underline font-medium flex flex-row items-center">
                 <a href="tel:8 777 123 12 12" >
                     <img class="inline h-full max-h-3.5 align-middle" src="{% static "core/icons/phone-fill-black-main.svg" %}" alt="">
                     8 777 123 12 12

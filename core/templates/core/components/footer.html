@@ -2,8 +2,8 @@
 {% load static %}
 
 <footer class="bg-black mt-auto text-white z-10 font-[Qanelas]">
-    <ul class="container flex flex-col items-center text-xl mx-auto md:h-32 p-16 font-light sm:flex-row">
-        <li class="w-full md:w-1/5">
+    <ul class="container flex flex-col justify-between items-center text-xl mx-auto md:h-32 p-16 font-light sm:flex-row">
+        <li class="w-full md:w-1/5 flex items-center justify-center mb-5 sm:mb-0">
             <img class="inline h-full align-middle"
                  src="{% static "core/images/logo-white.svg" %}" alt="">
         </li>
@@ -14,12 +14,12 @@
                      src="{% static "core/icons/right-arrow-white.svg" %}" alt="">
             </a>
         </li>
-        <li class="w-full md:w-1/5">
-            <a class="underline" href="#">
+        <li class="flex items-center ">
+            <a class="text-center mb-5 sm:mt-0 sm:mb-0 underline md:items-baseline sm md:text-nowrap" href="#">
                 Политика конфиденциальности
             </a>
         </li>
-        <li class="w-full md:w-1/5">
+        <li class=" md:w-1/5">
             <div class="float-right">© Все права защищены</div>
         </li>
     </ul>
