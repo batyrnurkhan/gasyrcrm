@@ -10,6 +10,7 @@
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] ml-[40px] mr-[78px]">
+
             <div class="main__welcome mb-[20px] w-full h-[340px] pt-[50px] pl-[50px] rounded-md bg-accent-red bg-right bg-contain bg-no-repeat"
                  style="background-image: url('{% static "core/images/crm2/main1_bg.png" %}');">
                 <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
@@ -23,7 +24,9 @@
                     Посмотреть видео
                 </button>
             </div>
-            <div class="flex gap-[20px]">
+
+
+             {% comment %} <div class="flex gap-[20px]">
                 <div class="h-[208px] main__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-1/2 p-[32px]">
                     {% if last_task %}
                         <div class="task__author flex gap-[12px]">
@@ -75,6 +78,8 @@
                         </div>
                     {% endif %}
                 </div>
+
+                
                 <div class="goto__result w-1/2 h-[208px] rounded-md pt-[52px] pl-[30px] bg-right bg-contain bg-no-repeat bg-accent-red"
                      style="background-image: url('{% static "core/images/crm2/main2-bg.png" %}');">
                     <h1 class="goto__result-title text-white font-semibold text-[20px] leading-[30px] max-w-[270px] mb-[12px]">
@@ -84,7 +89,9 @@
                         Перейти в дневник
                     </a>
                 </div>
+
             </div>
+
             <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
                 <div class="lessons__texts flex justify-between mb-[18px] items-center">
                     <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
@@ -133,6 +140,7 @@
             </div>
 
             <div class="flex mt-[20px] gap-[20px]">
+
                 <div class="pt-[32px] px-[32px] goto__psy w-1/2 h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md bg-right bg-contain bg-no-repeat bg-[#5B6AF4]"
                      style="background-image: url('{% static "core/images/crm2/main3_bg-psy.png" %}');">
                     <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
@@ -141,15 +149,19 @@
                         Записаться к психологу
                     </a>
                 </div>
+
                 <div class="pt-[32px] px-[32px] goto__psy w-1/2 h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-md bg-right bg-contain bg-no-repeat bg-[#2EB123]"
                      style="background-image: url('{% static "core/images/crm2/main4_bg-career.png" %}');">
-                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">Не
-                        знаете кем хотите стать в будущем?</h3>
+                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
+                        Не знаете кем хотите стать в будущем?</h3>
                     <a href="{% url 'subjects:ori-appointment' %}" class="inline-block mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-sm">
                         Записаться к проф. ориентологу
                     </a>
                 </div>
+
             </div>
+
+
             <div class="lastAchieve mt-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-md p-[32px] pb-[24px]">
                 <div class="lastAchieve__header flex justify-between items-center">
                     <h3 class="lastAchieve__title font-semibold text-[32px] leading-[44px] text-black-main max-w-[600px]">
@@ -204,7 +216,9 @@
                     </li>
                     {% endfor %}
                 </div>
-            </div>
+            </div> {% endcomment %}
+
+
         </div>
     </main>
 {% endblock %}

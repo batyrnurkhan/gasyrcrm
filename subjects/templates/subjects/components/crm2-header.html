@@ -1,7 +1,7 @@
 {% load static %}
 <header class="w-without-slider z-50 header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center fixed"
         style="justify-content: space-between; border-left: 1px solid #c6c6c6">
-    <div class="header__content">
+    <div class="header__content hidden md:block">
         <h1 class="header__title text-black-main font-semibold text-[20px] leading-[24px] mb-[2px]">
             Привет, {{ user.full_name }}!
         </h1>
@@ -9,13 +9,17 @@
             Тут вы сможете сдавать свое домашнее задание
         </p>
     </div>
+    <a href="{% url 'subjects:home' %}" class="md:hidden block"><img
+        src="{% static 'core/images/logo.svg' %}" alt=""/>
+    </a>
     <div class="header__author">
         <div class="border-l-2 border-gray py-4 pl-5 pr-10 flex flex-row items-center">
-            <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% if user.profile_picture %}
-                                /media/{{ user.profile_picture }}
-                                {% else %}
-                                {% static "core/images/default-user.svg" %}
-                            {% endif %}" alt="">
+            <img class="w-[60px] h-[60px] object-cover rounded-full" 
+                src="{% if user.profile_picture %}
+                    /media/{{ user.profile_picture }}
+                {% else %}
+                    {% static "core/images/default-user.svg" %}
+                {% endif %}" alt="">
             <div class="ml-3.5 mr-8 h-fit">
                 <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
                 <p class="m-0">{{ user.role }}</p>
@@ -38,4 +42,4 @@
         </div>
     </div>
 </header>
-<div class="h-[92px]"></div>
+<div class="h-[76px] md:h-[92px]"></div>

@@ -1,11 +1,11 @@
 
 {% load static %}
 <div class="fixed z-50 w-full">
-    <nav class="container items-center justify-between mx-auto flex font-[Qanelas] px-5 md:bg-none bg-[#BA2025]">
+    <nav class="container items-center justify-between mx-auto flex font-[Qanelas] px-5 md:bg-none ">
         <a class="mt-4" href="{% url "welcome" %}"><img src="{% static 'core/images/logo-white.svg' %}" alt=""></a>
         <ul class="flex flex-row items-center text-xl">
-            <li class="text-white tracking-widest hover:underline ">
-                <a href="tel:8 777 123 12 12" >
+            <li class="text-white tracking-widest hover:underline bg-[#BA2025] rounded-xl px-3">
+                <a href="tel:8 777 123 12 12" class='flex items-center gap-2'>
                     <img class="inline h-full max-h-3.5 align-middle " src="{% static "core/icons/phone-fill-white.svg" %}" alt="">
                     8 777 123 12 12
                 </a>
