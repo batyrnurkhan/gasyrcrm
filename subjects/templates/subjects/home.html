@@ -7,249 +7,250 @@
 
 {% block flex-content %}
     {% include "subjects/components/crm2-student-sidebar.html" %}
-    <main class="main flex-1 pb-[100px] md:w-3/4 font-[Qanelas] relative">
-        {% comment %} <div class="w-full  md:ml-[40px] md:pr-[150px] pl-5">
-
-        </div> {% endcomment %}
-
-        <div class=" md:ml-[40px] md:mr-[78px] px-5">
+    <main class="main flex-1 pb-[100px] md:w-3/4 font-[Qanelas] relative">   
+        <div class="md:mr-[60px] relative pr-5">
             {% include "subjects/components/crm2-header.html" %}
+            <div class=" md:ml-[40px] mt-5 px-5">
 
-            <div class=" pt-[50px]main__welcome mb-[20px] w-full md:h-[340px] pt-[42px] px-4 md:px-0 pb-48 md:pb-0 md:pt-[50px] md:pl-[50px] rounded-[10px] bg-accent-red bg-bottom md:bg-right bg-contain bg-no-repeat"
-                 style="background-image: url('{% static "core/images/crm2/main1_bg.png" %}');">
-                <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
-                    Добро пожаловать в Gasyr Foundation School!
-                </h1>
-                <p class="main__welcome-text font-medium text-[16px] leading-[24px] text-white max-w-[400px] mb-[30px]">
-                    Посмотри видео, и ознакомься с платформой нашей онлайн-школы
-                    подробнее
-                </p>
-                <button class="bg-[#BA2025] shadow-2xl shadow-[#fffff] main__welcome-btn w-full md:w-fit py-[21px] px-[50px] rounded-[5px] border-[1px] border-white font-semibold text-white text-[16px] leading-[22px] hover:bg-white hover:text-accent-red">
-                    Посмотреть видео
-                </button>
-            </div>
-
-
-             <div class="flex flex-col md:flex-row gap-[20px]">
-                <div class="h-[208px] main__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-[10px] w-full md:w-1/2 p-[32px]">
-                    {% if last_task %}
-                        <div class="task__author flex gap-[12px]">
-                            {% if task_teacher and task_teacher.profile_picture %}
-                                <img src="{{ creator_profile_pic_url }}"
-                                     alt="Profile Picture of {{ task_teacher.full_name }}"
-                                     class="max-w-[42px] max-h-[42px] rounded-full">
-                            {% elif task_teacher %}
-                                <img src="./assets/main__author.png"
-                                     alt="Profile Picture of {{ task_teacher.full_name }}"
-                                     class="max-w-[42px] max-h-[42px] rounded-full">
-                            {% else %}
-                                <img src="./assets/default_profile_pic.png" alt="Default Profile Picture"
-                                     class="max-w-[42px] max-h-[42px] rounded-full">
-                            {% endif %}
-                            <div class="author__info">
-                                {% if task_teacher %}
-                                    <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
-                                        Учитель {{ task_teacher.full_name }} добавил задание
-                                    </h3>
+                <div class="mt-5 pt-[50px]main__welcome mb-[20px] w-full md:h-[340px] pt-[42px] px-4 md:px-0 pb-52 md:pb-0 md:pt-[50px] md:pl-[50px] rounded-[10px] bg-accent-red bg-bottom md:bg-right bg-contain bg-no-repeat"
+                     style="background-image: url('{% static "core/images/crm2/main1_bg.png" %}');">
+                    <h1 class="main__welcome-title text-white font-semibold text-[32px] leading-[42px] max-w-[400px] mb-[13px]">
+                        Добро пожаловать в Gasyr Foundation School!
+                    </h1>
+                    <p class="main__welcome-text font-medium text-[16px] leading-[24px] text-white max-w-[400px] mb-[30px]">
+                        Посмотри видео, и ознакомься с платформой нашей онлайн-школы
+                        подробнее
+                    </p>
+                    <button class="bg-[#BA2025] shadow-2xl shadow-[#fffff] main__welcome-btn w-full md:w-fit py-[21px] px-[50px] rounded-[5px] border-[1px] border-white font-semibold text-white text-[16px] leading-[22px] hover:bg-white hover:text-accent-red">
+                        Посмотреть видео
+                    </button>
+                </div>
+    
+    
+                 <div class="flex flex-col md:flex-row gap-[20px]">
+                    <div class="h-[208px] main__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-[10px] w-full md:w-1/2 p-[32px]">
+                        {% if last_task %}
+                            <div class="task__author flex gap-[12px]">
+                                {% if task_teacher and task_teacher.profile_picture %}
+                                    <img src="{{ creator_profile_pic_url }}"
+                                         alt="Profile Picture of {{ task_teacher.full_name }}"
+                                         class="max-w-[42px] max-h-[42px] rounded-full">
+                                {% elif task_teacher %}
+                                    <img src="./assets/main__author.png"
+                                         alt="Profile Picture of {{ task_teacher.full_name }}"
+                                         class="max-w-[42px] max-h-[42px] rounded-full">
                                 {% else %}
-                                    <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
-                                        Учитель не указан
-                                    </h3>
+                                    <img src="./assets/default_profile_pic.png" alt="Default Profile Picture"
+                                         class="max-w-[42px] max-h-[42px] rounded-full">
                                 {% endif %}
-                                {% if last_task %}
-                                    <p class="author__item font-regular text-[14px] leading-[20px]">
-                                        {{ subject_name }}
-                                    </p>
-                                {% else %}
-                                    <p class="author__item font-regular text-[14px] leading-[20px]">
-                                        Предмет не указан
-                                    </p>
-                                {% endif %}
+                                <div class="author__info">
+                                    {% if task_teacher %}
+                                        <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
+                                            Учитель {{ task_teacher.full_name }} добавил задание
+                                        </h3>
+                                    {% else %}
+                                        <h3 class="author__fullname font-semibold text-[14px] leading-[20px] text-black-main">
+                                            Учитель не указан
+                                        </h3>
+                                    {% endif %}
+                                    {% if last_task %}
+                                        <p class="author__item font-regular text-[14px] leading-[20px]">
+                                            {{ subject_name }}
+                                        </p>
+                                    {% else %}
+                                        <p class="author__item font-regular text-[14px] leading-[20px]">
+                                            Предмет не указан
+                                        </p>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                        <p class="main__task-title font-bold text-[18px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px]">
-                            {{ last_task.name }}
-                        </p>
-                        <p class="main__task-date font-regular text-[14px] leading-[20px] text-black-main">
-                            Срок заканчивается {{ last_task.deadline|date:"d.m.Y H:i" }} г.
-                        </p>
-                    {% else %}
-                        <div class="flex flex-row justify-content-around items-center">
-                            <img class="inline-block mr-0 md:mr-9 max-w-[105px] md:max-w-none" src="{% static 'core/images/cats/sitting.png' %}" alt="">
-                            <p class="main__task-title font-bold text-[18px] md:text-[24px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px] h-fit">
-                                Заданий все еще нет, пока отдыхайте
+                            <p class="main__task-title font-bold text-[18px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px]">
+                                {{ last_task.name }}
                             </p>
-                        </div>
+                            <p class="main__task-date font-regular text-[14px] leading-[20px] text-black-main">
+                                Срок заканчивается {{ last_task.deadline|date:"d.m.Y H:i" }} г.
+                            </p>
+                        {% else %}
+                            <div class="flex flex-row justify-content-around items-center">
+                                <img class="inline-block mr-0 md:mr-9 max-w-[105px] md:max-w-none" src="{% static 'core/images/cats/sitting.png' %}" alt="">
+                                <p class="main__task-title font-bold text-[18px] md:text-[24px] leading-[25px] text-[#4F4F4F] max-w-[445px] my-[16px] h-fit">
+                                    Заданий все еще нет, пока отдыхайте
+                                </p>
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    
+                    <div class="goto__result w-full md:w-1/2 h-[208px] rounded-[10px] pt-9 md:pt-[52px] pl-[30px] bg-right bg-contain bg-no-repeat bg-accent-red"
+                         style="background-image: url('{% static "core/images/crm2/main2-bg.png" %}');">
+                        <h1 class="goto__result-title text-white font-semibold text-[20px] leading-[30px] max-w-[270px] mb-[12px]">
+                            Хотите узнать результат своих тестирований?
+                        </h1>
+                        <a href="{% url 'subjects:grades-by-day' %}" class="inline-block py-[17px] px-[35px] border-[1px] border-white rounded-sm text-white font-semibold text-[16px] leading-[22px]">
+                            Перейти в дневник
+                        </a>
+                    </div>
+    
+                </div>
+    
+                <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-[10px] p-[32px]">
+                    <div class="lessons__texts flex justify-between mb-[18px] items-center">
+                        <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
+                            Уроки сегодня
+                        </h1>
+                        <p class="lessons__date flex gap-[10px] items-center font-medium text-[16px] leading-[20px] text-[#9D9E9E]">
+                            <img src="{% static 'core/icons/calendar-line-gray.svg' %}" class="max-w-[15px] max-h-[15px]" alt=""/>
+                            <span>{% now "d M" %}</span>
+                        </p>
+                    </div>
+                    {% if lessons %}
+                        <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">
+                            {% for lesson in lessons %}
+                                <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
+                                    <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
+                                        {{ lesson.subject.name }}
+                                    </p>
+                                    <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
+                                        {{ lesson.time_slot.start_time|time:"H:i" }} - {{ lesson.time_slot.end_time|time:"H:i" }}
+                                    </p>
+                                    <div class="flex gap-[8px] items-center">
+                                        {% if lesson.teacher.profile_picture %}
+                                            <img src="{{ lesson.teacher.profile_picture.url }}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
+                                        {% else %}
+                                            <img src="{% static 'core/images/default-user.svg' %}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
+                                        {% endif %}
+                                        <span class="font-semibold text-[16px] leading-[20px]">{{ lesson.teacher.full_name }}</span>
+                                    </div>
+                                    <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}"
+                                       class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">
+                                        Присоединиться к уроку
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <ul class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex flex-col md:flex-row items-center justify-center gap-[48px]">
+                            <img src="{% static 'core/images/cats/papers.png' %}" alt=""
+                                 class="max-w-[215px] max-h-[215px]">
+                            <p class="empty-text max-w-[310px] font-bold text-center md:text-start text-[24px] leading-[36px] text-black-main">
+                                Расписание на этот
+                                день еще не назначено.<br/> Скоро все будет :)
+                            </p>
+                        </ul>
                     {% endif %}
                 </div>
-
                 
-                <div class="goto__result w-full md:w-1/2 h-[208px] rounded-[10px] pt-9 md:pt-[52px] pl-[30px] bg-right bg-contain bg-no-repeat bg-accent-red"
-                     style="background-image: url('{% static "core/images/crm2/main2-bg.png" %}');">
-                    <h1 class="goto__result-title text-white font-semibold text-[20px] leading-[30px] max-w-[270px] mb-[12px]">
-                        Хотите узнать результат своих тестирований?
-                    </h1>
-                    <a href="{% url 'subjects:grades-by-day' %}" class="inline-block py-[17px] px-[35px] border-[1px] border-white rounded-sm text-white font-semibold text-[16px] leading-[22px]">
-                        Перейти в дневник
-                    </a>
-                </div>
-
-            </div>
-
-            <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-[10px] p-[32px]">
-                <div class="lessons__texts flex justify-between mb-[18px] items-center">
-                    <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
-                        Уроки сегодня
-                    </h1>
-                    <p class="lessons__date flex gap-[10px] items-center font-medium text-[16px] leading-[20px] text-[#9D9E9E]">
-                        <img src="{% static 'core/icons/calendar-line-gray.svg' %}" class="max-w-[15px] max-h-[15px]" alt=""/>
-                        <span>{% now "d M" %}</span>
-                    </p>
-                </div>
-                {% if lessons %}
-                    <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">
-                        {% for lesson in lessons %}
-                            <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
-                                <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                                    {{ lesson.subject.name }}
-                                </p>
-                                <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                                    {{ lesson.time_slot.start_time|time:"H:i" }} - {{ lesson.time_slot.end_time|time:"H:i" }}
-                                </p>
-                                <div class="flex gap-[8px] items-center">
-                                    {% if lesson.teacher.profile_picture %}
-                                        <img src="{{ lesson.teacher.profile_picture.url }}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
-                                    {% else %}
-                                        <img src="{% static 'core/images/default-user.svg' %}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
-                                    {% endif %}
-                                    <span class="font-semibold text-[16px] leading-[20px]">{{ lesson.teacher.full_name }}</span>
-                                </div>
-                                <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}"
-                                   class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">
-                                    Присоединиться к уроку
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <ul class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex flex-col md:flex-row items-center justify-center gap-[48px]">
-                        <img src="{% static 'core/images/cats/papers.png' %}" alt=""
-                             class="max-w-[215px] max-h-[215px]">
-                        <p class="empty-text max-w-[310px] font-bold text-center md:text-start text-[24px] leading-[36px] text-black-main">
-                            Расписание на этот
-                            день еще не назначено.<br/> Скоро все будет :)
-                        </p>
-                    </ul>
-                {% endif %}
-            </div>
-            
-
-            <div class="flex flex-col md:flex-row mt-[20px] gap-[20px]">
-
-                <div class="w-full md:w-1/2 pt-[32px] pb-9 md:pb-0 px-[32px] goto__psy  md:h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] bg-right bg-contain bg-no-repeat bg-[#5B6AF4]"
-                     style="background-image: url('{% static "core/images/crm2/main3_bg-psy.png" %}');">
-                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
-                        Нуждаетесь в психологической помощи?</h3>
-                    <a href="{% url 'subjects:psy-appointment' %}" class="inline-block mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-[5px]">
-                        Записаться к психологу
-                    </a>
-                </div>
-
-                <div class="w-full md:w-1/2 pt-[32px] pb-9 md:pb-0 px-[32px] goto__psy md:h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] bg-right bg-contain bg-no-repeat bg-[#2EB123]"
-                     style="background-image: url('{% static "core/images/crm2/main4_bg-career.png" %}');">
-                    <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
-                        Не знаете кем хотите стать в будущем?</h3>
-                    <a href="{% url 'subjects:ori-appointment' %}" class="inline-block mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-[5px]">
-                        Записаться к проф. ориентологу
-                    </a>
-                </div>
-
-            </div>
-
-            <div class="w-full md:w-fit lastAchieve mt-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] p-[32px] pb-[24px]">
-                <div class="lastAchieve__header flex justify-between md:items-center">
-                    <h3 class="lastAchieve__title font-semibold text-base md:text-[32px] md:leading-[44px] text-black-main max-w-[600px]">
-                        Последнее полученное достижение
-                    </h3>
-                    <div class="lastAchieve__items flex gap-[20px]">
-                        <div class="lastAchieve__item text-center">
-                            <img src="{% static 'core/images/achievements/diamond.svg' %}"
-                                 class="max-w-[22px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                            <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.diamond }}</span>
-                        </div>
-                        <div class="lastAchieve__item text-center">
-                            <img src="{% static 'core/images/achievements/gold.svg' %}"
-                                 class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                            <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.gold }}</span>
-                        </div>
-                        <div class="lastAchieve__item text-center">
-                            <img src="{% static 'core/images/achievements/iron.svg' %}"
-                                 class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                            <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.iron }}</span>
-                        </div>
+    
+                <div class="flex flex-col md:flex-row mt-[20px] gap-[20px]">
+    
+                    <div class="w-full md:w-1/2 pt-[32px] pb-9 md:pb-0 px-[32px] goto__psy  md:h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] bg-right bg-contain bg-no-repeat bg-[#5B6AF4]"
+                         style="background-image: url('{% static "core/images/crm2/main3_bg-psy.png" %}');">
+                        <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
+                            Нуждаетесь в психологической помощи?</h3>
+                        <a href="{% url 'subjects:psy-appointment' %}" class="inline-block mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-[5px]">
+                            Записаться к психологу
+                        </a>
                     </div>
+    
+                    <div class="w-full md:w-1/2 pt-[32px] pb-9 md:pb-0 px-[32px] goto__psy md:h-[250px] shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] bg-right bg-contain bg-no-repeat bg-[#2EB123]"
+                         style="background-image: url('{% static "core/images/crm2/main4_bg-career.png" %}');">
+                        <h3 class="goto__psy-title font-semibold text-[32px] leading-[40px] text-white max-w-[430px]">
+                            Не знаете кем хотите стать в будущем?</h3>
+                        <a href="{% url 'subjects:ori-appointment' %}" class="inline-block mt-[18px] px-[32px] py-[21px] text-white border-white border-[1px] rounded-[5px]">
+                            Записаться к проф. ориентологу
+                        </a>
+                    </div>
+    
                 </div>
-                <div class="lastAchieve__main mt-[20px] bg-[#FAFAFA] rounded-[20px] h-[135px] flex items-center justify-between px-[40px]">
-                    {% for achievement in achievements %}
-                    <li class="achievements__list-item flex items-center justify-between py-[18px] border-b-[#E5E5E5] border-b-[1px]">
-                        <div class="lastAchieve__main-texts">
-                            <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">
-                                {{ achievement.achievement.name }}
-                            </h3>
-                            <div class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
-                                <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
-                                <ul class="lastAchieve__main-circles flex gap-1">
-                                    {% for i in achievement.achievement.difficulty|get_range %}
-                                    <li class="w-3 h-3 rounded-full bg-accent-red"></li>
-                                    {% endfor %}
-                                    {% for i in 5|subtract:achievement.achievement.difficulty|get_range %}
-                                    <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
-                                    {% endfor %}
-                                </ul>
+    
+                <div class="w-full  lastAchieve mt-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-[10px] p-[32px] pb-[24px]">
+                    <div class="lastAchieve__header flex justify-between md:items-center">
+                        <h3 class="lastAchieve__title font-semibold text-base md:text-[32px] md:leading-[44px] text-black-main max-w-[600px]">
+                            Последнее полученное достижение
+                        </h3>
+                        <div class="lastAchieve__items flex gap-[20px]">
+                            <div class="lastAchieve__item text-center">
+                                <img src="{% static 'core/images/achievements/diamond.svg' %}"
+                                     class="max-w-[22px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                                <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.diamond }}</span>
+                            </div>
+                            <div class="lastAchieve__item text-center">
+                                <img src="{% static 'core/images/achievements/gold.svg' %}"
+                                     class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                                <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.gold }}</span>
+                            </div>
+                            <div class="lastAchieve__item text-center">
+                                <img src="{% static 'core/images/achievements/iron.svg' %}"
+                                     class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                                <span class="font-semibold text-[16px] leading-[22px] text-[#282827]">{{ counts.iron }}</span>
                             </div>
                         </div>
-                        <div class="img w-[55px] max-h-[40px] flex justify-center">
-                            {% if achievement.achievement.difficulty == 1 or achievement.achievement.difficulty == 2 %}
-                            <img src="{% static 'core/images/achievements/iron.svg' %}" alt="Iron">
-                            {% elif achievement.achievement.difficulty == 3 or achievement.achievement.difficulty == 4 %}
-                            <img src="{% static 'core/images/achievements/gold.svg' %}" alt="Gold">
-                            {% elif achievement.achievement.difficulty == 5 %}
-                            <img src="{% static 'core/images/achievements/diamond.svg' %}" alt="Diamond">
-                            {% endif %}
-                        </div>
-                    </li>
-                    {% endfor %}
+                    </div>
+                    <div class="lastAchieve__main mt-[20px] bg-[#FAFAFA] rounded-[20px] h-[135px] flex items-center justify-between px-[40px]">
+                        {% for achievement in achievements %}
+                        <li class="achievements__list-item flex items-center justify-between py-[18px] border-b-[#E5E5E5] border-b-[1px]">
+                            <div class="lastAchieve__main-texts">
+                                <h3 class="lastAchieve__main-title font-semibold text-[18px] leading-[26px] text-[#282827] mb-1">
+                                    {{ achievement.achievement.name }}
+                                </h3>
+                                <div class="lastAchieve__main-type flex font-medium text-[14px] leading-[20px] text-[#282827] items-center gap-[12px]">
+                                    <span class="font-medium text-[14px] leading-[20px] text-[#282827]">Сложность:</span>
+                                    <ul class="lastAchieve__main-circles flex gap-1">
+                                        {% for i in achievement.achievement.difficulty|get_range %}
+                                        <li class="w-3 h-3 rounded-full bg-accent-red"></li>
+                                        {% endfor %}
+                                        {% for i in 5|subtract:achievement.achievement.difficulty|get_range %}
+                                        <li class="w-3 h-3 border-[1px] rounded-full border-[#E5E5E5] bg-white"></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="img w-[55px] max-h-[40px] flex justify-center">
+                                {% if achievement.achievement.difficulty == 1 or achievement.achievement.difficulty == 2 %}
+                                <img src="{% static 'core/images/achievements/iron.svg' %}" alt="Iron">
+                                {% elif achievement.achievement.difficulty == 3 or achievement.achievement.difficulty == 4 %}
+                                <img src="{% static 'core/images/achievements/gold.svg' %}" alt="Gold">
+                                {% elif achievement.achievement.difficulty == 5 %}
+                                <img src="{% static 'core/images/achievements/diamond.svg' %}" alt="Diamond">
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </div>
+                </div> 
+    
+                {% comment %} {% include "subjects/components/crm2-mobile-navbar.html" %} {% endcomment %}
+                {% comment %} готовая компонента footer-nav, Для самых умных и трудолюбивых котиков {% endcomment %}
+                <div class='md:hidden fixed bottom-0 left-0 w-full flex flex-row gap-9 justify-center bg-[#FFFFFF] pt-3 pb-4 shadow-2xl'>
+                    <div class="lastAchieve__item text-center items-center flex flex-col">
+                        <img src="{% static 'core/images/footer-nav/schedue.svg' %}"
+                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                        <p class="font-semibold text-xs leading-[22px] text-[#C7C7C7]">Расписание</p>
+                    </div>
+                    {% comment %} У "Расписание" состояние Выбрано, и по этому font-semibold, у остальных - font-normal {% endcomment %}
+                    <div class="lastAchieve__item text-center items-center flex flex-col">
+                        <img src="{% static 'core/images/footer-nav/Book.svg' %}"
+                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Дневник</p>
+                    </div>
+                    <div class="lastAchieve__item text-center items-center flex flex-col">
+                        <img src="{% static 'core/images/footer-nav/Hat.svg' %}"
+                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Задания</p>
+                    </div>
+                    <div class="lastAchieve__item text-center items-center flex flex-col">
+                        <img src="{% static 'core/images/footer-nav/Globus.svg' %}"
+                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
+                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Онлайн</p>
+                    </div>
                 </div>
-            </div> 
-
-
-            {% comment %} готовая компонента footer-nav, Для самых умных и трудолюбивых котиков {% endcomment %}
-            <div class='md:hidden fixed bottom-0 left-0 w-full flex flex-row gap-9 justify-center bg-[#FFFFFF] pt-3 pb-4 shadow-2xl'>
-                <div class="lastAchieve__item text-center items-center flex flex-col">
-                    <img src="{% static 'core/images/footer-nav/schedue.svg' %}"
-                         class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                    <p class="font-semibold text-xs leading-[22px] text-[#C7C7C7]">Расписание</p>
-                </div>
-                {% comment %} У "Расписание" состояние Выбрано, и по этому font-semibold, у остальных - font-normal {% endcomment %}
-                <div class="lastAchieve__item text-center items-center flex flex-col">
-                    <img src="{% static 'core/images/footer-nav/Book.svg' %}"
-                         class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                    <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Дневник</p>
-                </div>
-                <div class="lastAchieve__item text-center items-center flex flex-col">
-                    <img src="{% static 'core/images/footer-nav/Hat.svg' %}"
-                         class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                    <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Задания</p>
-                </div>
-                <div class="lastAchieve__item text-center items-center flex flex-col">
-                    <img src="{% static 'core/images/footer-nav/Globus.svg' %}"
-                         class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                    <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Онлайн</p>
-                </div>
+    
+                
+    
+    
+    
             </div>
-
-
-
         </div>
+        
     </main>
 {% endblock %}

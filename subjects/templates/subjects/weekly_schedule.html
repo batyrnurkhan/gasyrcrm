@@ -1,128 +1,224 @@
-{% extends 'subjects/base.html' %}
-{% load custom_tags %}
-{% load static %}
-{% load l10n %}
-
-{% block flex-content %}
-    {% if request.user.role == "Teacher" %}
-        {% include "subjects/components/crm2-teacher-sidebar.html" %}
-    {% else %}
-        {% include "subjects/components/crm2-student-sidebar.html" %}
-    {% endif %}
-    <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
-        {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px]">
-            <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="font-bold text-black-main text-[42px]">
-                    Расписание уроков
-                </h1>
-                 <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
-                    <button class="previous__date" onclick="updateWeek(-1)">
-                        <img src="{% static 'core/images/crm2/prev-accent-red.svg' %}" alt=""/>
-                    </button>
-                    <div class="switch__date-text" id="date-range">Загрузка</div>
-                    <button class="previous__date" onclick="updateWeek(1)">
-                        <img src="{% static 'core/images/crm2/next-accent-red.svg' %}" alt=""/>
-                    </button>
-                </div>
-            </div>
-            <div>
-                {% for day, lessons in weekly_lessons.items %}
-                    <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
-                        <div class="lessons__texts flex justify-between mb-[18px] items-center">
-                            <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">{{ day }}</h1>
-                            <h1 class="ml-auto text-[#9D9E9E]"><img src="{% static 'core/icons/calendar-line-gray.svg' %}" class="inline-block mr-[8px] align-middle" alt="">{{ week_dates|key:day|date:"d E" }}</h1>
-                        </div>
-                        {% if lessons %}
-                            <ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">
-                                {% for lesson in lessons %}
-                                    <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
-                                        <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">
-                                            {{ lesson.subject.name }}
-                                        </p>
-                                        <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">
-                                            {{ lesson.time_slot.start_time|time:"H:i" }} - {{ lesson.time_slot.end_time|time:"H:i" }}
-                                        </p>
-                                        <div class="flex gap-[8px] items-center overflow-hidden">
-                                            {% if lesson.teacher.profile_picture %}
-                                                <img src="{{ lesson.teacher.profile_picture.url }}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
-                                            {% else %}
-                                                <img src="{% static 'core/images/default-user.svg' %}" alt="" class="w-[32px] h-[32px] object-cover rounded-full">
-                                            {% endif %}
-                                            <span class="font-semibold text-[16px] leading-[20px] truncate max-w-[150px]">{{ lesson.teacher.full_name }}</span>
-                                        </div>
-                                        <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}"
-                                           class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">
-                                            Присоединиться к уроку
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            {% if forloop.last %}
-                                <div class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
-                                    <img src="{% static 'core/images/cats/sunday.png' %}" alt=""
-                                         class="max-w-[215px] max-h-[215px]">
-                                    <p class="empty-text max-w-[310px] text-black-main">
-                                        <span class="font-bold text-[24px] leading-[36px]">Выходной!</span><br>
-                                        Набирайтесь сил до следующих уроков
-                                    </p>
-                                </div>
-                            {% else %}
-                                <div class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
-                                    <img src="{% static 'core/images/cats/papers.png' %}" alt=""
-                                         class="max-w-[215px] max-h-[215px]">
-                                    <p class="empty-text max-w-[310px] font-bold text-[24px] leading-[36px] text-black-main">
-                                        Расписание на этот
-                                        день еще не назначено.<br/>Скоро все будет :)
-                                    </p>
-                                </div>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
+{% extends 'subjects/base.html' %} {% load custom_tags %} {% load static %} {%
+load l10n %} {% block flex-content %} {% if request.user.role == "Teacher" %} {%
+comment %} {% include "subjects/components/crm2-teacher-sidebar.html" %} {% {%
+else %} {% include "subjects/components/crm2-student-sidebar.html" %} {% endif
+%}
+<main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
+  {% include "subjects/components/crm2-header.html" %}
+  <div
+    class="pt-[50px] mr-5 md:ml-[40px] md:mr-[78px]"
+    style="margin-left: 20px"
+  >
+    <div
+      class="flex flex-col md:flex-row items-center justify-between mb-[24px]"
+    >
+      <h1 class="hidden md:block font-bold text-black-main text-[42px]">
+        Расписание уроков
+      </h1>
+      <div
+        class="w-full md:w-fit flex flex-row justify-between md:justify-center switch__date p-4 gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md"
+      >
+        <button class="previous__date" onclick="updateWeek(-1)">
+          <img
+            src="{% static 'core/images/crm2/prev-accent-red.svg' %}"
+            alt=""
+          />
+        </button>
+        <div
+          class="switch__date-text text-xl font-semibold text-[#4F4F4F]"
+          id="date-range"
+        >
+          Загрузка
         </div>
-    </main>
-    <script>
-        let weekOffset = 0;
+        <button class="previous__date" onclick="updateWeek(1)">
+          <img
+            src="{% static 'core/images/crm2/next-accent-red.svg' %}"
+            alt=""
+          />
+        </button>
+      </div>
 
-        function updateWeek(offset) {
-            weekOffset += offset;
-            fetchWeekDates();
-        }
+      <div
+        id="days-container"
+        class="md:hidden flex flex-row pt-5 justify-between w-full"
+      >
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-white bg-[#BA2025]"
+        >
+          Пн
+        </button>
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:bg-[#BA2025]"
+        >
+          Вт
+        </button>
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:bg-[#BA2025]"
+        >
+          Ср
+        </button>
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:bg-[#BA2025]"
+        >
+          Чт
+        </button>
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:bg-[#BA2025]"
+        >
+          Пт
+        </button>
+        <button
+          class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:bg-[#BA2025]"
+        >
+          Сб
+        </button>
+      </div>
+    </div>
 
-        function fetchWeekDates() {
-            fetch(`/api/week-dates/?week_offset=${weekOffset}`)
-                .then(response => response.json())
-                .then(data => {
-                    const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
-                    document.getElementById('date-range').textContent = dateRange;
-                    updateLessons(data.dates_of_week);
-                })
-                .catch(error => {
-                    console.error('Error fetching week dates:', error);
-                });
-        }
+    <div>
+      {% for day, lessons in weekly_lessons.items %}
+      <div
+        class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]"
+      >
+        <div class="lessons__texts flex justify-between mb-[18px] items-center">
+          <h1
+            class="lessons__title font-bold text-black-main text-[24px] leading-[30px]"
+          >
+            {{ day }}
+          </h1>
+          <h1 class="ml-auto text-[#9D9E9E]">
+            <img
+              src="{% static 'core/icons/calendar-line-gray.svg' %}"
+              class="inline-block mr-[8px] align-middle"
+              alt=""
+            />{{ week_dates|key:day|date:"d E" }}
+          </h1>
+        </div>
+        {% if lessons %}
+        <ul
+          class="lessons__items flex flex-col md:flex-row bg-[#FAFAFA] py-[10px] px-[24px]"
+        >
+          {% for lesson in lessons %}
+          <li
+            class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]"
+          >
+            <p
+              class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]"
+            >
+              {{ lesson.subject.name }}
+            </p>
+            <p
+              class="lesson__date font-medium text-[16px] leading-[20px] text-black-main"
+            >
+              {{ lesson.time_slot.start_time|time:"H:i" }} - {{
+              lesson.time_slot.end_time|time:"H:i" }}
+            </p>
+            <div class="flex gap-[8px] items-center overflow-hidden">
+              {% if lesson.teacher.profile_picture %}
+              <img
+                src="{{ lesson.teacher.profile_picture.url }}"
+                alt=""
+                class="w-[32px] h-[32px] object-cover rounded-full"
+              />
+              {% else %}
+              <img
+                src="{% static 'core/images/default-user.svg' %}"
+                alt=""
+                class="w-[32px] h-[32px] object-cover rounded-full"
+              />
+              {% endif %}
+              <span
+                class="font-semibold text-[16px] leading-[20px] truncate max-w-[150px]"
+                >{{ lesson.teacher.full_name }}</span
+              >
+            </div>
+            <a
+              href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}"
+              class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]"
+            >
+              Присоединиться к уроку
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %} {% if forloop.last %}
+        <div
+          class="lessons__items flex flex-col md:flex-row bg-[#FAFAFA] py-[24px] px-[24px] items-center justify-center gap-[48px]"
+        >
+          <img
+            src="{% static 'core/images/cats/sunday.png' %}"
+            alt=""
+            class="max-w-[215px] max-h-[215px]"
+          />
+          <p
+            class="empty-text max-w-[310px] text-center md:text-start text-black-main"
+          >
+            <span class="font-bold text-[24px] leading-[36px]">Выходной!</span
+            ><br />Набирайтесь сил до следующих уроков
+          </p>
+        </div>
+        {% else %}
+        <div
+          class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex flex-col md:flex-row items-center justify-center gap-[48px]"
+        >
+          <img
+            src="{% static 'core/images/cats/papers.png' %}"
+            alt=""
+            class="max-w-[215px] max-h-[215px]"
+          />
+          <p
+            class="empty-text max-w-[310px] text-center md:text-start font-semibold md:font-bold text-base md:text-[24px] leading-[36px] text-black-main"
+          >
+            Расписание на этот день <br />
+            еще не назначено.<br />Скоро все будет :)
+          </p>
+        </div>
+        {% endif %} {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+<script>
+  let weekOffset = 0;
 
-        function updateLessons(dates) {
-            fetch(`/api/lessons/?dates=${dates.join(',')}`)
-                .then(response => response.json())
-                .then(data => {
-                    const lessonsContainer = document.getElementById('lessons-container');
-                    lessonsContainer.innerHTML = ''; // Clear previous lessons
+  function updateWeek(offset) {
+    weekOffset += offset;
+    fetchWeekDates();
+  }
 
-                    for (const [day, lessons] of Object.entries(data)) {
-                        let dayLessons = `<div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
+  function fetchWeekDates() {
+    fetch(`/api/week-dates/?week_offset=${weekOffset}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const dateRange = `${data.start_day} - ${data.end_day} ${data.month_name}`;
+        document.getElementById("date-range").textContent = dateRange;
+        updateLessons(data.dates_of_week);
+      })
+      .catch((error) => {
+        console.error("Error fetching week dates:", error);
+      });
+  }
+
+  function updateLessons(dates) {
+    fetch(`/api/lessons/?dates=${dates.join(",")}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const lessonsContainer = document.getElementById("lessons-container");
+        lessonsContainer.innerHTML = ""; // Clear previous lessons
+
+        for (const [day, lessons] of Object.entries(data)) {
+          let dayLessons = `<div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md p-[32px]">
                             <div class="lessons__texts flex justify-between mb-[18px] items-center">
                                 <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">${day}</h1>
                                 <h1 class="ml-auto text-[#9D9E9E]"><img src="{% static 'core/icons/calendar-line-gray.svg' %}" class="inline-block mr-[8px] align-middle" alt=""/>${lessons.date}</h1>
                             </div>`;
 
-                        if (lessons.items.length > 0) {
-                            dayLessons += '<ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">';
-                            lessons.items.forEach(lesson => {
-                                dayLessons += `
+          if (lessons.items.length > 0) {
+            dayLessons +=
+              '<ul class="lessons__items bg-[#FAFAFA] py-[10px] px-[24px]">';
+            lessons.items.forEach((lesson) => {
+              dayLessons += `
                                     <li class="lessons__item flex items-center h-[60px] justify-between border-b-[#CDCDCD] border-b-[1px]">
                                         <p class="lesson__name w-[220px] text-accent-red font-bold text-[16px] leading-[20px]">${lesson.subject}</p>
                                         <p class="lesson__date font-medium text-[16px] leading-[20px] text-black-main">${lesson.start_time} - ${lesson.end_time}</p>
@@ -132,27 +228,27 @@
                                         </div>
                                         <a href="${lesson.chat_room_url}" class="lesson__link w-[220px] text-blue-ielts text-right underline font-medium text-[16px] leading-[20px]">Присоединиться к уроку</a>
                                     </li>`;
-                            });
-                            dayLessons += '</ul>';
-                        } else {
-                            dayLessons += `
+            });
+            dayLessons += "</ul>";
+          } else {
+            dayLessons += `
                                 <div class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex items-center justify-center gap-[48px]">
                                     <img src="{% static 'core/images/cats/papers.png' %}" alt="" class="max-w-[215px] max-h-[215px]">
                                     <p class="empty-text max-w-[310px] font-bold text-[24px] leading-[36px] text-black-main">Расписание на этот день еще не назначено.<br/>Скоро все будет :)</p>
                                 </div>`;
-                        }
+          }
 
-                        dayLessons += '</div>';
-                        lessonsContainer.innerHTML += dayLessons;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching lessons:', error);
-                });
+          dayLessons += "</div>";
+          lessonsContainer.innerHTML += dayLessons;
         }
+      })
+      .catch((error) => {
+        console.error("Error fetching lessons:", error);
+      });
+  }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            fetchWeekDates();
-        });
-    </script>
+  document.addEventListener("DOMContentLoaded", function () {
+    fetchWeekDates();
+  });
+</script>
 {% endblock %}

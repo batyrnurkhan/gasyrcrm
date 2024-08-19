@@ -7,11 +7,11 @@
 
 
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
-        <div class="white-block p-10">
+        <div class="white-block px-5 pt-10 md:pt-0 md:px-0 md:p-10">
             <form id="change_profile" class="w-full" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="flex flex-row gap-5">
-                    <div class="w-1/4 text-center">
+                <div class="flex flex-col md:flex-row gap-5">
+                    <div class="md:w-1/4 text-center">
                         <img class="mx-auto mb-5 w-[210px] h-[210px] object-cover rounded-full"
                              src="{% if user.profile_picture %}
                                 /media/{{ user.profile_picture }}
@@ -30,7 +30,7 @@
                         </span>
                         </label>
                     </div>
-                    <div class="w-1/4">
+                    <div class="md:w-1/4">
                         <label class="">
                             <p class="mb-2.5 font-bold uppercase">Имя и фамилия</p>
                             <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="text"
@@ -85,7 +85,7 @@
                             </label>
                         </div>
                     </div>
-                    <div class="w-1/4">
+                    <div class="md:w-1/4">
                         <p class="mb-2.5 font-bold uppercase">Номер телефона</p>
                         <div class="relative mb-5">
                             <label class="">
@@ -112,9 +112,9 @@
             <form id="change_password" action="{% url 'users:change_password' %}" class="w-full"
                   method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="flex flex-row gap-5">
-                    <div class="w-1/4"></div>
-                    <div class="w-1/4">
+                <div class="flex flex-col md:flex-row md:gap-5">
+                    <div class="hidden md:block md:w-1/4"></div>
+                    <div class="mt md:w-1/4">
                         <label class="">
                             <p class="mb-2.5 font-bold uppercase">Изменить пароль</p>
                             <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
@@ -125,9 +125,9 @@
                                    name="re_old_password" id="re_old_password" placeholder="Повторите старый пароль" required>
                         </label>
                     </div>
-                    <div class="w-1/4">
+                    <div class="md:w-1/4">
                         <label class="">
-                            <div class="mb-2.5 font-bold uppercase opacity-0 h-[24px]"></div>
+                            <div class="hidden md:block mb-2.5 font-bold uppercase opacity-0 h-[24px]"></div>
                             <input class="border py-[25px] px-4 border-gray w-full rounded-lg mb-5" type="password"
                                    name="new_password" id="new_password" placeholder="Новый пароль" required>
                         </label>
@@ -139,16 +139,16 @@
                     </div>
                 </div>
             </form>
-            <div class="flex flex-row gap-5">
-                <div class="w-1/4"></div>
-                <div class="w-1/4">
+            <div class="flex flex-col md:flex-row gap-2 md:gap-5">
+                <div class="hidden md:block md:w-1/4"></div>
+                <div class=" md:w-1/4">
                     <button onclick="check_form()"
-                            class="bg-accent-red rounded-lg text-white font-semibold px-10 py-5">Поменять пароль
+                            class=" w-full md:w-fit bg-accent-red rounded-lg text-white font-semibold px-10 py-5">Поменять пароль
                     </button>
                 </div>
-                <div class="w-1/4">
+                <div class="md:w-1/4">
                     <button type="submit" form="change_profile"
-                            class="float-right border border-accent-red rounded-lg text-accent-red font-semibold px-10 py-5">
+                            class="w-full md:w-fit float-right border border-accent-red rounded-lg text-accent-red font-semibold px-10 py-5">
                         Сохранить изменения
                     </button>
                 </div>

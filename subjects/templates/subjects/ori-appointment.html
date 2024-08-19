@@ -6,12 +6,12 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px]">
+        <div class="pt-[50px] px-5 md:px-0 md:ml-[40px] md:mr-[78px]">
             <div class="flex items-center justify-between mb-[24px]">
-                <h1 class="font-bold text-black-main text-[42px]">
+                <h1 class="hidden md:block font-bold text-black-main text-[42px]">
                     Запись к Проф. ориентологу
                 </h1>
-                <div class="switch__date p-4 flex gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
+                <div class="w-full md:w-fit flex flex-row justify-between md:justify-center switch__date p-4 gap-5 h-15 items-center bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-md">
                     <button class="previous__date" onclick="updateWeek(-1)">
                         <img src="{% static 'core/images/crm2/prev-accent-red.svg' %}" alt=""/>
                     </button>
@@ -21,7 +21,38 @@
                     </button>
                 </div>
             </div>
-            <div class="days flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3" id="days-container">
+
+            <div id="days-container" class="md:hidden flex flex-row pb-5 justify-between w-full">
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]">
+                  Пн
+                </button>
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]">
+                  Вт
+                </button>
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]">
+                  Ср
+                </button>
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]"
+                >
+                  Чт
+                </button>
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]"
+                >
+                  Пт
+                </button>
+                <button
+                  class="day-button w-[42px] h-[42px] rounded-full bg-none text-xl font-normal flex items-center justify-center text-[#4F4F4F] hover:text-white hover:font-semibold hover:bg-[#BA2025]"
+                >
+                  Сб
+                </button>
+            </div>
+
+            <div class="hidden days md:flex justify-between p-6 pl-[33px] bg-white rounded-md items-center mb-3" id="days-container">
                 <h1 class="days__choose text-[32px] leading-[40px] text-black-main font-bold">
                     Выберите день
                 </h1>

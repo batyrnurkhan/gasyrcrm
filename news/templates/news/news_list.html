@@ -7,7 +7,7 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px]">
+        <div class="pt-[50px] px-5 md:px-0 md:ml-[40px] md:mr-[78px]">
             {% if news_articles %}
                 <div class="news__title font-bold text-[42px] leading-[52px] text-black-main mb-[24px]">
                     Новости
@@ -41,10 +41,9 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <div class="text-center">
+                <div class="text-center pt-[90px]">
                     <img class="inline-block" src="{% static 'core/images/crm2/jirafe.png' %}" alt="">
-                    <h2 class="text-[40px] leading-[50px] font-bold text-accent-red text-center mb-[20px]">В новостях все еще <br>пусто :(</h2>
-                    <p class="text-[18px] leading-[22px] font-regular text-black-main text-center">Сдавайте тесты, и может быть тут что-то появится</p>
+                    <h2 class="text-[40px] leading-[50px] font-bold text-accent-red text-center mb-[20px]">В новостях все еще <br class="hidden md:block">пусто :(</h2>
                 </div>
             {% endif %}
             <div class="news__pagination text-center">
