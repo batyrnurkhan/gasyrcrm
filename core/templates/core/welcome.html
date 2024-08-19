@@ -3,46 +3,38 @@
 
 {% block title %}Gasyr - foundation school{% endblock %}
 {% block content %}
-{% include 'core/components/navbar-welcome.html' %}
-<div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center max-w-full px-5 md:px-4"
-     style="
-         background-image: url('{% static 'core/images/background.png' %}');
-         background-size: cover; /* Измените на cover, если хотите, чтобы изображение полностью покрывало блок */
-         height: 100vh;
-         background-repeat: no-repeat; /* Измените на no-repeat, чтобы избежать повторения изображения */
-         background-position: center;
-     ">
-    <div
-        class="border rounded-lg border-accent-red text-center inline-block py-16 px-6 mt-14 mb-28 md:mb-64 bg-white sm:py-8 sm:px-4 sm:mt-6 sm:mb-32 max-w-full">
-        <h1
-            class="text-black-main  font-semibold text-[32px] md:text-[64px] leading-[38px] md:leading-[76.8px] sm:text-3xl sm:leading-tight break-words">
-            Добро пожаловать <br class="hidden sm:inline" />в сообщество <span
-                style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
-        </h1>
-        <p class="text-base text-black-main mt-3 md:mt-0 mb-10 sm:text-sm sm:mb-6" style="letter-spacing: 0.01rem">
-            Платформа по подготовке в зарубежные ВУЗы от Gasyr Foundation School
-        </p>
-        <div
-            class="flex flex-col md:flex-row gap-[10px] text-start text-nowrap  items-center justify-center w-full md:w-3/4 mx-auto">
-            <a class="bg-accent-red rounded-lg p-6 text-white w-full md:w-1/2 flex items-center justify-between text-center"
-                href="{% url 'users:login' %}">
-                Войти на платформу
-                <img class="inline" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}"
-                    alt="Войти на платформу" />
-            </a>
-            <div class="border-gray border rounded-lg p-2.5 flex flex-col items-center w-full md:w-1/2 md:flex-row">
-                <p class="w-full mb-4 md:mb-0 text-center">Впервые у нас?</p>
-                <a class="w-full border-accent-red border rounded-lg py-4 px-4 text-accent-red block font-semibold text-center"
-                    href="{% url 'users:signup' %}">
-                    Регистрация
+    {% include 'core/components/navbar-welcome.html' %}
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center"
+         style="background-image: url('{% static 'core/images/background.png' %}'); background-size: 100%">
+        <div class="border rounded-lg border-accent-red text-center inline-block py-16 px-12 mt-14 mb-64 bg-white">
+            <h1 class="text-black-main font-semibold" style="font-size: 64px; line-height: 76.8px">
+                Добро пожаловать <br/>в сообщество <span style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
+            </h1>
+            <p class="text-base text-black-main mb-10" style="letter-spacing: 0.01rem">
+                Платформа по подготовке в зарубежные ВУЗы от Gasyr Foundation School
+            </p>
+            <div class="flex flex-row items-center justify-center">
+                <a class="bg-accent-red rounded-lg p-6 text-white mr-2.5" href="{% url 'users:login' %}">
+                    Войти на платформу
+                    <img class="inline ml-14" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}" alt=""/>
                 </a>
+                <div class="border border-gray border-2 rounded-lg p-2.5 pl-5 flex flex-row items-center">
+                    <p class="mr-8">Впервые у нас?</p>
+                    <a class="border border-accent-red border-2 rounded-lg py-4 px-12 text-accent-red block font-semibold" href="{% url 'users:signup' %}">
+                        Регистрация
+                    </a>
+                </div>
             </div>
         </div>
-
     </div>
-</div>
-
-{% csrf_token %}
-{% include 'core/components/footer.html' %}
-
+    {% csrf_token %}
+    {% include 'core/components/footer.html' %}
+{% comment %}
+<h2>Welcome to the Home Page</h2>
+<p>This is your home page. Navigate through the site from here.</p>
+{% if request.user.role == "Teacher" or request.user.is_superuser %}
+HI TEQACHER/ADMIN
+    <a href="{% url 'users:grant_access' %}">Give Access</a>
+{% endif %}
+{% endcomment %}
 {% endblock %}

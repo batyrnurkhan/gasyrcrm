@@ -163,8 +163,9 @@ def weekly_schedule_view(request):
     lessons = Lesson_crm2.objects.filter(Q(students__in=[user]) | Q(teacher=user))
 
     for lesson in lessons:
-        lesson_time_slot = lesson.time_slot  # Assuming lesson.time_slot is a ShiftTime object
-        lesson_weekday = lesson_time_slot.weekday  # Use the weekday field directly
+        lesson_time_slot = lesson.time_slot
+        print(f"Lesson Start: {lesson_time_slot.start_time}, End: {lesson_time_slot.end_time}")  # Add this line
+        lesson_weekday = lesson_time_slot.weekday
         lesson_day_name = weeknames[lesson_weekday]
         weekly_lessons[lesson_day_name].append(lesson)
 

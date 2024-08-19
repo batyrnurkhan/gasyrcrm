@@ -1,8 +1,15 @@
-{% extends 'subjects/base.html' %} {% load custom_tags %} {% load static %} {%
-load l10n %} {% block flex-content %} {% if request.user.role == "Teacher" %} {%
-comment %} {% include "subjects/components/crm2-teacher-sidebar.html" %} {% {%
-else %} {% include "subjects/components/crm2-student-sidebar.html" %} {% endif
-%}
+{% extends 'subjects/base.html' %}
+{% load custom_tags %}
+{% load static %}
+{%load l10n %}
+{% block flex-content %}
+    {% if request.user.role == "Teacher" %}
+        {% comment %}
+        {% include "subjects/components/crm2-teacher-sidebar.html" %}
+        {% endcomment %}
+    {% else %}
+        {% include "subjects/components/crm2-student-sidebar.html" %}
+    {% endif %}
 <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
   {% include "subjects/components/crm2-header.html" %}
   <div
@@ -110,8 +117,7 @@ else %} {% include "subjects/components/crm2-student-sidebar.html" %} {% endif
             <p
               class="lesson__date font-medium text-[16px] leading-[20px] text-black-main"
             >
-              {{ lesson.time_slot.start_time|time:"H:i" }} - {{
-              lesson.time_slot.end_time|time:"H:i" }}
+              {{ lesson.time_slot.start_time }} - {{ lesson.time_slot.end_time }}
             </p>
             <div class="flex gap-[8px] items-center overflow-hidden">
               {% if lesson.teacher.profile_picture %}
@@ -177,6 +183,8 @@ else %} {% include "subjects/components/crm2-student-sidebar.html" %} {% endif
       </div>
       {% endfor %}
     </div>
+                                    {% include "subjects/components/crm2-mobile-navbar.html" %}
+
   </div>
 </main>
 <script>
@@ -201,7 +209,11 @@ else %} {% include "subjects/components/crm2-student-sidebar.html" %} {% endif
   }
 
   function updateLessons(dates) {
-    fetch(`/api/lessons/?dates=${dates.join(",")}`)
+    fetch(`/subjects/lessons/?dates=${dates.join(",")}`,{
+      headers: {
+        'Content-Type': 'application/json'
+    }
+    })
       .then((response) => response.json())
       .then((data) => {
         const lessonsContainer = document.getElementById("lessons-container");

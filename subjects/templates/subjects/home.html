@@ -221,35 +221,11 @@
     
                 {% comment %} {% include "subjects/components/crm2-mobile-navbar.html" %} {% endcomment %}
                 {% comment %} готовая компонента footer-nav, Для самых умных и трудолюбивых котиков {% endcomment %}
-                <div class='md:hidden fixed bottom-0 left-0 w-full flex flex-row gap-9 justify-center bg-[#FFFFFF] pt-3 pb-4 shadow-2xl'>
-                    <div class="lastAchieve__item text-center items-center flex flex-col">
-                        <img src="{% static 'core/images/footer-nav/schedue.svg' %}"
-                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                        <p class="font-semibold text-xs leading-[22px] text-[#C7C7C7]">Расписание</p>
-                    </div>
-                    {% comment %} У "Расписание" состояние Выбрано, и по этому font-semibold, у остальных - font-normal {% endcomment %}
-                    <div class="lastAchieve__item text-center items-center flex flex-col">
-                        <img src="{% static 'core/images/footer-nav/Book.svg' %}"
-                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Дневник</p>
-                    </div>
-                    <div class="lastAchieve__item text-center items-center flex flex-col">
-                        <img src="{% static 'core/images/footer-nav/Hat.svg' %}"
-                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Задания</p>
-                    </div>
-                    <div class="lastAchieve__item text-center items-center flex flex-col">
-                        <img src="{% static 'core/images/footer-nav/Globus.svg' %}"
-                             class="max-w-[32px] md:max-w-[45px] max-h-[24px] md:max-h-[35px]" alt="">
-                        <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Онлайн</p>
-                    </div>
-                </div>
-    
-                
-    
-    
-    
+
+
             </div>
+                                {% include "subjects/components/crm2-mobile-navbar.html" %}
+
         </div>
         
     </main>
