@@ -10,7 +10,7 @@
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px]">
+        <div class="pt-[50px] px-5 md:px-0 md:ml-[40px] md:mr-[78px]">
             {% if tasks %}
                 <div class="task__inner flex gap-[10px] h-block">
                     <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] min-w-[360px] rounded-md pb-[50px]">
@@ -102,10 +102,10 @@
             {% else %}
                 <div class="task__list-item p-[20px] text-center">
                     <img class="inline-block mb-[40px]" src="{% static 'core/images/crm2/cangoroo.png' %}" alt="">
-                    <h1 class="task__teacher-title text-accent-red font-bold text-[40px] leading-[50px] mb-[12px]">
+                    <h1 class="task__teacher-title text-accent-red font-bold text-2xl md:text-[40px] leading-[50px] mb-1 md:mb-[12px]">
                         Задании все еще нет
                     </h1>
-                    <p class="task__course text-[16px] leading-[22px]">
+                    <p class="task__course text-sm md:text-[16px] leading-[22px]">
                         Сдавайте тесты, и может быть тут что-то появится
                     </p>
                 </div>

@@ -1,41 +1,53 @@
 {% load static %}
-<header class="w-without-slider z-50 header shadow-[0px_4px_14px_0px_#0000000A] bg-white flex pl-[40px] items-center fixed"
-        style="justify-content: space-between; border-left: 1px solid #c6c6c6">
-    <div class="header__content">
-        <h1 class="header__title text-black-main font-semibold text-[20px] leading-[24px] mb-[2px]">
-            Привет, {{ user.full_name }}!
-        </h1>
-        <p class="header__subtitle text-[14px] leading-[16px] font-regular text-black-main">
-            Тут вы сможете сдавать свое домашнее задание
-        </p>
-    </div>
-    <div class="header__author">
-        <div class="border-l-2 border-gray py-4 pl-5 pr-10 flex flex-row items-center">
-            <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% if user.profile_picture %}
-                                /media/{{ user.profile_picture }}
-                                {% else %}
-                                {% static "core/images/default-user.svg" %}
-                            {% endif %}" alt="">
-            <div class="ml-3.5 mr-8 h-fit">
-                <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
-                <p class="m-0">{{ user.role }}</p>
-            </div>
-            <div class="relative ease-in" x-data="{ open: false }">
-                <img class="cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
-                     src="{% static "core/icons/user-arrow.svg" %}">
-                <div id="dropdownMenu"
-                     class="absolute top-11 right-0 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
-                    <a href="{% url 'users:profile' %}" class="text-blue-ielts font-bold block px-4 py-2">
-                        <img class="inline mr-3" src="{% static "core/icons/edit-fill-blue-ielts.svg" %}" alt="">
-                        Редактировать профиль
-                    </a>
-                    <a href="{% url 'users:logout' %}" class="text-accent-red font-bold block px-4 py-2">
-                        <img class="inline mr-3" src="{% static "core/icons/close-fill-accent-red.svg" %}" alt="">
-                        Выйти из аккаунта
-                    </a>
+<header class="w-without-slider z-50 w-full top-0 right-0 sticky">
+    <div class="pt-3 md:pt-0 w-full header shadow-[0px_4px_14px_0px_#0000000A] items-center  justify-between md:border-l md:border-l-[#c6c6c6] bg-white flex px-5 ">
+        <div class="header__content hidden md:block">
+            <h1 class="header__title text-black-main font-semibold text-[20px] leading-[24px] mb-[2px]">
+                Привет, {{ user.full_name }}!
+            </h1>
+            <p class="header__subtitle text-[14px] leading-[16px] font-regular text-black-main">
+                Тут вы сможете сдавать свое домашнее задание
+            </p>
+        </div>
+        <a href="{% url 'subjects:home' %}" class="md:hidden block"><img
+            src="{% static 'core/images/logo.svg' %}" alt=""/>
+        </a>
+        <div class="header__author">
+            <div class="md:border-l-2 md:border-gray py-4 pl-5 md:pr-10 flex flex-row items-center">
+                <img class="w-[42px] h-[42px] md:w-[60px] md:h-[60px] object-cover rounded-full" 
+                    src="{% if user.profile_picture %}
+                        /media/{{ user.profile_picture }}
+                    {% else %}
+                        {% static "core/images/default-user.svg" %}
+                    {% endif %}" alt="">
+                <div class="ml-3.5 mr-8 h-fit hidden md:block">
+                    <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
+                    <p class="m-0">{{ user.role }}</p>
+                </div>
+                <div class="relative ease-in hidden md:block" x-data="{ open: false }">
+                    <img class="cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
+                         src="{% static "core/icons/user-arrow.svg" %}">
+                    <div id="dropdownMenu"
+                         class="absolute top-11 right-0 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
+                        <a href="{% url 'users:profile' %}" class="text-blue-ielts font-bold block px-4 py-2">
+                            <img class="inline mr-3" src="{% static "core/icons/edit-fill-blue-ielts.svg" %}" alt="">
+                            Редактировать профиль
+                        </a>
+                        <a href="{% url 'users:logout' %}" class="text-accent-red font-bold block px-4 py-2">
+                            <img class="inline mr-3" src="{% static "core/icons/close-fill-accent-red.svg" %}" alt="">
+                            Выйти из аккаунта
+                        </a>
+                    </div>
+                </div>
+    
+                <div class='w-8 h-7 gap-1 flex flex-col justify-between rounded-md ml-4 md:hidden'>
+                    <div class='w-8 h-1 bg-[#4F4F4F]'></div>
+                    <div class='w-8 h-1 bg-[#4F4F4F]'></div>
+                    <div class='w-8 h-1 bg-[#4F4F4F]'></div>
                 </div>
             </div>
         </div>
     </div>
+    
+
 </header>
-<div class="h-[92px]"></div>
