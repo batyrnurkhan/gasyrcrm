@@ -10,14 +10,14 @@
 
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
 
-        <div class="white-block mb-[50px] {% if create %}h-side{% else %}h-block{% endif %} overflow-y-auto">
-            <div class="px-[230px] pt-[76px] text-center">
-                <img class="inline-block mb-[53px]" src="{% static 'core/images/cats/box.png' %}" alt="">
-                <h2 class="text-[32px] font-bold mb-[30px]">Теперь, мы вас поздравляем!</h2>
-                <p class="text-lg mb-[70px]">
+        <div class="white-block mb-[50px]  overflow-y-auto">
+            <div class="px-[230px] pt-[30px] text-center">
+                <img class="inline-block mb-[30px]" src="{% static 'core/images/cats/box.png' %}" alt="">
+                <h2 class="text-[32px] font-bold mb-[10px]">Теперь, мы вас поздравляем!</h2>
+                <p class="text-lg mb-[30px]">
                     Курс уже загружен и ждет учеников
                 </p>
-                <a class="w-[390px] text-center py-[26px] border border-accent-red text-accent-red text-xl font-semibold rounded-lg mx-auto block"
+                <a class="w-[390px] text-center mb-[30px] py-[26px] border border-accent-red text-accent-red text-xl font-semibold rounded-lg mx-auto block"
                    href="{% url 'courses:course_detail_edit' pk=course.id %}">Вернуться на главную
                 </a>
             </div>
