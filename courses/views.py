@@ -14,14 +14,15 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
     AnswerForm, QuestionForm, SuccessVideoLinkForm
-from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature
-from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework
+from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer, HomeworkSerializer
 
 
 class CourseDelete(DetailView):
@@ -228,6 +229,10 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
         course = module.course
         module_index_gen = (i for i, v in enumerate(course.modules.all()) if v.id == module.id)
         module_index = next(module_index_gen, 0) + 1  # default to 0 if not found
+
+        # Example: Send a success message if the module is loaded successfully
+        messages.success(self.request, "Модуль успешно загружен.")
+
         context.update({
             'test': test,
             'module_index': module_index,
@@ -237,6 +242,7 @@ class ModuleDetailView(LoginRequiredMixin, DetailView):
             'is_enrolled': module.course.users.filter(id=user.id).exists(),
         })
         return context
+
 
 
 class LessonDetailView(DetailView):
@@ -381,11 +387,21 @@ class CourseModulesView(APIView):
 
     def put(self, request, course_id):
         course = Course.objects.get(pk=course_id)
-        serializer = CourseSerializer(course, data=request.data)
+
+        # Print the incoming data to check its structure
+        print(f"Incoming data for update: {json.dumps(request.data, ensure_ascii=False)}")
+
+        serializer = CourseSerializer(course, data=request.data, partial=True)  # partial=True allows partial updates
+
         if serializer.is_valid():
+            # Save and log the update process
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            print(f"Successfully updated course {course_id}")
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            # Log and respond with errors
+            print(f"Errors in update: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ModuleCreateViewAPI(APIView):
@@ -426,13 +442,28 @@ class LessonCreateViewAPI(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LiteratureCreateViewAPI(APIView):
+class HomeworkCreateViewAPI(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
     def post(self, request, lesson_id):
-        # Check if the lesson exists
         if not Lesson.objects.filter(id=lesson_id).exists():
             return Response({'error': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Add lesson to the request data
+        request.data["lesson"] = lesson_id
+        serializer = HomeworkSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class LiteratureCreateViewAPI(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, lesson_id):
+        if not Lesson.objects.filter(id=lesson_id).exists():
+            return Response({'error': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
+
         request.data["lesson"] = lesson_id
         serializer = LiteratureSerializer(data=request.data)
 
@@ -448,6 +479,50 @@ class LiteratureDeleteViewAPI(APIView):
         LessonLiterature.objects.get(id=literature_id).delete()
         return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
 
+class HomeworkDeleteViewAPI(APIView):
+    def delete(self, request, homework_id):
+        try:
+            homework = Homework.objects.get(id=homework_id)
+            homework.delete()
+            return Response({"message": "Homework deleted successfully"}, status=status.HTTP_200_OK)
+        except Homework.DoesNotExist:
+            return Response({"error": "Homework not found"}, status=status.HTTP_404_NOT_FOUND)
+
+class LiteratureDetailView(DetailView):
+    model = Lesson
+    template_name = 'core/student/literature_detail.html'
+    context_object_name = 'lesson'
+
+    def get_object(self):
+        course_id = self.kwargs['course_id']
+        module_id = self.kwargs['module_id']
+        lesson_id = self.kwargs['lesson_id']
+
+        return Lesson.objects.get(id=lesson_id, module__id=module_id, module__course__id=course_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['literatures'] = self.object.literatures.all()
+        return context
+
+
+
+class HomeworkDetailView(DetailView):
+    model = Lesson
+    template_name = 'core/student/homework_detail.html'
+    context_object_name = 'lesson'
+
+    def get_object(self):
+        course_id = self.kwargs['course_id']
+        module_id = self.kwargs['module_id']
+        lesson_id = self.kwargs['pk']
+
+        return Lesson.objects.get(id=lesson_id, module__id=module_id, module__course__id=course_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['homeworks'] = self.object.homeworks.all()
+        return context
 
 class ModuleDeleteViewAPI(APIView):
     def delete(self, request, module_id):
@@ -730,3 +805,5 @@ def publishCourse(request, pk):
     course.published = not course.published
     course.save()
     return redirect('courses:course_detail_edit', pk=pk)
+
+

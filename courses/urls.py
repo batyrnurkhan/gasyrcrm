@@ -7,7 +7,7 @@ from .views import (
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
     CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view, publishCourse,
-    student_test_results_view
+    student_test_results_view, HomeworkCreateViewAPI, HomeworkDetailView, LiteratureDetailView, HomeworkDeleteViewAPI
 )
 from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentTestPageView
 from django.conf import settings
@@ -34,7 +34,18 @@ urlpatterns = [
     path('create/ending/<int:course_id>', CreateCourseEndingView.as_view(), name='create_course_ending'),
     path('<int:course_id>/module/create/', ModuleCreateViewAPI.as_view(), name='module_create'),
     path('<int:module_id>/lesson/create/', LessonCreateViewAPI.as_view(), name='lesson_create'),
+
     path('<int:lesson_id>/literature/create/', LiteratureCreateViewAPI.as_view(), name='literature_create'),
+    path('<int:lesson_id>/homework/create/', HomeworkCreateViewAPI.as_view(), name='homework_create'),
+
+    path('<int:course_id>/<int:module_id>/<int:pk>/homework/', HomeworkDetailView.as_view(),
+                       name='course_student_homework'),
+
+    path('student/<int:course_id>/<int:module_id>/<int:lesson_id>/literature/',
+                       LiteratureDetailView.as_view(), name='course_student_literature'),
+
+    path('homework/<int:homework_id>/delete/', HomeworkDeleteViewAPI.as_view(), name='homework-delete'),
+
     path('literature/<int:literature_id>/delete/', LiteratureDeleteViewAPI.as_view(), name='literature_delete'),
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
     path('<int:pk>/final_test/edit', CourseFinalTestView.as_view(), name='final_test_creation'),

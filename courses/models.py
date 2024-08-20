@@ -216,3 +216,11 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.rating}/5 by {self.teacher.full_name} for {self.student.full_name} in {self.course.course_name}"
+
+class Homework(models.Model):
+    lesson = models.ForeignKey(Lesson, related_name='homeworks', on_delete=models.CASCADE)
+    homework_name = models.CharField(max_length=100)
+    file = models.FileField(upload_to="homework_files/")
+
+    def __str__(self):
+        return self.homework_name

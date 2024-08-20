@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ course.course_name }}{% endblock %}
+{% block body-classes %}bg-whiteless{% endblock %}
+{% block content %}
+    {% include 'core/components/navbar-main-without-links.html' %}
+    <div class="flex">
+        {% include 'core/components/course-sidebar.html' %}
+        <div class="course px-[40px] pt-[40px] w-full">
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md">
+                <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
+                    Домашняя работа - Урок {{ lesson_position }} - Модуль: {{ module.module_name }}
+                </div>
+                <div class="course__title leading-[52px] text-[42px] text-black-main font-bold mb-3.5">
+                    {{ lesson.lesson_name }}
+                </div>
+
+                <div class="homework-list mt-5">
+                    {% if lesson.homeworks.count > 0 %}
+                        <ul class="space-y-4">
+                            {% for homework in lesson.homeworks.all %}
+                                <li class="flex items-center justify-between">
+                                    <span class="text-lg font-medium">{{ homework.homework_name }}</span>
+                                    {% if homework.file %}
+                                        <a href="{{ homework.file.url }}" download
+                                           class="inline-block px-6 py-3 bg-accent-red text-white rounded-lg font-semibold">
+                                            Скачать Домашнюю Работу
+                                        </a>
+                                    {% else %}
+                                        <span class="text-gray-500">Файл отсутствует</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-gray-500 text-lg">Домашняя работа пока не добавлена.</p>
+                    {% endif %}
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

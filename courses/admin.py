@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Test, Question, Answer, Course, Module, Lesson, LessonLiterature, TestSubmission
+from .models import Test, Question, Answer, Course, Module, Lesson, LessonLiterature, TestSubmission, Homework
+
 
 class TestAdmin(admin.ModelAdmin):
     list_display = ('id', 'content_type', 'object_id','content_object', 'title')  # Add 'id' to display in the admin interface
@@ -14,3 +15,4 @@ admin.site.register(Module)
 admin.site.register(Lesson)
 admin.site.register(LessonLiterature)
 admin.site.register(TestSubmission)
+admin.site.register(Homework)

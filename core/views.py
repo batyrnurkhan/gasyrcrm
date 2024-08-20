@@ -266,8 +266,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
 
             previous_module_passed = user_passed_all_tests
 
-        context['modules'] = accessible_modules
-        context['blocked_modules'] = blocked_modules
+        context['modules'] = accessible_modules + blocked_modules  # Show all modules
         return context
 
 
@@ -538,15 +537,7 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 
             previous_module_passed = user_passed_all_tests
 
-        course_data = {
-            'course_name': course.course_name,
-            'course_hours': course.course_time,
-            'modules_count': course.modules.count(),
-            'lessons_count': sum(module.lessons.count() for module in course.modules.all()),
-        }
-        context['course_data'] = course_data
-        context['modules'] = accessible_modules
-        context['blocked_modules'] = blocked_modules
+        context['modules'] = accessible_modules + blocked_modules  # Show all modules
         context['all_tests_passed'] = all_tests_passed
         return context
 

@@ -1,28 +1,49 @@
 from rest_framework import serializers
-from .models import Course, Module, Lesson, LessonLiterature
+from .models import Course, Module, Lesson, LessonLiterature, Homework
 
 
 class LiteratureSerializer(serializers.ModelSerializer):
-    file = serializers.CharField(read_only=True)
+    file = serializers.FileField(required=False, allow_null=True)
 
-    def save(self, **kwargs):
-        # Directly manipulate self.validated_data if needed
-        if 'literature_name' in self.validated_data:
-            literature_name = self.validated_data['literature_name']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['literature_name'] = literature_name.encode('utf-8', 'ignore').decode('utf-8')
+    def validate_file(self, value):
+        # If the value is a string, assume it's a file path and skip validation
+        if isinstance(value, str):
+            return value
 
-        # Call the superclass method to actually save the data
-        return super(LiteratureSerializer, self).save(**kwargs)
+        if value is None:
+            raise serializers.ValidationError("This field cannot be empty.")
+
+        # Assuming the uploaded file is passed, check its type
+        file_type = value.name.split('.')[-1].lower()
+        if file_type not in ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']:
+            raise serializers.ValidationError("Invalid file type.")
+
+        return value
 
     class Meta:
         model = LessonLiterature
         fields = ['id', 'file', 'literature_name', 'literature_type', 'lesson']
 
 
+class HomeworkSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(required=False, allow_null=True)
+
+    def validate_file(self, value):
+        # Allow any file type, so no validation on file extensions
+        if value is None or value == '':
+            raise serializers.ValidationError("This field cannot be empty.")
+        return value
+
+    class Meta:
+        model = Homework
+        fields = ['id', 'file', 'homework_name', 'lesson']
+
+
 class LessonFullSerializer(serializers.ModelSerializer):
     literatures = LiteratureSerializer(many=True)
     id = serializers.IntegerField(required=False)
+    homeworks = HomeworkSerializer(many=True)
+
 
     def save(self, **kwargs):
         # Directly manipulate self.validated_data if needed
@@ -40,7 +61,7 @@ class LessonFullSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ['id', 'lesson_name', 'video_link', 'literatures']
+        fields = ['id', 'lesson_name', 'video_link', 'literatures', 'homeworks']
     
     def create(self, validated_data):
         validated_data.pop("literatures")
@@ -113,21 +134,61 @@ class CourseSerializer(serializers.ModelSerializer):
                 module = Module.objects.get(id=module_id, course=instance)
                 lessons_data = module_data.pop('lessons', [])
                 for key, value in module_data.items():
-                    print(key, value)
                     setattr(module, key, value)
                 module.save()
+
                 for lesson_data in lessons_data:
                     lesson_id = lesson_data.get('id', None)
+                    literature_data = lesson_data.pop('literatures', [])
+                    homeworks_data = lesson_data.pop('homeworks', [])
+
                     if lesson_id:
                         lesson = Lesson.objects.get(id=lesson_id, module=module)
-                        literature_data = lesson_data.pop('literatures', [])
                         for key, value in lesson_data.items():
-                            print(key, value)
                             setattr(lesson, key, value)
                         lesson.save()
+
+                        # Handle literatures
+                        literatures = []
+                        for literature in literature_data:
+                            literature_id = literature.get('id')
+                            literature_instance, created = LessonLiterature.objects.get_or_create(
+                                id=literature_id,
+                                defaults=literature
+                            )
+                            if not created:
+                                print(f"Updating literature with file: {literature_instance.file}")  # Log for debugging
+                                # If literature is already present, update it
+                                for key, value in literature.items():
+                                    setattr(literature_instance, key, value)
+                                literature_instance.save()
+                            literatures.append(literature_instance)
+                        lesson.literatures.set(literatures)
+
+                        # Handle homeworks (similar approach)
+                        homeworks = []
+                        for homework in homeworks_data:
+                            homework_instance, created = Homework.objects.get_or_create(
+                                id=homework.get('id'),
+                                defaults=homework
+                            )
+                            if not created:
+                                for key, value in homework.items():
+                                    setattr(homework_instance, key, value)
+                                homework_instance.save()
+                            homeworks.append(homework_instance)
+                        lesson.homeworks.set(homeworks)
                     else:
-                        Lesson.objects.create(module=module, **lesson_data)
+                        lesson = Lesson.objects.create(module=module, **lesson_data)
+
+                        literatures = [LessonLiterature.objects.create(**lit) for lit in literature_data]
+                        lesson.literatures.set(literatures)
+
+                        homeworks = [Homework.objects.create(**hw) for hw in homeworks_data]
+                        lesson.homeworks.set(homeworks)
             else:
                 Module.objects.create(course=instance, **module_data)
 
         return instance
+
+

@@ -38,7 +38,6 @@
 
     let data, current_module = 0, modules_count = 0;
 
-
     async function send_data() {
         await fetch("{% url 'courses:course-modules' course_id=course.id %}", {
             method: 'PUT',
@@ -59,7 +58,7 @@
     }
 
     function edit_input(event, module, module_id, lesson_id = null) {
-        let value = event.target.value
+        let value = event.target.value;
         if (module) {
             data.modules[module_id - 1].module_name = value;
         } else {
@@ -73,7 +72,7 @@
 
     async function new_module() {
         await send_data();
-        console.log(data.modules, modules_count)
+        console.log(data.modules, modules_count);
         await fetch("{% url 'courses:module_create' course_id=course.id %}", {
             method: 'POST',
             body: JSON.stringify({"module_name": `Модуль ${modules_count + 1}`}),
@@ -87,10 +86,8 @@
                 if (res_data.error) {
                     alert("Error: " + JSON.stringify(res_data.error));
                 } else {
-                    // Module was created successfully, reload to show new module
-                    console.log(res_data)
-                    res_data["lessons"] = []
-                    delete res_data["course"]
+                    res_data["lessons"] = [];
+                    delete res_data["course"];
                     data.modules.push(res_data);
                     modules_count = data.modules.length;
                 }
@@ -99,51 +96,51 @@
                 console.error('Error:', error);
                 alert('Failed to add module');
             });
+
         let module = document.createElement("div");
         module.id = `module-${modules_count}`;
         module.classList = "module";
-        let sidebar_module = document.createElement("div");
-        sidebar_module.classList = "relative overflow-hidden mb-4";
         module.classList.add("hidden");
-        let active = false;
+
         module.innerHTML = module_div({
             id: modules_count,
             module_id: data.modules[modules_count - 1].id,
             module_name: data.modules[modules_count - 1].module_name
         });
         document.getElementById("modules").appendChild(module);
+
+        let sidebar_module = document.createElement("div");
+        sidebar_module.classList = "relative overflow-hidden mb-4";
         sidebar_module.innerHTML = sidebar_modules_div({
             id: modules_count,
-            active: active,
-        })
+            active: false,
+        });
         document.getElementById("sidebar_modules").appendChild(sidebar_module);
-        console.log(modules_count)
     }
 
     async function new_lesson(id, module_id) {
         await send_data();
-        let lesson_count = data.modules[id - 1].lessons.length
-        console.log(data.modules[id - 1].lessons, lesson_count)
+        let lesson_count = data.modules[id - 1].lessons.length;
+
         await fetch(`/courses/${module_id}/lesson/create/`, {
-    method: 'POST',
-    body: JSON.stringify({
-        "lesson_name": `Урок ${lesson_count + 1}`,
-        "video_link": `https://player.vimeo.com/video/823111497?h=9a60ec7769&badge=0&autopause=0&player_id=0&app_id=58479`,
-    }),
-    headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken,
-    },
-})
+            method: 'POST',
+            body: JSON.stringify({
+                "lesson_name": `Урок ${lesson_count + 1}`,
+                "video_link": `https://player.vimeo.com/video/823111497?h=9a60ec7769&badge=0&autopause=0&player_id=0&app_id=58479`,
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+        })
             .then(response => response.json())
             .then(res_data => {
                 if (res_data.error) {
                     alert("Error: " + JSON.stringify(res_data.error));
                 } else {
-                    // Module was created successfully, reload to show new module
-                    console.log(res_data)
-                    res_data["literatures"] = []
-                    delete res_data["module"]
+                    res_data["literatures"] = [];
+                    res_data["homeworks"] = [];  // Add homeworks
+                    delete res_data["module"];
                     data.modules[id - 1].lessons.push(res_data);
                     lesson_count = data.modules[id - 1].lessons.length;
                 }
@@ -152,8 +149,8 @@
                 console.error('Error:', error);
                 alert('Failed to add lesson');
             });
-        console.log(id, lesson_count)
-        lesson = document.createElement("div");
+
+        let lesson = document.createElement("div");
         lesson.id = `module-${id}-lesson-${lesson_count}`;
         lesson.classList = "border border-[#CDCDCD] rounded-lg p-6 mb-5";
         lesson.innerHTML = lesson_div({
@@ -167,27 +164,78 @@
     }
 
     async function new_literature(event, id, lid, lesson_id) {
+    let file = event.target.files[0];
+    if (!file) {
+        alert('Please select a file to upload.');
+        return;
+    }
+
+    await send_data();
+    let literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const fileType = file.type;
+    if (fileType.startsWith('application/pdf')) {
+        formData.append('literature_type', "Book");
+    } else if (fileType.startsWith('video/')) {
+        formData.append('literature_type', "Video");
+    } else if (fileType.startsWith('audio/')) {
+        formData.append('literature_type', "Audio");
+    } else {
+        formData.append('literature_type', "Text");
+    }
+    formData.append('literature_name', file.name.slice(0, 20));
+
+    await fetch(`/courses/${lesson_id}/literature/create/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(res_data => {
+        if (res_data.error) {
+            alert("Error: " + JSON.stringify(res_data.error));
+        } else {
+            data.modules[id - 1].lessons[lid - 1].literatures.push(res_data);
+            literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+            // Add the new literature to the DOM
+            let literature = document.createElement("div");
+            literature.id = `module-${id}-lesson-${lid}-literature-${literature_count}`;
+            literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
+            literature.innerHTML = literature_div({
+                id: literature_count,
+                lesson_id: lid,
+                module_id: id,
+                literature_id: res_data.id,
+                literature_type: res_data.literature_type,
+                literature_name: res_data.literature_name,
+            });
+            document.getElementById(`literature-container-${id}-${lid}`).appendChild(literature);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to add literature');
+    });
+}
+
+
+
+
+    async function new_homework(event, id, lid, lesson_id) {
         await send_data();
-        let literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
-        console.log(data.modules[id - 1].lessons, literature_count);
+        let homework_count = data.modules[id - 1].lessons[lid - 1].homeworks.length;
         const formData = new FormData();
         let file = event.target.files[0];
         formData.append('file', file);
-        console.log(file)
+
         if (file) {
-            const fileType = file.type;
-            // Additional logic based on file type can be added here
-            if (fileType.startsWith('application/pdf')) {
-                formData.append('literature_type', "Book");
-            } else if (fileType.startsWith('video/')) {
-                formData.append('literature_type', "Video");
-            } else if (fileType.startsWith('audio/')) {
-                formData.append('literature_type', "Audio");
-            } else {
-                formData.append('literature_type', "Text");
-            }
-            formData.append('literature_name', file.name.slice(0, 20));
-            await fetch(`/courses/${lesson_id}/literature/create/`, {
+            formData.append('homework_name', file.name.slice(0, 100));
+
+            await fetch(`/courses/${lesson_id}/homework/create/`, {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -199,30 +247,26 @@
                     if (res_data.error) {
                         alert("Error: " + JSON.stringify(res_data.error));
                     } else {
-                        // Module was created successfully, reload to show new module
-                        console.log(res_data)
-                        data.modules[id - 1].lessons[lid - 1].literatures.push(res_data);
-                        literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+                        data.modules[id - 1].lessons[lid - 1].homeworks.push(res_data);
+                        homework_count = data.modules[id - 1].lessons[lid - 1].homeworks.length;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Failed to add lesson');
+                    alert('Failed to add homework');
                 });
-            console.log(id, literature_count)
-            let literature = document.createElement("div");
-            literature.id = `module-${id}-lesson-${lid}-literature-${literature_count}`;
-            literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
-            console.log(data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1]);
-            literature.innerHTML = literature_div({
-                id: literature_count,
+
+            let homework = document.createElement("div");
+            homework.id = `module-${id}-lesson-${lid}-homework-${homework_count}`;
+            homework.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
+                        homework.innerHTML = homework_div({
+                id: homework_count,
                 lesson_id: lid,
                 module_id: id,
-                literature_id: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].id,
-                literature_type: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].literature_type,
-                literature_name: data.modules[id - 1].lessons[lid - 1].literatures[literature_count - 1].literature_name,
+                homework_id: data.modules[id - 1].lessons[lid - 1].homeworks[homework_count - 1].id,
+                homework_name: data.modules[id - 1].lessons[lid - 1].homeworks[homework_count - 1].homework_name,
             });
-            document.getElementById(`literature-container-${id}-${lid}`).appendChild(literature);
+            document.getElementById(`homework-container-${id}-${lid}`).appendChild(homework);
         }
     }
 
@@ -239,10 +283,7 @@
                 if (res_data.error) {
                     alert("Error: " + JSON.stringify(res_data.error));
                 } else {
-                    // Module was created successfully, reload to show new module
-                    console.log(res_data);
                     data.modules[module_i - 1].lessons[lesson_i - 1].literatures.splice(literature_i - 1, 1);
-                    console.log(data.modules[module_i - 1].lessons[lesson_i - 1])
                     document.getElementById(`module-${module_i}-lesson-${lesson_i}-literature-${literature_i}`).remove();
                 }
             })
@@ -251,6 +292,31 @@
                 alert('Failed to remove literature');
             });
     }
+
+    async function remove_homework(module_i, lesson_i, homework_i, homework_id) {
+    await send_data();
+    await fetch(`/courses/homework/${homework_id}/delete/`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        },
+    })
+    .then(response => response.json())
+    .then(res_data => {
+        if (res_data.error) {
+            alert("Error: " + JSON.stringify(res_data.error));
+        } else {
+            // Remove homework from the data and the DOM
+            data.modules[module_i - 1].lessons[lesson_i - 1].homeworks.splice(homework_i - 1, 1);
+            document.getElementById(`module-${module_i}-lesson-${lesson_i}-homework-${homework_i}`).remove();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to remove homework');
+    });
+}
+
 
     function openModule(module_id) {
         let side_module_text, side_module_folder, side_module_arrow, module_div;
@@ -262,8 +328,8 @@
             side_module_folder = document.getElementById(`side_module_folder_${i + 1}`);
             module_div = document.getElementById(`module-${i + 1}`);
 
-            side_module_folder.src = "{% static "core/icons/folder-fill-black-main.svg" %}";
-            side_module_arrow.src = "{% static "core/icons/arrow-down-button-gray.svg" %}";
+            side_module_folder.src = "{% static 'core/icons/folder-fill-black-main.svg' %}";
+            side_module_arrow.src = "{% static 'core/icons/arrow-down-button-gray.svg' %}";
             if (!side_module_arrow.classList.contains("-rotate-90")) side_module_arrow.classList.add("-rotate-90");
             if (side_module_text.classList.contains("text-accent-red")) side_module_text.classList.remove("text-accent-red");
             if (!module_div.classList.contains("hidden")) module_div.classList.add("hidden");
@@ -273,8 +339,8 @@
         side_module_folder = document.getElementById(`side_module_folder_${module_id}`);
         module_div = document.getElementById(`module-${module_id}`);
 
-        side_module_folder.src = "{% static "core/icons/folder-fill-accent-red.svg" %}";
-        side_module_arrow.src = "{% static "core/icons/arrow-right-button-accent-red.svg" %}";
+        side_module_folder.src = "{% static 'core/icons/folder-fill-accent-red.svg' %}";
+        side_module_arrow.src = "{% static 'core/icons/arrow-right-button-accent-red.svg' %}";
         side_module_arrow.classList.remove("-rotate-90");
         side_module_text.classList.add("text-accent-red");
         module_div.classList.remove("hidden");
@@ -284,11 +350,11 @@
     function sidebar_modules_div(vars) {
         let folder, arrow;
         if (vars.active) {
-            folder = "{% static "core/icons/folder-fill-accent-red.svg" %}";
-            arrow = "{% static "core/icons/arrow-right-button-accent-red.svg" %}";
+            folder = "{% static 'core/icons/folder-fill-accent-red.svg' %}";
+            arrow = "{% static 'core/icons/arrow-right-button-accent-red.svg' %}";
         } else {
-            folder = "{% static "core/icons/folder-fill-black-main.svg" %}";
-            arrow = "{% static "core/icons/arrow-down-button-gray.svg" %}";
+            folder = "{% static 'core/icons/folder-fill-black-main.svg' %}";
+            arrow = "{% static 'core/icons/arrow-down-button-gray.svg' %}";
         }
         return `
         <button onclick="openModule(${vars.id})" type="button">
@@ -378,6 +444,23 @@
                 </div>
             </label>
         </div>
+        <div class="w-full mb-6">
+            <div class="w-full mb-2 font-semibold">Домашнее задание</div>
+            <div id="homework-container-${vars.module_id}-${vars.id}" class="mb-2 font-semibold"></div>
+            <label class="">
+                <input id="module-${vars.module_id}-lesson-${vars.id}-homework" class="hidden" type="file"
+                       name="file" onchange="new_homework(event, ${vars.module_id}, ${vars.id}, ${vars.lesson_id})">
+                <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
+                    <img class="inline-block align-middle mr-[23px]"
+                         src="{% static 'core/icons/upload-ielts.svg' %}"
+                         alt="">
+                    <span id="input-file-text" type="text"
+                          class="text-[#5E8BFF] underline font-semibold">
+                            Загрузить домашнее задание
+                        </span>
+                </div>
+            </label>
+        </div>
         `;
     }
 
@@ -405,9 +488,16 @@
         `;
     }
 
+    function homework_div(vars) {
+        return `
+            <p class="underline mr-auto">${vars.homework_name}</p>
+            <img onclick="remove_homework(${vars.module_id}, ${vars.lesson_id}, ${vars.id}, ${vars.homework_id})" class="cursor-pointer"
+                 src="{% static 'core/icons/close-fill-black-main.svg' %}" alt="">
+        `;
+    }
+
     function placeData(data) {
-        let literature, lesson, module, sidebar_module, active = true;
-        console.log(data.modules.length);
+        let literature, homework, lesson, module, sidebar_module, active = true;
         if (data.modules.length !== 0) {
             document.getElementById("cat").classList.add('hidden');
             for (let i = 0; i < data.modules.length; i++) {
@@ -429,7 +519,7 @@
                 sidebar_module.innerHTML = sidebar_modules_div({
                     id: i + 1,
                     active: active,
-                })
+                });
                 document.getElementById("sidebar_modules").appendChild(sidebar_module);
                 for (let j = 0; j < data.modules[i].lessons.length; j++) {
                     lesson = document.createElement("div");
@@ -447,7 +537,6 @@
                         literature = document.createElement("div");
                         literature.id = `module-${i + 1}-lesson-${j + 1}-literature-${k + 1}`;
                         literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
-                        console.log(data.modules[i].lessons[j].literatures[k]);
                         literature.innerHTML = literature_div({
                             id: k + 1,
                             lesson_id: j + 1,
@@ -458,6 +547,19 @@
                         });
                         document.getElementById(`literature-container-${i + 1}-${j + 1}`).appendChild(literature);
                     }
+                    for (let l = 0; l < data.modules[i].lessons[j].homeworks.length; l++) {
+                        homework = document.createElement("div");
+                        homework.id = `module-${i + 1}-lesson-${j + 1}-homework-${l + 1}`;
+                        homework.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
+                        homework.innerHTML = homework_div({
+                            id: l + 1,
+                            lesson_id: j + 1,
+                            module_id: i + 1,
+                            homework_id: data.modules[i].lessons[j].homeworks[l].id,
+                            homework_name: data.modules[i].lessons[j].homeworks[l].homework_name,
+                        });
+                        document.getElementById(`homework-container-${i + 1}-${j + 1}`).appendChild(homework);
+                    }
                 }
             }
         }
@@ -465,7 +567,6 @@
 
     function getAllModules() {
         var courseId = {{ course.id }}; // Set the course ID you want to retrieve data for
-        let modules;
         fetch(`/courses/${courseId}/modules/api/`)
             .then(response => {
                 if (!response.ok) {
@@ -474,15 +575,14 @@
                 return response.json();
             })
             .then(res_data => {
-                modules = res_data;
                 data = res_data;
                 modules_count = data.modules.length;
-                console.log('Data received:', res_data);
-                placeData(modules)
-                // Process and display your data here
+                placeData(data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }
 </script>
+
+

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer, Rating
+from .models import Course, Module, Lesson, LessonLiterature, Test, Question, Answer, Rating, Homework
 from users.models import CustomUser
 
 class CourseForm(forms.ModelForm):
@@ -37,6 +37,11 @@ class LessonLiteratureForm(forms.ModelForm):
     class Meta:
         model = LessonLiterature
         fields = ['literature_name', 'literature_type', 'file']
+
+class HomeworkForm(forms.ModelForm):
+    class Meta:
+        model = Homework
+        fields = ['homework_name', 'file']
 
 class TestForm(forms.ModelForm):
     class Meta:
