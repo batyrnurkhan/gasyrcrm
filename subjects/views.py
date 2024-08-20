@@ -52,13 +52,19 @@ def home_view(request):
         }
         template_name = 'appointments/week_view.html'
     else:
-        # Fetch lessons for the user
+        # Get today's weekday (0 = Monday, 6 = Sunday)
+        today_weekday = datetime.now().weekday()
+
+        # Fetch today's lessons for the user based on the current weekday
         user_lessons = Lesson_crm2.objects.filter(
-            group_template__students=user
+            group_template__students=user,
+            time_slot__weekday=today_weekday  # Filter by today's weekday
         ).select_related('teacher', 'subject', 'chat_room')
 
+        # Get the last created task for the user or a task related to any of the user's lessons
         last_task = Task.objects.filter(
-            chat_room__in=[lesson.chat_room for lesson in user_lessons]
+            Q(chat_room__lessons__group_template__students=user) |
+            Q(chat_room__in=[lesson.chat_room for lesson in user_lessons])
         ).select_related('created_by').order_by('-deadline').first()
 
         if last_task:

@@ -4,9 +4,7 @@
 {%load l10n %}
 {% block flex-content %}
     {% if request.user.role == "Teacher" %}
-        {% comment %}
         {% include "subjects/components/crm2-teacher-sidebar.html" %}
-        {% endcomment %}
     {% else %}
         {% include "subjects/components/crm2-student-sidebar.html" %}
     {% endif %}
