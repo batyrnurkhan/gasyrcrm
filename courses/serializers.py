@@ -1,34 +1,52 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .models import Course, Module, Lesson, LessonLiterature, Homework
+import magic
 
 
 class LiteratureSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(required=False, allow_null=True)
-
     class Meta:
         model = LessonLiterature
-        fields = ['id', 'file', 'literature_name', 'literature_type', 'lesson']
+        fields = ['id', 'lesson', 'literature_name', 'literature_type', 'file', 'created_at']
+    def validate_file(self, value):
+        file = value
+        content_type = file.content_type
 
-    def update(self, instance, validated_data):
-        # Update fields if they are present in the request
-        instance.literature_name = validated_data.get('literature_name', instance.literature_name)
-        instance.literature_type = validated_data.get('literature_type', instance.literature_type)
-        instance.lesson = validated_data.get('lesson', instance.lesson)
+        print(f"Validating file with content type: {content_type} and name: {file.name}")
 
-        # Only update the file if a new file is provided
-        new_file = validated_data.get('file', None)
-        if new_file:
-            instance.file = new_file
+        if content_type in ['application/pdf']:
+            return value
+        elif content_type in ['image/jpeg', 'image/png']:
+            return value
+        elif content_type in ['text/plain', 'application/msword',
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
+            return value
+        elif content_type in ['audio/mpeg', 'audio/mp3']:
+            return value
+        else:
+            raise serializers.ValidationError("Unsupported file type.")
 
-        instance.save()
-        return instance
+    def create(self, validated_data):
+        file = validated_data.get('file')
+        content_type = file.content_type
 
+        if content_type in ['application/pdf']:
+            validated_data['literature_type'] = 'Book'
+        elif content_type in ['image/jpeg', 'image/png']:
+            validated_data['literature_type'] = 'Image'
+        elif content_type in ['text/plain', 'application/msword',
+                                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document']:
+            validated_data['literature_type'] = 'Text'
+        elif content_type in ['audio/mpeg', 'audio/mp3']:
+            validated_data['literature_type'] = 'Audio'
+
+        return super().create(validated_data)
 
 class HomeworkSerializer(serializers.ModelSerializer):
     file = serializers.FileField(required=False, allow_null=True)
 
     def validate_file(self, value):
-        print("Validating file:", value)  # Debug statement
         if value:
             file_type = value.name.split('.')[-1].lower()
             if file_type not in ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']:
@@ -54,7 +72,10 @@ class LessonFullSerializer(serializers.ModelSerializer):
         lesson = Lesson.objects.create(**validated_data)
 
         for literature_data in literatures_data:
-            LessonLiterature.objects.create(lesson=lesson, **literature_data)
+            literature = LessonLiterature.objects.create(lesson=lesson, **literature_data)
+            # Ensure the file is not altered after initial validation
+            literature.file = literature_data['file']
+            literature.save()
 
         return lesson
 
@@ -66,30 +87,25 @@ class LessonFullSerializer(serializers.ModelSerializer):
                 literature_id = literature_data.get('id')
                 if literature_id:
                     literature = LessonLiterature.objects.get(id=literature_id, lesson=instance)
-                    literature.file = literature_data.get('file', literature.file)
-                    literature.literature_name = literature_data.get('literature_name', literature.literature_name)
-                    literature.literature_type = literature_data.get('literature_type', literature.literature_type)
+                    for key, value in literature_data.items():
+                        if key == 'file':
+                            # Ensure the file is not re-validated or altered
+                            literature.file = value
+                        else:
+                            setattr(literature, key, value)
                     literature.save()
                 else:
-                    LessonLiterature.objects.create(lesson=instance, **literature_data)
+                    literature = LessonLiterature.objects.create(lesson=instance, **literature_data)
+                    # Ensure the file is not altered after initial validation
+                    literature.file = literature_data['file']
+                    literature.save()
 
         return super().update(instance, validated_data)
 
+
+
+
 class LessonSerializer(serializers.ModelSerializer):
-    def save(self, **kwargs):
-        # Directly manipulate self.validated_data if needed
-        if 'lesson_name' in self.validated_data:
-            lesson_name = self.validated_data['lesson_name']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['lesson_name'] = lesson_name.encode('utf-8', 'ignore').decode('utf-8')
-        if 'video_link' in self.validated_data:
-            video_link = self.validated_data['video_link']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['video_link'] = video_link.encode('utf-8', 'ignore').decode('utf-8')
-
-        # Call the superclass method to actually save the data
-        return super(LessonSerializer, self).save(**kwargs)
-
     class Meta:
         model = Lesson
         fields = ['id', 'lesson_name', 'video_link', 'module']
@@ -99,23 +115,18 @@ class ModuleFullSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
     lessons = LessonFullSerializer(many=True)
 
-    def save(self, **kwargs):
-        # Directly manipulate self.validated_data if needed
-        if 'module_name' in self.validated_data:
-            module_name = self.validated_data['module_name']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['module_name'] = module_name.encode('utf-8', 'ignore').decode('utf-8')
-
-        # Call the superclass method to actually save the data
-        return super(ModuleFullSerializer, self).save(**kwargs)
-
     class Meta:
         model = Module
         fields = ['id', 'module_name', 'lessons']
 
     def create(self, validated_data):
-        validated_data.pop("lessons")
-        return super().create(validated_data)
+        lessons_data = validated_data.pop('lessons', [])
+        module = Module.objects.create(**validated_data)
+
+        for lesson_data in lessons_data:
+            Lesson.objects.create(module=module, **lesson_data)
+
+        return module
 
 
 class ModuleSerializer(serializers.ModelSerializer):
@@ -140,63 +151,59 @@ class CourseSerializer(serializers.ModelSerializer):
             if module_id:
                 module = Module.objects.get(id=module_id, course=instance)
                 lessons_data = module_data.pop('lessons', [])
+
                 for key, value in module_data.items():
                     setattr(module, key, value)
                 module.save()
 
                 for lesson_data in lessons_data:
                     lesson_id = lesson_data.get('id', None)
-                    literature_data = lesson_data.pop('literatures', [])
-                    homeworks_data = lesson_data.pop('homeworks', [])
-
                     if lesson_id:
                         lesson = Lesson.objects.get(id=lesson_id, module=module)
+
                         for key, value in lesson_data.items():
-                            setattr(lesson, key, value)
+                            if key == 'literatures':
+                                # Skip file validation here, let LiteratureSerializer handle it
+                                literature_ids = [lit['id'] for lit in value if 'id' in lit]
+                                lesson.literatures.set(LessonLiterature.objects.filter(id__in=literature_ids))
+                            elif key == 'homeworks':
+                                self.validate_homeworks(value)  # Validate homeworks
+                                homework_ids = [hw['id'] for hw in value if 'id' in hw]
+                                lesson.homeworks.set(Homework.objects.filter(id__in=homework_ids))
+                            else:
+                                setattr(lesson, key, value)
                         lesson.save()
 
-                        # Handle literatures
-                        literatures = []
-                        for literature in literature_data:
-                            literature_id = literature.get('id')
-                            literature_instance, created = LessonLiterature.objects.get_or_create(
-                                id=literature_id,
-                                defaults=literature
-                            )
-                            if not created:
-                                # Only update literature if a file is provided or other fields are non-empty
-                                for key, value in literature.items():
-                                    if value is not None and value != '':
-                                        setattr(literature_instance, key, value)
-                                literature_instance.save()
-                            literatures.append(literature_instance)
-                        lesson.literatures.set(literatures)
-
-                        # Handle homeworks (similar approach)
-                        homeworks = []
-                        for homework in homeworks_data:
-                            homework_instance, created = Homework.objects.get_or_create(
-                                id=homework.get('id'),
-                                defaults=homework
-                            )
-                            if not created:
-                                for key, value in homework.items():
-                                    if value is not None and value != '':
-                                        setattr(homework_instance, key, value)
-                                homework_instance.save()
-                            homeworks.append(homework_instance)
-                        lesson.homeworks.set(homeworks)
                     else:
                         lesson = Lesson.objects.create(module=module, **lesson_data)
-
-                        literatures = [LessonLiterature.objects.create(**lit) for lit in literature_data]
+                        literatures = [LessonLiterature.objects.create(**lit) for lit in lesson_data.get('literatures', [])]
                         lesson.literatures.set(literatures)
 
-                        homeworks = [Homework.objects.create(**hw) for hw in homeworks_data]
+                        homeworks = [Homework.objects.create(**hw) for hw in lesson_data.get('homeworks', [])]
+                        self.validate_homeworks(homeworks)  # Validate homeworks
                         lesson.homeworks.set(homeworks)
             else:
                 Module.objects.create(course=instance, **module_data)
 
         return instance
 
+    def validate_homeworks(self, homeworks):
+        allowed_extensions = ['pdf', 'doc', 'docx', 'txt']
+        for homework in homeworks:
+            file = homework.get('file')
+            if file:
+                self.validate_file(file, allowed_extensions)
 
+    def validate_file(self, file, allowed_extensions=None):
+        if allowed_extensions is None:
+            allowed_extensions = ['pdf', 'doc', 'docx', 'txt']
+
+        file_extension = file.name.split('.')[-1].lower()
+        mime_type = file.content_type
+
+        if file_extension not in allowed_extensions:
+            raise serializers.ValidationError(f"Invalid file extension: {file_extension}")
+
+        allowed_mime_types = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain']
+        if mime_type not in allowed_mime_types:
+            raise serializers.ValidationError(f"Invalid MIME type: {mime_type}")

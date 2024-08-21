@@ -1,6 +1,7 @@
 import json
 import traceback
 
+import magic
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, transaction
@@ -23,7 +24,6 @@ from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, Modul
     AnswerForm, QuestionForm, SuccessVideoLinkForm
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework
 from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer, HomeworkSerializer
-
 
 class CourseDelete(DetailView):
     model = Course
@@ -386,15 +386,20 @@ class CourseModulesView(APIView):
         return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, course_id):
-        course = Course.objects.get(pk=course_id)
+        try:
+            course = Course.objects.get(pk=course_id)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = CourseSerializer(course, data=request.data, partial=True)  # partial=True allows partial updates
 
         if serializer.is_valid():
+            print(f"Data passed to serializer is valid: {serializer.validated_data}")
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
+            print(f"Serializer errors COURSE VIEW: {serializer.errors}")  # Debug statement
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ModuleCreateViewAPI(APIView):
     def post(self, request, course_id):
@@ -449,27 +454,54 @@ class HomeworkCreateViewAPI(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
 class LiteratureCreateViewAPI(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request, lesson_id):
-        if not Lesson.objects.filter(id=lesson_id).exists():
-            return Response({'error': 'Lesson not found'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+        except Lesson.DoesNotExist:
+            return Response({"error": "Lesson not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        request.data["lesson"] = lesson_id
-        serializer = LiteratureSerializer(data=request.data)
+        # Use the simplified serializer to create the literature
+        data = {
+            'lesson': lesson.id,
+            'literature_name': request.data.get('literature_name', ''),
+            'literature_type': request.data.get('literature_type', 'Generic'),
+            'file': request.FILES.get('file')
+        }
+
+        serializer = LiteratureSerializer(data=data)
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # Removed validation-related messages and kept it generic
+            print(f"Serializer errors FROM CREATE: {serializer.errors}")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LiteratureDeleteViewAPI(APIView):
     def delete(self, request, literature_id):
-        # Add lesson to the request data
-        LessonLiterature.objects.get(id=literature_id).delete()
-        return Response({"message": "Delete complete"}, status=status.HTTP_200_OK)
+        try:
+            print(f"Attempting to delete Literature with ID: {literature_id}")
+            literature = LessonLiterature.objects.get(id=literature_id)
+            literature.delete()
+            print(f"Literature with ID: {literature_id} deleted successfully.")
+            return Response({"message": "Literature deleted successfully"}, status=status.HTTP_200_OK)
+        except LessonLiterature.DoesNotExist:
+            print(f"Literature with ID: {literature_id} not found.")
+            return Response({"error": "Literature not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Error while deleting Literature: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 
 class HomeworkDeleteViewAPI(APIView):
     def delete(self, request, homework_id):

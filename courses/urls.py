@@ -36,7 +36,9 @@ urlpatterns = [
     path('<int:course_id>/module/create/', ModuleCreateViewAPI.as_view(), name='module_create'),
     path('<int:module_id>/lesson/create/', LessonCreateViewAPI.as_view(), name='lesson_create'),
 
-    path('<int:lesson_id>/literature/create/', LiteratureCreateViewAPI.as_view(), name='literature_create'),
+    path('literature/create/<int:lesson_id>/', LiteratureCreateViewAPI.as_view(), name='literature-create'),
+    path('literature/delete/<int:literature_id>/', LiteratureDeleteViewAPI.as_view(), name='literature-delete'),
+
     path('<int:lesson_id>/homework/create/', HomeworkCreateViewAPI.as_view(), name='homework_create'),
 
     path('<int:course_id>/<int:module_id>/<int:pk>/homework/', HomeworkDetailView.as_view(),
@@ -47,7 +49,6 @@ urlpatterns = [
 
     path('homework/<int:homework_id>/delete/', HomeworkDeleteViewAPI.as_view(), name='homework-delete'),
 
-    path('literature/<int:literature_id>/delete/', LiteratureDeleteViewAPI.as_view(), name='literature_delete'),
     path('module/<int:pk>/', ModuleDetailView.as_view(), name='module_detail'),
     path('<int:pk>/final_test/edit', CourseFinalTestView.as_view(), name='final_test_creation'),
     path('<int:pk>/success_video/edit', SuccessVideoLinkEditView.as_view(), name='success_video_edit'),
@@ -56,7 +57,6 @@ urlpatterns = [
     path('course/<int:pk>/add-students/', AddStudentsView.as_view(), name='add_students'),
     path('<int:course_id>/add-student/<int:student_id>/', add_student_to_course, name='add_student_to_course'),
     path('course/search-students/', search_students, name='search_students'),
-    path('literature/delete/', delete_literature, name='literature_delete'),
 
     path('<int:course_id>/student/<str:student_login_code>', student_results_view, name='student_results'),
     path('<int:course_id>/student/<str:student_login_code>/<int:submission_id>', student_test_results_view, name='student_test_results'),

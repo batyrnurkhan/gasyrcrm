@@ -180,16 +180,23 @@ class Lesson(models.Model):
 
 
 class LessonLiterature(models.Model):
-    lesson = models.ForeignKey(Lesson, related_name='literatures', on_delete=models.CASCADE)
-    literature_name = models.CharField(max_length=20)
-    literature_type = models.CharField(max_length=6, choices=[
+    LITERATURE_TYPE_CHOICES = [
         ('Book', 'Book'),
         ('Video', 'Video'),
         ('Text', 'Text'),
         ('Audio', 'Audio'),
-    ])
-    file = models.FileField(upload_to="lesson_literature")
+        ('Generic', 'Generic')
+    ]
 
+    lesson = models.ForeignKey(Lesson, related_name='literatures', on_delete=models.CASCADE)
+    literature_name = models.CharField(max_length=255)
+    literature_type = models.CharField(max_length=20, choices=LITERATURE_TYPE_CHOICES, default='Generic')
+    file = models.FileField(upload_to='literature_files/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        print(f"Saving LessonLiterature with file: {self.file}")
+        super().save(*args, **kwargs)
     def __str__(self):
         return self.literature_name
 

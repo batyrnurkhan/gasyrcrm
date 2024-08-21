@@ -35,6 +35,7 @@
     </div>
 </div>
 <script>
+    var course_id = {{ course.id }}; // Define this globally
 let data, current_module = 0, modules_count = 0;
 
 async function send_data() {
@@ -169,31 +170,17 @@ async function new_literature(event, id, lid, lesson_id) {
         return;
     }
 
-    await send_data();  // Ensure any existing data is saved before proceeding
-    let literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
     const formData = new FormData();
     formData.append('file', file);
-
-    const fileType = file.type;
-    let literatureType = 'Text'; // Default literature type
-
-    if (fileType.startsWith('application/pdf')) {
-        literatureType = "Book";
-    } else if (fileType.startsWith('video/')) {
-        literatureType = "Video";
-    } else if (fileType.startsWith('audio/')) {
-        literatureType = "Audio";
-    }
-
-    formData.append('literature_type', literatureType);
+    formData.append('literature_type', 'Generic');  // Use a default type
     formData.append('literature_name', file.name.slice(0, 20));  // Ensure a valid literature name
 
     try {
-        const response = await fetch(`/courses/${lesson_id}/literature/create/`, {
+        const response = await fetch(`/courses/literature/create/${lesson_id}/`, {
             method: 'POST',
             body: formData,
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken, // Ensure CSRF token is included
             },
         });
 
@@ -207,7 +194,7 @@ async function new_literature(event, id, lid, lesson_id) {
             alert("Error: " + JSON.stringify(res_data.error));
         } else {
             data.modules[id - 1].lessons[lid - 1].literatures.push(res_data);
-            literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
+            let literature_count = data.modules[id - 1].lessons[lid - 1].literatures.length;
             let literature = document.createElement("div");
             literature.id = `module-${id}-lesson-${lid}-literature-${literature_count}`;
             literature.classList = "border border-gray flex flex-row p-4 rounded-lg mb-1";
@@ -226,7 +213,6 @@ async function new_literature(event, id, lid, lesson_id) {
         alert('Failed to add literature');
     }
 }
-
 
 async function new_homework(event, id, lid, lesson_id) {
     let file = event.target.files[0];
@@ -276,7 +262,7 @@ async function new_homework(event, id, lid, lesson_id) {
 
 async function remove_literature(module_i, lesson_i, literature_i, literature_id) {
     await send_data();
-    await fetch(`/courses/literature/${literature_id}/delete/`, {
+    await fetch(`/courses/literature/delete/${literature_id}/`, {
         method: 'DELETE',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}',
@@ -434,8 +420,10 @@ function lesson_div(vars) {
         <div class="w-full mb-2 font-semibold">Литература</div>
         <div id="literature-container-${vars.module_id}-${vars.id}" class="mb-2 font-semibold"></div>
         <label class="">
-            <input id="module-${vars.module_id}-lesson-${vars.id}" class="hidden" type="file"
-                   name="file" onchange="new_literature(event, ${vars.module_id}, ${vars.id}, ${vars.lesson_id})">
+<input id="module-${vars.module_id}-lesson-${vars.id}" class="hidden" type="file"
+       name="file" onchange="new_literature(event, ${vars.module_id}, ${vars.id}, ${vars.lesson_id}, {{ course.id }})">
+
+
             <div class="block w-full border border-[#8D8D8D] text-center p-[18px] rounded-lg">
                 <img class="inline-block align-middle mr-[23px]"
                      src="{% static 'core/icons/upload-ielts.svg' %}"
