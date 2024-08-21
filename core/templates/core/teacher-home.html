@@ -5,21 +5,21 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main">
+    <div class="container content px-5 md:px-5 bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main">
         <div class="relative py-10">
-            <div class="min-h-60 bg-cover bg-center rounded-lg py-[52px] px-[54px] text-white flex flex-row items-center"
+            <div class="min-h-60 bg-cover bg-center rounded-lg py-10 md:py-[52px] md:px-[54px] text-white flex flex-col md:flex-row items-center"
                  style="background-image: url('{% static "core/images/course-create.png" %}')">
                 <img class="h-full" src="{% static "core/images/gasyr-white-emblem.png" %}" alt="">
-                <div class="ml-[106px] text-white">
-                    <h2 class="text-[56px] font-semibold leading-[68.49px] mb-5">Хотите загрузить<br/> свой курс?</h2>
+                <div class="md:ml-[106px] flex flex-col items-center md:items-start text-white">
+                    <h2 class="text-[56px] w-full md:w-fit text-center md:text-start font-semibold leading-[68.49px] mb-5">Хотите загрузить<br/> свой курс?</h2>
                     <a class="px-16 py-[26px] border border-white rounded-lg inline-block" href="{% url "courses:create_course_step1" %}">Создать новый курс</a>
                 </div>
             </div>
-            <img class="absolute -inset-y-2 right-0 h-full" src="{% static "core/images/cats/course-create.png" %}" alt="">
+            <img class="absolute -inset-y-2 right-0 hidden md:block md:h-full" src="{% static "core/images/cats/course-create.png" %}" alt="">
         </div>
 
         <h1 class="text-[42px] font-bold mb-3">Мои курсы</h1>
-        <div class="grid grid-cols-2 gap-5 mb-10 ">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10 ">
             {% for course in published_courses %}
                 {% include 'core/components/course-card-edit.html' with course=course %}
             {% empty %}

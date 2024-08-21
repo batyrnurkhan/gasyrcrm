@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="block bg-white rounded-lg p-8 text-start">
+<div class="block bg-white rounded-lg md:p-8 text-start">
     <div id="course_img" class="block bg-cover bg-center h-36 w-full p-3 mb-6 rounded-lg"
          style="background-image: url('{% if course.course_picture %}/media/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
         <div class="float-left bg-cover bg-center w-8 h-8 rounded-full border-2 border-white"
@@ -15,9 +15,9 @@
              {% endif %}"></div>
     </div>
     <div class="flex flex-row">
-        <p class="text-gray font-semibold">Онлайн-курс</p>
+        <p class="text-gray font-semibold text-sm">Онлайн-курс</p>
         <img class="mx-1.5" src="{% static "core/icons/gray-point.svg" %}" alt="">
-        <p class="text-gray font-semibold">{% if course %}
+        <p class="text-gray font-semibold text-sm">{% if course %}
             {{ course.created_by.full_name }}
         {% else %}
             {{ user.full_name }}
@@ -38,7 +38,7 @@
                 Some description
             {% endif %}
         </p>
-        <a class="inline-block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
+        <a class="w-full md:w-fit inline-block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
            href="{% if course %}{% url 'courses:course_detail' pk=course.id %}{% else %}#{% endif %}">
             Начать прохождения курса
         </a>

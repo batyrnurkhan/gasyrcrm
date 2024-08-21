@@ -5,7 +5,7 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
+    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] px-5 md:px-0 pt-14 text-black-main">
         {% if user.is_authenticated %}
         {% if last_opened_content_id %}
             <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
@@ -45,10 +45,10 @@
                     <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">{{ test_completion_percentage|floatformat:0 }}%</h2>
                 </div>
             </div>
-{% endif %}
-            <h1 class="text-[42px] font-bold mb-3">Все курсы</h1>
         {% endif %}
-        <div class="grid grid-cols-2 gap-5 mb-10">
+        <h1 class="hidden md:block text-[42px] font-bold mb-3">Все курсы</h1>
+        {% endif %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-5 mb-10">
             {% for course in courses %}
                 {% if user in course.users.all %}
                     {% with course|calculate_completion_percentage:user as completion_percentage %}

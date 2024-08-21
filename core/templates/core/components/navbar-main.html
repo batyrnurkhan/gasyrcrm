@@ -1,28 +1,28 @@
 {% load static %}
-<div class="fixed w-full bg-white shadow-lg z-50">
-    <div class="border-b-2 border-gray">
-        <nav class="container py-2 items-center mx-auto flex font-[Qanelas]" style="height: 90px;">
-            <div class="py-[19px] pr-10 border-r-2 border-gray">
+<div class="fixed w-full ">
+    <div class="md:border-b-2 px-5 border-gray bg-white md:shadow-md z-50">
+        <nav class="container py-2 items-center mx-auto flex flex-row justify-between font-[Qanelas]" style="height: 90px;">
+            <div class="py-[19px] pr-10 md:border-r-2 border-gray">
                 <a href="{% url "home" %}"><img class="h-[53px]" src="{% static 'core/images/logo.svg' %}" alt=""></a>
             </div>
-            <div class="mr-auto pl-11">
+            <div class="mr-auto pl-11 hidden md:block">
                 {% if request.path == "/home/" or request.path == "/my-courses/" or request.path == "/completed-courses/" %}
                     <h2 class="text-xl text-black-main font-semibold">Привет, {{ user.full_name }}!</h2>
                     <h2 class="text-black-main">Это место для вашего саморазвития и роста личности</h2>
                 {% endif %}
             </div>
-            <div class="border-l-2 border-gray py-4 pl-5 flex flex-row items-center">
-                <img class="w-[60px] h-[60px] object-cover rounded-full" src="{% if user.profile_picture %}
+            <div class="md:border-l-2 border-gray py-4 pl-5 flex flex-row items-center">
+                <img class="w-[42px] h-[42px] md:w-[60px] md:h-[60px] object-cover rounded-full" src="{% if user.profile_picture %}
                                 /media/{{ user.profile_picture }}
                                 {% else %}
                                 {% static "core/images/default-user.svg" %}
                             {% endif %}" alt="">
-                <div class="ml-3.5 mr-8 h-fit">
+                <div class="ml-3.5 mr-8 h-fit hidden md:block ">
                     <h2 class="text-xl text-black-main font-bold">{{ user.full_name }}</h2>
                     <p class="m-0">{{ user.role }}</p>
                 </div>
                 <div class="relative ease-in" x-data="{ open: false }">
-                    <img class="cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
+                    <img class="hidden md:block cursor-pointer" onclick="toggleDropdown(event)" id="dropdownButton"
                          src="{% static "core/icons/user-arrow.svg" %}">
                     <div id="dropdownMenu"
                          class="absolute top-11 -right-2 mt-2 py-2 w-72 bg-white rounded hidden border-2 border-gray">
@@ -39,18 +39,19 @@
             </div>
         </nav>
     </div>
-    <nav class="flex flex-row justify-center">
-        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/home/" %}active-link{% endif %}"
+    <nav class="flex flex-row px-5 md:px-0 justify-around gap-3 md:gap-0 md:justify-center bg-whiteless md:bg-white shadow-sm z-50">
+        <a class="text-center font-bold md:px-2 py-5 md:mx-4 {% if request.path == "/home/" %}active-link{% endif %}"
            href="{% url 'home' %}">
             Все курсы
-            {% if request.path == "/home/" %}<div class="link-block"></div>{% endif %}
+            {% if request.path == "/home/" %}
+            <div class="link-block"></div>{% endif %}
         </a>
-        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/my-courses/" %}active-link{% endif %}"
+        <a class="text-center block font-bold md:px-2 py-5 md:mx-4 {% if request.path == "/my-courses/" %}active-link{% endif %}"
            href="{% url 'my-courses' %}">
             Мои курсы
             {% if request.path == "/my-courses/" %}<div class="link-block"></div>{% endif %}
         </a>
-        <a class="block font-bold px-2 py-5 mx-4 {% if request.path == "/completed-courses/" %}active-link{% endif %}"
+        <a class="text-center block font-bold md:px-2 py-5 md:mx-4 {% if request.path == "/completed-courses/" %}active-link{% endif %}"
            href="{% url 'completed-courses' %}">
             Пройденные
             {% if request.path == "/completed-courses/" %}<div class="link-block"></div>{% endif %}

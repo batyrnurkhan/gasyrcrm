@@ -4,8 +4,8 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
-        <h1 class="text-[42px] font-bold mb-3">Пройденные курсы</h1>
+    <div class="container px-5 content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-[32px] md:pt-14 text-black-main">
+        <h1 class="text-[24px] md:text-[42px] font-bold mb-3">Пройденные курсы</h1>
         {% if completed_courses %}
             <div class="grid grid-cols-2 gap-5 mb-10">
                 {% for course in completed_courses %}
@@ -14,7 +14,7 @@
             </div>
         {% else %}
             <div class="w-full text-center bg-white pb-32 pt-6">
-                <img class="mx-auto mb-6" src="{% static "core/images/cats/no-completed-courses.png" %}" alt="">
+                <img class="h-max-[302px] w-max-[296px] md:h-max-none md:w-max-none mx-auto mb-6" src="{% static "core/images/cats/no-completed-courses.png" %}" alt="">
                 <h4 class="text-2xl font-semibold">Пройденных курсов, все еще нет :(</h4>
             </div>
         {% endif %}
