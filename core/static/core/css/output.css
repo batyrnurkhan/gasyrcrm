@@ -4743,6 +4743,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-decoration-line: none;
 }
 
+.hover\:outline-none:hover {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -4815,6 +4820,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:top-0 {
     top: 0px;
+  }
+
+  .md\:left-32 {
+    left: 8rem;
   }
 
   .md\:-z-10 {
@@ -4978,6 +4987,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .md\:w-fit {
     width: -moz-fit-content;
     width: fit-content;
+  }
+
+  .md\:min-w-52 {
+    min-width: 13rem;
+  }
+
+  .md\:min-w-64 {
+    min-width: 16rem;
   }
 
   .md\:max-w-\[45px\] {
@@ -5158,6 +5175,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .md\:py-16 {
     padding-top: 4rem;
     padding-bottom: 4rem;
+  }
+
+  .md\:px-7 {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
   }
 
   .md\:pb-0 {

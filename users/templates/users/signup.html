@@ -14,21 +14,20 @@
                 <form class="mb-7 w-full" method="post" action="{% url 'users:signup' %}" id="signup-form">
                     {% csrf_token %}
                     <div class="relative mb-4">
-                        <input class="pl-11 py-5 md:py-4 w-full border rounded-lg placeholder:text-black-main text-sm md:text-base"
+                        <input class="pl-4 py-5 md:py-4 w-full border border-[#CDCDCD] rounded-lg focus:outline-none placeholder:text-black-main text-sm md:text-base"
                                type="text" name="full_name" id="id_full_name" placeholder="Имя и Фамилия" required>
                         <div class="absolute top-1/2 left-3 transform -translate-y-1/2 flex items-center pointer-events-none">
-                            <img class="h-6 w-6" src="{% static "core/icons/kz.png" %}" alt="">
                         </div>
                     </div>
                     <div class="relative mb-4">
-                        <input class="pl-11 py-5 md:py-4 w-full border rounded-lg placeholder:text-black-main text-sm md:text-base"
+                        <input class="pl-11 py-5 md:py-4 w-full border border-[#CDCDCD] rounded-lg focus:outline-none placeholder:text-black-main text-sm md:text-base"
                                type="text" name="phone_number" id="id_phone_number" value="+7 (___) ___ __ __" required>
                         <div class="absolute top-1/2 left-3 transform -translate-y-1/2 flex items-center pointer-events-none">
                             <img class="h-6 w-6" src="{% static "core/icons/kz.png" %}" alt="">
                         </div>
                     </div>
                     <div class="relative mb-4">
-                        <select class="pl-11 py-5 md:py-4 w-full border rounded-lg placeholder:text-black-main text-sm md:text-base appearance-none"
+                        <select class="pl-11 py-5 md:py-4 w-full border border-[#CDCDCD] rounded-lg placeholder:text-black-main text-sm md:text-base appearance-none"
                                 name="user_city" id="id_user_city" required>
                             <option selected value="_">Ваш город</option>
                             <option value="Astana">Астана</option>
@@ -46,9 +45,9 @@
                             <img class="h-6 w-6" src="{% static "core/icons/arrow-down-s-fill.svg" %}" alt="">
                         </div>
                     </div>
-                    <input class="pl-11 py-5 md:py-4 w-full border rounded-lg mb-3 placeholder:text-black-main text-sm md:text-base"
+                    <input class="pl-4 py-5 md:py-4 w-full border border-[#CDCDCD] focus:outline-none rounded-lg mb-3 placeholder:text-black-main text-sm md:text-base"
                            type="password" name="password" id="id_password" placeholder="Пароль" required><br>
-                    <input class="pl-11 py-5 md:py-4 w-full border rounded-lg  mb-3 placeholder:text-black-main text-sm md:text-base"
+                    <input class="pl-4 py-5 md:py-4 w-full border border-[#CDCDCD] focus:outline-none rounded-lg  mb-3 placeholder:text-black-main text-sm md:text-base"
                            type="password" name="re_password" id="id_re_password" placeholder="Повторите пароль" required><br>
                     <button class="bg-accent-red rounded-lg py-5 md:py-4 font-semibold text-white text-sm md:text-base w-full"
                             type="submit">Стать частью Gasyr

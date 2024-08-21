@@ -5,53 +5,76 @@
 {% block content %}
 
     {% include 'core/components/navbar-light-transparent.html' %}
-    <div class="relative -z-10 bg-no-repeat bg-top bg-cover order-3 md:order-1"
-        style="background-image: url('{% static "core/images/background-stars.png" %}')"></div>
-        <div class="container content mx-auto relative font-[Qanelas] flex flex-col-reverse md:flex-row">
-            <div class="relative order-2 md:absolute md:left-24 md:-top-[50px] md:-bottom-5 md:-z-10">
-                <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
-            </div>
-        <div class="relative z-20 order-1 bg-white rounded-lg py-6 px-8 text-center mx-auto mb-16  md:absolute md:order-1 md:bottom-36 md:left-36">
-            <h2 class="text-lg md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
-            <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
-         </div>
+    {% comment %} <div class="relative -z-10 bg-no-repeat bg-top bg-cover order-3 md:order-1"
+        style="background-image: url('{% static "core/images/background-stars.png" %}')">
+    </div>
+    <div class="container content mx-auto relative font-[Qanelas] flex flex-col-reverse md:flex-row">
+        <div class="relative order-2 md:absolute md:left-24 md:-top-[50px] md:-bottom-5 md:-z-10">
+            <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
+        </div>
+    <div class="relative z-20 order-1 bg-white rounded-lg py-6 px-8 text-center mx-auto mb-16  md:absolute md:order-1 md:bottom-36 md:left-36">
+        <h2 class="text-lg md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
+        <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
+     </div> {% endcomment %}
 
+     
+     <div class="container content mx-auto relative font-[Qanelas] flex justify-end flex-col md:flex-row px-5 md:px-20 ">
 
-    <div class="relative order-3 md:absolute md:top-0 md:bottom-0 md:right-16 2xl:right-32 flex flex-col justify-center items-center md:items-start">
-        <div class="bg-light-gray rounded-lg text-center px-7 pb-7 pt-7 md:pb-11 md:pt-12 max-w-xs md:max-w-none">
-            <h2 class="font-bold text-lg md:text-2xl mb-5 text-black-main">Вход на платформу</h2>
-            <form class="mb-7 w-full" method="post">
-                {% csrf_token %}
-                <div class="relative mb-4">
-                    <input class="pl-14 py-3 md:py-4 w-full border rounded-lg placeholder:text-black-main text-sm md:text-base"
-                        type="text" name="phone_number" id="id_phone_number" value="+7 (___) ___ __ __" required>
-                    <div class="absolute top-1/2 left-3 transform -translate-y-1/2 flex items-center pointer-events-none">
-                        <img class="h-6 w-6" src="{% static "core/icons/kz.png" %}" alt="">
+        
+        <div class="md:mb-20 md:w-fit md:mr-32 p-5 flex flex-col justify-center items-center md:items-start">
+            <div class="bg-light-gray w-full md:w-fit rounded-lg text-center px-4 pb-7 pt-7 md:pb-11 md:pt-14 md:max-w-none">
+
+                <h2 class="font-bold text-2xl mb-5 text-black-main">Вход на платформу</h2>
+                <form class="mb-7 w-full" method="post">
+                    {% csrf_token %}
+                    <div class="relative mb-1">
+                        <input class="pl-14 py-5 md:py-4 w-full border border-[#CDCDCD] focus:outline-none rounded-lg placeholder:text-black-main text-sm md:text-base"
+                            type="text" name="phone_number" id="id_phone_number" value="+7 (___) ___ __ __" required>
+                        <div class="absolute top-1/2 left-3 transform -translate-y-1/2 flex items-center pointer-events-none">
+                            <img class="h-6 w-6" src="{% static "core/icons/kz.png" %}" alt="">
+                        </div>
                     </div>
-                </div>
-                <input class="pl-4 py-3 md:py-4 w-full border rounded-lg placeholder:text-black-main text-sm md:text-base"
-                    type="password" name="password" id="id_password" placeholder="Введите ваш пароль" required><br><br>
-                <button class="bg-accent-red rounded-lg py-3 md:py-4 font-semibold text-white text-sm md:text-base w-full"
-                    type="submit">Войти на платформу</button>
-            </form>
-            <div>
-                <h4 class="text-black-main font-semibold text-base md:text-lg mb-2.5">Войти через соц. сети</h4>
-                <div class="flex justify-center space-x-4">
-                    <a class="p-4 md:p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                        <img class="h-5 w-5 md:h-7 md:w-7" src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
+                    <input class="pl-4 py-5 md:py-4 w-full border border-[#CDCDCD] rounded-lg focus:outline-none placeholder:text-black-main text-sm md:text-base"
+                        type="password" name="password" id="id_password" placeholder="Введите ваш пароль" required><br><br>
+                    <button class="bg-accent-red rounded-lg py-5 md:py-4 font-semibold text-white text-sm md:text-base w-full"
+                        type="submit">Войти на платформу</button>
+                </form>
+                <div>
+                    <h4 class="text-black-main font-semibold text-base md:text-lg mb-2.5">Войти через соц. сети</h4>
+                    <div class="flex justify-center gap-[10px]">
+                        <a class="p-4 md:p-6 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="h-5 w-5 md:h-7 md:w-7" src="{% static "core/icons/google-icon-svgrepo-com.svg" %}" alt="">
+                        </a>
+                        <a class="p-4 md:p-6 border border-gray bg-white rounded-full inline-block" href="#">
+                            <img class="h-5 w-5 md:h-7 md:w-7" src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
+                        </a>
+                    </div>
+                    <a class="text-black-main font-light underline text-sm md:text-base mt-4 block" href="#">
+                        Проблемы со входом?
                     </a>
-                    <a class="p-4 md:p-6 border border-gray bg-white rounded-full inline-block" href="#">
-                        <img class="h-5 w-5 md:h-7 md:w-7" src="{% static "core/icons/vk-svgrepo-com.svg" %}" alt="">
-                    </a>
                 </div>
-                <a class="text-black-main font-light underline text-sm md:text-base mt-4 block" href="#">
-                    Проблемы со входом?
-                </a>
             </div>
         </div>
-    </div>
 
-</div>
+
+
+        <div class="hidden md:block relative bg-no-repeat bg-top bg-cover mt-4 mb-10">
+            <div class="absolute" style="background-image: url('{% static "core/images/background-stars.png" %}')"></div>
+        </div>
+
+        <div class="relative md:absolute md:left-24 md:left-32 md:-top-[50px] md:-bottom-10 md:-z-10">
+            <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
+            <div class="absolute hidden md:block bottom-0 left-auto right-auto z-20  bg-white rounded-lg py-6 px-8 text-center mxmx-auto mb-16 md:bottom-36 md:left-36">
+                <h2 class="text-lg md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
+                <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
+            </div>
+            <div class="absolute md:hidden -bottom-6 left-5 right-5 z-50 bg-white rounded-lg py-6 px-5 text-center">
+                <h2 class="text-[26px] md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
+                <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
+            </div>
+        </div>
+
+    </div>
 
     {% include "core/components/footer.html" %}
 
