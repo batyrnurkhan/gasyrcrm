@@ -6,8 +6,8 @@
     {% include "core/components/navbar-main-without-links.html" %}
 
 
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
-        <div class="white-block px-5 pt-10 md:pt-0 md:px-0 md:p-10">
+    <div class="container content px-5  bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-6 md:pt-14">
+        <div class="white-block  px-[10px] pt-10 md:pt-10 md:px-0 md:p-10">
             <form id="change_profile" class="w-full" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="flex flex-col md:flex-row gap-5">
@@ -139,7 +139,7 @@
                     </div>
                 </div>
             </form>
-            <div class="flex flex-col md:flex-row gap-2 md:gap-5">
+            <div class="flex flex-col md:flex-row pb-5 md:pb-0 gap-2 mb-32 md:gap-5">
                 <div class="hidden md:block md:w-1/4"></div>
                 <div class=" md:w-1/4">
                     <button onclick="check_form()"

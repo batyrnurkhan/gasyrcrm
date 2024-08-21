@@ -1,6 +1,6 @@
 {% load static %}
 
-<div class="block bg-white rounded-lg p-8 text-start">
+<div class="block bg-white rounded-lg md:p-8 text-start">
     <div class="block bg-cover bg-center h-36 w-full p-3 mb-6 rounded-lg"
          style="background-image: url('{% if course.course_picture %}/media/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
         <div class="float-left bg-cover bg-center w-8 h-8 rounded-full border-2 border-white"
@@ -15,7 +15,7 @@
         <h2 class="text-2xl font-semibold mb-3">{{ course.course_name }}</h2>
         <p class="font-light text-sm mb-7">{{ course.big_description }} </p>
         <div class="flex flex-row justify-between">
-            <a class="block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
+            <a class="w-full md:w-fit block min-w-[268px] text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
                href="{% url 'courses:course_start' pk=course.id %}">Продолжить курс</a>
             <div class="block w-1/2 text-center p-3 bg-[#F3F3F3] rounded-lg font-semibold">
                 Пройдено: {{ completion_percentage|floatformat:'0' }}%

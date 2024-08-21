@@ -4,8 +4,16 @@
 <head>
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static "core/css/output.css" %}" rel="stylesheet">
+    <style>
+        @media screen and (min-width: 1120px) {
+            body {
+                zoom: 80%;
+            }
+        }
+    </style>
 </head>
 <body class="{% block body-classes %}{% endblock %}">
+    {% comment %}  {% endcomment %}
 {% block content %}
     {% csrf_token %}
 {% endblock %}

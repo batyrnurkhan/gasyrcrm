@@ -1082,6 +1082,38 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   top: 30px;
 }
 
+.-bottom-14 {
+  bottom: -3.5rem;
+}
+
+.bottom-14 {
+  bottom: 3.5rem;
+}
+
+.bottom-\[44px\] {
+  bottom: 44px;
+}
+
+.bottom-11 {
+  bottom: 2.75rem;
+}
+
+.bottom-9 {
+  bottom: 2.25rem;
+}
+
+.bottom-8 {
+  bottom: 2rem;
+}
+
+.-bottom-6 {
+  bottom: -1.5rem;
+}
+
+.-bottom-5 {
+  bottom: -1.25rem;
+}
+
 .-z-10 {
   z-index: -10;
 }
@@ -1137,11 +1169,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .mx-1\.5 {
   margin-left: 0.375rem;
   margin-right: 0.375rem;
-}
-
-.mx-4 {
-  margin-left: 1rem;
-  margin-right: 1rem;
 }
 
 .mx-\[35px\] {
@@ -1221,16 +1248,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: 5rem;
 }
 
-.mb-28 {
-  margin-bottom: 7rem;
-}
-
 .mb-3 {
   margin-bottom: 0.75rem;
 }
 
 .mb-3\.5 {
   margin-bottom: 0.875rem;
+}
+
+.mb-32 {
+  margin-bottom: 8rem;
 }
 
 .mb-36 {
@@ -1249,6 +1276,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: 1.5rem;
 }
 
+.mb-64 {
+  margin-bottom: 16rem;
+}
+
 .mb-7 {
   margin-bottom: 1.75rem;
 }
@@ -1259,10 +1290,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .mb-9 {
   margin-bottom: 2.25rem;
-}
-
-.mb-\[100px\] {
-  margin-bottom: 100px;
 }
 
 .mb-\[10px\] {
@@ -1377,16 +1404,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: 8px;
 }
 
-.mb-auto {
-  margin-bottom: auto;
-}
-
 .ml-1 {
   margin-left: 0.25rem;
 }
 
 .ml-10 {
   margin-left: 2.5rem;
+}
+
+.ml-14 {
+  margin-left: 3.5rem;
 }
 
 .ml-3\.5 {
@@ -1403,10 +1430,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .ml-8 {
   margin-left: 2rem;
-}
-
-.ml-\[106px\] {
-  margin-left: 106px;
 }
 
 .ml-\[12px\] {
@@ -1447,6 +1470,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .mr-2 {
   margin-right: 0.5rem;
+}
+
+.mr-2\.5 {
+  margin-right: 0.625rem;
 }
 
 .mr-3 {
@@ -1545,6 +1572,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-top: 1.25rem;
 }
 
+.mt-7 {
+  margin-top: 1.75rem;
+}
+
 .mt-\[10px\] {
   margin-top: 10px;
 }
@@ -1609,16 +1640,20 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-top: auto;
 }
 
-.ml-5 {
-  margin-left: 1.25rem;
+.mt-\[14px\] {
+  margin-top: 14px;
 }
 
-.mt-8 {
-  margin-top: 2rem;
+.mb-44 {
+  margin-bottom: 11rem;
 }
 
-.mt-12 {
-  margin-top: 3rem;
+.mb-48 {
+  margin-bottom: 12rem;
+}
+
+.mb-52 {
+  margin-bottom: 13rem;
 }
 
 .block {
@@ -1696,10 +1731,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .h-8 {
   height: 2rem;
-}
-
-.h-80 {
-  height: 20rem;
 }
 
 .h-\[100px\] {
@@ -1842,6 +1873,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   height: 80px;
 }
 
+.h-\[90px\] {
+  height: 90px;
+}
+
 .h-\[auto\] {
   height: auto;
 }
@@ -1857,10 +1892,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .h-screen {
   height: 100vh;
-}
-
-.h-\[92px\] {
-  height: 92px;
 }
 
 .max-h-0 {
@@ -2414,8 +2445,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-width: 995px;
 }
 
-.max-w-full {
-  max-width: 100%;
+.max-w-md {
+  max-width: 28rem;
 }
 
 .max-w-xs {
@@ -2474,6 +2505,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 .grid-cols-2 {
@@ -2542,6 +2577,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .gap-1 {
   gap: 0.25rem;
+}
+
+.gap-10 {
+  gap: 2.5rem;
 }
 
 .gap-2 {
@@ -2771,14 +2810,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-wrap: wrap;
 }
 
-.text-nowrap {
-  text-wrap: nowrap;
-}
-
-.break-words {
-  overflow-wrap: break-word;
-}
-
 .rounded {
   border-radius: 0.25rem;
 }
@@ -2866,24 +2897,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   border-bottom-width: 1px;
 }
 
-.border-b-2 {
-  border-bottom-width: 2px;
-}
-
 .border-b-\[1px\] {
   border-bottom-width: 1px;
 }
 
-.border-l-2 {
-  border-left-width: 2px;
-}
-
 .border-r {
   border-right-width: 1px;
-}
-
-.border-r-2 {
-  border-right-width: 2px;
 }
 
 .border-t {
@@ -2901,6 +2920,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .border-\[\#8D8D8D\] {
   --tw-border-opacity: 1;
   border-color: rgb(141 141 141 / var(--tw-border-opacity));
+}
+
+.border-\[\#BA2025\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(186 32 37 / var(--tw-border-opacity));
 }
 
 .border-\[\#C6C6C6\] {
@@ -3297,6 +3321,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-right: 2.75rem;
 }
 
+.px-12 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
 .px-16 {
   padding-left: 4rem;
   padding-right: 4rem;
@@ -3677,11 +3706,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 4px;
 }
 
-.py-\[52px\] {
-  padding-top: 52px;
-  padding-bottom: 52px;
-}
-
 .py-\[5px\] {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -3702,9 +3726,19 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 9px;
 }
 
-.px-0 {
-  padding-left: 0px;
-  padding-right: 0px;
+.py-12 {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.py-11 {
+  padding-top: 2.75rem;
+  padding-bottom: 2.75rem;
+}
+
+.py-\[46px\] {
+  padding-top: 46px;
+  padding-bottom: 46px;
 }
 
 .pb-10 {
@@ -3727,12 +3761,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 1rem;
 }
 
-.pb-48 {
-  padding-bottom: 12rem;
-}
-
 .pb-5 {
   padding-bottom: 1.25rem;
+}
+
+.pb-52 {
+  padding-bottom: 13rem;
 }
 
 .pb-6 {
@@ -3915,6 +3949,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-right: 1rem;
 }
 
+.pr-5 {
+  padding-right: 1.25rem;
+}
+
 .pr-6 {
   padding-right: 1.5rem;
 }
@@ -4023,6 +4061,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-top: 24px;
 }
 
+.pt-\[30px\] {
+  padding-top: 30px;
+}
+
 .pt-\[32px\] {
   padding-top: 32px;
 }
@@ -4059,24 +4101,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-top: 62px;
 }
 
-.pt-\[76px\] {
-  padding-top: 76px;
-}
-
 .pt-\[78px\] {
   padding-top: 78px;
 }
 
 .pt-\[90px\] {
   padding-top: 90px;
-}
-
-.pb-52 {
-  padding-bottom: 13rem;
-}
-
-.pr-5 {
-  padding-right: 1.25rem;
 }
 
 .text-left {
@@ -4330,10 +4360,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   line-height: 36px;
 }
 
-.leading-\[38px\] {
-  line-height: 38px;
-}
-
 .leading-\[40px\] {
   line-height: 40px;
 }
@@ -4433,6 +4459,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .text-\[\#B5B5B5\] {
   --tw-text-opacity: 1;
   color: rgb(181 181 181 / var(--tw-text-opacity));
+}
+
+.text-\[\#BA2025\] {
+  --tw-text-opacity: 1;
+  color: rgb(186 32 37 / var(--tw-text-opacity));
 }
 
 .text-\[\#C7C7C7\] {
@@ -4560,6 +4591,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-sm {
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .shadow-\[\#fffff\] {
   --tw-shadow-color: #fffff;
   --tw-shadow: var(--tw-shadow-colored);
@@ -4645,6 +4682,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   accent-color: #BA2025;
 }
 
+.hover\:bg-\[\#BA2025\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+}
+
 .hover\:bg-accent-red:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(186 32 37 / var(--tw-bg-opacity));
@@ -4662,11 +4704,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-\[\#BA2025\]:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
 }
 
 .hover\:font-semibold:hover {
@@ -4706,9 +4743,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-decoration-line: none;
 }
 
-.focus\:bg-\[\#BA2025\]:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
+.hover\:outline-none:hover {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
 }
 
 .focus\:outline-none:focus {
@@ -4722,11 +4759,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
-.active\:bg-\[\#BA2025\]:active {
-  --tw-bg-opacity: 1;
-  background-color: rgb(186 32 37 / var(--tw-bg-opacity));
-}
-
 .group:hover .group-hover\:block {
   display: block;
 }
@@ -4736,52 +4768,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     margin-bottom: 0px;
   }
 
-  .sm\:mb-32 {
-    margin-bottom: 8rem;
-  }
-
-  .sm\:mb-6 {
-    margin-bottom: 1.5rem;
-  }
-
   .sm\:mt-0 {
     margin-top: 0px;
   }
 
-  .sm\:mt-6 {
-    margin-top: 1.5rem;
-  }
-
-  .sm\:inline {
-    display: inline;
-  }
-
   .sm\:flex-row {
     flex-direction: row;
-  }
-
-  .sm\:px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .sm\:py-8 {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-  }
-
-  .sm\:text-3xl {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
-
-  .sm\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
-  .sm\:leading-tight {
-    line-height: 1.25;
   }
 }
 
@@ -4830,6 +4822,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     top: 0px;
   }
 
+  .md\:left-32 {
+    left: 8rem;
+  }
+
   .md\:-z-10 {
     z-index: -10;
   }
@@ -4838,17 +4834,22 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     order: 1;
   }
 
+  .md\:mx-4 {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
   .md\:my-\[30px\] {
     margin-top: 30px;
     margin-bottom: 30px;
   }
 
-  .md\:mb-0 {
-    margin-bottom: 0px;
+  .md\:mb-\[12px\] {
+    margin-bottom: 12px;
   }
 
-  .md\:mb-64 {
-    margin-bottom: 16rem;
+  .md\:ml-\[106px\] {
+    margin-left: 106px;
   }
 
   .md\:ml-\[40px\] {
@@ -4863,6 +4864,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     margin-right: 2.25rem;
   }
 
+  .md\:mr-\[60px\] {
+    margin-right: 60px;
+  }
+
   .md\:mr-\[78px\] {
     margin-right: 78px;
   }
@@ -4871,20 +4876,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     margin-top: 0px;
   }
 
-  .md\:mt-\[20px\] {
-    margin-top: 20px;
+  .md\:mr-2\.5 {
+    margin-right: 0.625rem;
   }
 
-  .md\:mr-\[68px\] {
-    margin-right: 68px;
+  .md\:mb-64 {
+    margin-bottom: 16rem;
   }
 
-  .md\:mr-\[60px\] {
-    margin-right: 60px;
-  }
-
-  .md\:mb-\[12px\] {
-    margin-bottom: 12px;
+  .md\:mb-20 {
+    margin-bottom: 5rem;
   }
 
   .md\:block {
@@ -4911,6 +4912,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     height: 1.75rem;
   }
 
+  .md\:h-80 {
+    height: 20rem;
+  }
+
   .md\:h-\[250px\] {
     height: 250px;
   }
@@ -4923,8 +4928,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     height: 60px;
   }
 
-  .md\:h-\[92px\] {
-    height: 92px;
+  .md\:h-full {
+    height: 100%;
   }
 
   .md\:h-screen {
@@ -4939,8 +4944,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: 50%;
   }
 
+  .md\:w-1\/4 {
+    width: 25%;
+  }
+
   .md\:w-1\/5 {
     width: 20%;
+  }
+
+  .md\:w-2\/3 {
+    width: 66.666667%;
   }
 
   .md\:w-2\/5 {
@@ -4959,6 +4972,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: 1.75rem;
   }
 
+  .md\:w-\[220px\] {
+    width: 220px;
+  }
+
   .md\:w-\[285px\] {
     width: 285px;
   }
@@ -4972,8 +4989,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: fit-content;
   }
 
-  .md\:w-1\/4 {
-    width: 25%;
+  .md\:min-w-52 {
+    min-width: 13rem;
+  }
+
+  .md\:min-w-64 {
+    min-width: 16rem;
   }
 
   .md\:max-w-\[45px\] {
@@ -4982,6 +5003,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:max-w-none {
     max-width: none;
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .md\:flex-row {
@@ -5004,12 +5029,28 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     justify-content: center;
   }
 
+  .md\:gap-0 {
+    gap: 0px;
+  }
+
+  .md\:gap-20 {
+    gap: 5rem;
+  }
+
   .md\:gap-5 {
     gap: 1.25rem;
   }
 
+  .md\:gap-8 {
+    gap: 2rem;
+  }
+
   .md\:text-nowrap {
     text-wrap: nowrap;
+  }
+
+  .md\:border-b-2 {
+    border-bottom-width: 2px;
   }
 
   .md\:border-l {
@@ -5020,6 +5061,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     border-left-width: 2px;
   }
 
+  .md\:border-r-2 {
+    border-right-width: 2px;
+  }
+
   .md\:border-gray {
     border-color: rgba(194, 194, 194, 1);
   }
@@ -5027,6 +5072,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .md\:border-l-\[\#c6c6c6\] {
     --tw-border-opacity: 1;
     border-left-color: rgb(198 198 198 / var(--tw-border-opacity));
+  }
+
+  .md\:bg-white {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   }
 
   .md\:bg-none {
@@ -5041,12 +5091,20 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding: 0.375rem;
   }
 
+  .md\:p-10 {
+    padding: 2.5rem;
+  }
+
   .md\:p-6 {
     padding: 1.5rem;
   }
 
-  .md\:p-10 {
-    padding: 2.5rem;
+  .md\:p-8 {
+    padding: 2rem;
+  }
+
+  .md\:p-2\.5 {
+    padding: 0.625rem;
   }
 
   .md\:px-0 {
@@ -5054,19 +5112,74 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-right: 0px;
   }
 
+  .md\:px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+
   .md\:px-20 {
     padding-left: 5rem;
     padding-right: 5rem;
   }
 
-  .md\:px-4 {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  .md\:px-5 {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .md\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .md\:px-\[24px\] {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .md\:px-\[32px\] {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .md\:px-\[54px\] {
+    padding-left: 54px;
+    padding-right: 54px;
+  }
+
+  .md\:py-3 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
   .md\:py-4 {
     padding-top: 1rem;
     padding-bottom: 1rem;
+  }
+
+  .md\:py-\[32px\] {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  .md\:py-\[52px\] {
+    padding-top: 52px;
+    padding-bottom: 52px;
+  }
+
+  .md\:px-12 {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  .md\:py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
+  .md\:px-7 {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
   }
 
   .md\:pb-0 {
@@ -5085,12 +5198,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-right: 2.5rem;
   }
 
-  .md\:pr-\[150px\] {
-    padding-right: 150px;
-  }
-
   .md\:pt-0 {
     padding-top: 0px;
+  }
+
+  .md\:pt-10 {
+    padding-top: 2.5rem;
   }
 
   .md\:pt-12 {
@@ -5109,6 +5222,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-top: 52px;
   }
 
+  .md\:pl-5 {
+    padding-left: 1.25rem;
+  }
+
+  .md\:text-right {
+    text-align: right;
+  }
+
   .md\:text-start {
     text-align: start;
   }
@@ -5122,6 +5243,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 123px;
   }
 
+  .md\:text-\[16px\] {
+    font-size: 16px;
+  }
+
   .md\:text-\[24px\] {
     font-size: 24px;
   }
@@ -5130,8 +5255,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 32px;
   }
 
-  .md\:text-\[64px\] {
-    font-size: 64px;
+  .md\:text-\[40px\] {
+    font-size: 40px;
+  }
+
+  .md\:text-\[42px\] {
+    font-size: 42px;
   }
 
   .md\:text-\[93px\] {
@@ -5153,12 +5282,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     line-height: 1.25rem;
   }
 
-  .md\:text-\[40px\] {
-    font-size: 40px;
-  }
-
-  .md\:text-\[16px\] {
-    font-size: 16px;
+  .md\:text-\[64px\] {
+    font-size: 64px;
   }
 
   .md\:font-bold {
@@ -5173,8 +5298,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     line-height: 44px;
   }
 
-  .md\:leading-\[76\.8px\] {
-    line-height: 76.8px;
+  .md\:leading-\[76px\] {
+    line-height: 76px;
+  }
+
+  .md\:shadow-md {
+    --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   }
 }
 

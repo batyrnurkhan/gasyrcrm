@@ -21,39 +21,50 @@
                             <img class="h-[48px] w-[48px]" src="{% static 'core/images/crm2/stars-white.svg' %}"
                                  alt=""/>
                         </div>
-                        <ul class="flex flex-col results px-[30px] py-[24px] gap-y-[12px] w-full">
+                        <ul class="flex flex-row results px-[30px] py-[24px] gap-y-[12px] items-start w-full">
                             {% for grade_info in grades %}
-                                <li class="result__item flex w-full items-center justify-between">
+                                <li class="result__item flex flex-col gap-3 items-start md:flex-row w-full md:items-center justify-between">
                                     <p class="result__item-title min-w-[150px] font-semibold text-[16px] leading-[20px] text-black-main">{{ grade_info.grade.lesson.subject.name }}</p>
                                     {% with grade_info.grade.grade|divide:grade_info.grade.max_grade as percent %}
-                                        <div class="result__number text-white px-[13px] py-1 rounded-md font-semibold text-[16px] leading-5 text-center
+                                        <div class="hidden md:block result__number text-white px-[13px] py-1 rounded-md font-semibold text-[16px] leading-5 text-center
                                                     {% if percent >= 0.7 %}bg-[#51B812]{% elif percent >= 0.5 %}bg-[#D59822]{% else %}bg-[#C91D1D]{% endif %}">
                                             {{ grade_info.grade.grade }}/{{ grade_info.grade.max_grade }}
                                         </div>
                                     {% endwith %}
-                                    {% if grade_info.grade.file %}
+                                    
+                                    <div class="flex flex-col-reverse justify-between gap-3 md:gap-20 md:flex-row"> 
+                                        {% if grade_info.grade.file %}
                                         <a href="{% url 'subjects:download_grade_file' grade_info.grade.id %}" class="result__link underline text-black-main text-[16px] leading-[20px] font-semibold">
-                                            <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
+                                            <img class="inline mr-2" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
                                             Работа с ошибками
                                         </a>
-                                    {% else %}
+                                        {% else %}
                                         <span class="result__link text-black-main text-[16px] leading-[20px] font-semibold">
-                                            <img class="inline" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
+                                            <img class="inline mr-2" src="{% static 'core/icons/download-black-main.svg' %}" alt="">
                                             No file available
                                         </span>
-                                    {% endif %}
-                                    <div class="flex flex-row items-center">
-                                        {% if grade_info.teacher.profile_picture %}
+                                        {% endif %}
+
+                                        <div class="flex flex-row items-center">
+                                            {% if grade_info.teacher.profile_picture %}
                                             <img src="{{ grade_info.teacher.profile_picture }}"
                                                  alt="Teacher's Profile Picture" class="w-[32px] h-[32px] rounded-full">
-                                        {% else %}
+                                            {% else %}
                                             <img src="{% static 'core/images/default-user.svg' %}"
                                                  alt="No Profile Picture"
                                                  class="w-[32px] h-[32px] rounded-full">
-                                        {% endif %}
-                                        <p class="author__fullname font-semibold text-[16px] leading-[20px] text-black-main ml-[18px]">{{ grade_info.teacher.full_name }}</p>
+                                            {% endif %}
+                                            <p class="author__fullname font-semibold text-[16px] leading-[20px] text-black-main ml-[18px]">{{ grade_info.teacher.full_name }}</p>
+                                        </div>
                                     </div>
+                                    
                                 </li>
+                                {% with grade_info.grade.grade|divide:grade_info.grade.max_grade as percent %}
+                                <div class="md:hidden result__number text-white py-1 px-3 rounded-[10px] w-fit font-semibold text-[16px] leading-5 text-center
+                                            {% if percent >= 0.7 %}bg-[#51B812]{% elif percent >= 0.5 %}bg-[#D59822]{% else %}bg-[#C91D1D]{% endif %}">
+                                    {{ grade_info.grade.grade }}/{{ grade_info.grade.max_grade }}
+                                </div>
+                                {% endwith %}
                             {% endfor %}
                         </ul>
                     </div>
