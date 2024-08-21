@@ -4,23 +4,23 @@
 {% block title %}Gasyr - foundation school{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-welcome.html' %}
-    <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center"
+    <div class="container px-5 md:px-0 content bg-no-repeat bg-top mx-auto font-[Qanelas] text-center"
          style="background-image: url('{% static 'core/images/background.png' %}'); background-size: 100%">
-        <div class="border rounded-lg border-accent-red text-center inline-block py-16 px-12 mt-14 mb-64 bg-white">
-            <h1 class="text-black-main font-semibold" style="font-size: 64px; line-height: 76.8px">
+        <div class="border rounded-lg border-accent-red text-center inline-block py-10 md:py-16 px-5 md:px-12 mt-14 mb-64 bg-white">
+            <h1 class="text-black-main font-semibold text-3xl md:text-[64px] md:leading-[76px]">
                 Добро пожаловать <br/>в сообщество <span style="color: rgba(186, 32, 37, 1)">GasyrFoundation</span>
             </h1>
-            <p class="text-base text-black-main mb-10" style="letter-spacing: 0.01rem">
+            <p class="text-base text-black-main mt-[14px] md:mt-0 mb-10" style="letter-spacing: 0.01rem">
                 Платформа по подготовке в зарубежные ВУЗы от Gasyr Foundation School
             </p>
-            <div class="flex flex-row items-center justify-center">
-                <a class="bg-accent-red rounded-lg p-6 text-white mr-2.5" href="{% url 'users:login' %}">
+            <div class="flex flex-col gap-3 md:flex-row items-center justify-center">
+                <a class="bg-accent-red w-full md:w-fit rounded-lg p-6 text-white" href="{% url 'users:login' %}">
                     Войти на платформу
                     <img class="inline ml-14" src="{% static 'core/icons/rounded-right-arrow-white.svg' %}" alt=""/>
                 </a>
-                <div class="border border-gray border-2 rounded-lg p-2.5 pl-5 flex flex-row items-center">
-                    <p class="mr-8">Впервые у нас?</p>
-                    <a class="border border-accent-red border-2 rounded-lg py-4 px-12 text-accent-red block font-semibold" href="{% url 'users:signup' %}">
+                <div class="border border-gray rounded-lg gap-[14px] md:gap-8 w-full md:w-fit p-4 md:p-2.5 md:pl-5 flex flex-col md:flex-row items-center">
+                    <p class="text-base font-semibold text-[#4F4F4F]">Впервые у нас?</p>
+                    <a class="border w-full md:w-fit border-accent-red rounded-lg py-5 px-12 text-accent-red block font-semibold" href="{% url 'users:signup' %}">
                         Регистрация
                     </a>
                 </div>

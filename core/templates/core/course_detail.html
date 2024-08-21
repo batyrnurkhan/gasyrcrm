@@ -7,7 +7,7 @@
     <div class="container content bg-no-repeat px-5 bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
         <div class="relative w-full rounded-lg h-[90px] md:h-80 bg-cover"
              style="background-image: url('{% if course.course_picture %}/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
-            <div class="absolute bottom-5 left-5 rounded-lg bg-white py-3 px-4 flex flex-row items-center">
+            <div class="hidden absolute bottom-5 left-5 rounded-lg bg-white py-3 px-4 md:flex flex-row items-center">
                 <p class="mr-[35px] font-semibold">Сложность</p>
                 <div class="inline-block relative">
                     <img src="{% static "core/icons/difficulty-empty.png" %}" alt="">
@@ -19,7 +19,16 @@
         </div>
         <div class="flex flex-row">
             <div class="w-full md:w-2/3 md:p-10 mr-auto">
-                <h1 class="font-bold mt-4 text-2xl md:text-[42px] mb-4">{{ course.course_name }}</h1>
+                <div class="md:hidden mt-4 rounded-lg bg-white py-3 px-4 w-fit flex flex-row items-center">
+                    <p class="mr-[35px] font-semibold">Сложность</p>
+                    <div class="inline-block relative">
+                        <img src="{% static "core/icons/difficulty-empty.png" %}" alt="">
+                        <div class="absolute top-0 overflow-hidden bg-no-repeat bg-cover h-3"
+                             style="width: {% widthratio course.course_difficulty 1 20 %}%; background-image: url('{% static "core/icons/difficulty-filled.png" %}')">
+                        </div>
+                    </div>
+                </div>
+                <h1 class="font-bold text-2xl md:text-[42px] mb-4">{{ course.course_name }}</h1>
                 <p class="font-light mb-9">{{ course.full_description }}</p>
                 {# Modules #}
                 {% for module in course.modules.all %}
@@ -53,29 +62,29 @@
                 {% endfor %}
                 <div class="md:hidden mb-4">
                     <div class="white-block">
-                        <div class="border-b border-gray p-8 pb-6 flex flex-row items-center">
+                        <div class="border-b border-gray p-4 pb-6 flex flex-row items-center">
                             <img class="w-full max-w-14 rounded-full" src="{% if course.created_by.profile_picture %}
                                     /{{ course.created_by.profile_picture }}
                                     {% else %}
                                     {% static "core/images/default-user.svg" %}
                                 {% endif %}" alt="">
                             <div class="ml-3.5 mr-8 h-fit">
-                                <h2 class="text-xl text-black-main font-bold">{{ course.created_by.full_name }}</h2>
+                                <h2 class="text-[16px] text-black-main font-bold">{{ course.created_by.full_name }}</h2>
                                 <p class="m-0">Учитель</p>
                             </div>
                         </div>
-                        <div class="p-8">
-                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-lg font-medium mb-2">
+                        <div class="p-4">
+                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-base font-medium mb-2">
                                 <img class="inline mr-5 align-text-top"
                                      src="{% static "core/icons/time-line-accent-red.svg" %}" alt="">
                                 {{ course.course_time }} часов
                             </div>
-                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-lg font-medium mb-2">
+                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-basetext-lg font-medium mb-2">
                                 <img class="inline mr-5 align-text-top"
                                      src="{% static "core/icons/book-open-line-accent-red.svg" %}" alt="">
                                 {{ modules_count }} модулей
                             </div>
-                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-lg font-medium mb-8">
+                            <div class="py-6 px-5 w-full border border-gray rounded-lg text-accent-red text-base font-medium mb-8">
                                 <img class="inline mr-5 align-text-top"
                                      src="{% static "core/icons/pencil-line-accent-red.svg" %}" alt="">
                                 {{ lessons_count }} уроков
@@ -88,7 +97,7 @@
                 </div>
 
                 {# About Teacher #}
-                <div class="rounded-lg bg-white p-8 mb-[42px]">
+                <div class="rounded-lg bg-white p-4 md:p-8 mb-[42px]">
                     <div class="flex flex-row items-center mb-5">
                         <img class="w-full max-w-14 rounded-full" src="{% if course.created_by.profile_picture %}
                                 /{{ course.created_by.profile_picture }}
@@ -152,7 +161,7 @@
 
 
         </div>
-        <h1 class="text-[42px] font-bold mb-3">Другие курсы</h1>
+        <h1 class="text-[24px] md:text-[42px] font-bold mt-7 md:mt-0 mb-3">Другие курсы</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
             {% for course in courses %}
                 {% include 'core/components/course-card-start.html' with course=course %}
