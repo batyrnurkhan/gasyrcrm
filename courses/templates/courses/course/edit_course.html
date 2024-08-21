@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 {% load static %}
-
+{% load course_tags %}
 {% block title %}{{ course.course_name }}{% endblock %}
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
@@ -65,43 +65,43 @@
                             </label>
                         </div>
                         <div class="w-3/4 px-3 flex flex-row items-center gap-4 mb-6">
-                            <div class="w-[280px]">
-                                <span class="float-left mb-2 font-semibold">Сколько часов длится весь курс?</span>
-                                <div class="my-container">
-                                    <div class="container__items border py-[25px] px-4 border-gray w-full rounded-lg rotate-180">
-                                        <input value="5" {% if form.course_difficulty.value >= 5 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Hard">
-                                        <label for="Very Hard">
-                                            <div class="star-stroke">
-                                                <div class="star-fill"></div>
-                                            </div>
-                                        </label>
-                                        <input value="4" {% if form.course_difficulty.value >= 4 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Hard">
-                                        <label for="Hard">
-                                            <div class="star-stroke">
-                                                <div class="star-fill"></div>
-                                            </div>
-                                        </label>
-                                        <input value="3" {% if form.course_difficulty.value >= 3 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Medium">
-                                        <label for="Medium">
-                                            <div class="star-stroke">
-                                                <div class="star-fill"></div>
-                                            </div>
-                                        </label>
-                                        <input value="2" {% if form.course_difficulty.value >= 2 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Easy">
-                                        <label for="Easy">
-                                            <div class="star-stroke">
-                                                <div class="star-fill"></div>
-                                            </div>
-                                        </label>
-                                        <input value="1" {% if form.course_difficulty.value >= 1 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Very Easy">
-                                        <label for="Very Easy">
-                                            <div class="star-stroke">
-                                                <div class="star-fill"></div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+<div class="w-[280px]">
+    <span class="float-left mb-2 font-semibold">Сложность курса {{ form.course_difficulty.value }}</span>
+    <div class="my-container">
+        <div class="container__items border py-[25px] px-4 border-gray w-full rounded-lg rotate-180">
+            <input value="5" {% if form.course_difficulty.value >= 5 %} checked {% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="VeryHard">
+            <label for="VeryHard">
+                <div class="star-stroke">
+                    <div class="star-fill"></div>
+                </div>
+            </label>
+            <input value="4" {% if form.course_difficulty.value >= 4 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Hard">
+            <label for="Hard">
+                <div class="star-stroke">
+                    <div class="star-fill"></div>
+                </div>
+            </label>
+            <input value="3" {% if form.course_difficulty.value >= 3 %}checked{% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Medium">
+            <label for="Medium">
+                <div class="star-stroke">
+                    <div class="star-fill"></div>
+                </div>
+            </label>
+            <input value="2" {% if form.course_difficulty.value >= 2 %} checked {% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="Easy">
+            <label for="Easy">
+                <div class="star-stroke">
+                    <div class="star-fill"></div>
+                </div>
+            </label>
+            <input value="1" {% if form.course_difficulty.value >= 1 %} checked {% endif %} type="radio" name="{{ form.course_difficulty.name }}" id="VeryEasy">
+            <label for="VeryEasy">
+                <div class="star-stroke">
+                    <div class="star-fill"></div>
+                </div>
+            </label>
+        </div>
+    </div>
+</div>
                             <div>
                                 Выбирайте количество кружочков по мере сложности вашего курса. Словно вы ставите рейтинг
                                 таксисту в Яндекс.GO

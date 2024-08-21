@@ -41,3 +41,4 @@ def calculate_completion_percentage(course, user):
 def get_pass(phone, request):
     print(phone, request)
     return request.session.get(phone, 'Expired')
+

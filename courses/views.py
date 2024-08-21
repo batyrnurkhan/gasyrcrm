@@ -1,9 +1,12 @@
 import json
+import os
 import traceback
 
 import magic
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse, HttpResponseRedirect, \
     HttpResponseNotAllowed, Http404
@@ -79,11 +82,21 @@ class CreateCourseStep1View(View):
         form = CourseFormStep1(request.POST, request.FILES)
         if form.is_valid():
             course_step1_data = form.cleaned_data
+
+            # Handle file saving
+            course_picture = form.cleaned_data.get('course_picture')
+            if course_picture:
+                fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'temp'))
+                filename = fs.save(course_picture.name, course_picture)
+                file_path = fs.path(filename)
+                request.session['course_picture_path'] = file_path
+
             course_step1_data.pop('course_picture', None)
             request.session['course_step1_data'] = course_step1_data
             return redirect('courses:create_course_step2')
         return render(request, 'courses/course/create_course_step1.html', {'form': form})
 
+from django.core.files import File
 
 class CreateCourseStep2View(View):
     def get(self, request, *args, **kwargs):
@@ -96,8 +109,21 @@ class CreateCourseStep2View(View):
             course_data = request.session.get('course_step1_data', {})
             course = Course(**course_data, **form.cleaned_data)
             course.created_by = request.user
+
+            # Handle file retrieval and attachment
+            course_picture_path = request.session.get('course_picture_path')
+            if course_picture_path:
+                with open(course_picture_path, 'rb') as f:
+                    course.course_picture.save(os.path.basename(course_picture_path), File(f), save=False)
+
             course.save()
+
+            # Clean up session data and temporary file
             del request.session['course_step1_data']
+            if 'course_picture_path' in request.session:
+                os.remove(request.session['course_picture_path'])
+                del request.session['course_picture_path']
+
             return redirect('courses:create_course_step3', course_id=course.id)
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
