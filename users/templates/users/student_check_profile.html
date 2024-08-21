@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block title %}{{ user.full_name }}{% endblock %}
+
+{% block content %}
+    {% include "core/components/navbar-main-without-links.html" %}
+
+    <div class="container content px-5  bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-6 md:pt-14">
+        <!-- Display profile picture -->
+            {% if student.profile_picture %}
+                <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}" class="profile-picture"/>
+            {% else %}
+                <img src="{% static 'core/images/anonymous-user-image.png' %}" alt="No Profile Picture" class="profile-picture"/>
+            {% endif %}
+
+            <!-- Display full name -->
+            <p><strong>Full Name:</strong> {{ student.full_name }}</p>
+
+            <!-- Display role -->
+            <p><strong>Role:</strong> {{ student.get_role_display }}</p>
+
+            <!-- Display phone number -->
+            <p><strong>Phone Number:</strong> {{ student.phone_number }}</p>
+
+            <!-- Display city -->
+            <p><strong>City:</strong> {{ student.user_city }}</p>
+
+            <!-- Display email -->
+            <p><strong>Email:</strong> {{ student.email }}</p>
+         <p><strong>Страна поступление:</strong>
+                <span id="admission_country" contenteditable="true">{{ student.admission_country }}</span>
+            </p>
+            <p><strong>Класс обучения:</strong>
+                <span id="education_class" contenteditable="true">{{ student.education_class }}</span>
+            </p>
+            <p><strong>Дата регистрации:</strong>
+                <span>{{ student.registration_date }}</span>
+            </p>
+            <p><strong>Дата окончание договора:</strong>
+                <span>{{ student.contract_end_date }}</span>
+            </p>
+        </div>
+
+        <!-- Save Button -->
+        <button id="saveButton">
+            Save
+        </button>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+    $('#saveButton').click(function () {
+        // Collect the data from all the editable fields
+        var data = {
+            'admission_country': $('#admission_country').text(),
+            'education_class': $('#education_class').text(),
+            'csrfmiddlewaretoken': '{{ csrf_token }}'
+        };
+
+        // Send the updated data via AJAX
+        $.ajax({
+            url: "{% url 'users:student_check_profile' pk=student.pk %}",  // Correct URL pattern
+            type: 'POST',
+            data: data,
+            success: function (response) {
+                if (response.success) {
+                    $('#messageElement').text(response.message).addClass('success').removeClass('error').show();
+                } else {
+                    $('#messageElement').text(response.message).addClass('error').removeClass('success').show();
+                }
+            },
+            error: function () {
+                $('#messageElement').text('An error occurred while saving changes.').addClass('error').removeClass('success').show();
+            }
+        });
+    });
+});
+
+    </script>
+{% endblock %}

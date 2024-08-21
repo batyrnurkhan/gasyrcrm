@@ -52,29 +52,36 @@
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">
             <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
-            <div class="flex flex-col gap-3">
-                {% for student in students %}
-                    <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
-                        <img class="w-[60px] h-[60px] object-cover rounded-full mr-6"
-                             src="{% if student.profile_picture %}
-                                /{{ student.profile_picture.url }}
-                                {% else %}
-                                {% static "core/images/anonymous-user-image.png" %}
-                                {% endif %}">
-                        <p class="w-[30%]">{{ student.full_name }}</p>
-                        <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
-                        <p class="w-[15%]">12.12.2024</p>
-                        <p class="w-[12%]">{{ student.login_code }}</p>
-                        <a href="{% url 'courses:student_results' course_id=course.id student_login_code=student.login_code %}" class="text-blue-ielts underline">Результаты</a>
-                    </div>
-                {% empty %}
-                    <div class="bg-white p-[50px] rounded-lg text-center">
-                        <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
-                        <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
-                    </div>
-                {% endfor %}
-            </div>
+<div class="flex flex-col gap-3">
+    {% for student in students %}
+        <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
+            <img class="w-[60px] h-[60px] object-cover rounded-full mr-6"
+                 src="{% if student.profile_picture %}
+                    /{{ student.profile_picture.url }}
+                    {% else %}
+                    {% static "core/images/anonymous-user-image.png" %}
+                    {% endif %}">
+            <p class="w-[30%]">{{ student.full_name }}</p>
+            <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
+            <!-- Change Date to Данные -->
+            <p class="w-[15%]">
+                <p class="w-[15%]">
+    <a href="{% url 'users:student_check_profile' student_id=student.id %}" class="text-blue-ielts underline">
+        Данные
+    </a>
+</p>
+
+            </p>
+            <p class="w-[12%]">{{ student.login_code }}</p>
+            <a href="{% url 'courses:student_results' course_id=course.id student_login_code=student.login_code %}" class="text-blue-ielts underline">Результаты</a>
         </div>
+    {% empty %}
+        <div class="bg-white p-[50px] rounded-lg text-center">
+            <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
+            <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
+        </div>
+    {% endfor %}
+</div>        </div>
     </div>
     <script>
         $(document).ready(function () {

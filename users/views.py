@@ -8,10 +8,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-from django.shortcuts import render, redirect
-from django.views.generic import TemplateView, View
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import TemplateView, View, DetailView
+from django.views.generic.edit import FormMixin
+
 from users.forms import CustomUserAuthenticationForm, AccessCodeForm, ProfileUpdateForm, PasswordChangeForm, \
-    TeacherCreationForm
+    TeacherCreationForm, StudentProfileForm
 from users.models import CustomUser
 
 logger = logging.getLogger(__name__)
@@ -206,3 +208,29 @@ def create_teacher(request):
     phone = request.GET.get('phone')
     if phone: context['phone'] = phone
     return render(request, 'users/create_teacher.html', context)
+
+
+
+class StudentCheckProfileView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = 'users/student_check_profile.html'
+    context_object_name = 'student'
+
+    def post(self, request, *args, **kwargs):
+        student = self.get_object()
+        # Get data from the request
+        admission_country = request.POST.get('admission_country')
+        education_class = request.POST.get('education_class')
+
+        try:
+            # Update the student object
+            if admission_country is not None:
+                student.admission_country = admission_country
+            if education_class is not None:
+                student.education_class = education_class
+
+            student.save()
+
+            return JsonResponse({'success': True, 'message': 'Changes saved successfully!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': 'An error occurred while saving changes.'})

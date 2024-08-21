@@ -526,9 +526,51 @@ class LiteratureDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['literatures'] = self.object.literatures.all()
-        return context
+        lesson = self.get_object()
+        module = lesson.module
+        course = module.course
 
+        # Add module and course to the context
+        context['module'] = module
+        context['course'] = course
+        context['lesson_position'] = module.lessons.filter(id__lte=lesson.id).count()
+        context['literatures'] = lesson.literatures.all()
+
+        # Add modules for the sidebar
+        modules = course.modules.prefetch_related(
+            Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
+        )
+        accessible_modules = []
+        blocked_modules = []
+
+        previous_module_passed = True
+        user = self.request.user
+
+        for module in modules:
+            module_tests = module.tests.all()
+            lesson_tests = Test.objects.filter(
+                content_type=ContentType.objects.get_for_model(Lesson),
+                object_id__in=module.lessons.values_list('id', flat=True)
+            )
+            all_tests = (module_tests | lesson_tests).distinct()
+
+            if all_tests.exists():
+                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
+                user_passed_all_tests = passed_tests.count() == all_tests.count()
+            else:
+                user_passed_all_tests = True
+
+            if previous_module_passed:
+                module.accessible = True
+                accessible_modules.append(module)
+            else:
+                module.accessible = False
+                blocked_modules.append(module)
+
+            previous_module_passed = user_passed_all_tests
+
+        context['modules'] = accessible_modules + blocked_modules  # Show all modules
+        return context
 
 
 class HomeworkDetailView(DetailView):
@@ -545,7 +587,50 @@ class HomeworkDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['homeworks'] = self.object.homeworks.all()
+        lesson = self.get_object()
+        module = lesson.module
+        course = module.course
+
+        # Add module and course to the context
+        context['module'] = module
+        context['course'] = course
+        context['lesson_position'] = module.lessons.filter(id__lte=lesson.id).count()
+        context['homeworks'] = lesson.homeworks.all()
+
+        # Add modules for the sidebar
+        modules = course.modules.prefetch_related(
+            Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
+        )
+        accessible_modules = []
+        blocked_modules = []
+
+        previous_module_passed = True
+        user = self.request.user
+
+        for module in modules:
+            module_tests = module.tests.all()
+            lesson_tests = Test.objects.filter(
+                content_type=ContentType.objects.get_for_model(Lesson),
+                object_id__in=module.lessons.values_list('id', flat=True)
+            )
+            all_tests = (module_tests | lesson_tests).distinct()
+
+            if all_tests.exists():
+                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
+                user_passed_all_tests = passed_tests.count() == all_tests.count()
+            else:
+                user_passed_all_tests = True
+
+            if previous_module_passed:
+                module.accessible = True
+                accessible_modules.append(module)
+            else:
+                module.accessible = False
+                blocked_modules.append(module)
+
+            previous_module_passed = user_passed_all_tests
+
+        context['modules'] = accessible_modules + blocked_modules  # Show all modules
         return context
 
 class ModuleDeleteViewAPI(APIView):

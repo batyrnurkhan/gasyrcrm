@@ -97,3 +97,14 @@ class TeacherCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user, password
+
+class StudentProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['admission_country', 'education_class', 'registration_date', 'contract_end_date']
+        widgets = {
+            'admission_country': forms.TextInput(attrs={'class': 'form-control'}),
+            'education_class': forms.TextInput(attrs={'class': 'form-control'}),
+            'registration_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'contract_end_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }

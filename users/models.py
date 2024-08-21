@@ -1,4 +1,6 @@
 import re
+from datetime import timedelta, date
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import EmailValidator
@@ -43,14 +45,26 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     last_opened_content_id = models.PositiveIntegerField(null=True, blank=True)
 
+    admission_country = models.CharField(max_length=255, verbose_name='Страна поступление', blank=True, null=True)
+    education_class = models.CharField(max_length=100, verbose_name='Класс обучения', blank=True, null=True)
+    registration_date = models.DateField(verbose_name='Дата регистрации', default=date.today, editable=True)
+    contract_end_date = models.DateField(verbose_name='Дата окончание договора', blank=True, null=True)
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = ['full_name', 'user_city']
 
     def save(self, *args, **kwargs):
+        # If registration_date is set and contract_end_date is not set, calculate and set it
+        if self.registration_date and not self.contract_end_date:
+            self.contract_end_date = self.registration_date + timedelta(days=120)  # Approximately 4 months
+
+        # Set has_access to True if the user is a Teacher
         if self.role == 'Teacher':
             self.has_access = True
+
+        # Call the parent save method to ensure the instance is saved correctly
         super(CustomUser, self).save(*args, **kwargs)
 
     class Meta:
