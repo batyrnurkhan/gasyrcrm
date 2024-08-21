@@ -387,20 +387,12 @@ class CourseModulesView(APIView):
 
     def put(self, request, course_id):
         course = Course.objects.get(pk=course_id)
-
-        # Print the incoming data to check its structure
-        print(f"Incoming data for update: {json.dumps(request.data, ensure_ascii=False)}")
-
         serializer = CourseSerializer(course, data=request.data, partial=True)  # partial=True allows partial updates
 
         if serializer.is_valid():
-            # Save and log the update process
             serializer.save()
-            print(f"Successfully updated course {course_id}")
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            # Log and respond with errors
-            print(f"Errors in update: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -807,3 +799,16 @@ def publishCourse(request, pk):
     return redirect('courses:course_detail_edit', pk=pk)
 
 
+class UploadLiteratureView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, lesson_id):
+        lesson = Lesson.objects.get(id=lesson_id)
+        data = request.data.copy()
+        data['lesson'] = lesson.id  # Associate the literature with the lesson
+        serializer = LiteratureSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

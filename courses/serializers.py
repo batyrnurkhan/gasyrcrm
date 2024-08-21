@@ -5,33 +5,34 @@ from .models import Course, Module, Lesson, LessonLiterature, Homework
 class LiteratureSerializer(serializers.ModelSerializer):
     file = serializers.FileField(required=False, allow_null=True)
 
-    def validate_file(self, value):
-        # If the value is a string, assume it's a file path and skip validation
-        if isinstance(value, str):
-            return value
-
-        if value is None:
-            raise serializers.ValidationError("This field cannot be empty.")
-
-        # Assuming the uploaded file is passed, check its type
-        file_type = value.name.split('.')[-1].lower()
-        if file_type not in ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']:
-            raise serializers.ValidationError("Invalid file type.")
-
-        return value
-
     class Meta:
         model = LessonLiterature
         fields = ['id', 'file', 'literature_name', 'literature_type', 'lesson']
+
+    def update(self, instance, validated_data):
+        # Update fields if they are present in the request
+        instance.literature_name = validated_data.get('literature_name', instance.literature_name)
+        instance.literature_type = validated_data.get('literature_type', instance.literature_type)
+        instance.lesson = validated_data.get('lesson', instance.lesson)
+
+        # Only update the file if a new file is provided
+        new_file = validated_data.get('file', None)
+        if new_file:
+            instance.file = new_file
+
+        instance.save()
+        return instance
 
 
 class HomeworkSerializer(serializers.ModelSerializer):
     file = serializers.FileField(required=False, allow_null=True)
 
     def validate_file(self, value):
-        # Allow any file type, so no validation on file extensions
-        if value is None or value == '':
-            raise serializers.ValidationError("This field cannot be empty.")
+        print("Validating file:", value)  # Debug statement
+        if value:
+            file_type = value.name.split('.')[-1].lower()
+            if file_type not in ['pdf', 'doc', 'docx', 'jpg', 'png', 'txt']:
+                raise serializers.ValidationError("Invalid file type. Allowed types: pdf, doc, docx, jpg, png, txt.")
         return value
 
     class Meta:
@@ -40,33 +41,39 @@ class HomeworkSerializer(serializers.ModelSerializer):
 
 
 class LessonFullSerializer(serializers.ModelSerializer):
-    literatures = LiteratureSerializer(many=True)
+    literatures = LiteratureSerializer(many=True, required=False)
     id = serializers.IntegerField(required=False)
-    homeworks = HomeworkSerializer(many=True)
-
-
-    def save(self, **kwargs):
-        # Directly manipulate self.validated_data if needed
-        if 'lesson_name' in self.validated_data:
-            lesson_name = self.validated_data['lesson_name']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['lesson_name'] = lesson_name.encode('utf-8', 'ignore').decode('utf-8')
-        if 'video_link' in self.validated_data:
-            video_link = self.validated_data['video_link']
-            # Example operation, though this might be redundant if encoding is handled:
-            self.validated_data['video_link'] = video_link.encode('utf-8', 'ignore').decode('utf-8')
-
-        # Call the superclass method to actually save the data
-        return super(LessonFullSerializer, self).save(**kwargs)
+    homeworks = HomeworkSerializer(many=True, required=False)
 
     class Meta:
         model = Lesson
         fields = ['id', 'lesson_name', 'video_link', 'literatures', 'homeworks']
-    
-    def create(self, validated_data):
-        validated_data.pop("literatures")
-        return super().create(validated_data)
 
+    def create(self, validated_data):
+        literatures_data = validated_data.pop('literatures', [])
+        lesson = Lesson.objects.create(**validated_data)
+
+        for literature_data in literatures_data:
+            LessonLiterature.objects.create(lesson=lesson, **literature_data)
+
+        return lesson
+
+    def update(self, instance, validated_data):
+        literatures_data = validated_data.pop('literatures', None)
+
+        if literatures_data is not None:
+            for literature_data in literatures_data:
+                literature_id = literature_data.get('id')
+                if literature_id:
+                    literature = LessonLiterature.objects.get(id=literature_id, lesson=instance)
+                    literature.file = literature_data.get('file', literature.file)
+                    literature.literature_name = literature_data.get('literature_name', literature.literature_name)
+                    literature.literature_type = literature_data.get('literature_type', literature.literature_type)
+                    literature.save()
+                else:
+                    LessonLiterature.objects.create(lesson=instance, **literature_data)
+
+        return super().update(instance, validated_data)
 
 class LessonSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
@@ -157,10 +164,10 @@ class CourseSerializer(serializers.ModelSerializer):
                                 defaults=literature
                             )
                             if not created:
-                                print(f"Updating literature with file: {literature_instance.file}")  # Log for debugging
-                                # If literature is already present, update it
+                                # Only update literature if a file is provided or other fields are non-empty
                                 for key, value in literature.items():
-                                    setattr(literature_instance, key, value)
+                                    if value is not None and value != '':
+                                        setattr(literature_instance, key, value)
                                 literature_instance.save()
                             literatures.append(literature_instance)
                         lesson.literatures.set(literatures)
@@ -174,7 +181,8 @@ class CourseSerializer(serializers.ModelSerializer):
                             )
                             if not created:
                                 for key, value in homework.items():
-                                    setattr(homework_instance, key, value)
+                                    if value is not None and value != '':
+                                        setattr(homework_instance, key, value)
                                 homework_instance.save()
                             homeworks.append(homework_instance)
                         lesson.homeworks.set(homeworks)

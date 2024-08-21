@@ -7,7 +7,8 @@ from .views import (
     delete_literature, CourseFinalTestView, SuccessVideoLinkEditView, bulk_create_lessons, CourseModulesView,
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
     CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view, publishCourse,
-    student_test_results_view, HomeworkCreateViewAPI, HomeworkDetailView, LiteratureDetailView, HomeworkDeleteViewAPI
+    student_test_results_view, HomeworkCreateViewAPI, HomeworkDetailView, LiteratureDetailView, HomeworkDeleteViewAPI,
+    UploadLiteratureView
 )
 from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentTestPageView
 from django.conf import settings
@@ -69,4 +70,8 @@ urlpatterns = [
     path('module/<int:module_id>/bulk-create-lessons/', bulk_create_lessons, name='bulk_create_lessons'),
     path('module/<int:module_id>/update-module-and-lessons/', bulk_create_lessons, name='update_module_and_lessons'),
     path('<int:course_id>/modules/api/', CourseModulesView.as_view(), name='course-modules'),
+
+    path('lessons/<int:lesson_id>/literature/upload/', UploadLiteratureView.as_view(),
+                       name='upload-literature'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
