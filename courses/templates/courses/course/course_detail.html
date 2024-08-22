@@ -16,7 +16,7 @@
             <form id="searchForm" method="get" action="{% url 'courses:search_students' %}">
                 <div class="relative mb-3">
                     <input type="text" name="login_code" id="id_login_code"
-                           class="peer w-full placeholder-black-main py-6 px-8 border border-gray rounded-lg"
+                           class="peer focus:outline-none w-full placeholder-black-main py-6 px-8 border border-gray rounded-lg"
                            placeholder="Добавить ученика по ID" required>
                     <img class="absolute inset-y-1/2 -translate-y-1/2 right-6 peer-focus-hidden border-transparent focus:border-transparent focus:ring-0"
                          src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
@@ -52,36 +52,65 @@
         </div>
         <div class="bg-white p-14 rounded-lg mb-36">
             <h2 class="text-[32px] font-semibold pb-[13px]">Ученики</h2>
-<div class="flex flex-col gap-3">
-    {% for student in students %}
-        <div class="w-full p-2.5 pr-6 border border-gray rounded-lg flex flex-row items-center text-xl">
-            <img class="w-[60px] h-[60px] object-cover rounded-full mr-6"
-                 src="{% if student.profile_picture %}
-                    /{{ student.profile_picture.url }}
-                    {% else %}
-                    {% static "core/images/anonymous-user-image.png" %}
-                    {% endif %}">
-            <p class="w-[30%]">{{ student.full_name }}</p>
-            <p class="w-[20%]">{{ student.phone_number|format_phone_number }}</p>
-            <!-- Change Date to Данные -->
-            <p class="w-[15%]">
-                <p class="w-[15%]">
-    <a href="{% url 'users:student_check_profile' pk=student.id %}" class="text-blue-ielts underline">Данные</a>
-
-</p>
-
-            </p>
-            <p class="w-[12%]">{{ student.login_code }}</p>
-            <a href="{% url 'courses:student_results' course_id=course.id student_login_code=student.login_code %}" class="text-blue-ielts underline">Результаты</a>
+            <div class="flex flex-col gap-3">
+                {% comment %} <div class="w-full p-2.5 pr-6 border border-[#CDCDCD] rounded-lg flex flex-row items-center text-xl">
+                </div> {% endcomment %}
+                <form >
+                    <div class="relative mb-3">
+                        <input type="text" name="login_code" id="id_login_code"
+                               class="peer focus:outline-none w-full placeholder-black-main py-6 px-8 border border-gray rounded-lg"
+                               placeholder="Добавить ученика по ID" required>
+                        <img class="absolute inset-y-1/2 -translate-y-1/2 right-6 peer-focus-hidden border-transparent focus:border-transparent focus:ring-0"
+                             src="{% static 'core/icons/search-accent-red.svg' %}" alt="">
+                        <button class="absolute inset-y-2 right-2 text-center rounded-lg bg-accent-red text-white text-lg font-semibold hidden w-[189px] h-full-4 peer-focus-inline-block peer-valid-inline-block z-10" type="submit">
+                            Поиск
+                        </button>
+                    </div>
+                </form>
+                
+                {% for student in students %}
+                    <div class="flex flex-row items-center justify-between w-full p-2.5 pr-6 border border-[#CDCDCD] rounded-lg  text-xl">
+                        <div class="flex flex-row gap-6 pr-20 items-center">
+                            <img class="w-[60px] h-[60px] object-cover rounded-full mr-6"
+                             src="{% if student.profile_picture %}
+                                {{ student.profile_picture.url }}
+                                {% else %}
+                                {% static "core/images/anonymous-user-image.png" %}
+                                {% endif %}" alt='Ava'>
+                            <p class=" text-xl font-medium text-[#4F4F4F]">{{ student.full_name }}</p>
+                        </div>
+                        
+                        <p class="text-xl font-medium text-black">{{ student.phone_number|format_phone_number }}</p>
+                        <!-- Change Date to Данные -->
+                        <a class="text-xl font-medium text-black" href="{% url 'users:student_check_profile' pk=student.id %}" class="text-blue-ielts underline">Данные</a>
+                        <p class="text-xl font-medium text-black">{{ student.login_code }}</p>
+                        <a href="{% url 'courses:student_results' course_id=course.id student_login_code=student.login_code %}" class="text-blue-ielts underline">Результаты</a>
+                    </div>
+                {% empty %}
+                    <div class="bg-white p-[50px] rounded-lg text-center">
+                        <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
+                        <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
+                    </div>
+                {% endfor %}
+            </div>        
         </div>
-    {% empty %}
-        <div class="bg-white p-[50px] rounded-lg text-center">
-            <img class="mx-auto mb-6" src="{% static "core/images/cats/student.png" %}">
-            <p class="text-2xl font-bold ">Тут пока никого нет :(</p>
-        </div>
-    {% endfor %}
-</div>        </div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <script>
         $(document).ready(function () {
             $('#searchForm').submit(function (event) {
