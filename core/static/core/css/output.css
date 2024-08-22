@@ -1200,6 +1200,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: auto;
 }
 
+.mx-5 {
+  margin-left: 1.25rem;
+  margin-right: 1.25rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -1646,6 +1651,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .mr-20 {
   margin-right: 5rem;
+}
+
+.ml-5 {
+  margin-left: 1.25rem;
 }
 
 .block {
