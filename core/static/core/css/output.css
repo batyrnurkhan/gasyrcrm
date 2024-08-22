@@ -44,7 +44,7 @@ html,
   -moz-tab-size: 4;
   /* 3 */
   -o-tab-size: 4;
-     tab-size: 4;
+  tab-size: 4;
   /* 3 */
   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   /* 4 */
@@ -89,7 +89,7 @@ Add the correct text decoration in Chrome, Edge, and Safari.
 
 abbr:where([title]) {
   -webkit-text-decoration: underline dotted;
-          text-decoration: underline dotted;
+  text-decoration: underline dotted;
 }
 
 /*
@@ -239,7 +239,10 @@ button,
 input:where([type='button']),
 input:where([type='reset']),
 input:where([type='submit']) {
-  -webkit-appearance: button;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
   /* 1 */
   background-color: transparent;
   /* 2 */
@@ -286,7 +289,13 @@ Correct the cursor style of increment and decrement buttons in Safari.
 */
 
 [type='search'] {
-  -webkit-appearance: textfield;
+  /* Строка 292 */
+  -webkit-appearance: none;
+  /* Вендорный префикс для WebKit-браузеров */
+  -moz-appearance: none;
+  /* Вендорный префикс для Firefox */
+  appearance: none;
+  /* Стандартное свойство для остальных браузеров */
   /* 1 */
   outline-offset: -2px;
   /* 2 */
@@ -378,7 +387,8 @@ textarea {
 2. Set the default placeholder color to the user's configured gray 400 color.
 */
 
-input::-moz-placeholder, textarea::-moz-placeholder {
+input::-moz-placeholder,
+textarea::-moz-placeholder {
   opacity: 1;
   /* 1 */
   color: #9ca3af;
@@ -426,8 +436,6 @@ embed,
 object {
   display: block;
   /* 1 */
-  vertical-align: middle;
-  /* 2 */
 }
 
 /*
@@ -506,7 +514,9 @@ video {
   src: url('/static/core/fonts/QanelasBold.otf') format('woff2');
 }
 
-*, ::before, ::after {
+*,
+::before,
+::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
   --tw-translate-x: 0;
@@ -516,19 +526,19 @@ video {
   --tw-skew-y: 0;
   --tw-scale-x: 1;
   --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
   --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
   --tw-ring-color: rgb(59 130 246 / 0.5);
@@ -536,28 +546,28 @@ video {
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+  --tw-contain-size: ;
+  --tw-contain-layout: ;
+  --tw-contain-paint: ;
+  --tw-contain-style: ;
 }
 
 ::backdrop {
@@ -570,19 +580,19 @@ video {
   --tw-skew-y: 0;
   --tw-scale-x: 1;
   --tw-scale-y: 1;
-  --tw-pan-x:  ;
-  --tw-pan-y:  ;
-  --tw-pinch-zoom:  ;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
   --tw-scroll-snap-strictness: proximity;
-  --tw-gradient-from-position:  ;
-  --tw-gradient-via-position:  ;
-  --tw-gradient-to-position:  ;
-  --tw-ordinal:  ;
-  --tw-slashed-zero:  ;
-  --tw-numeric-figure:  ;
-  --tw-numeric-spacing:  ;
-  --tw-numeric-fraction:  ;
-  --tw-ring-inset:  ;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
   --tw-ring-color: rgb(59 130 246 / 0.5);
@@ -590,28 +600,28 @@ video {
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
   --tw-shadow-colored: 0 0 #0000;
-  --tw-blur:  ;
-  --tw-brightness:  ;
-  --tw-contrast:  ;
-  --tw-grayscale:  ;
-  --tw-hue-rotate:  ;
-  --tw-invert:  ;
-  --tw-saturate:  ;
-  --tw-sepia:  ;
-  --tw-drop-shadow:  ;
-  --tw-backdrop-blur:  ;
-  --tw-backdrop-brightness:  ;
-  --tw-backdrop-contrast:  ;
-  --tw-backdrop-grayscale:  ;
-  --tw-backdrop-hue-rotate:  ;
-  --tw-backdrop-invert:  ;
-  --tw-backdrop-opacity:  ;
-  --tw-backdrop-saturate:  ;
-  --tw-backdrop-sepia:  ;
-  --tw-contain-size:  ;
-  --tw-contain-layout:  ;
-  --tw-contain-paint:  ;
-  --tw-contain-style:  ;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+  --tw-contain-size: ;
+  --tw-contain-layout: ;
+  --tw-contain-paint: ;
+  --tw-contain-style: ;
 }
 
 .container {
@@ -662,7 +672,7 @@ input[type=time]::-webkit-datetime-edit-ampm-field {
 }
 
 input[type="time"]::-webkit-calendar-picker-indicator {
-  display:none;
+  display: none;
 }
 
 .article__texts p {
@@ -687,9 +697,9 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .article__texts blockquote::before {
-  content:url('/static/core/icons/quotes.svg');
+  content: url('/static/core/icons/quotes.svg');
   /* with class ModalCarrot ??*/
-  position:relative;
+  position: relative;
   /*or absolute*/
   top: -35px;
   display: block;
@@ -703,7 +713,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .without-spin::-webkit-outer-spin-button,
-    .without-spin::-webkit-inner-spin-button {
+.without-spin::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -741,15 +751,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: #BA2025;
 }
 
-.peer:checked ~ .accordion-red {
+.peer:checked~.accordion-red {
   display: none;
 }
 
-.peer:checked ~ .accordion-gray {
+.peer:checked~.accordion-gray {
   display: block;
 }
 
-.peer:checked ~ .peer-active-max-h-full {
+.peer:checked~.peer-active-max-h-full {
   max-height: 100%;
 }
 
@@ -757,18 +767,18 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transition-property: none;
 }
 
-.peer:checked ~ .peer-active-font-bold {
+.peer:checked~.peer-active-font-bold {
   font-weight: 700;
 }
 
-.peer:checked ~ .peer-hover-psy {
+.peer:checked~.peer-hover-psy {
   --tw-bg-opacity: 1;
   background-color: rgb(186 32 37 / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.peer:hover ~ .peer-hover-psy {
+.peer:hover~.peer-hover-psy {
   --tw-bg-opacity: 1;
   background-color: rgb(186 32 37 / var(--tw-bg-opacity));
   --tw-text-opacity: 1;
@@ -807,15 +817,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   height: calc(100vh - 180px);
 }
 
-.peer:focus ~ .peer-focus-hidden {
+.peer:focus~.peer-focus-hidden {
   display: none;
 }
 
-.peer:focus ~ .peer-focus-inline-block {
+.peer:focus~.peer-focus-inline-block {
   display: inline-block;
 }
 
-.peer:valid ~ .peer-valid-inline-block {
+.peer:valid~.peer-valid-inline-block {
   display: inline-block;
 }
 
@@ -854,11 +864,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   clip-path: circle(50% at 50% 50%);
 }
 
-.my-container .container__items input:hover ~ label .star-stroke, .container .container__items input:checked ~ label .star-stroke {
+.my-container .container__items input:hover~label .star-stroke,
+.container .container__items input:checked~label .star-stroke {
   background: #BA2025;
 }
 
-.my-container .container__items input:checked ~ label .star-stroke .star-fill {
+.my-container .container__items input:checked~label .star-stroke .star-fill {
   background: #BA2025;
 }
 
@@ -910,6 +921,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   bottom: 0.5rem;
 }
 
+.-bottom-6 {
+  bottom: -1.5rem;
+}
+
 .-bottom-\[10px\] {
   bottom: -10px;
 }
@@ -920,10 +935,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .-right-\[35px\] {
   right: -35px;
-}
-
-.-top-14 {
-  top: -3.5rem;
 }
 
 .-top-\[35px\] {
@@ -1082,38 +1093,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   top: 30px;
 }
 
-.-bottom-14 {
-  bottom: -3.5rem;
-}
-
-.bottom-14 {
-  bottom: 3.5rem;
-}
-
-.bottom-\[44px\] {
-  bottom: 44px;
-}
-
-.bottom-11 {
-  bottom: 2.75rem;
-}
-
-.bottom-9 {
-  bottom: 2.25rem;
-}
-
-.bottom-8 {
-  bottom: 2rem;
-}
-
-.-bottom-6 {
-  bottom: -1.5rem;
-}
-
-.-bottom-5 {
-  bottom: -1.25rem;
-}
-
 .-z-10 {
   z-index: -10;
 }
@@ -1242,10 +1221,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .mb-2\.5 {
   margin-bottom: 0.625rem;
-}
-
-.mb-20 {
-  margin-bottom: 5rem;
 }
 
 .mb-3 {
@@ -1472,10 +1447,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-right: 0.5rem;
 }
 
-.mr-2\.5 {
-  margin-right: 0.625rem;
-}
-
 .mr-3 {
   margin-right: 0.75rem;
 }
@@ -1592,6 +1563,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-top: 140px;
 }
 
+.mt-\[14px\] {
+  margin-top: 14px;
+}
+
 .mt-\[15px\] {
   margin-top: 15px;
 }
@@ -1638,22 +1613,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .mt-auto {
   margin-top: auto;
-}
-
-.mt-\[14px\] {
-  margin-top: 14px;
-}
-
-.mb-44 {
-  margin-bottom: 11rem;
-}
-
-.mb-48 {
-  margin-bottom: 12rem;
-}
-
-.mb-52 {
-  margin-bottom: 13rem;
 }
 
 .block {
@@ -2449,10 +2408,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   max-width: 28rem;
 }
 
-.max-w-xs {
-  max-width: 20rem;
-}
-
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -2489,6 +2444,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
@@ -2503,8 +2462,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .appearance-none {
   -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .grid-cols-1 {
@@ -2717,7 +2676,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .gap-x-\[20px\] {
   -moz-column-gap: 20px;
-       column-gap: 20px;
+  column-gap: 20px;
 }
 
 .gap-y-\[12px\] {
@@ -2728,49 +2687,55 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   row-gap: 40px;
 }
 
-.space-x-4 > :not([hidden]) ~ :not([hidden]) {
+.space-x-4> :not([hidden])~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
-.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+.space-y-3> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(0.75rem * var(--tw-space-y-reverse));
 }
 
-.space-y-5 > :not([hidden]) ~ :not([hidden]) {
+.space-y-4> :not([hidden])~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+
+.space-y-5> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.25rem * var(--tw-space-y-reverse));
 }
 
-.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+.space-y-6> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 
-.space-y-\[10px\] > :not([hidden]) ~ :not([hidden]) {
+.space-y-\[10px\]> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(10px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(10px * var(--tw-space-y-reverse));
 }
 
-.space-y-\[16px\] > :not([hidden]) ~ :not([hidden]) {
+.space-y-\[16px\]> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(16px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(16px * var(--tw-space-y-reverse));
 }
 
-.space-y-\[36px\] > :not([hidden]) ~ :not([hidden]) {
+.space-y-\[36px\]> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(36px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(36px * var(--tw-space-y-reverse));
 }
 
-.space-y-\[8px\] > :not([hidden]) ~ :not([hidden]) {
+.space-y-\[8px\]> :not([hidden])~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(8px * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(8px * var(--tw-space-y-reverse));
@@ -3194,17 +3159,17 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .object-contain {
   -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 
 .object-cover {
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 
 .object-scale-down {
   -o-object-fit: scale-down;
-     object-fit: scale-down;
+  object-fit: scale-down;
 }
 
 .p-1 {
@@ -3556,11 +3521,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding-bottom: 2.5rem;
 }
 
-.py-16 {
-  padding-top: 4rem;
-  padding-bottom: 4rem;
-}
-
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
@@ -3724,21 +3684,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .py-\[9px\] {
   padding-top: 9px;
   padding-bottom: 9px;
-}
-
-.py-12 {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
-
-.py-11 {
-  padding-top: 2.75rem;
-  padding-bottom: 2.75rem;
-}
-
-.py-\[46px\] {
-  padding-top: 46px;
-  padding-bottom: 46px;
 }
 
 .pb-10 {
@@ -4631,35 +4576,35 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   transition-timing-function: linear;
 }
 
-.\*\:w-\[391px\] > * {
+.\*\:w-\[391px\]>* {
   width: 391px;
 }
 
-.\*\:rounded-lg > * {
+.\*\:rounded-lg>* {
   border-radius: 0.5rem;
 }
 
-.\*\:bg-white > * {
+.\*\:bg-white>* {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.\*\:px-8 > * {
+.\*\:px-8>* {
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
-.\*\:py-5 > * {
+.\*\:py-5>* {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
 }
 
-.\*\:py-\[20px\] > * {
+.\*\:py-\[20px\]>* {
   padding-top: 20px;
   padding-bottom: 20px;
 }
 
-.\*\:py-\[26px\] > * {
+.\*\:py-\[26px\]>* {
   padding-top: 26px;
   padding-bottom: 26px;
 }
@@ -4743,11 +4688,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-decoration-line: none;
 }
 
-.hover\:outline-none:hover {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -4798,10 +4738,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     top: -50px;
   }
 
-  .md\:bottom-0 {
-    bottom: 0px;
-  }
-
   .md\:bottom-36 {
     bottom: 9rem;
   }
@@ -4810,20 +4746,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     left: 6rem;
   }
 
-  .md\:left-36 {
-    left: 9rem;
-  }
-
-  .md\:right-16 {
-    right: 4rem;
-  }
-
-  .md\:top-0 {
-    top: 0px;
-  }
-
   .md\:left-32 {
     left: 8rem;
+  }
+
+  .md\:left-36 {
+    left: 9rem;
   }
 
   .md\:-z-10 {
@@ -4842,6 +4770,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .md\:my-\[30px\] {
     margin-top: 30px;
     margin-bottom: 30px;
+  }
+
+  .md\:mb-20 {
+    margin-bottom: 5rem;
   }
 
   .md\:mb-\[12px\] {
@@ -4874,18 +4806,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:mt-0 {
     margin-top: 0px;
-  }
-
-  .md\:mr-2\.5 {
-    margin-right: 0.625rem;
-  }
-
-  .md\:mb-64 {
-    margin-bottom: 16rem;
-  }
-
-  .md\:mb-20 {
-    margin-bottom: 5rem;
   }
 
   .md\:block {
@@ -4989,14 +4909,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: fit-content;
   }
 
-  .md\:min-w-52 {
-    min-width: 13rem;
-  }
-
-  .md\:min-w-64 {
-    min-width: 16rem;
-  }
-
   .md\:max-w-\[45px\] {
     max-width: 45px;
   }
@@ -5095,6 +5007,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding: 2.5rem;
   }
 
+  .md\:p-2\.5 {
+    padding: 0.625rem;
+  }
+
   .md\:p-6 {
     padding: 1.5rem;
   }
@@ -5103,13 +5019,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding: 2rem;
   }
 
-  .md\:p-2\.5 {
-    padding: 0.625rem;
-  }
-
   .md\:px-0 {
     padding-left: 0px;
     padding-right: 0px;
+  }
+
+  .md\:px-12 {
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 
   .md\:px-2 {
@@ -5147,6 +5064,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-right: 54px;
   }
 
+  .md\:py-16 {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+
   .md\:py-3 {
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
@@ -5167,27 +5089,16 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-bottom: 52px;
   }
 
-  .md\:px-12 {
-    padding-left: 3rem;
-    padding-right: 3rem;
-  }
-
-  .md\:py-16 {
-    padding-top: 4rem;
-    padding-bottom: 4rem;
-  }
-
-  .md\:px-7 {
-    padding-left: 1.75rem;
-    padding-right: 1.75rem;
-  }
-
   .md\:pb-0 {
     padding-bottom: 0px;
   }
 
   .md\:pb-11 {
     padding-bottom: 2.75rem;
+  }
+
+  .md\:pl-5 {
+    padding-left: 1.25rem;
   }
 
   .md\:pl-\[50px\] {
@@ -5206,10 +5117,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     padding-top: 2.5rem;
   }
 
-  .md\:pt-12 {
-    padding-top: 3rem;
-  }
-
   .md\:pt-14 {
     padding-top: 3.5rem;
   }
@@ -5220,10 +5127,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:pt-\[52px\] {
     padding-top: 52px;
-  }
-
-  .md\:pl-5 {
-    padding-left: 1.25rem;
   }
 
   .md\:text-right {
@@ -5263,6 +5166,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     font-size: 42px;
   }
 
+  .md\:text-\[64px\] {
+    font-size: 64px;
+  }
+
   .md\:text-\[93px\] {
     font-size: 93px;
   }
@@ -5280,10 +5187,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   .md\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
-  }
-
-  .md\:text-\[64px\] {
-    font-size: 64px;
   }
 
   .md\:font-bold {
@@ -5318,11 +5221,5 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 @media (min-width: 1280px) {
   .xl\:w-3\/4 {
     width: 75%;
-  }
-}
-
-@media (min-width: 1536px) {
-  .\32xl\:right-32 {
-    right: 8rem;
   }
 }
