@@ -4,24 +4,24 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
     <div class="checked:accent-[#289e29] hidden"></div>
     {% include 'core/components/course-sidebar.html' %}
-    <div class="course px-[40px] pt-[40px] w-full">
-        <div class="result pl-[60px] pt-[60px] flex flex-col space-y-5">
-            <div class="results w-[100%] h-[300px] rounded-md bg-center bg-no-repeat flex items-center max-w-[995px]"
+    <div class="course px-5 mb-12 md:px-[40px] pt-[40px] w-full">
+        <div class="result md:pl-[60px] md:pt-[60px] flex flex-col space-y-5">
+            <div class="results md:w-[100%] md:h-[300px] rounded-md bg-center  bg-no-repeat flex items-center md:max-w-[995px]"
                  style="{% if submission.score >= 75 %}
-                     background-image: url('{% static 'core/images/goodScore.png' %}')
+                    background: linear-gradient(90deg, #5BCA27 0%, #4FB31F 51%, #5ED128 100%);
                  {% elif submission.score >= 50 %}
-                     background-image: url('{% static 'core/images/normalScore.png' %}')
+                    background: linear-gradient(90deg, #C87120 0%, #EA9B53 45%, #B36F1F 100%);
                  {% else %}
-                     background-image: url('{% static 'core/images/badScore.png' %}')
+                    background: linear-gradient(90deg, #C82020 0%, #DC4949 45%, #B31F1F 100%);
                  {% endif %}">
-                <div class="result-precent flex justify-around w-full items-center text-center">
+                <div class="result-precent flex flex-col md:flex-row p-8 justify-around w-full items-center text-center">
                     <img src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
-                    <div class="results-text font-semibold text-white">
-                        <span class="text-[156px] leading-[190px]">{{ submission.score|floatformat:"0" }}%</span> <br/>
-                        <span class="text-[24px] leading-[30px]">
+                    <div class=" results-text font-semibold text-white">
+                        <span class="text-8xl md:text-[156px] md:leading-[190px]">{{ submission.score|floatformat:"0" }}%</span> <br/>
+                        <span class="pb-[50px] md:pb-0 text-[24px] leading-[30px]">
                             {% if submission.score >= 75 %}
                                 Отличный результат!
                             {% elif submission.score >= 50 %}
@@ -31,10 +31,10 @@
                             {% endif %}
                         </span>
                     </div>
-                    <img src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
+                    <img class='hidden md:block' src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
                 </div>
             </div>
-            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014]  px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
                 <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
                     Модуль: {{ module_name }}
                 </div>
@@ -61,16 +61,16 @@
                                                  class="w-6 h-6"/>
                                             <div class="relative flex-1">
                                                 <input type="range" id="seek-slider" value="0" min="0" max="100"
-                                                       class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
-                                                       style="
-                  background: linear-gradient(
-                    to right,
-                    red 0%,
-                    red var(--progress-percentage),
-                    white var(--progress-percentage),
-                    white 100%
-                  );
-                " oninput="updateTime()"/>
+                                                    class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
+                                                    style="
+                                                      background: linear-gradient(
+                                                        to right,
+                                                        red 0%,
+                                                        red var(--progress-percentage),
+                                                        white var(--progress-percentage),
+                                                        white 100%
+                                                      );"
+                                                    oninput="updateTime()"/>
                                                 <div class="flex absolute w-full justify-between top-[1px]">
                                                     <output class="text-[12px] leading-5 font-regular text-black-main"
                                                             id="current-time-{{ forloop.counter0 }}">00:00
@@ -89,9 +89,9 @@
                                             </button>
                                         </div>
                                     {% endif %}
-                                    <div class="testing__question-answers grid gap-2.5 grid-cols-2">
+                                    <div class="testing__question-answers grid gap-2.5 grid-cols-1 md:grid-cols-2">
                                         {% for answer in question.answers.all %}
-                                            <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex justify-between items-center py-2 cursor-pointer
+                                            <label class="answer  border-[1px] border-[#D8D8D8] h-[75px] rounded-[5px] px-[18px] flex justify-between items-center py-2 cursor-pointer
                                                    {% if answer in submission.selected_answers.all %}
                                                        text-white
                                                        {% if answer.is_correct %}
@@ -131,12 +131,13 @@
                                     </div>
                                 </li>
                             {% endfor %}
-                            <div class="testing__btn mx-auto">
-                                <a href="" class="border-accent-red hover:bg-accent-red hover:text-white text-center mt-4 px-[64px] py-[26px] text-5 leading-7 font-bold text-accent-red border rounded-lg inline">
-                                    Следующий этап
-                                </a>
-                            </div>
+                            
                         </ul>
+                        <div class="testing__btn w-full flex justify-center mx-auto">
+                            <a href="" class="border-accent-red hover:bg-accent-red w-full md:w-fit hover:text-white text-center md:px-[64px] py-[26px] text-5 leading-7 font-bold text-accent-red border rounded-lg inline">
+                                Следующий этап
+                            </a>
+                        </div>
                     {% endfor %}
                 </div>
             </div>

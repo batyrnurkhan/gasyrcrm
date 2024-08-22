@@ -4,27 +4,32 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
         {% include 'core/components/course-sidebar.html' %}
-        <div class="course px-[40px] pt-[40px] w-full">
-            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md">
-                <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
-                    Домашняя работа - Урок {{ lesson_position }} - Модуль: {{ module.module_name }}
+        <div class="course px-5 md:px-[40px] pt-[40px] w-full">
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-4 md:px-9 pt-9 pb-[46px] rounded-md">
+                <div class="course__subtitle font-bold text-black-main text-sm md:text-base uppercase">
+                     Урок {{ lesson_position }} - Модуль: {{ module.module_name }}
                 </div>
-                <div class="course__title leading-[52px] text-[42px] text-black-main font-bold mb-3.5">
-                    {{ lesson.lesson_name }}
+                <div class="course__title leading-[52px] text-2xl md:text-[42px] text-[#BA2025] font-bold mb-3.5">
+                    Домашняя работа
                 </div>
 
                 <div class="homework-list mt-5">
                     {% if lesson.homeworks.count > 0 %}
                         <ul class="space-y-4">
                             {% for homework in lesson.homeworks.all %}
-                                <li class="flex items-center justify-between">
-                                    <span class="text-lg font-medium">{{ homework.homework_name }}</span>
+                                <li class="flex flex-col gap-4 items-start justify-between">
                                     {% if homework.file %}
-                                        <a href="{{ homework.file.url }}" download
-                                           class="inline-block px-6 py-3 bg-accent-red text-white rounded-lg font-semibold">
-                                            Скачать Домашнюю Работу
+                                        
+                                        <a href="{{ homework.file.url }}" download class="flex flex-row gap-3 md:gap-6 items-center w-full px-3 md:px-6 py-4 border border-[#D8D8D8]  text-[#4F4F4F] rounded-lg font-semibold">
+                                            {% comment %} TODO: тут нужно получить тип файла и в зависимости от нее отображать нужные иконки
+                                            все иконки тут - core/static/core/icons/typeOfLitterature/...
+                                            {% endcomment %}
+                                            <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M13 0L18 5V19.0082C18 19.556 17.5551 20 17.0066 20H0.9934C0.44476 20 0 19.5447 0 19.0082V0.9918C0 0.44405 0.44495 0 0.9934 0H13ZM8 10.05C7.8384 10.0172 7.6712 10 7.5 10C6.11929 10 5 11.1193 5 12.5C5 13.8807 6.11929 15 7.5 15C8.8807 15 10 13.8807 10 12.5V8H13V6H8V10.05Z" fill="#BA2025"/>
+                                            </svg>
+                                            <span class="underline">{{ homework.homework_name }}</span>
                                         </a>
                                     {% else %}
                                         <span class="text-gray-500">Файл отсутствует</span>
@@ -36,8 +41,21 @@
                         <p class="text-gray-500 text-lg">Домашняя работа пока не добавлена.</p>
                     {% endif %}
                 </div>
+                
+                <div class='flex flex-col gap-3 items-start pb-28 md:pb-36 mt-6 md:mt-8'>
+                    <p class='text-[#4F4F4F] text-base font-bold'>Моя работа</p>
+                    <a href='' upload class='flex flex-row items-center gap-3 text-[#BA2025] text-sm font-medium'>
+                        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 16H18V9H20V17C20 17.5523 19.5523 18 19 18H1C0.44772 18 0 17.5523 0 17V9H2V16ZM11 6V13H9V6H4L10 0L16 6H11Z" fill="#BA2025"/>
+                        </svg>
+                        Загрузить работу
+                    </a>
 
-
+                </div>
+                <div class='flex flex-row justify-center mt-11 md:mt-14' style="margin-top: 44px;">
+                    {% comment %} TODO: Тут нужна ссылка на следующий этап {% endcomment %}
+                    <a href='' class='text-[#BA2025] text-base md:text-xl font-semibold w-full md:w-fit py-4 px-5 text-center md:px-16 border border-[#BA2025] rounded-[5px]' >Перейти к следующему уроку</a>
+                </div>
             </div>
         </div>
     </div>

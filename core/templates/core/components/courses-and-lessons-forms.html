@@ -5,7 +5,7 @@
     </script>
     {% include "core/components/course-sidebar-edit.html" with course=course create=create %}
     <div id="modules"
-         class="w-[75%] p-10 overflow-y-auto {% if create %} {% else %}h-side{% endif %} bg-whiteless">
+         class="w-[75%] p-10 overflow-y-auto {% if create %} {% else %} {% endif %} bg-whiteless">
         <div id="cat"
              class="w-[75%] p-10 overflow-y-auto {% if create %}h-side-create{% else %}h-side{% endif %} bg-whiteless text-center">
             <img class="mx-auto mb-10" src="{% static 'core/images/cats/teacher.png' %}" alt="">

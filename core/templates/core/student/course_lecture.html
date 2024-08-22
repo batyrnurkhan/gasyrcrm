@@ -4,19 +4,22 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
         {% include 'core/components/course-sidebar.html' %}
-        <div class="course px-[40px] pt-[40px] w-full">
-            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md">
-                <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
+
+        <div class="course px-5 md:px-[40px] md:pt-[40px] w-full">
+            
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-[10px] pb-[32px] md:px-9 pt-9 md:pb-[46px] rounded-md">
+                <p class="course__subtitle  font-bold text-black-main text-sm md:text-base leading-5 uppercase">
                     Урок {{ lesson_position }} - Модуль: {{ module.module_name }}
-                </div>
-                <div class="course__title leading-[52px] text-[42px] text-black-main font-bold mb-3.5">
+                </p>
+                <p class="course__title md:leading-[52px] ml-2 md:ml-0 text-2xl md:text-[42px] text-black-main font-bold mb-3.5">
                     {{ lesson.lesson_name }}
-                </div>
-                <div class="video-container relative w-full">
+                </p>
+                <div class="video-container relative w-full rounded-[10px]">
                     <div style="padding:56.25% 0 0 0;position:relative;">
                         <iframe src="{{ lesson.video_link }}"
+                                class="rounded-[10px]"
                                 frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write"
                                 style="position:absolute;top:0;left:0;width:100%;height:100%;"
                                 title="five-factorizations-version-4_360p_16_9"></iframe>
@@ -31,7 +34,7 @@
 
                 <div class="course__testBtn text-center mt-5">
                     <a href="{% url 'courses:course_student_test_lesson' pk=course.id module_id=module.id lesson_id=lesson.id %}"
-                            class="inline-block test-btn px-[64px] py-[26px] hover:bg-accent-red hover:text-white rounded-lg border-[1px] border-accent-red leading-7 text-5 font-semibold text-accent-red"
+                            class="inline-block test-btn w-full md:w-fit md:px-[64px] py-5 md:py-[26px] hover:bg-accent-red hover:text-white rounded-lg border-[1px] border-accent-red leading-7 text-5 font-semibold text-accent-red"
                     >
                         Перейти к тесту
                     </a>
