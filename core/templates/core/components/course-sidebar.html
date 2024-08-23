@@ -139,19 +139,6 @@
                             <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=m.id lesson_id=l.id %}"
                                class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Лекция</a>
                         </li>
-                        {% if l.homeworks.count > 0 %}
-                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                        <a href="{% if m.accessible %}{% url 'courses:course_student_homework' course_id=course.id module_id=m.id pk=l.id %}{% endif %}"
-                           class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Домашняя работа</a>
-                            </li>
-                        {% endif %}
-                        {% if l.literatures.count > 0 %}
-                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                            <a href="{% url 'courses:course_student_literature' course_id=course.id module_id=m.id lesson_id=l.id %}">Литература</a>
-                        </li>
-                        {% endif %}
                         {% if l.tests.count > 0 %}
                         <li class="font-regular text-4 leading-5 text-black-main flex items-center">
                             <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
@@ -159,7 +146,19 @@
                                class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
                         </li>
                         {% endif %}
-
+                        {% if l.literatures.count > 0 %}
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                            <a href="{% url 'courses:course_student_literature' course_id=course.id module_id=m.id lesson_id=l.id %}">Литература</a>
+                        </li>
+                        {% endif %}
+                        {% if l.homeworks.count > 0 %}
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                        <a href="{% if m.accessible %}{% url 'courses:course_student_homework' course_id=course.id module_id=m.id pk=l.id %}{% endif %}"
+                           class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Домашняя работа</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
                 {% endfor %}
@@ -178,18 +177,18 @@
     </div>
     {% endfor %}
     <div class="relative overflow-hidden">
-        <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
-           class="bg-white rounded-lg text-start font-bold px-6">
-            {% if all_tests_passed %}
-                <img class="inline-block mr-3"
-                     src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
-            {% else %}
-                <img class="inline-block mr-3"
-                     src="{% static 'core/icons/trophy-fill-gray.svg' %}" alt="">
-            {% endif %}
-            <span class="{% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
-        </a>
-    </div>
+    <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
+       class="bg-white rounded-lg text-start font-bold px-6">
+        {% if all_tests_passed %}
+            <img class="inline-block mr-3"
+                 src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
+        {% else %}
+            <img class="inline-block mr-3"
+                 src="{% static 'core/icons/trophy-fill-gray.svg' %}" alt="">
+        {% endif %}
+        <span class="{% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
+    </a>
+</div>
 </div>
 
 <script>
