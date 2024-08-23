@@ -10,21 +10,21 @@
         {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[40px] px-5 md:px-0 md:ml-[40px] md:mr-[78px]">
             <div class="items-main text-black-main">
-                <h1 class="items__title font-semibold text-[42px] leading-[52px] text-black-main mb-[20px]">
+                <h1 class="items__title font-semibold text-[32px] md:text-[42px] leading-[52px] text-black-main mb-[20px]">
                     Предметы
                 </h1>
-                <div class="items__inner grid grid-cols-2 gap-[20px]">
+                <div class="items__inner grid grid-cols-1 md:grid-cols-2 gap-[20px]">
                     {% for lesson in lessons %}
-                        <div class="item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-lg flex p-[20px] items-center">
+                        <div class="item bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-lg flex p-3 md:p-[20px] items-center">
                             <div class="item-image mr-[25px]">
                                 {% if lesson.subject.image %}
                                     <img src="{{ lesson.subject.image.url }}" alt="{{ lesson.subject.name }}"
-                                         class="w-[160px] h-[160px] object-cover rounded-lg">
+                                         class="w-[120px] max-w-none max-h-none h-[120px] md:w-[160px] md:h-[160px] object-cover rounded-lg">
                                 {% endif %}
                             </div>
                             <div class="item-details h-fit">
-                                <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}" class="text-[24px] font-semibold">{{ lesson.group_name }}</a>
-                                <p class="text-[16px] mb-[28px]">{{ lesson.subject.description }}</p>
+                                <a href="{% url 'chats:chat_room_detail' room_id=lesson.chat_room.id %}" class="text-xl md:text-[24px] font-semibold">{{ lesson.group_name }}</a>
+                                <p class="text-sm md:text-[16px] mb-[28px]">{{ lesson.subject.description }}</p>
                                 {% if lesson.teacher %}
                                     <p class="text-[16px] font-semibold">
                                         {% if lesson.teacher.profile_picture %}

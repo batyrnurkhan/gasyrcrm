@@ -12,8 +12,8 @@
         {% include "subjects/components/crm2-header.html" %}
         <div class="pt-[50px] px-5 md:px-0 md:ml-[40px] md:mr-[78px]">
             {% if tasks %}
-                <div class="task__inner flex gap-[10px] h-block">
-                    <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] min-w-[360px] rounded-md pb-[50px]">
+                <div class="task__inner flex flex-col md:flex-row gap-[10px] ">
+                    <div class="task__list bg-white shadow-[0px_4px_24px_0px_#00000014] md:min-w-[360px] rounded-md pb-[50px]">
                         <h1 class="tasks__list-title py-[32px] pl-[32px] font-semibold text-[20px] leading-[24px] text-black-main overflow-y-auto">
                             Задания
                         </h1>
@@ -50,18 +50,28 @@
                                         </div>
                                         {% now 'Y-m-d h:i' as today %}
                                         {% if task in student_tasks %}
-                                            <img src="{% static 'core/images/crm2/done.png' %}" alt="">
+                                            <img class='ml-auto md:ml-none' src="{% static 'core/images/crm2/done.png' %}" alt="">
                                         {% elif task.deadline|date:'Y-m-d h:i' < today %}
-                                            <img src="{% static 'core/images/crm2/not-done.png' %}" alt="">
+                                            <img class='ml-auto md:ml-none' src="{% static 'core/images/crm2/not-done.png' %}" alt="">
                                         {% endif %}
                                     </div>
                                 {% endif %}
                             {% endfor %}
                         {% endfor %}
                     </div>
-                    <div class="about__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-webkit-fill pt-[32px] pl-[42px] pr-[42px]">
+
+                    <!-- Карточка задания, скрыта по умолчанию на мобильных устройствах -->
+                    <div class="about__task bg-white shadow-[0px_4px_24px_0px_#00000014] rounded-md w-webkit-fill pb-5 pt-[32px] px-4 md:px-0 md:pl-[42px] md:pr-[42px] hidden md:block">
                         <div id="task-detail" style="display: none">
-                            <p class="about__task-time font-regular text-[14px] leading-[20px] text-black-main mb-[6px]"
+                            <button type="button" class='back pb-4 w-full'>
+                                <svg class='block md:hidden' width="7" height="18" viewBox="0 0 7 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.369141 9.00011L5.11681 0.0322266L6.88441 0.968007L2.63211 9.00011L6.88441 17.0322L5.11681 17.968L0.369141 9.00011Z" fill="#BA2025"/>
+                                </svg>
+                            </button>    
+                                
+                            
+                                
+                            <p class="about__task-time font-regular text-xl md:text-[14px] leading-[20px] text-black-main mb-[6px]"
                                id="task-deadline"></p>
                             <h1 class="about__task-title font-bold text-[24px] leading-[33px] text-black-main max-w-[520px] mb-[20px]"
                                 id="task-title"></h1>
@@ -91,7 +101,7 @@
                                         <input onchange="newFile(event)" type="file" name="file" style="display: none;">
                                     </label>
                                     <button type="submit"
-                                            class="done__task mt-[110px] py-[15px] px-[26px] rounded-lg bg-accent-red text-white text-[16px] leading-[22px] font-semibold">
+                                            class="done__task mt-[60px] md:mt-[110px] py-[15px] px-[26px] rounded-lg bg-accent-red text-white text-[16px] leading-[22px] font-semibold">
                                         Сдать мою работу
                                     </button>
                                 </form>
@@ -113,11 +123,9 @@
         </div>
 
         <script>
-            function newFile(event) {
-                document.getElementById('my-work').innerText = event.target.files[0].name
-            }
-
+            
             $(document).ready(function () {
+                // Обработка клика на элементе задания
                 $('.task-link').click(function (e) {
                     e.preventDefault();
                     var taskId = $(this).data('task-id');
@@ -126,37 +134,44 @@
                     var taskFileUrl = $(this).data('task-file-url');
                     var taskFileName = $(this).data('task-file-name');
                     var submissionFileName = $(this).data('submission-file-name');
-                    let dot_id = taskDeadline.indexOf('.') + 1
-
+                    let dot_id = taskDeadline.indexOf('.') + 1;
+            
                     $('#task-id').val(taskId);
                     $('#task-title').text(taskName);
                     $('#task-deadline').text('Срок заканчивается ' + taskDeadline.substr(0, dot_id) + ' в ' + taskDeadline.substr(dot_id));
                     $('#download-task-file').attr('href', taskFileUrl);
-                    if (submissionFileName) $('#my-work').text(submissionFileName)
-                    else $('#my-work').text("Загрузить работу")
-                    if (taskFileName) $('#file-name').text(taskFileName)
-                    else $('#file-name').text("Скачать задание")
+                    if (submissionFileName) {
+                        $('#my-work').text(submissionFileName);
+                    } else {
+                        $('#my-work').text("Загрузить работу");
+                    }
+                    if (taskFileName) {
+                        $('#file-name').text(taskFileName);
+                    } else {
+                        $('#file-name').text("Скачать задание");
+                    }
                     $('#task-detail').show();
+            
+                    // Скрыть блок списка заданий и показать блок с карточкой задания на мобильных устройствах
+                    if ($(window).width() < 768) {
+                        $('.task__list').addClass('hidden');
+                        $('.about__task').removeClass('hidden');
+                    }
                 });
-
-                $('#upload-form').submit(function (e) {
-                    e.preventDefault();
-
-                    var formData = new FormData(this);
-                    $.ajax({
-                        url: "{% url 'subjects:upload_task_view' %}",
-                        type: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            location.reload()
-                        }
-                    });
+            
+                // Обработка клика на кнопке "Назад"
+                $('.back').click(function () {
+                    // Скрыть блок с карточкой задания и показать блок списка заданий на мобильных устройствах
+                    if ($(window).width() < 768) {
+                        $('.about__task').addClass('hidden');
+                        $('.task__list').removeClass('hidden');
+                    }
                 });
             });
+            
         </script>
-                                        {% include "subjects/components/crm2-mobile-navbar.html" %}
+{% include "subjects/components/crm2-mobile-navbar.html" %}
 
     </main>
 {% endblock %}
+
