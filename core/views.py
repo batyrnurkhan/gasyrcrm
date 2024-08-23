@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from django.urls import reverse_lazy, reverse
 from django.db.models import Prefetch, Q
@@ -13,6 +13,76 @@ from django.utils.translation import activate
 from django.utils.formats import date_format
 
 #locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+
+def get_next_step(course, current_lesson=None, current_module=None):
+    if current_lesson:
+        module = current_lesson.module
+
+        # Check if there's a homework next
+        next_homework = current_lesson.homeworks.first()
+        if next_homework:
+            return reverse('courses:course_student_homework', kwargs={
+                'course_id': course.id,
+                'module_id': module.id,
+                'pk': next_homework.id
+            })
+
+        # Check if there's literature next
+        next_literature = current_lesson.literatures.first()
+        if next_literature:
+            return reverse('courses:course_student_literature', kwargs={
+                'course_id': course.id,
+                'module_id': module.id,
+                'lesson_id': current_lesson.id
+            })
+
+        # Check if there's a test next
+        next_test = current_lesson.tests.first()
+        if next_test:
+            return reverse('courses:course_student_test_lesson', kwargs={
+                'pk': course.id,
+                'module_id': module.id,
+                'lesson_id': current_lesson.id
+            })
+
+        # Move to the next lesson in the module if available
+        next_lesson = module.lessons.filter(id__gt=current_lesson.id).first()
+        if next_lesson:
+            return reverse('courses:course_student_lecture', kwargs={
+                'pk': course.id,
+                'module_id': module.id,
+                'lesson_id': next_lesson.id
+            })
+
+    # If current_module is provided, handle module-level navigation
+    if current_module:
+        # Check if there's a module test next
+        next_module_test = current_module.tests.first()
+        if next_module_test:
+            return reverse('courses:course_student_test_module', kwargs={
+                'pk': course.id,
+                'module_id': current_module.id
+            })
+
+        # Move to the next module if available
+        next_module = course.modules.filter(id__gt=current_module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return reverse('courses:course_student_lecture', kwargs={
+                    'pk': course.id,
+                    'module_id': next_module.id,
+                    'lesson_id': next_lesson.id
+                })
+
+    # If it's the last module, move to the course test
+    next_course_test = course.tests.first()
+    if next_course_test:
+        return reverse('courses:course_student_test_course', kwargs={'pk': course.id})
+
+    # If it's the last course step, go to the course final page
+    return reverse('courses:course_final', kwargs={'course_id': course.id})
+
 
 def get_week_dates(request):
     # Activate Russian locale
@@ -224,6 +294,14 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         course = self.get_object()
         user = self.request.user
+        current_lesson = get_object_or_404(Lesson, pk=self.kwargs['lesson_id'])
+        next_step_url = get_next_step(course, current_lesson=current_lesson)
+
+        context.update({
+            'lesson': current_lesson,
+            'module': current_lesson.module,
+            'next_step_url': next_step_url
+        })
 
         lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id']).first()
         module = Module.objects.filter(lessons=lesson).first()
@@ -523,7 +601,7 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
             all_tests = (module_tests | lesson_tests).distinct()
 
             if all_tests.exists():
-                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
+                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=49).distinct()
                 user_passed_all_tests = passed_tests.count() == all_tests.count()
             else:
                 user_passed_all_tests = True

@@ -61,7 +61,7 @@
                                 <img src="{% static 'core/icons/audioIcon.png' %}" alt="Audio Icon"
                                      class="w-6 h-6"/>
                                 <div class="relative flex-1">
-                                    <input type="range" id="seek-slider" value="0" min="0" max="100"
+                                    <input type="range" id="seek-slider-{{ forloop.counter0 }}" value="0" min="0" max="100"
                                         class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
                                         style="
                                                 background: linear-gradient(
@@ -70,23 +70,23 @@
                                                     red var(--progress-percentage),
                                                     white var(--progress-percentage),
                                                     white 100%
-                                                );" 
-                                        oninput="updateTime()"/>
+                                                );"
+                                        oninput="updateTime({{ forloop.counter0 }})"/>
                                     <div class="flex absolute w-full justify-between top-[1px]">
                                         <output class="text-[12px] leading-5 font-regular text-black-main"
                                                 id="current-time-{{ forloop.counter0 }}">00:00
                                         </output>
                                         <output class="text-[12px] leading-5 font-regular text-black-main"
-                                                id="time-{{ forloop.counter0 }}">3:10
+                                                id="time-{{ forloop.counter0 }}">00:00
                                         </output>
                                     </div>
                                 </div>
-                                <audio id="audioPlayer" preload="metadata"
+                                <audio id="audioPlayer-{{ forloop.counter0 }}" preload="metadata"
                                        src="{{ question.audio.url }}"></audio>
-                                <button id="play-icon" type="button"
+                                <button id="play-icon-{{ forloop.counter0 }}" type="button"
                                         class="flex justify-center items-center focus:outline-none">
                                     <img src="{% static 'core/icons/playIcon.png' %}" alt="Play Icon"
-                                         id="playPauseIcon" class="w-8 h-8"/>
+                                         id="playPauseIcon-{{ forloop.counter0 }}" class="w-8 h-8"/>
                                 </button>
                             </div>
                             {% endif %}
@@ -133,9 +133,11 @@
                         </li>
                         {% endfor %}
                         <div class="testing__btn mx-auto flex w-full md:w-fit md:block mt-4 md:mt-14">
-                            <a href="" class="border-accent-red  hover:bg-accent-red hover:text-white text-center  w-full  md:px-[64px] py-[26px] text-base md:text-xl leading-7 font-bold text-accent-red border rounded-lg md:inline">
-                                Следующий этап
-                            </a>
+                            <a href="{{ next_step_url }}"
+   class="border-accent-red hover:bg-accent-red hover:text-white text-center w-full md:px-[64px] py-[26px] text-base md:text-xl leading-7 font-bold text-accent-red border rounded-lg md:inline">
+   Следующий этап
+</a>
+
                         </div>
                     </ul>
                     {% endfor %}
@@ -147,39 +149,6 @@
         const removeChecked = (e) => {
             e.preventDefault()
         }
-        const playIconContainer = document.getElementById('play-icon');
-        const audioPlayerContainer = document.getElementById('audio-player-container');
-        const seekSlider = document.getElementById('seek-slider');
-        let playState = 'play';
-
-
-        const playButton = () => {
-            if (playState === 'play') {
-                audio.play();
-                requestAnimationFrame(whilePlaying);
-                playState = 'pause';
-            } else {
-                audio.pause();
-                cancelAnimationFrame(raf);
-                playState = 'play';
-            }
-        };
-
-        const showRangeProgress = (rangeInput) => {
-            if (rangeInput === seekSlider) audioPlayerContainer.style.setProperty('--seek-before-width', rangeInput.value / rangeInput.max * 100 + '%');
-            else audioPlayerContainer.style.setProperty('--volume-before-width', rangeInput.value / rangeInput.max * 100 + '%');
-        }
-
-        seekSlider.addEventListener('input', (e) => {
-            showRangeProgress(e.target);
-        });
-
-        /** Implementation of the functionality of the audio player */
-
-        const audio = document.querySelector('audio');
-        const durationContainer = document.getElementById('duration');
-        const currentTimeContainer = document.getElementById('current-time');
-        let raf = null;
 
         const calculateTime = (secs) => {
             const minutes = Math.floor(secs / 60);
@@ -188,52 +157,93 @@
             return `${minutes}:${returnedSeconds}`;
         }
 
-        const displayDuration = () => {
-            durationContainer.textContent = calculateTime(audio.duration);
-        }
+        const playButton = (index) => {
+            const audio = document.getElementById(`audioPlayer-${index}`);
+            const playPauseIcon = document.getElementById(`playPauseIcon-${index}`);
+            let playState = playPauseIcon.getAttribute('data-play-state') || 'play';
 
-        const setSliderMax = () => {
-            seekSlider.max = Math.floor(audio.duration);
-        }
+            if (playState === 'play') {
+                audio.play();
+                requestAnimationFrame(() => whilePlaying(index));
+                playState = 'pause';
+                playPauseIcon.src = '{% static 'core/icons/playIcon.png' %}'; // Change icon to pause
+            } else {
+                audio.pause();
+                playState = 'play';
+                playPauseIcon.src = '{% static 'core/icons/playIcon.png' %}'; // Change icon to play
+            }
+            playPauseIcon.setAttribute('data-play-state', playState);
+        };
 
-        const displayBufferedAmount = () => {
-            const bufferedAmount = Math.floor(audio.buffered.end(audio.buffered.length - 1));
-            audioPlayerContainer.style.setProperty('--buffered-width', `${(bufferedAmount / seekSlider.max) * 100}%`);
-        }
+        const whilePlaying = (index) => {
+            const audio = document.getElementById(`audioPlayer-${index}`);
+            const seekSlider = document.getElementById(`seek-slider-${index}`);
+            const currentTimeContainer = document.getElementById(`current-time-${index}`);
+            const audioPlayerContainer = document.getElementById(`audio-player-container-${index}`);
 
-        const whilePlaying = () => {
             seekSlider.value = Math.floor(audio.currentTime);
             currentTimeContainer.textContent = calculateTime(seekSlider.value);
             audioPlayerContainer.style.setProperty('--seek-before-width', `${seekSlider.value / seekSlider.max * 100}%`);
-            raf = requestAnimationFrame(whilePlaying);
-        }
 
-        if (audio.readyState > 0) {
-            displayDuration();
-            setSliderMax();
-            displayBufferedAmount();
-        } else {
-            audio.addEventListener('loadedmetadata', () => {
-                displayDuration();
-                setSliderMax();
-                displayBufferedAmount();
-            });
-        }
-
-        audio.addEventListener('progress', displayBufferedAmount);
-
-        seekSlider.addEventListener('input', () => {
-            currentTimeContainer.textContent = calculateTime(seekSlider.value);
             if (!audio.paused) {
-                cancelAnimationFrame(raf);
+                requestAnimationFrame(() => whilePlaying(index));
             }
+        };
+
+        const displayDuration = (index) => {
+            const audio = document.getElementById(`audioPlayer-${index}`);
+            const durationContainer = document.getElementById(`time-${index}`);
+            const seekSlider = document.getElementById(`seek-slider-${index}`);
+
+            if (audio.readyState > 0) {
+                durationContainer.textContent = calculateTime(audio.duration);
+                seekSlider.max = Math.floor(audio.duration);
+            } else {
+                audio.addEventListener('loadedmetadata', () => {
+                    durationContainer.textContent = calculateTime(audio.duration);
+                    seekSlider.max = Math.floor(audio.duration);
+                });
+            }
+        };
+
+        const displayBufferedAmount = (index) => {
+            const audio = document.getElementById(`audioPlayer-${index}`);
+            const seekSlider = document.getElementById(`seek-slider-${index}`);
+            const audioPlayerContainer = document.getElementById(`audio-player-container-${index}`);
+
+            if (audio.buffered.length > 0) {
+                const bufferedAmount = Math.floor(audio.buffered.end(audio.buffered.length - 1));
+                audioPlayerContainer.style.setProperty('--buffered-width', `${(bufferedAmount / seekSlider.max) * 100}%`);
+            }
+        };
+
+        document.querySelectorAll('audio').forEach((audio, index) => {
+            displayDuration(index);
+            audio.addEventListener('progress', () => displayBufferedAmount(index));
         });
 
-        seekSlider.addEventListener('change', () => {
-            audio.currentTime = seekSlider.value;
-            if (!audio.paused) {
-                requestAnimationFrame(whilePlaying);
-            }
+        document.querySelectorAll('[id^="play-icon-"]').forEach((button, index) => {
+            button.addEventListener('click', () => playButton(index));
+        });
+
+        document.querySelectorAll('[id^="seek-slider-"]').forEach((slider, index) => {
+            slider.addEventListener('input', (e) => {
+                const audio = document.getElementById(`audioPlayer-${index}`);
+                const currentTimeContainer = document.getElementById(`current-time-${index}`);
+
+                currentTimeContainer.textContent = calculateTime(e.target.value);
+                if (!audio.paused) {
+                    cancelAnimationFrame(raf);
+                }
+            });
+
+            slider.addEventListener('change', (e) => {
+                const audio = document.getElementById(`audioPlayer-${index}`);
+                audio.currentTime = e.target.value;
+                if (!audio.paused) {
+                    requestAnimationFrame(() => whilePlaying(index));
+                }
+            });
         });
     </script>
 {% endblock %}
