@@ -9,17 +9,19 @@
         {% if user.is_authenticated %}
         {% if last_opened_content_id %}
             <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
-            <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-row mb-12"
+            <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-col-reverse md:flex-row mb-12"
                  style="background-image: url('{% static "core/images/gasyr-red-row.png" %}')">
-                <div class="p-3 text-start mr-auto">
-                    <h4 class="text-2xl font-semibold">Вы остановились!</h4>
-                    <h2 class="text-[32px] font-bold mb-[20px]">{{ course_name }}</h2>
-                    <a class="inline-block text-white font-semibold py-5 px-16 border-white border-2 rounded-lg"
-                       href="#">Продолжить курс</a>
+                <div class="md:p-3 text-start md:mr-auto">
+                    <h4 class="text-2xl font-semibold text-center md:text-start">Вы остановились!</h4>
+                    <h2 class="text-[32px] font-bold mb-[20px] text-center md:text-start">{{ course_name }}</h2>
+                    <a class="inline-block text-white font-semibold py-5 w-full text-center md:w-fit px-5 md:px-16 border-white border-2 rounded-lg"
+                       href="#">Продолжить курс
+                    </a>
                 </div>
                 <div class="relative h-full">
                     <svg class="w-[182px] h-[182px] m-auto z-0" viewBox="0 0 100 100">
                         <!-- Background circle -->
+                         {% comment %} TODO: подключить к реальному прогрессу {% endcomment %}
                         <circle
                                 class="text-gray-200 stroke-white"
                                 stroke-width="10"

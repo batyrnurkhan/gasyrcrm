@@ -4,10 +4,10 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
     <div class="checked:accent-[#289e29] hidden"></div>
     {% include 'core/components/course-sidebar.html' %}
-    <div class="course px-[40px] pt-[40px] w-full">
+    <div class="course px-5 md:px-[40px] pt-[40px] w-full">
         <div class="result pl-[60px] pt-[60px] flex flex-col space-y-5">
             <div class="pl-[200px] congratulations w-[100%] h-[300px] rounded-md bg-center bg-no-repeat flex items-center max-w-[995px]"
                  style="background-image: url('{% static 'core/images/conguratulationBG.png' %}')">

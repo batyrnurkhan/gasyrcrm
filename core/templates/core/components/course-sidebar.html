@@ -1,78 +1,180 @@
 {% load course_tags %}
 {% load static %}
-<div class="w-[25%]"></div>
-<div class="h-without-navbar w-[20%] flex flex-col pt-[60px] pb-5 bg-white space-y-6 fixed">
-    {% for m in modules %}
-        <div class="relative overflow-hidden">
-            <input {% if module.id == m.id %}checked{% endif %} type="checkbox"
-                   {% if not m.accessible %}disabled{% endif %}
-                   class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
-            <div class="bg-white rounded-lg text-start font-bold px-6
-                {% if not m.accessible %}text-gray{% else %}text-accent-red{% endif %}">
-                <img class="inline-block mr-3"
-                     src="{% if not m.accessible %}{% static 'core/icons/folder-fill-gray.svg' %}{% else %}{% static 'core/icons/folder-fill-accent-red.svg' %}{% endif %}" alt="">
-                <span class="mr-auto">Модуль {{ forloop.counter }}</span>
-            </div>
-            {% if m.accessible %}
-                <img class="absolute right-6 top-0 accordion-red block h-[24px]"
-                     src="{% static 'core/icons/arrow-right-button-accent-red.svg' %}" alt="">
-                <img class="absolute right-6 top-0 accordion-gray hidden h-[24px]"
-                     src="{% static 'core/icons/arrow-down-button-gray.svg' %}" alt="">
-            {% else %}
-                <img class="absolute right-6 top-0 block h-[24px]"
-                     src="{% static 'core/icons/lock-gray.svg' %}" alt="">
-            {% endif %}
-            <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px] text-black-main">
-                <div class="px-6 py-3 space-y-5">
-                    {% for l in m.lessons.all %}
-                        <div class="relative overflow-hidden">
-                            <input {% if l.id == lesson.id %}checked{% endif %} type="checkbox"
-                                   class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
-                            <p class="peer-active-font-bold text-[18px] leading-[22px] text-black-main mb-[12px] block">{{ l.lesson_name }}</p>
-                            <ul class="overflow-hidden transition-all peer-active-max-h-full
-                        max-h-0 space-y-3 pl-[36px] list-disc list-outside">
-                                <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-                                    <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                    <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=m.id lesson_id=l.id %}"
-                                       class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Лекция</a>
-                                </li>
-                                {% if l.tests.count > 0 %}
-                                    <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-                                        <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-                                        <a href="{% if m.accessible %}{% url 'courses:course_student_test_lesson' pk=course.id module_id=m.id lesson_id=l.id %}{% endif %}"
-                                           class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
-                                    </li>
-                                {% endif %}
-                                {% if l.literatures.count > 0 %}
-    <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-        <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-<a href="{% url 'courses:course_student_literature' course_id=course.id module_id=m.id lesson_id=l.id %}">Литература</a>
+<div class="hidden md:block w-[25%]"></div>
 
-    </li>
-{% endif %}
-                                {% if l.homeworks.count > 0 %}
-                                    <li class="font-regular text-4 leading-5 text-black-main flex items-center">
-                                        <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
-<a href="{% if m.accessible %}{% url 'courses:course_student_homework' course_id=course.id module_id=m.id pk=l.id %}{% endif %}"
-   class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Домашняя работа</a>
-                                    </li>
-                                {% endif %}
-                            </ul>
+<div class="pt-6 pb-4 px-5 md:pt-0 md:pb-0 md:px-0 md:pl-0">
+    <button type="button" onclick="toggleVisibility()" class="flex flex-row gap-2 items-center mt-3 md:hidden">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.82843 6.9999H16V8.9999H3.82843L9.1924 14.3638L7.7782 15.778L0 7.9999L7.7782 0.22168L9.1924 1.63589L3.82843 6.9999Z" fill="#BA2025"/>
+        </svg>
+        <p id="toggle-text" class="text-base font-semibold text-[#BA2025]">Вернуться к модулям</p>
+    </button>
+
+    <div id="mobile-only-content" class="overflow-hidden md:hidden transition-all duration-500 ease-in-out max-h-0">
+        <p class="font-bold text-[#4F4F4F] text-3xl mt-7">Выберите <br/> модуль и урок</p>
+
+        <div class="mt-5 md:w-[20%] md:flex flex-col pt-5 rounded-[10px] pb-5  space-y-6">
+            {% for m in modules %}
+                <div class="relative overflow-hidden bg-white py-6">
+                    <input {% if module.id == m.id %}checked{% endif %} type="checkbox"
+                           {% if not m.accessible %}disabled{% endif %}
+                           class="peer absolute inset-0 w-full top-6 z-10 opacity-0 h-[26px]">
+                    <div class="bg-white rounded-lg text-start font-bold px-6
+                        {% if not m.accessible %}text-gray{% else %}text-accent-red{% endif %}">
+                        <img class="inline-block mr-3"
+                             src="{% if not m.accessible %}{% static 'core/icons/folder-fill-gray.svg' %}{% else %}{% static 'core/icons/folder-fill-accent-red.svg' %}{% endif %}" alt="">
+                        <span class="mr-auto">Модуль {{ forloop.counter }}</span>
+                    </div>
+                    {% if m.accessible %}
+                        <img class="absolute right-6 top-6 accordion-red block h-[24px]"
+                             src="{% static 'core/icons/arrow-right-button-accent-red.svg' %}" alt="">
+                        <img class="absolute right-6 top-6 accordion-gray hidden h-[24px]"
+                             src="{% static 'core/icons/arrow-down-button-gray.svg' %}" alt="">
+                    {% else %}
+                        <img class="absolute right-6 top-6 block h-[24px]"
+                             src="{% static 'core/icons/lock-gray.svg' %}" alt="">
+                    {% endif %}
+                    <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px] text-black-main">
+                        <div class="md:px-6 py-3 space-y-5">
+                            {% for l in m.lessons.all %}
+                                <div class="relative overflow-hidden">
+                                    <input {% if l.id == lesson.id %}checked{% endif %} type="checkbox"
+                                           class="peer absolute inset-0 w-full top-4 z-10 opacity-0 h-[26px]">
+                                    <p class="peer-active-font-bold text-[18px] leading-[22px] text-black-main mt-3 md:mt-0 mb-[16px] block">{{ l.lesson_name }}</p>
+                                    <ul class="flex flex-col gap-3 overflow-hidden transition-all peer-active-max-h-full
+                                max-h-0 space-y-3 md:pl-[36px] list-disc list-outside">
+                                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                                            <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=m.id lesson_id=l.id %}"
+                                               class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Лекция</a>
+                                        </li>
+                                        {% if l.tests.count > 0 %}
+                                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                                            <a href="{% if m.accessible %}{% url 'courses:course_student_test_lesson' pk=course.id module_id=m.id lesson_id=l.id %}{% endif %}"
+                                               class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
+                                        </li>
+                                        {% endif %}
+                                        {% if l.literatures.count > 0 %}
+                                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                                            <a href="{% url 'courses:course_student_literature' course_id=course.id module_id=m.id lesson_id=l.id %}">Литература</a>
+                                        </li>
+                                        {% endif %}
+                                        {% if l.homeworks.count > 0 %}
+                                            <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                                                <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                                                <a href="{% if m.accessible %}{% url 'courses:course_student_homework' course_id=course.id module_id=m.id pk=l.id %}{% endif %}"
+                                                   class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Домашняя работа</a>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                                {% endfor %}
+                                {% for test in m.tests.all %}
+                                <div class="relative overflow-hidden">
+                                    {% with "/courses/student/"|addstr:course.id|addstr:"/"|addstr:m.id|addstr:"/test" as test_url %}
+                                        <a href="{% if m.accessible %}{% url 'courses:course_student_test_module' pk=course.id module_id=m.id %}{% endif %}"
+                                           class="text-[18px] leading-[22px] text-black-main mb-[12px] block
+                                          {% if request.path == test_url %}font-bold{% endif %}
+                                          {% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
+                                    {% endwith %}
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
+                    </div>
                     {% endfor %}
-                    {% for test in m.tests.all %}
-                        <div class="relative overflow-hidden">
-                            {% with "/courses/student/"|addstr:course.id|addstr:"/"|addstr:m.id|addstr:"/test" as test_url %}
-                                <a href="{% if m.accessible %}{% url 'courses:course_student_test_module' pk=course.id module_id=m.id %}{% endif %}"
-                                   class="text-[18px] leading-[22px] text-black-main mb-[12px] block
-                                  {% if request.path == test_url %}font-bold{% endif %}
-                                  {% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
-                            {% endwith %}
-                        </div>
-                    {% endfor %}
+                    <div class="relative overflow-hidden">
+                        <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
+                           class="bg-white rounded-lg text-start font-bold px-6">
+                            {% if all_tests_passed %}
+                                <img class="inline-block mr-3"
+                                     src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
+                            {% else %}
+                                <img class="inline-block mr-3"
+                                     src="{% static 'core/icons/trophy-fill-gray.svg' %}" alt="">
+                            {% endif %}
+                            <span class="{% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
+                        </a>
+                    </div>
                 </div>
+
+
+    </div>
+</div>
+
+
+<div class="h-without-navbar w-[20%] hidden md:flex flex-col pt-[60px] pb-5 bg-white space-y-6 fixed">
+    {% for m in modules %}
+    <div class="relative overflow-hidden">
+        <input {% if module.id == m.id %}checked{% endif %} type="checkbox"
+               {% if not m.accessible %}disabled{% endif %}
+               class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
+        <div class="bg-white rounded-lg text-start font-bold px-6
+            {% if not m.accessible %}text-gray{% else %}text-accent-red{% endif %}">
+            <img class="inline-block mr-3"
+                 src="{% if not m.accessible %}{% static 'core/icons/folder-fill-gray.svg' %}{% else %}{% static 'core/icons/folder-fill-accent-red.svg' %}{% endif %}" alt="">
+            <span class="mr-auto">Модуль {{ forloop.counter }}</span>
+        </div>
+        {% if m.accessible %}
+            <img class="absolute right-6 top-0 accordion-red block h-[24px]"
+                 src="{% static 'core/icons/arrow-right-button-accent-red.svg' %}" alt="">
+            <img class="absolute right-6 top-0 accordion-gray hidden h-[24px]"
+                 src="{% static 'core/icons/arrow-down-button-gray.svg' %}" alt="">
+        {% else %}
+            <img class="absolute right-6 top-0 block h-[24px]"
+                 src="{% static 'core/icons/lock-gray.svg' %}" alt="">
+        {% endif %}
+        <div class="overflow-hidden transition-all peer-active-max-h-full max-h-0 ml-[36px] text-black-main">
+            <div class="px-6 py-3 space-y-5">
+                {% for l in m.lessons.all %}
+                <div class="relative overflow-hidden">
+                    <input {% if l.id == lesson.id %}checked{% endif %} type="checkbox"
+                           class="peer absolute inset-0 w-full z-10 opacity-0 h-[26px]">
+                    <p class="peer-active-font-bold text-[18px] leading-[22px] text-black-main mb-[12px] block">{{ l.lesson_name }}</p>
+                    <ul class="overflow-hidden transition-all peer-active-max-h-full max-h-0 space-y-3 pl-[36px] list-disc list-outside">
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                            <a href="{% url 'courses:course_student_lecture' pk=course.id module_id=m.id lesson_id=l.id %}"
+                               class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Лекция</a>
+                        </li>
+                        {% if l.tests.count > 0 %}
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                            <a href="{% if m.accessible %}{% url 'courses:course_student_test_lesson' pk=course.id module_id=m.id lesson_id=l.id %}{% endif %}"
+                               class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
+                        </li>
+                        {% endif %}
+                        {% if l.literatures.count > 0 %}
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                            <a href="{% url 'courses:course_student_literature' course_id=course.id module_id=m.id lesson_id=l.id %}">Литература</a> 
+                        </li>
+                        {% endif %}
+                        {% if l.homeworks.count > 0 %}
+                        <li class="font-regular text-4 leading-5 text-black-main flex items-center">
+                            <div class="w-2 h-2 rounded-full bg-accent-red mr-2"></div>
+                        <a href="{% if m.accessible %}{% url 'courses:course_student_homework' course_id=course.id module_id=m.id pk=l.id %}{% endif %}"
+                           class="{% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Домашняя работа</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                {% endfor %}
+                {% for test in m.tests.all %}
+                <div class="relative overflow-hidden">
+                {% with "/courses/student/"|addstr:course.id|addstr:"/"|addstr:m.id|addstr:"/test" as test_url %}
+                    <a href="{% if m.accessible %}{% url 'courses:course_student_test_module' pk=course.id module_id=m.id %}{% endif %}"
+                       class="text-[18px] leading-[22px] text-black-main mb-[12px] block
+                      {% if request.path == test_url %}font-bold{% endif %}
+                      {% if not m.accessible %}cursor-not-allowed text-gray{% endif %}">Тестирование</a>
+                {% endwith %}
+                </div>
+                {% endfor %}
             </div>
         </div>
+    </div>
     {% endfor %}
     <div class="relative overflow-hidden">
         <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
@@ -88,3 +190,20 @@
         </a>
     </div>
 </div>
+
+<script>
+    function toggleVisibility() {
+        const content = document.getElementById('mobile-only-content');
+        const text = document.getElementById('toggle-text');
+
+        if (content.classList.contains('max-h-0')) {
+            content.style.maxHeight = content.scrollHeight + "px";
+            content.classList.remove('max-h-0');
+            text.textContent = 'Скрыть модули';
+        } else {
+            content.style.maxHeight = "0px";
+            content.classList.add('max-h-0');
+            text.textContent = 'Вернуться к модулям';
+        }
+    }
+</script>

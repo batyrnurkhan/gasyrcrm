@@ -10,13 +10,13 @@
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main">
         <div class="result px-[20px] pt-[60px] w-full max-w-[995px] mx-auto flex flex-col space-y-5">
             <div class="results w-[100%] h-[300px] rounded-md bg-center bg-no-repeat flex items-center"
-                 style="{% if submission.score >= 75 %}
-                     background-image: url('{% static 'core/images/goodScore.png' %}')
-                 {% elif submission.score >= 50 %}
-                     background-image: url('{% static 'core/images/normalScore.png' %}')
-                 {% else %}
-                     background-image: url('{% static 'core/images/badScore.png' %}')
-                 {% endif %}">
+                style="{% if submission.score >= 75 %}
+                    background: linear-gradient(90deg, #5BCA27 0%, #4FB31F 51%, #5ED128 100%);
+                {% elif submission.score >= 50 %}
+                   background: linear-gradient(90deg, #C87120 0%, #EA9B53 45%, #B36F1F 100%);
+                {% else %}
+                   background: linear-gradient(90deg, #C82020 0%, #DC4949 45%, #B31F1F 100%);
+                {% endif %}">
                 <div class="result-precent flex justify-around w-full items-center text-center">
                     <img src="{% static 'core/images/fourCorneredStarIMG.png' %}" alt=""/>
                     <div class="results-text font-semibold text-white">
@@ -61,16 +61,16 @@
                                              class="w-6 h-6"/>
                                         <div class="relative flex-1">
                                             <input type="range" id="seek-slider" value="0" min="0" max="100"
-                                                   class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
-                                                   style="
-                  background: linear-gradient(
-                    to right,
-                    red 0%,
-                    red var(--progress-percentage),
-                    white var(--progress-percentage),
-                    white 100%
-                  );
-                " oninput="updateTime()"/>
+                                                class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
+                                                style="
+                                                  background: linear-gradient(
+                                                    to right,
+                                                    red 0%,
+                                                    red var(--progress-percentage),
+                                                    white var(--progress-percentage),
+                                                    white 100%
+                                                  );
+                                                " oninput="updateTime()"/>
                                             <div class="flex absolute w-full justify-between top-[1px]">
                                                 <output class="text-[12px] leading-5 font-regular text-black-main"
                                                         id="current-time-{{ forloop.counter0 }}">00:00
@@ -91,7 +91,7 @@
                                 {% endif %}
                                 <div class="testing__question-answers grid gap-2.5 grid-cols-2">
                                     {% for answer in question.answers.all %}
-                                        <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex justify-between items-center py-2 cursor-pointer
+                                        <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-[5px] px-[18px] flex justify-between items-center py-2 cursor-pointer
                                                    {% if answer in submission.selected_answers.all %}
                                                        text-white
                                                        {% if answer.is_correct %}

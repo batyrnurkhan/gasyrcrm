@@ -5,46 +5,124 @@
 {% block content %}
     {% include "core/components/navbar-main-without-links.html" %}
 
-    <div class="container content px-5  bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-6 md:pt-14">
-        <!-- Display profile picture -->
+    <div class="container content px-5 bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-6 md:pt-14">
+        <div class="flex flex-row mb-5 items-center rounded-[10px] gap-9 p-[42px] bg-[#BA2025]">
             {% if student.profile_picture %}
-                <img src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}" class="profile-picture"/>
+            <img class="w-[210px] h-[210px] rounded-full object-cover" src="{{ student.profile_picture.url }}" alt="{{ student.full_name }}" />
             {% else %}
-                <img src="{% static 'core/images/anonymous-user-image.png' %}" alt="No Profile Picture" class="profile-picture"/>
+            <img class="w-[210px] h-[210px] rounded-full object-cover" src="{% static 'core/images/anonymous-user-image.png' %}" alt="No Profile Picture" />
             {% endif %}
-
-            <!-- Display full name -->
-            <p><strong>Full Name:</strong> {{ student.full_name }}</p>
-
-            <!-- Display role -->
-            <p><strong>Role:</strong> {{ student.get_role_display }}</p>
-
-            <!-- Display phone number -->
-            <p><strong>Phone Number:</strong> {{ student.phone_number }}</p>
-
-            <!-- Display city -->
-            <p><strong>City:</strong> {{ student.user_city }}</p>
-
-            <!-- Display email -->
-            <p><strong>Email:</strong> {{ student.email }}</p>
-         <p><strong>Страна поступление:</strong>
-                <span id="admission_country" contenteditable="true">{{ student.admission_country }}</span>
-            </p>
-            <p><strong>Класс обучения:</strong>
-                <span id="education_class" contenteditable="true">{{ student.education_class }}</span>
-            </p>
-            <p><strong>Дата регистрации:</strong>
-                <span>{{ student.registration_date }}</span>
-            </p>
-            <p><strong>Дата окончание договора:</strong>
-                <span>{{ student.contract_end_date }}</span>
-            </p>
+            <div class="flex flex-col text-white">
+                <p class="text-[56px] font-semibold ">{{ student.full_name }}</p>
+                <p class="text-2xl mb-5 font-normal ">{{ student.get_role_display }}</p>
+                <div class="flex flex-row gap-5 items-center"> 
+                    <p class="text-lg font-semibold flex flex-row items-center gap-3">
+                        <img src="{% static 'core/icons/kz.png' %}" alt=""> 
+                        {{ student.phone_number }}</p>
+                    <p class="text-lg font-medium ">{{ student.user_city }}</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Save Button -->
-        <button id="saveButton">
-            Save
-        </button>
+        <div class='flex flex-col gap-8 mb-5 p-14 rounded-[10px] bg-white' style='box-shadow: 0px 4px 20px 0px #00000014;'> 
+
+            {% comment %} Юзай эту таблицу для добавления модулей {% endcomment %}
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th class="py-4  text-left text-2xl font-bold text-[#4F4F4F]">Модуль 1 (нужны данные)</th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Дата прохождения</th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Домашка</th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Добавьте дополнительные строки по необходимости -->
+                    <tr>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-left font-semibold">Тестирование за 1 урок</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold">12.10.2024</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"><a href="" class='text-[#7A48E4] underline'>Не выполнил</a></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"><a href="" class='text-[#7A48E4] underline'>Результат</a></td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-left font-semibold">Тестирование за 1 урок</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold">12.10.2024</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"><a href="" class='text-[#7A48E4] underline'>Скачать</a></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"><a href="" class='text-[#7A48E4] underline'>Результат</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th class="py-4  text-left text-2xl font-bold text-[#4F4F4F]">Модуль 2 </th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Дата прохождения</th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Домашка</th>
+                        <th class="py-4  text-right text-base font-bold text-[#4F4F4F]">Результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-left font-semibold">Тестирование за 1 урок</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold">Не пройден</td>
+                    </tr>
+                    <tr>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-left font-semibold">Тестирование за 2 урок</td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold"></td>
+                        <td class="py-4 border-y border-[#CDCDCD] text-lg text-right font-semibold">Не пройден</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </div>
+        <div class='flex flex-col items-start gap-12 mb-5 p-14 rounded-[10px] bg-white' style='box-shadow: 0px 4px 20px 0px #00000014;' >
+            <div class='w-4/5 grid grid-cols-3 gap-8'> 
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Имя и фамилия</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.full_name }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Номер телефона</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.phone_number }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Страна поступления</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.admission_country }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Город</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.user_city }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Электронная почта</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.email }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">Класс обучения</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.education_class }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">дата регистрации</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.registration_date }}/>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label for="username" class="uppercase text-base font-bold text-[#4F4F4F]">дата окончания договора</label>
+                    <input type="text" id="username" name="username" class="border border-[#CDCDCD] py-6 px-4 rounded-[10px] text-base font-medium text-[#4F4F4F] focus:outline-none" placeholder={{ student.contract_end_date }}/>
+                </div>
+            </div>
+            <button id="saveButton" class='bg-[#BA2025] rounded-[5px] py-5 px-9 text-white text-base font-semibold'>
+                Сохранить данные
+            </button>
+        </div>
+
+    </div>
+
+        
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>

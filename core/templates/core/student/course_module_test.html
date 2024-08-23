@@ -4,16 +4,17 @@
 {% block body-classes %}bg-whiteless{% endblock %}
 {% block content %}
     {% include 'core/components/navbar-main-without-links.html' %}
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
         {% include 'core/components/course-sidebar.html' %}
-        <div class="course px-[40px] pt-[40px] w-full">
-            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
-                <div class="course__subtitle font-bold text-black-main text-4 leading-5 uppercase">
+        <div class="course px-5 md:px-[40px] pt-[40px] w-full">
+            <div class="course__container bg-white shadow-[0px_4px_20px_0px_#00000014] px-4 md:px-9 pt-9 pb-[46px] rounded-md max-w-[995px]">
+                <div class="course__subtitle font-bold text-black-main text-sm md:text-base  leading-5 uppercase">
                     Модуль: {{ module_name }}
                 </div>
-                <div class="course__title leading-[52px] text-[42px] text-accent-red font-bold mb-3.5">
+                <div class="course__title leading-[52px] text-2xl md:text-[42px] text-accent-red font-bold mb-3.5">
                     Тестирование по модулю
                 </div>
+                <div class='w-full h-0 border border-[#D8D8D8]'></div>
                 <div class="video-container relative w-full">
                     {% for test in module.tests.all %}
                         <form action="{% url 'courses:take_test_module' course_id=course.id module_id=module.id test_id=test.id %}" method="post">
@@ -21,7 +22,7 @@
                             <ul class="testing__questions pt-[42px] pb-20 flex flex-col space-y-[36px] text-5 text-black-main font-bold leading-6">
                                 {% for question in test.questions.all %}
                                     <li class="testing__question-item">
-                                        <div class="testing__question-title mb-[24px]">
+                                        <div class="testing__question-title text-lg md:text-xl mb-[24px]">
                                             {{ forloop.counter }}. {{ question.text }}
                                         </div>
                                         {% if question.question_type == 'IMG' and question.image %}
@@ -36,24 +37,24 @@
                                                      class="w-6 h-6"/>
                                                 <div class="relative flex-1">
                                                     <input type="range" id="seek-slider" value="0" min="0" max="100"
-                                                           class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
-                                                           style="
-                      background: linear-gradient(
-                        to right,
-                        red 0%,
-                        red var(--progress-percentage),
-                        white var(--progress-percentage),
-                        white 100%
-                      );
-                    " oninput="updateTime()"/>
-                                                    <div class="flex absolute w-full justify-between top-[1px]">
-                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
-                                                                id="current-time-{{ forloop.counter0 }}">00:00
-                                                        </output>
-                                                        <output class="text-[12px] leading-5 font-regular text-black-main"
-                                                                id="time-{{ forloop.counter0 }}">3:10
-                                                        </output>
-                                                    </div>
+                                                        class="absolute -top-[7px] h-1 w-full rounded-sm cursor-pointer border-none"
+                                                        style="
+                                                        background: linear-gradient(
+                                                          to right,
+                                                          red 0%,
+                                                          red var(--progress-percentage),
+                                                          white var(--progress-percentage),
+                                                          white 100%
+                                                        );" 
+                                                        oninput="updateTime()"/>
+                                                <div class="flex absolute w-full justify-between top-[1px]">
+                                                    <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                            id="current-time-{{ forloop.counter0 }}">00:00
+                                                    </output>
+                                                    <output class="text-[12px] leading-5 font-regular text-black-main"
+                                                            id="time-{{ forloop.counter0 }}">3:10
+                                                    </output>
+                                                </div>
                                                 </div>
                                                 <audio id="audioPlayer" preload="metadata"
                                                        src="{{ question.audio.url }}"></audio>
@@ -64,9 +65,9 @@
                                                 </button>
                                             </div>
                                         {% endif %}
-                                        <div class="testing__question-answers grid gap-2.5 grid-cols-2">
+                                        <div class="testing__question-answers grid gap-2.5 grid-cols-1 md:grid-cols-2">
                                             {% for answer in question.answers.all %}
-                                                <label class="answer border-[1px] border-[#D8D8D8] h-[75px] rounded-sm px-[18px] flex items-center py-2 cursor-pointer">
+                                                <label class="answer border rounded-[5px] border-[#D8D8D8] h-[75px] px-[18px] flex items-center py-2 cursor-pointer">
                                                     <input type="{% if question.question_type == 'MC' %}checkbox{% else %}radio{% endif %}"
                                                            name="answer_{{ question.id }}"
                                                            value="{{ answer.id }}"
