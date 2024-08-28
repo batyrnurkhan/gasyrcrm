@@ -34,14 +34,14 @@
                                 {% if task_teacher and task_teacher.profile_picture %}
                                     <img src="{{ creator_profile_pic_url }}"
                                          alt="Profile Picture of {{ task_teacher.full_name }}"
-                                         class="max-w-[42px] max-h-[42px] rounded-full">
+                                         class="w-[42px] h-[42px] rounded-full">
                                 {% elif task_teacher %}
                                     <img src="./assets/main__author.png"
                                          alt="Profile Picture of {{ task_teacher.full_name }}"
-                                         class="max-w-[42px] max-h-[42px] rounded-full">
+                                         class="w-[42px] h-[42px] rounded-full">
                                 {% else %}
                                     <img src="./assets/default_profile_pic.png" alt="Default Profile Picture"
-                                         class="max-w-[42px] max-h-[42px] rounded-full">
+                                         class="w-[42px] h-[42px] rounded-full">
                                 {% endif %}
                                 <div class="author__info">
                                     {% if task_teacher %}
