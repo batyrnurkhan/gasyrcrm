@@ -2,6 +2,8 @@ import os
 
 from django import template
 
+from subjects.models import TaskSubmission
+
 register = template.Library()
 
 
@@ -40,3 +42,7 @@ def submission_filename(value, user):
     if submission:
         return os.path.basename(submission.file.name)
     return ""
+
+@register.filter
+def get_task_submission(task, user):
+    return TaskSubmission.objects.filter(task=task, student=user).first()

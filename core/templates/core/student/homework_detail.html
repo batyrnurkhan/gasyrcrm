@@ -44,12 +44,23 @@
                 
                 <div class='flex flex-col gap-3 items-start pb-28 md:pb-36 mt-6 md:mt-8'>
                     <p class='text-[#4F4F4F] text-base font-bold'>Моя работа</p>
-                    <a href='' upload class='flex flex-row items-center gap-3 text-[#BA2025] text-sm font-medium'>
-                        <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M2 16H18V9H20V17C20 17.5523 19.5523 18 19 18H1C0.44772 18 0 17.5523 0 17V9H2V16ZM11 6V13H9V6H4L10 0L16 6H11Z" fill="#BA2025"/>
-                        </svg>
-                        Загрузить работу
-                    </a>
+                    <form id="upload-form" method="POST" enctype="multipart/form-data" action="{% url 'courses:student_homework_upload' course.id module.id lesson.id %}" style="display: none;">
+    {% csrf_token %}
+    <input type="file" id="file-input" name="file" style="display: none;">
+</form>
+
+<a href="javascript:void(0);" id="upload-button" class="flex flex-row items-center gap-3 text-[#BA2025] text-sm font-medium">
+    <svg width="20" height="18" viewBox="0 0 20 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 16H18V9H20V17C20 17.5523 19.5523 18 19 18H1C0.44772 18 0 17.5523 0 17V9H2V16ZM11 6V13H9V6H4L10 0L16 6H11Z" fill="#BA2025"/>
+    </svg>
+    <span id="file-name">
+        {% if student_homework and student_homework.file %}
+            {{ student_homework.file.name }}
+        {% else %}
+            Загрузить работу
+        {% endif %}
+    </span>
+</a>
 
                 </div>
                 <div class='flex flex-row justify-center mt-11 md:mt-14' style="margin-top: 44px;">
@@ -59,4 +70,67 @@
             </div>
         </div>
     </div>
+
+<script type="text/javascript">
+    document.getElementById('upload-button').addEventListener('click', function() {
+        document.getElementById('file-input').click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', function() {
+        var formData = new FormData(document.getElementById('upload-form'));
+        var fileName = document.getElementById('file-input').files[0].name;
+        var url = document.getElementById('upload-form').action;
+
+        // Display the selected file name in the button
+        document.getElementById('file-name').textContent = fileName;
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                // Display success message without an alert
+                showSuccessMessage('Вы загрузили домашнюю работу');
+            } else if (data.error) {
+                alert("Error uploading homework: " + data.error);
+                document.getElementById('file-name').textContent = 'Загрузить работу';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("An error occurred during the upload.");
+            document.getElementById('file-name').textContent = 'Загрузить работу';
+        });
+    });
+
+    function showSuccessMessage(message) {
+        const messageCat = document.getElementById('message-cat');
+        const messageTitle = document.getElementById('message-title');
+        const messageText = document.getElementById('message-text');
+        const accessMessage = document.getElementById('accessMessage');
+
+        // Update message content
+        messageCat.src = "{% static 'core/images/cats/student-sit.png' %}";
+        messageTitle.innerText = `Системное уведомление`;
+        messageText.innerHTML = message;
+
+        // Show the message
+        accessMessage.classList.remove("hidden");
+
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            accessMessage.classList.add("hidden");
+        }, 5000);
+    }
+
+    function closeMessage() {
+        document.getElementById('accessMessage').classList.add("hidden");
+    }
+</script>
+
 {% endblock %}

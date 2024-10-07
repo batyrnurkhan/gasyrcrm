@@ -6,13 +6,44 @@ from django.views.generic import TemplateView, DetailView
 from django.urls import reverse_lazy, reverse
 from django.db.models import Prefetch, Q
 
-from courses.models import Course, Module, Lesson, TestSubmission, Test
+from courses.models import Course, Module, Lesson, TestSubmission, Test, StudentHomework, Homework
 from django.http import JsonResponse
 from datetime import date, timedelta
 from django.utils.translation import activate
 from django.utils.formats import date_format
 
 #locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
+
+def check_final_test_access(user, course):
+    # Check if all module and lesson tests are passed
+    module_tests = Test.objects.filter(
+        object_id__in=course.modules.values_list('id', flat=True),
+        content_type=ContentType.objects.get_for_model(course.modules.model)
+    )
+
+    lesson_tests = Test.objects.filter(
+        object_id__in=Lesson.objects.filter(module__course=course).values_list('id', flat=True),
+        content_type=ContentType.objects.get_for_model(Lesson)
+    )
+
+    all_tests = list(module_tests) + list(lesson_tests)
+    passed_tests = TestSubmission.objects.filter(
+        user=user, test__in=all_tests, score__gte=50
+    ).values_list('test', flat=True).distinct()
+
+    all_tests_passed = all(test.id in passed_tests for test in all_tests)
+
+    # Check if all homework has been submitted
+    homeworks = Homework.objects.filter(lesson__module__course=course)
+    submitted_homeworks = StudentHomework.objects.filter(
+        student=user,
+        lesson__in=homeworks.values_list('lesson', flat=True)
+    )
+
+    all_homeworks_submitted = submitted_homeworks.count() == homeworks.count()
+
+    # Return True if all tests and homework are completed
+    return all_tests_passed and all_homeworks_submitted
 
 def get_next_step(course, current_lesson=None, current_module=None):
     if current_lesson:
@@ -297,31 +328,32 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         current_lesson = get_object_or_404(Lesson, pk=self.kwargs['lesson_id'])
         next_step_url = get_next_step(course, current_lesson=current_lesson)
 
-        context.update({
-            'lesson': current_lesson,
-            'module': current_lesson.module,
-            'next_step_url': next_step_url
-        })
+        # Add lesson and module details for the sidebar
+        context['lesson'] = current_lesson
+        context['module'] = current_lesson.module
+        context['next_step_url'] = next_step_url
 
-        lesson = Lesson.objects.filter(pk=self.kwargs['lesson_id']).first()
-        module = Module.objects.filter(lessons=lesson).first()
-        if lesson and module:
-            context['lesson'] = lesson
-            context['module'] = module
-            for i, item in enumerate(module.lessons.all()):
-                if item == lesson:
-                    context['lesson_position'] = i + 1
-                    break
-
+        # Sidebar: Retrieve accessible and blocked modules
         modules = course.modules.prefetch_related(
             Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
         )
+        accessible_modules, blocked_modules = self.get_accessible_modules(user, modules)
+
+        # Check if final test (Финал) is accessible
+        context['course_test_accessible'] = self.check_final_test_access(user, course)
+        context['all_tests_passed'] = self.check_final_test_access(user, course)
+
+        context['modules'] = accessible_modules + blocked_modules
+        return context
+
+    def get_accessible_modules(self, user, modules):
+        """Determine which modules are accessible based on test completion."""
         accessible_modules = []
         blocked_modules = []
-
         previous_module_passed = True
 
         for module in modules:
+            # Check if all tests in the module and its lessons are passed
             module_tests = module.tests.all()
             lesson_tests = Test.objects.filter(
                 content_type=ContentType.objects.get_for_model(Lesson),
@@ -330,7 +362,9 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
             all_tests = (module_tests | lesson_tests).distinct()
 
             if all_tests.exists():
-                passed_tests = all_tests.filter(test_submissions__user=user, test_submissions__score__gte=50).distinct()
+                passed_tests = all_tests.filter(
+                    test_submissions__user=user, test_submissions__score__gte=50
+                ).distinct()
                 user_passed_all_tests = passed_tests.count() == all_tests.count()
             else:
                 user_passed_all_tests = True
@@ -344,9 +378,38 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
 
             previous_module_passed = user_passed_all_tests
 
-        context['modules'] = accessible_modules + blocked_modules  # Show all modules
-        return context
+        return accessible_modules, blocked_modules
 
+    def check_final_test_access(self, user, course):
+        """Check if the user has passed all tests and submitted all homework."""
+        # Get all the course, module, and lesson tests
+        module_tests = Test.objects.filter(
+            object_id__in=course.modules.values_list('id', flat=True),
+            content_type=ContentType.objects.get_for_model(Module)
+        )
+        lesson_tests = Test.objects.filter(
+            object_id__in=Lesson.objects.filter(module__course=course).values_list('id', flat=True),
+            content_type=ContentType.objects.get_for_model(Lesson)
+        )
+        all_tests = list(module_tests) + list(lesson_tests)
+
+        # Get the user's passed tests (score >= 50%)
+        passed_tests = TestSubmission.objects.filter(
+            user=user, test__in=all_tests, score__gte=50
+        ).values_list('test', flat=True).distinct()
+
+        # Check if all tests are passed
+        all_tests_passed = all(test.id in passed_tests for test in all_tests)
+
+        # Get all homeworks and check if all are submitted
+        homeworks = Homework.objects.filter(lesson__module__course=course)
+        submitted_homeworks = StudentHomework.objects.filter(
+            student=user, lesson__in=homeworks.values_list('lesson', flat=True)
+        )
+        all_homeworks_submitted = submitted_homeworks.count() == homeworks.count()
+
+        # Grant access to the final test if all tests are passed and all homework is submitted
+        return all_tests_passed and all_homeworks_submitted
 
 # class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 #     model = Course
@@ -521,7 +584,9 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
         course = self.get_object()
         lesson_id = self.kwargs.get('lesson_id')
         module_id = self.kwargs.get('module_id')
+        user = self.request.user
 
+        # Handle lesson context
         if lesson_id:
             lesson = Lesson.objects.filter(pk=lesson_id).first()
             module = Module.objects.filter(pk=module_id).first()
@@ -535,6 +600,7 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
                 context['module'] = module
                 context['module_name'] = module.module_name
 
+        # Handle module context
         elif module_id:
             module = Module.objects.filter(pk=module_id).first()
             if module:
@@ -542,12 +608,13 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
                 context['module'] = module
                 context['module_name'] = module.module_name
 
+        # Handle course context
         else:
             course = Course.objects.filter(pk=self.kwargs['pk']).first()
             if course:
                 test = course.tests.first()
 
-        user = self.request.user
+        # Check if there is a test submission
         submission = TestSubmission.objects.filter(user=user, test=test)
         if submission.exists():
             if not lesson_id and not module_id:
@@ -560,7 +627,7 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
                 context['lessons_count'] = lessons_count
             context['submission'] = submission.first()
 
-        # Calculate if all module and lesson tests are passed
+        # Calculate total tests and passed tests
         module_tests = Test.objects.filter(object_id__in=course.modules.values_list('id', flat=True),
                                            content_type=ContentType.objects.get_for_model(Module))
         lesson_tests = Test.objects.filter(
@@ -568,16 +635,26 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
             content_type=ContentType.objects.get_for_model(Lesson))
 
         all_tests = list(module_tests) + list(lesson_tests)
-        passed_tests = TestSubmission.objects.filter(user=user, test__in=all_tests, score__gte=50).values_list('test', flat=True).distinct()
+        passed_tests = TestSubmission.objects.filter(user=user, test__in=all_tests, score__gte=50).values_list('test',
+                                                                                                               flat=True).distinct()
 
         # Grant access to the course test if all module and lesson tests are passed
         all_tests_passed = all(test.id in passed_tests for test in all_tests)
 
-        if all_tests_passed:
+        # Check if all homework has been submitted
+        homeworks = Homework.objects.filter(lesson__module__course=course)
+        submitted_homeworks = StudentHomework.objects.filter(student=user,
+                                                             lesson__in=homeworks.values_list('lesson', flat=True))
+
+        all_homeworks_submitted = submitted_homeworks.count() == homeworks.count()
+
+        # Check if both tests and homework are completed
+        if all_tests_passed and all_homeworks_submitted:
             context['course_test_accessible'] = True
         else:
             context['course_test_accessible'] = False
 
+        # Prepare accessible and blocked modules
         modules = course.modules.prefetch_related(
             Prefetch('lessons', queryset=Lesson.objects.prefetch_related('tests'))
         )
@@ -611,7 +688,10 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 
         context['modules'] = accessible_modules + blocked_modules  # Show all modules
         context['all_tests_passed'] = all_tests_passed
+        context['all_homeworks_submitted'] = all_homeworks_submitted
+
         return context
+
 
 class WelcomePageView(TemplateView):
     template_name = 'core/welcome.html'

@@ -231,64 +231,76 @@
 
         <!-- Modal for Setting Link -->
         <div class="absolute top-0 bottom-0 left-0 right-0 bg-black bg-opacity-40 z-50 modal fade" id="setLinkModal"
-             tabindex="-1"
-             style="display: none"
-             aria-labelledby="setLinkModalLabel">
-            <div class="w-2/3 mx-auto bg-white mt-[140px]">
-                <div class="p-[40px] font-[Qanelas] text-black-main">
-                    <div class="flex flex-row justify-between mb-[22px]">
-                        <h5 class="font-semibold text-[25px]" id="setLinkModalLabel">Вставьте ссылку на Google Meet</h5>
-                        <button type="button" onclick="closeSetLinkModal()" class="btn-close" data-dismiss="modal"
-                                aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}"
-                                                        alt="">
+     tabindex="-1"
+     style="display: none"
+     aria-labelledby="setLinkModalLabel">
+    <div class="w-2/3 mx-auto bg-white mt-[140px]">
+        <div class="p-[40px] font-[Qanelas] text-black-main">
+            <div class="flex flex-row justify-between mb-[22px]">
+                <h5 class="font-semibold text-[25px]" id="setLinkModalLabel">Вставьте ссылку на Google Meet</h5>
+                <button type="button" onclick="closeSetLinkModal()" class="btn-close" data-dismiss="modal"
+                        aria-label="Close"><img src="{% static 'core/icons/close-fill-black-main.svg' %}"
+                                                alt="">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="setLinkForm">
+                    <label class="rounded-md border border-[#CDCDCD] flex justify-between py-[20px] pl-[30px] pr-[14px]"
+                           for="linkModal">
+                        <input type="hidden" id="appointmentId" name="appointmentId">
+                        <input type="url" class="w-full" placeholder="Место для ссылки" id="linkModal"
+                               name="link" required>
+                        <button type="button"
+                                class="flex items-center bg-accent-red rounded-lg py-[12px] px-[15px] gap-[18px] w-1/3"
+                                onclick="setLink()">
+                            <img src="{% static 'core/images/crm2/camera.svg' %}" alt=""
+                                 class="max-w-[25px] max-h-[20px]">
+                            <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
                         </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="setLinkForm">
-                            <label class="rounded-md border border-[#CDCDCD] flex justify-between py-[20px] pl-[30px] pr-[14px]"
-                                   for="linkModal">
-                                <input type="hidden" id="appointmentId" name="appointmentId">
-                                <input type="url" class="w-full" placeholder="Место для ссылки" id="linkModal"
-                                       name="link" required>
-                                <button type="button"
-                                        class="flex items-center bg-accent-red rounded-lg py-[12px] px-[15px] gap-[18px] w-1/3"
-                                        onclick="setLink()">
-                                    <img src="{% static "core/images/crm2/camera.svg" %}" alt=""
-                                         class="max-w-[25px] max-h-[20px]">
-                                    <span class="text-white text-[14px] leading-[18px] font-semibold">Создать встречу</span>
-                                </button>
-                            </label>
-                        </form>
-                    </div>
-                </div>
+                    </label>
+                </form>
             </div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script>
-            function closeSetLinkModal() {
-                $('#setLinkModal').hide();
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    function closeSetLinkModal() {
+        $('#setLinkModal').hide();
+    }
+
+    window.showSetLinkModal = function (appointmentId) {
+        document.getElementById('appointmentId').value = appointmentId;
+        $('#setLinkModal').show();
+    };
+
+    window.setLink = function () {
+        const lessonId = document.getElementById('appointmentId').value;
+        const link = document.getElementById('linkModal').value;
+        const csrfToken = '{{ csrf_token }}';
+
+        fetch(`/subjects/api/lesson/${lessonId}/update_google_meet_link/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({link: link})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                location.reload(); // Reload page on success
+            } else {
+                alert('Error: ' + data.error);
             }
-
-            window.showSetLinkModal = function (appointmentId) {
-                document.getElementById('appointmentId').value = appointmentId;
-                $('#setLinkModal').show();
-            };
-
-            window.setLink = function () {
-                fetch(`/subjects/api/lesson/{{ lesson.id }}/update_google_meet_link/`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({link: document.getElementById('linkModal').value})
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        location.reload()
-                    });
-            };
-        </script>
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    };
+</script>
     {% endif %}
 
 {% endblock %}

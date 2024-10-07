@@ -8,7 +8,7 @@ from .views import (
     ModuleCreateViewAPI, LessonCreateViewAPI, LiteratureCreateViewAPI, LiteratureDeleteViewAPI, CreateCourseStep3View,
     CreateCourseStep4View, CreateCourseStep5View, CreateCourseEndingView, student_results_view, publishCourse,
     student_test_results_view, HomeworkCreateViewAPI, HomeworkDetailView, LiteratureDetailView, HomeworkDeleteViewAPI,
-    UploadLiteratureView
+    UploadLiteratureView, StudentHomeworkUploadView
 )
 from core.views import CoursePageView, CourseStudentLecturePageView, course_redirect, CourseStudentTestPageView
 from django.conf import settings
@@ -73,5 +73,7 @@ urlpatterns = [
 
     path('lessons/<int:lesson_id>/literature/upload/', UploadLiteratureView.as_view(),
                        name='upload-literature'),
+
+    path('<int:course_id>/<int:module_id>/<int:lesson_id>/homework/upload/', StudentHomeworkUploadView.as_view(), name='student_homework_upload'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

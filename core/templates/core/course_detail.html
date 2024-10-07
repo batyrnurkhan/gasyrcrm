@@ -6,7 +6,8 @@
     {% include 'core/components/navbar-main.html' %}
     <div class="container content bg-no-repeat px-5 bg-top mx-auto font-[Qanelas] pt-14 text-black-main">
         <div class="relative w-full rounded-lg h-[90px] md:h-80 bg-cover"
-             style="background-image: url('{% if course.course_picture %}/{{ course.course_picture }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
+     style="background-image: url('{% if course.course_picture %}{{ course.course_picture.url }}{% else %}{% static "core/images/course-default-bg.png" %}{% endif %}')">
+
             <div class="hidden absolute bottom-5 left-5 rounded-lg bg-white py-3 px-4 md:flex flex-row items-center">
                 <p class="mr-[35px] font-semibold">Сложность</p>
                 <div class="inline-block relative">
@@ -110,16 +111,14 @@
                         </div>
                     </div>
                     <p class="font-light">
-                        Майкл Джерард Тайсон — американский боксер-профессионал, выступавший в тяжелой весовой
-                        категории. Он появился на свет 30 июня 1966 года в Нью-Йорке (США). В детстве Майк не мог за
-                        себя постоять. Его старший брат и сверстники издевались над мальчиком. В Тайсоне случился
-                        внутренний перелом, когда один из соседских мальчишек надругался над любимым голубем будущей
-                        звезды бокса. Майк жестко избил обидчика, и его зауважали местные малолетние бандиты.
-                    </p>
+    {{ object.full_description }}
+</p>
                 </div>
-                <button class="py-6 px-5 w-full bg-accent-red rounded-lg text-white text-lg font-medium mb-2 max-w-[356px] block mx-auto">
-                    {% if user in course.users.all %}Начать курс{% else %}Приобрести курс{% endif %}
-                </button>
+                <a href="{% if user in course.users.all %}{% url 'courses:course_start' pk=course.id %}{% else %}#{% endif %}"
+   class="py-6 px-5 w-full bg-accent-red rounded-lg text-white text-lg font-medium mb-2 max-w-[356px] block mx-auto text-center">
+   {% if user in course.users.all %}Начать курс{% else %}Приобрести курс{% endif %}
+</a>
+
             </div>
 
 

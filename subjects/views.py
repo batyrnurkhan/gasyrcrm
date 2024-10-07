@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Prefetch, Q
 from django.db.models.functions import TruncDate
-from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
+from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -596,20 +596,20 @@ def update_google_meet_link(request, lesson_id):
     lesson = get_object_or_404(Lesson_crm2, id=lesson_id)
 
     # Security check (ensure the user has permissions to update the lesson)
-    if not (request.user.is_superuser or request.user == lesson.mentor):
+    if not (request.user.is_superuser or request.user == lesson.mentor or request.user == lesson.teacher):
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     try:
         data = json.loads(request.body)
         google_meet_link = data.get('link')
         if not google_meet_link:
-            return JsonResponse({'error': 'Нету ссылки на Google Meets'}, status=400)
+            return JsonResponse({'error': 'Google Meet link is missing'}, status=400)
 
         # Update the lesson with the new Google Meet link
         lesson.google_meet_link = google_meet_link
         lesson.save()
 
-        # Create a conference type message in the chat room
+        # Create a "conference" type message in the chat room
         Message.objects.create(
             chat_room=lesson.chat_room,
             user=request.user,
@@ -618,11 +618,12 @@ def update_google_meet_link(request, lesson_id):
             timestamp=now()
         )
 
-        return JsonResponse({'message': 'Ссылка на Google Meets вставлена успешна'}, status=200)
+        return JsonResponse({'message': 'Google Meet link successfully updated'}, status=200)
+
     except json.JSONDecodeError as e:
         return JsonResponse({'error': f'Invalid JSON: {str(e)}'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': f'An unexpected error occurred: {str(e)}'}, status=500)
 
 
 @login_required
@@ -632,9 +633,27 @@ def student_tasks_view(request):
         return HttpResponseForbidden("You are not authorized to view this page.")
 
     # Get all lessons where the user is a student
-    lessons = Lesson_crm2.objects.filter(group_template__students=user).select_related('teacher', 'subject', 'chat_room')
+    lessons = Lesson_crm2.objects.filter(group_template__students=user).select_related('teacher', 'subject',
+                                                                                       'chat_room')
     tasks = Task.objects.filter(chat_room__in=[lesson.chat_room for lesson in lessons])
-    student_tasks = Task.objects.filter(submissions__student=user)
+    student_tasks = TaskSubmission.objects.filter(student=user)  # Get student's task submissions
+
+    if request.method == 'POST':
+        form = FileUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            task_id = form.cleaned_data['task_id']
+            task = get_object_or_404(Task, id=task_id)
+
+            # Create or update the task submission for the student
+            task_submission, created = TaskSubmission.objects.get_or_create(
+                task=task,
+                student=user,
+            )
+            task_submission.file = form.cleaned_data['file']
+            task_submission.save()
+
+            # Redirect to avoid re-submitting the form on page refresh
+            return HttpResponseRedirect(request.path_info)
 
     return render(request, 'subjects/student_tasks.html', {
         'tasks': tasks,

@@ -231,3 +231,11 @@ class Homework(models.Model):
 
     def __str__(self):
         return self.homework_name
+
+class StudentHomework(models.Model):
+    lesson = models.ForeignKey(Lesson, related_name='student_homeworks', on_delete=models.CASCADE)
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='student_homework_files/')  # Custom directory for student homework
+
+    def __str__(self):
+        return f'{self.student.full_name} - {self.lesson.lesson_name}'

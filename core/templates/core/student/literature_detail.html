@@ -44,9 +44,14 @@
                     {% endif %}
                 </div>
                 <div class='flex flex-row justify-center mt-11 md:mt-14' style="margin-top: 44px;">
-                    {% comment %} TODO: Тут нужна ссылка на следующий этап {% endcomment %}
-                    <a href='' class='text-[#BA2025] text-xl font-semibold w-full md:w-fit py-4 px-5 text-center md:px-16 border border-[#BA2025] rounded-[5px]' >Следующий этап</a>
-                </div>
+    {% if all_tests_passed %}
+        <a href="{% url 'courses:course_student_test_course' pk=course.id %}"
+           class='text-[#BA2025] text-xl font-semibold w-full md:w-fit py-4 px-5 text-center md:px-16 border border-[#BA2025] rounded-[5px]' >Следующий этап</a>
+    {% else %}
+        <span class="text-gray-500 text-lg">Пройдите все тесты, чтобы продолжить.</span>
+    {% endif %}
+</div>
+
             </div>
         </div>
     </div>

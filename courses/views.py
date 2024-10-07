@@ -24,8 +24,9 @@ from rest_framework.views import APIView
 
 from users.models import CustomUser
 from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, ModuleForm, AddStudentForm, CourseForm, \
-    AnswerForm, QuestionForm, SuccessVideoLinkForm
-from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework
+    AnswerForm, QuestionForm, SuccessVideoLinkForm, HomeworkForm
+from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework, \
+    StudentHomework
 from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer, HomeworkSerializer
 
 class CourseDelete(DetailView):
@@ -555,12 +556,17 @@ class LiteratureDetailView(DetailView):
         lesson = self.get_object()
         module = lesson.module
         course = module.course
+        user = self.request.user
 
         # Add module and course to the context
         context['module'] = module
         context['course'] = course
         context['lesson_position'] = module.lessons.filter(id__lte=lesson.id).count()
         context['literatures'] = lesson.literatures.all()
+
+        # Add student's homework submission
+        student_homework = StudentHomework.objects.filter(lesson=lesson, student=user).first()
+        context['student_homework'] = student_homework
 
         # Add modules for the sidebar
         modules = course.modules.prefetch_related(
@@ -570,7 +576,9 @@ class LiteratureDetailView(DetailView):
         blocked_modules = []
 
         previous_module_passed = True
-        user = self.request.user
+
+        # Check if all tests for this module have been passed by the user
+        all_tests_passed = True  # Variable to track if the user has passed all tests and completed homework
 
         for module in modules:
             module_tests = module.tests.all()
@@ -586,6 +594,15 @@ class LiteratureDetailView(DetailView):
             else:
                 user_passed_all_tests = True
 
+            # Check homework completion for all lessons in the module
+            homeworks = Homework.objects.filter(lesson__in=module.lessons.all())
+            user_homeworks = StudentHomework.objects.filter(lesson__in=module.lessons.all(), student=user)
+            homework_completed = user_homeworks.count() == homeworks.count()
+
+            # Only grant access to the final if both tests and homework are complete
+            if not (user_passed_all_tests and homework_completed):
+                all_tests_passed = False
+
             if previous_module_passed:
                 module.accessible = True
                 accessible_modules.append(module)
@@ -596,6 +613,8 @@ class LiteratureDetailView(DetailView):
             previous_module_passed = user_passed_all_tests
 
         context['modules'] = accessible_modules + blocked_modules  # Show all modules
+        context['all_tests_passed'] = all_tests_passed  # Add flag for final test access
+
         return context
 
 
@@ -616,12 +635,17 @@ class HomeworkDetailView(DetailView):
         lesson = self.get_object()
         module = lesson.module
         course = module.course
+        user = self.request.user
 
         # Add module and course to the context
         context['module'] = module
         context['course'] = course
         context['lesson_position'] = module.lessons.filter(id__lte=lesson.id).count()
         context['homeworks'] = lesson.homeworks.all()
+
+        # Add the student's homework if uploaded
+        student_homework = StudentHomework.objects.filter(lesson=lesson, student=user).first()
+        context['student_homework'] = student_homework
 
         # Add modules for the sidebar
         modules = course.modules.prefetch_related(
@@ -630,9 +654,9 @@ class HomeworkDetailView(DetailView):
         accessible_modules = []
         blocked_modules = []
 
-        previous_module_passed = True
-        user = self.request.user
+        all_tests_passed = True  # Initialize flag for the final button
 
+        previous_module_passed = True
         for module in modules:
             module_tests = module.tests.all()
             lesson_tests = Test.objects.filter(
@@ -647,6 +671,15 @@ class HomeworkDetailView(DetailView):
             else:
                 user_passed_all_tests = True
 
+            # Check homework completion for all lessons in the module
+            homeworks = Homework.objects.filter(lesson__in=module.lessons.all())
+            user_homeworks = StudentHomework.objects.filter(lesson__in=module.lessons.all(), student=user)
+            homework_completed = user_homeworks.count() == homeworks.count()
+
+            # If either tests or homeworks are not completed, mark all_tests_passed as False
+            if not (user_passed_all_tests and homework_completed):
+                all_tests_passed = False
+
             if previous_module_passed:
                 module.accessible = True
                 accessible_modules.append(module)
@@ -657,6 +690,8 @@ class HomeworkDetailView(DetailView):
             previous_module_passed = user_passed_all_tests
 
         context['modules'] = accessible_modules + blocked_modules  # Show all modules
+        context['all_tests_passed'] = all_tests_passed  # Pass flag for final test access
+
         return context
 
 class ModuleDeleteViewAPI(APIView):
@@ -955,3 +990,28 @@ class UploadLiteratureView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentHomeworkUploadView(View):
+    def post(self, request, course_id, module_id, lesson_id):
+        lesson = get_object_or_404(Lesson, id=lesson_id, module__id=module_id, module__course__id=course_id)
+
+        if 'file' in request.FILES:
+            file = request.FILES['file']
+
+            # Check if there's already an uploaded file for this student and lesson
+            student_homework, created = StudentHomework.objects.get_or_create(
+                lesson=lesson,
+                student=request.user
+            )
+
+            # Update the file if a new one is uploaded
+            student_homework.file = file
+            student_homework.save()
+
+            # Add a success message
+            messages.success(request, 'Вы загрузили домашнюю работу')
+
+            return JsonResponse({'message': 'Homework uploaded successfully!'}, status=201)
+
+        return JsonResponse({'error': 'File not found in request'}, status=400)
