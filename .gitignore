@@ -161,6 +161,6 @@ cython_debug/
 
 media/
 node_modules/
-
+static/
 node_modules/
 package-lock.json

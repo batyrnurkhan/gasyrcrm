@@ -6,10 +6,10 @@
     {% include 'core/components/navbar-light-transparent.html' %}
 
 
-    <div class="container content mx-auto relative flex justify-end flex-col md:flex-row md:px-20 ">
+    <div class="container content mx-auto relative flex justify-end flex-col md:flex-row px-5 md:px-0 ">
 
-        <div class="md:mb-20 md:w-[400px] md:mr-32 p-5 flex flex-col justify-center items-center md:items-start">
-            <div class="bg-light-gray w-full md:w-fit rounded-lg text-center px-4 pb-7 pt-7 md:pb-7 md:pt-14 md:max-w-none">
+        <div class="md:mb-20 flex md:ml-auto md:w-full  md:flex-row justify-center md:justify-end items-center md:items-start">
+            <div class="bg-light-gray w-full md:min-w-[410px] md:w-fit rounded-lg text-center px-4 pb-7 pt-7 md:pb-7 md:pt-14 md:max-w-none">
                 <h2 class="font-bold text-2xl md:text-2xl mb-5 text-black-main">Давайте знакомиться!</h2>
                 <form class="mb-7 w-full" method="post" action="{% url 'users:signup' %}" id="signup-form">
                     {% csrf_token %}
