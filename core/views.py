@@ -140,7 +140,7 @@ def get_week_dates(request):
 class HomePageView(LoginRequiredMixin, TemplateView):
 
     def get_template_names(self):
-        if self.request.user.role == "Teacher":
+        if self.request.user.role in ["Teacher", "Mentor"]:
             return "core/teacher-home.html"
         else:
             return "core/student-home.html"
@@ -149,7 +149,7 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
 
-        if user.role == "Teacher":
+        if user.role in ["Teacher", "Mentor"]:
             courses = Course.objects.filter(created_by=user)
             context["published_courses"] = courses.filter(published=True)
             context["unpublished_courses"] = courses.filter(published=False)
