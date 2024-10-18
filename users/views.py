@@ -165,7 +165,7 @@ def change_password(request):
 class CheckAccessView(LoginRequiredMixin, View):
     def post(self, request):
         if request.user.has_access:
-            return JsonResponse({'has_access': True, 'url': reverse('subjects:home')})
+            return JsonResponse({'has_access': True, 'url': reverse('courses:course_list')})
         else:
             return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
 
