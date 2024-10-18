@@ -58,7 +58,7 @@ class ShowCodeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         # Redirect teachers and superusers directly to the home page
         if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
-            return redirect('courses:home')
+            return redirect('home')
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -165,7 +165,7 @@ def change_password(request):
 class CheckAccessView(LoginRequiredMixin, View):
     def post(self, request):
         if request.user.has_access:
-            return JsonResponse({'has_access': True, 'url': reverse('subjects:home')})
+            return JsonResponse({'has_access': True, 'url': reverse('home')})
         else:
             return JsonResponse({'has_access': False, 'message': 'Администратор еще не подтвердил ваш аккаунт.'})
 

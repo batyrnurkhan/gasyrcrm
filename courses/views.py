@@ -162,7 +162,7 @@ class CourseListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'courses'
 
     def test_func(self):
-        return self.request.user.is_superuser or self.request.user.role in ['Student', 'Teacher']
+        return self.request.user.is_superuser or self.request.user.role in ['Student', 'Teacher', 'Mentor']
 
     def get_queryset(self):
         user = self.request.user
@@ -739,7 +739,7 @@ class AddStudentsView(LoginRequiredMixin, UserPassesTestMixin, FormView):
 
     def test_func(self):
         user = self.request.user
-        return user.is_superuser or user.role == 'Teacher'
+        return user.is_superuser or user.role == 'Teacher' or user.role == 'Mentor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
