@@ -58,7 +58,7 @@ class ShowCodeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         # Redirect teachers and superusers directly to the home page
         if request.user.is_superuser or request.user.role == 'Teacher' or request.user.has_access:
-            return redirect('courses:home')
+            return redirect('courses:course_list')
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
