@@ -1188,6 +1188,11 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   margin-bottom: auto;
 }
 
+.mx-5 {
+  margin-left: 1.25rem;
+  margin-right: 1.25rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -2261,6 +2266,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   min-width: max-content;
 }
 
+.min-w-\[450px\] {
+  min-width: 450px;
+}
+
+.min-w-\[410px\] {
+  min-width: 410px;
+}
+
 .max-w-14 {
   max-width: 3.5rem;
 }
@@ -2854,6 +2867,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .rounded-xl {
   border-radius: 0.75rem;
+}
+
+.rounded-\[15px\] {
+  border-radius: 15px;
 }
 
 .rounded-r-md {
@@ -4104,6 +4121,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   text-align: start;
 }
 
+.text-end {
+  text-align: end;
+}
+
 .align-middle {
   vertical-align: middle;
 }
@@ -4806,6 +4827,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     left: 13rem;
   }
 
+  .md\:left-20 {
+    left: 5rem;
+  }
+
   .md\:-z-10 {
     z-index: -10;
   }
@@ -4878,6 +4903,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:mt-\[110px\] {
     margin-top: 110px;
+  }
+
+  .md\:ml-auto {
+    margin-left: auto;
   }
 
   .md\:block {
@@ -5017,8 +5046,15 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     width: fit-content;
   }
 
+  .md\:w-full {
+    width: 100%;
+  }
   .md\:min-w-\[360px\] {
     min-width: 360px;
+  }
+
+  .md\:min-w-\[410px\] {
+    min-width: 410px;
   }
 
   .md\:max-w-\[45px\] {
@@ -5051,6 +5087,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
   .md\:items-baseline {
     align-items: baseline;
+  }
+
+  .md\:justify-end {
+    justify-content: flex-end;
   }
 
   .md\:justify-center {
