@@ -848,18 +848,73 @@ class TakeTestView(LoginRequiredMixin, View):
         return redirect('courses:course_student_test_course', pk=course_id)
 
 
+from django.shortcuts import render, get_object_or_404
+from .models import Course, CustomUser, Module, Lesson, Test, TestSubmission, StudentHomework
+
+
 def student_results_view(request, course_id, student_login_code):
     student = CustomUser.objects.get(login_code=student_login_code)
+    print(f"Student: {student.full_name}, Phone: {student.phone_number}")
+
     course = Course.objects.get(id=course_id)
-    context = {'student': student, 'course': course}
-    course_tests = Test.objects.filter(object_id=course_id)
-    modules = Module.objects.filter(course_id=course_id)
-    module_tests = Test.objects.filter(object_id__in=modules.values_list('id', flat=True))
-    lessons = Lesson.objects.filter(module__course_id=course_id)
-    lesson_tests = Test.objects.filter(object_id__in=lessons.values_list('id', flat=True))
-    context['sub_test_lesson'] = TestSubmission.objects.filter(user=student, test__in=lesson_tests)
-    context['sub_test_module'] = TestSubmission.objects.filter(user=student, test__in=module_tests)
-    context['sub_test_course'] = TestSubmission.objects.filter(user=student, test__in=course_tests)
+    print(f"Course: {course.course_name}")
+
+    # Получаем модули и уроки с тестами
+    modules = Module.objects.filter(course_id=course_id).prefetch_related('lessons')
+    print(f"Modules found: {modules}")
+
+    for module in modules:
+        print(f"Module: {module.module_name}")
+        module_tests = Test.objects.filter(object_id=module.id, content_type=ContentType.objects.get_for_model(Module))
+        print(f"Tests for module {module.module_name}: {module_tests}")
+
+        lessons = module.lessons.all()
+        for lesson in lessons:
+            print(f"Lesson: {lesson.lesson_name}")
+            lesson_tests = Test.objects.filter(object_id=lesson.id,
+                                               content_type=ContentType.objects.get_for_model(Lesson))
+            print(f"Tests for lesson {lesson.lesson_name}: {lesson_tests}")
+
+            literatures = lesson.literatures.all()
+            print(f"Literatures for lesson {lesson.lesson_name}: {literatures}")
+
+            homeworks = lesson.homeworks.all()
+            print(f"Homeworks for lesson {lesson.lesson_name}: {homeworks}")
+
+    # Тесты курса
+    course_tests = Test.objects.filter(object_id=course_id, content_type=ContentType.objects.get_for_model(Course))
+    print(f"Course tests: {course_tests}")
+
+    # Тесты уроков
+    lesson_tests = Test.objects.filter(
+        object_id__in=Lesson.objects.filter(module__course_id=course_id).values_list('id', flat=True))
+    print(f"Lesson tests: {lesson_tests}")
+
+    # Сдачи тестов
+    sub_test_lesson = TestSubmission.objects.filter(user=student, test__in=lesson_tests)
+    print(f"Test submissions for lessons: {sub_test_lesson}")
+
+    sub_test_module = TestSubmission.objects.filter(user=student, test__in=Test.objects.filter(
+        object_id__in=modules.values_list('id', flat=True)))
+    print(f"Test submissions for modules: {sub_test_module}")
+
+    sub_test_course = TestSubmission.objects.filter(user=student, test__in=course_tests)
+    print(f"Test submissions for course: {sub_test_course}")
+
+    # Домашние задания
+    homework_submissions = StudentHomework.objects.filter(student=student)
+    print(f"Homework submissions: {homework_submissions}")
+
+    context = {
+        'student': student,
+        'course': course,
+        'modules': modules,
+        'sub_test_lesson': sub_test_lesson,
+        'sub_test_module': sub_test_module,
+        'sub_test_course': sub_test_course,
+        'homework_submissions': homework_submissions,
+    }
+
     return render(request, 'courses/student_results.html', context)
 
 

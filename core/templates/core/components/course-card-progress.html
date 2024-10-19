@@ -13,7 +13,7 @@
     </div>
     <div>
         <h2 class="text-2xl font-semibold mb-3">{{ course.course_name }}</h2>
-        <p class="font-light text-sm mb-7">{{ course.big_description }} </p>
+        <p class="font-light text-sm mb-7">{{ course.mini_description }} </p>
         <div class="flex flex-col gap-2 md:gap-5 md:flex-row justify-between">
             <a class="w-full block md:w-1/2 text-center py-5 border-2 border-accent-red rounded-lg text-accent-red font-semibold"
                href="{% url 'courses:course_start' pk=course.id %}">Продолжить курс</a>

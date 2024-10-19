@@ -1,0 +1,32 @@
+<!-- schedule/edit_lesson_form.html -->
+<form method="POST" id="edit-lesson-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>
+
+<script>
+    document.getElementById('edit-lesson-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const url = this.action;
+
+        fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Урок успешно обновлен');
+                document.getElementById("lessonModal").style.display = "none";
+            } else {
+                alert('Произошла ошибка: ' + JSON.stringify(data.errors));
+            }
+        })
+        .catch(error => console.error('Ошибка:', error));
+    });
+</script>

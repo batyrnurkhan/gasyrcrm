@@ -1,7 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Test, Question, Answer, Course, Module, Lesson, LessonLiterature, TestSubmission, Homework
+from .models import Test, Question, Answer, Course, Module, Lesson, LessonLiterature, TestSubmission, Homework, \
+    StudentHomework
 
 
 class TestAdmin(admin.ModelAdmin):
@@ -16,3 +17,4 @@ admin.site.register(Lesson)
 admin.site.register(LessonLiterature)
 admin.site.register(TestSubmission)
 admin.site.register(Homework)
+admin.site.register(StudentHomework)
