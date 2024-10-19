@@ -11,6 +11,7 @@ from users.models import CustomUser
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
+from django.templatetags.static import static
 
 User = get_user_model()
 
@@ -110,7 +111,7 @@ class Course(models.Model):
     ]
     course_name = models.CharField(max_length=100)
     mini_description = models.CharField(max_length=255)
-    course_picture = models.ImageField(upload_to="course_pictures/", default='static/core/images/course-default-bg.png')
+    course_picture = models.ImageField(upload_to="course_pictures/", blank=True, null=True)
     big_description = models.TextField()
     course_time = models.PositiveIntegerField(help_text="Duration in hours")
     course_difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
@@ -155,6 +156,13 @@ class Course(models.Model):
         if is_new:
             # Automatically create a module when a new course is created
             Module.objects.create(course=self, module_name="Default Module")
+
+    def get_course_picture_url(self):
+        """ Return the correct URL for the course picture, whether it's a default image or an uploaded one. """
+        if self.course_picture:
+            return self.course_picture.url  # Serve the uploaded media file
+        else:
+            return static('core/images/course-default-bg.png')
 
     def __str__(self):
         return self.course_name

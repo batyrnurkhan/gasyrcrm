@@ -86,17 +86,20 @@ class CreateCourseStep1View(View):
 
             # Handle file saving
             course_picture = form.cleaned_data.get('course_picture')
-            if course_picture:
+            if course_picture and hasattr(course_picture, 'name'):
                 fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'temp'))
                 filename = fs.save(course_picture.name, course_picture)
                 file_path = fs.path(filename)
                 request.session['course_picture_path'] = file_path
+            else:
+                # If no file is uploaded, set course_picture_path to None
+                request.session['course_picture_path'] = None
 
             course_step1_data.pop('course_picture', None)
             request.session['course_step1_data'] = course_step1_data
             return redirect('courses:create_course_step2')
-        return render(request, 'courses/course/create_course_step1.html', {'form': form})
 
+        return render(request, 'courses/course/create_course_step1.html', {'form': form})
 from django.core.files import File
 
 class CreateCourseStep2View(View):
@@ -111,7 +114,7 @@ class CreateCourseStep2View(View):
             course = Course(**course_data, **form.cleaned_data)
             course.created_by = request.user
 
-            # Handle file retrieval and attachment
+            # Handle file retrieval and attachment only if a custom picture was uploaded
             course_picture_path = request.session.get('course_picture_path')
             if course_picture_path:
                 with open(course_picture_path, 'rb') as f:
@@ -119,13 +122,14 @@ class CreateCourseStep2View(View):
 
             course.save()
 
-            # Clean up session data and temporary file
+            # Clean up session data and temporary file if exists
             del request.session['course_step1_data']
-            if 'course_picture_path' in request.session:
-                os.remove(request.session['course_picture_path'])
+            if 'course_picture_path' in request.session and course_picture_path:
+                os.remove(course_picture_path)
                 del request.session['course_picture_path']
 
             return redirect('courses:create_course_step3', course_id=course.id)
+
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 
@@ -405,6 +409,8 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
 
 
 class CourseModulesView(APIView):
+    parser_classes = (MultiPartParser, FormParser)  # This ensures files are correctly parsed
+
     def get(self, request, course_id):
         course = Course.objects.filter(id=course_id).first()
         if course:

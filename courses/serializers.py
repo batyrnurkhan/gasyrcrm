@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+import mimetypes
 
 from .models import Course, Module, Lesson, LessonLiterature, Homework
 import magic
@@ -9,13 +10,14 @@ class LiteratureSerializer(serializers.ModelSerializer):
     class Meta:
         model = LessonLiterature
         fields = ['id', 'lesson', 'literature_name', 'literature_type', 'file', 'created_at']
+
     def validate_file(self, value):
         file = value
-        content_type = file.content_type
+        content_type, encoding = mimetypes.guess_type(file.name)
 
-        print(f"Validating file with content type: {content_type} and name: {file.name}")
+        print(f"Validating file with name: {file.name}, size: {file.size}, detected content_type: {content_type}")
 
-        if content_type in ['application/pdf']:
+        if content_type == 'application/pdf':
             return value
         elif content_type in ['image/jpeg', 'image/png']:
             return value
