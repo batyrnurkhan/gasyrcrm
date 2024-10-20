@@ -690,6 +690,18 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
         context['all_tests_passed'] = all_tests_passed
         context['all_homeworks_submitted'] = all_homeworks_submitted
 
+        modules = course.modules.all()  # Get all modules for the course
+        lessons_count = 0
+        for module in modules:
+            lessons_count += module.lessons.count()  # Count lessons in each module
+
+        course_data = {}
+        course_data['modules_count'] = modules.count()  # Total number of modules
+        course_data['lessons_count'] = lessons_count  # Total number of lessons
+        course_data['course_hours'] = course.course_time
+
+        context['course_data'] = course_data
+
         return context
 
 
