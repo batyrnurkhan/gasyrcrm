@@ -18,7 +18,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,6 +28,7 @@ from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, Modul
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework, \
     StudentHomework
 from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer, HomeworkSerializer
+
 
 class CourseDelete(DetailView):
     model = Course
@@ -409,7 +410,7 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
 
 
 class CourseModulesView(APIView):
-    parser_classes = (MultiPartParser, FormParser)  # This ensures files are correctly parsed
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def get(self, request, course_id):
         course = Course.objects.filter(id=course_id).first()
@@ -618,11 +619,30 @@ class LiteratureDetailView(DetailView):
 
             previous_module_passed = user_passed_all_tests
 
-        context['modules'] = accessible_modules + blocked_modules  # Show all modules
-        context['all_tests_passed'] = all_tests_passed  # Add flag for final test access
+        context['modules'] = accessible_modules + blocked_modules
+        context['all_tests_passed'] = all_tests_passed
+
+        if not lesson.homeworks.exists():
+            return self.redirect_to_next_step(lesson, course)
 
         return context
 
+    def redirect_to_next_step(self, lesson, course):
+        # Check if there's a module test
+        next_test = lesson.module.tests.first()
+        if next_test:
+            return redirect('courses:course_student_test_module', pk=course.id, module_id=lesson.module.id)
+
+        # If none of the above, move to the next module’s first lesson
+        next_module = course.modules.filter(id__gt=lesson.module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return redirect('courses:course_student_lecture', pk=course.id, module_id=next_module.id,
+                                lesson_id=next_lesson.id)
+
+        # Fallback if no more steps exist
+        return redirect('courses:course_final', course_id=course.id)
 
 class HomeworkDetailView(DetailView):
     model = Lesson
@@ -698,7 +718,27 @@ class HomeworkDetailView(DetailView):
         context['modules'] = accessible_modules + blocked_modules  # Show all modules
         context['all_tests_passed'] = all_tests_passed  # Pass flag for final test access
 
+        if not lesson.homeworks.exists():
+            return self.redirect_to_next_step(lesson, course)
+
         return context
+
+    def redirect_to_next_step(self, lesson, course):
+        # Check if there's a module test
+        next_test = lesson.module.tests.first()
+        if next_test:
+            return redirect('courses:course_student_test_module', pk=course.id, module_id=lesson.module.id)
+
+        # If none of the above, move to the next module’s first lesson
+        next_module = course.modules.filter(id__gt=lesson.module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return redirect('courses:course_student_lecture', pk=course.id, module_id=next_module.id,
+                                lesson_id=next_lesson.id)
+
+        # Fallback if no more steps exist
+        return redirect('courses:course_final', course_id=course.id)
 
 class ModuleDeleteViewAPI(APIView):
     def delete(self, request, module_id):

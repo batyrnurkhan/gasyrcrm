@@ -5,7 +5,6 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView, DetailView
 from django.urls import reverse_lazy, reverse
 from django.db.models import Prefetch, Q
-
 from courses.models import Course, Module, Lesson, TestSubmission, Test, StudentHomework, Homework
 from django.http import JsonResponse
 from datetime import date, timedelta
@@ -44,75 +43,6 @@ def check_final_test_access(user, course):
 
     # Return True if all tests and homework are completed
     return all_tests_passed and all_homeworks_submitted
-
-def get_next_step(course, current_lesson=None, current_module=None):
-    if current_lesson:
-        module = current_lesson.module
-
-        # Check if there's a homework next
-        next_homework = current_lesson.homeworks.first()
-        if next_homework:
-            return reverse('courses:course_student_homework', kwargs={
-                'course_id': course.id,
-                'module_id': module.id,
-                'pk': next_homework.id
-            })
-
-        # Check if there's literature next
-        next_literature = current_lesson.literatures.first()
-        if next_literature:
-            return reverse('courses:course_student_literature', kwargs={
-                'course_id': course.id,
-                'module_id': module.id,
-                'lesson_id': current_lesson.id
-            })
-
-        # Check if there's a test next
-        next_test = current_lesson.tests.first()
-        if next_test:
-            return reverse('courses:course_student_test_lesson', kwargs={
-                'pk': course.id,
-                'module_id': module.id,
-                'lesson_id': current_lesson.id
-            })
-
-        # Move to the next lesson in the module if available
-        next_lesson = module.lessons.filter(id__gt=current_lesson.id).first()
-        if next_lesson:
-            return reverse('courses:course_student_lecture', kwargs={
-                'pk': course.id,
-                'module_id': module.id,
-                'lesson_id': next_lesson.id
-            })
-
-    # If current_module is provided, handle module-level navigation
-    if current_module:
-        # Check if there's a module test next
-        next_module_test = current_module.tests.first()
-        if next_module_test:
-            return reverse('courses:course_student_test_module', kwargs={
-                'pk': course.id,
-                'module_id': current_module.id
-            })
-
-        # Move to the next module if available
-        next_module = course.modules.filter(id__gt=current_module.id).first()
-        if next_module:
-            next_lesson = next_module.lessons.first()
-            if next_lesson:
-                return reverse('courses:course_student_lecture', kwargs={
-                    'pk': course.id,
-                    'module_id': next_module.id,
-                    'lesson_id': next_lesson.id
-                })
-
-    # If it's the last module, move to the course test
-    next_course_test = course.tests.first()
-    if next_course_test:
-        return reverse('courses:course_student_test_course', kwargs={'pk': course.id})
-
-    # If it's the last course step, go to the course final page
-    return reverse('courses:course_final', kwargs={'course_id': course.id})
 
 
 def get_week_dates(request):
@@ -326,8 +256,7 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
         course = self.get_object()
         user = self.request.user
         current_lesson = get_object_or_404(Lesson, pk=self.kwargs['lesson_id'])
-        next_step_url = get_next_step(course, current_lesson=current_lesson)
-
+        next_step_url = self.get_next_step(current_lesson, course)
         # Add lesson and module details for the sidebar
         context['lesson'] = current_lesson
         context['module'] = current_lesson.module
@@ -345,6 +274,58 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
 
         context['modules'] = accessible_modules + blocked_modules
         return context
+
+    def get_next_step(self, lesson, course):
+        """Redirect based on priority order: lesson test, literature, homework, module test, next module lesson."""
+
+        # 1. Check if there's a test for the lesson
+        next_test = lesson.tests.first()
+        if next_test:
+            return reverse('courses:course_student_test_lesson', kwargs={
+                'pk': course.id,  # Use 'pk' here based on your error message
+                'module_id': lesson.module.id,
+                'lesson_id': lesson.id
+            })
+
+        # 2. If no test, check for literature
+        next_literature = lesson.literatures.first()
+        if next_literature:
+            return reverse('courses:course_student_literature', kwargs={
+                'course_id': course.id,
+                'module_id': lesson.module.id,
+                'lesson_id': lesson.id
+            })
+
+        # 3. If no literature, check for homework
+        next_homework = lesson.homeworks.first()
+        if next_homework:
+            return reverse('courses:course_student_homework', kwargs={
+                'course_id': course.id,
+                'module_id': lesson.module.id,
+                'pk': lesson.id  # Use 'pk' as per your homework URL pattern
+            })
+
+        # 4. If no homework, check for module test
+        next_module_test = lesson.module.tests.first()
+        if next_module_test:
+            return reverse('courses:course_student_test_module', kwargs={
+                'course_id': course.id,
+                'module_id': lesson.module.id
+            })
+
+        # 5. If no module test, move to the next module’s first lesson
+        next_module = course.modules.filter(id__gt=lesson.module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return reverse('courses:course_student_lecture', kwargs={
+                    'course_id': course.id,
+                    'module_id': next_module.id,
+                    'lesson_id': next_lesson.id
+                })
+
+        # Fallback: No further steps, return to final course page
+        return reverse('courses:course_final', kwargs={'course_id': course.id})
 
     def get_accessible_modules(self, user, modules):
         """Determine which modules are accessible based on test completion."""
@@ -702,7 +683,29 @@ class CourseStudentTestPageView(LoginRequiredMixin, DetailView):
 
         context['course_data'] = course_data
 
+        if not test:
+            # No test for the lesson, call redirect to next step
+            return self.redirect_to_next_step(module, course, lesson)
+
         return context
+
+    def redirect_to_next_step(self, module, course, lesson):
+        # 1. Check if literature exists for the lesson
+        if lesson.literatures.exists():
+            return redirect('courses:course_student_literature', course_id=course.id, module_id=module.id, lesson_id=lesson.id)
+
+        # 2. If no literature, check if homework exists for the lesson
+        homework = Homework.objects.filter(lesson=lesson).first()
+        if homework:
+            return redirect('courses:course_student_homework', course_id=course.id, module_id=module.id, lesson_id=lesson.id)
+
+        # 3. If no literature or homework, redirect to the module test
+        if module.tests.exists():
+            return redirect('courses:course_student_test_module', course_id=course.id, module_id=module.id)
+
+        # Fallback: If no test found, redirect back to the course overview or handle as needed
+        return redirect('courses:course_overview', course_id=course.id)
+
 
 
 class WelcomePageView(TemplateView):
