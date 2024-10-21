@@ -4417,6 +4417,10 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   line-height: 80px;
 }
 
+.leading-10 {
+  line-height: 2.5rem;
+}
+
 .tracking-widest {
   letter-spacing: 0.1em;
 }
