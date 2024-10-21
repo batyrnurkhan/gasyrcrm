@@ -12,46 +12,45 @@
         <div class="pt-[50px] ml-[40px] mr-[78px] flex flex-col gap-[20px]">
             <ul>
                 <h1 class="text-[42px] text-black-main font-semibold leading-[52px] mb-[24px]">Ученики</h1>
-                <div class="rounded-md mb-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] pt-[48px] px-[42px] pb-[42px]">
-                    <h3 class="text-[32px] leading-[45px] text-black-main font-semibold mb-[12px]">
+                <div class="rounded-md mb-[20px] bg-white shadow-[0px_4px_20px_0px_#00000014] pt-[48px] px-4 pb-[42px]">
+                    <h3 class="text-[32px] leading-[45px] text-black-main font-semibold px-[26px] mb-[12px]">
                         Шаблоны группы учеников
                     </h3>
 
                     {% if group_templates %}
-                        <ul class="bg-[#FAFAFA] py-[30px] px-[38px] grid items-center gap-[16px] max-h-[200px] overflow-y-auto">
+                        <ul class="bg-[#FAFAFA] py-[30px] px-[16px] grid items-center gap-[16px] max-h-[200px] overflow-y-auto">
                             {% for template in group_templates %}
                                 <li class="flex justify-between w-full px-[15px]">
-                                    <div class="flex gap-[12px] items-center">
+                                    <div class="flex gap-[12px] items-center w-1/5">
                                         <img src="{% static 'core/icons/team-accent-red.svg' %}" alt=""
                                              class="max-w-[24px] max-h-[24px]">
                                         <p class="text-black-main font-semibold text-[16px] leading-[22px]">
                                             {{ template.name }}
                                         </p>
                                     </div>
-                                    <div class="flex gap-[12px] items-center">
+                                    <div class="flex gap-[12px] items-center w-1/5">
                                         <img src="{% static 'core/icons/calendar-accent-red.svg' %}" alt=""
                                              class="max-w-[16px] max-h-[16px]">
                                         <p class="text-black-main font-semibold text-[16px] leading-[22px]">{{ template.created_at|date:"Y-m-d" }}</p>
                                     </div>
-                                    <div class="flex gap-[12px] items-center">
+                                    <div class="flex gap-[12px] items-center w-1/5">
                                         <img src="{% static 'core/icons/user-fill-accent-red.svg' %}" alt=""
                                              class="max-w-[16px] max-h-[16px]">
                                         <p class="text-black-main font-semibold text-[16px] leading-[22px]">{{ template.students.count }}
                                             ученик(а)</p>
                                     </div>
                                     <a href="#"
-                                       class="text-black-main underline hover:no-underline font-semibold text-[16px] leading-[22px]">
+                                       class="text-black-main flex justify-end w-1/5 underline hover:no-underline font-semibold text-[16px] leading-[22px]">
                                         Редактировать шаблон
                                     </a>
                                 </li>
                             {% endfor %}
-                            <li class="flex justify-between w-full px-[15px]">
-                                <a href="{% url 'subjects:grouptemplate-list' %}"
-                                   class="block ml-auto text-[20px] font-semibold hover:bg-gray text-black-main leading-[28px] border-black-main border-[1px] rounded-lg py-[4px] px-[4px]"
-                                   style="width: fit-content;">Добавить шаблон
-                                </a>
-                            </li>
+                            
                         </ul>
+                        <a href="{% url 'subjects:grouptemplate-list' %}"
+                           class="block mr-auto mt-4 text-[20px] w-fit font-semibold hover:bg-gray text-white leading-[28px] bg-[#BA2025] rounded-[5px] py-16 px-6">
+                           Добавить шаблон
+                        </a>
                     {% else %}
                         <div class="bg-[#FAFAFA] py-[30px] px-[38px] flex items-center gap-[37px]">
                             <img src="{% static 'core/images/cats/glasses.png' %}" alt=""
@@ -82,12 +81,12 @@
                         </form>
                     </div>
                     <div class="numberOfStudents pt-[33px] px-[30px] pb-[37px] bg-[#FAFAFA] rounded-lg mt-[10px]">
-                        <h3 class="text-[#4F4F4F] uppercase font-bold text-[16px]  font-bold leading-[26px] mb-[20px]">
+                        <h3 class="text-[#4F4F4F] opacity-50 uppercase text-[16px]  font-bold leading-[26px] mb-[20px]">
                             Количество учеников:
                             <span>{{ student_count }}</span>
                         </h3>
                         {% if students %}
-                            <ul class="grid gap-[16px] max-h-[425px] overflow-y-auto px-[15px]">
+                            <ul class="grid gap-[16px] max-h-[425px] overflow-y-auto">
                                 {% for student in students %}
                                     <li class="flex justify-between w-full items-center">
                                         <div class="gap-[16px] flex items-center w-[230px]">
