@@ -39,22 +39,44 @@
 let data, current_module = 0, modules_count = 0;
 
 async function send_data() {
+    const preparedData = prepareDataForUpdate(data);
     await fetch("{% url 'courses:course-modules' course_id=course.id %}", {
         method: 'PUT',
-        body: JSON.stringify(data),
+        body: JSON.stringify(preparedData),
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': '{{ csrf_token }}',
         },
     })
-        .then(response => response.json())
-        .then(res_data => {
-            console.log(res_data)
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to add module');
+    .then(response => response.json())
+    .then(res_data => {
+        console.log(res_data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to update module');
+    });
+}
+
+function prepareDataForUpdate(data) {
+    // Deep copy the data to avoid mutating the original object
+    const dataCopy = JSON.parse(JSON.stringify(data));
+
+    dataCopy.modules.forEach(module => {
+        module.lessons.forEach(lesson => {
+            if (lesson.literatures) {
+                lesson.literatures.forEach(literature => {
+                    delete literature.file;
+                });
+            }
+            if (lesson.homeworks) {
+                lesson.homeworks.forEach(homework => {
+                    delete homework.file;
+                });
+            }
         });
+    });
+    return dataCopy;
 }
 
 function edit_input(event, module, module_id, lesson_id = null) {

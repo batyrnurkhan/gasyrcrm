@@ -18,7 +18,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView, View, TemplateView
 from django.views.generic.edit import CreateView, FormView, UpdateView
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -28,6 +28,7 @@ from .forms import CourseFormStep1, CourseFormStep2, LessonForm, TestForm, Modul
 from .models import Course, Module, Lesson, Test, Question, Answer, TestSubmission, LessonLiterature, Homework, \
     StudentHomework
 from .serializers import CourseSerializer, ModuleSerializer, LessonSerializer, LiteratureSerializer, HomeworkSerializer
+
 
 class CourseDelete(DetailView):
     model = Course
@@ -86,17 +87,20 @@ class CreateCourseStep1View(View):
 
             # Handle file saving
             course_picture = form.cleaned_data.get('course_picture')
-            if course_picture:
+            if course_picture and hasattr(course_picture, 'name'):
                 fs = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, 'temp'))
                 filename = fs.save(course_picture.name, course_picture)
                 file_path = fs.path(filename)
                 request.session['course_picture_path'] = file_path
+            else:
+                # If no file is uploaded, set course_picture_path to None
+                request.session['course_picture_path'] = None
 
             course_step1_data.pop('course_picture', None)
             request.session['course_step1_data'] = course_step1_data
             return redirect('courses:create_course_step2')
-        return render(request, 'courses/course/create_course_step1.html', {'form': form})
 
+        return render(request, 'courses/course/create_course_step1.html', {'form': form})
 from django.core.files import File
 
 class CreateCourseStep2View(View):
@@ -111,7 +115,7 @@ class CreateCourseStep2View(View):
             course = Course(**course_data, **form.cleaned_data)
             course.created_by = request.user
 
-            # Handle file retrieval and attachment
+            # Handle file retrieval and attachment only if a custom picture was uploaded
             course_picture_path = request.session.get('course_picture_path')
             if course_picture_path:
                 with open(course_picture_path, 'rb') as f:
@@ -119,13 +123,14 @@ class CreateCourseStep2View(View):
 
             course.save()
 
-            # Clean up session data and temporary file
+            # Clean up session data and temporary file if exists
             del request.session['course_step1_data']
-            if 'course_picture_path' in request.session:
-                os.remove(request.session['course_picture_path'])
+            if 'course_picture_path' in request.session and course_picture_path:
+                os.remove(course_picture_path)
                 del request.session['course_picture_path']
 
             return redirect('courses:create_course_step3', course_id=course.id)
+
         return render(request, 'courses/course/create_course_step2.html', {'form': form})
 
 
@@ -405,6 +410,8 @@ class CreateOrEditTestView(View, LoginRequiredMixin):
 
 
 class CourseModulesView(APIView):
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+
     def get(self, request, course_id):
         course = Course.objects.filter(id=course_id).first()
         if course:
@@ -612,11 +619,30 @@ class LiteratureDetailView(DetailView):
 
             previous_module_passed = user_passed_all_tests
 
-        context['modules'] = accessible_modules + blocked_modules  # Show all modules
-        context['all_tests_passed'] = all_tests_passed  # Add flag for final test access
+        context['modules'] = accessible_modules + blocked_modules
+        context['all_tests_passed'] = all_tests_passed
+
+        if not lesson.homeworks.exists():
+            return self.redirect_to_next_step(lesson, course)
 
         return context
 
+    def redirect_to_next_step(self, lesson, course):
+        # Check if there's a module test
+        next_test = lesson.module.tests.first()
+        if next_test:
+            return redirect('courses:course_student_test_module', pk=course.id, module_id=lesson.module.id)
+
+        # If none of the above, move to the next module’s first lesson
+        next_module = course.modules.filter(id__gt=lesson.module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return redirect('courses:course_student_lecture', pk=course.id, module_id=next_module.id,
+                                lesson_id=next_lesson.id)
+
+        # Fallback if no more steps exist
+        return redirect('courses:course_final', course_id=course.id)
 
 class HomeworkDetailView(DetailView):
     model = Lesson
@@ -692,7 +718,27 @@ class HomeworkDetailView(DetailView):
         context['modules'] = accessible_modules + blocked_modules  # Show all modules
         context['all_tests_passed'] = all_tests_passed  # Pass flag for final test access
 
+        if not lesson.homeworks.exists():
+            return self.redirect_to_next_step(lesson, course)
+
         return context
+
+    def redirect_to_next_step(self, lesson, course):
+        # Check if there's a module test
+        next_test = lesson.module.tests.first()
+        if next_test:
+            return redirect('courses:course_student_test_module', pk=course.id, module_id=lesson.module.id)
+
+        # If none of the above, move to the next module’s first lesson
+        next_module = course.modules.filter(id__gt=lesson.module.id).first()
+        if next_module:
+            next_lesson = next_module.lessons.first()
+            if next_lesson:
+                return redirect('courses:course_student_lecture', pk=course.id, module_id=next_module.id,
+                                lesson_id=next_lesson.id)
+
+        # Fallback if no more steps exist
+        return redirect('courses:course_final', course_id=course.id)
 
 class ModuleDeleteViewAPI(APIView):
     def delete(self, request, module_id):
@@ -842,18 +888,73 @@ class TakeTestView(LoginRequiredMixin, View):
         return redirect('courses:course_student_test_course', pk=course_id)
 
 
+from django.shortcuts import render, get_object_or_404
+from .models import Course, CustomUser, Module, Lesson, Test, TestSubmission, StudentHomework
+
+
 def student_results_view(request, course_id, student_login_code):
     student = CustomUser.objects.get(login_code=student_login_code)
+    print(f"Student: {student.full_name}, Phone: {student.phone_number}")
+
     course = Course.objects.get(id=course_id)
-    context = {'student': student, 'course': course}
-    course_tests = Test.objects.filter(object_id=course_id)
-    modules = Module.objects.filter(course_id=course_id)
-    module_tests = Test.objects.filter(object_id__in=modules.values_list('id', flat=True))
-    lessons = Lesson.objects.filter(module__course_id=course_id)
-    lesson_tests = Test.objects.filter(object_id__in=lessons.values_list('id', flat=True))
-    context['sub_test_lesson'] = TestSubmission.objects.filter(user=student, test__in=lesson_tests)
-    context['sub_test_module'] = TestSubmission.objects.filter(user=student, test__in=module_tests)
-    context['sub_test_course'] = TestSubmission.objects.filter(user=student, test__in=course_tests)
+    print(f"Course: {course.course_name}")
+
+    # Получаем модули и уроки с тестами
+    modules = Module.objects.filter(course_id=course_id).prefetch_related('lessons')
+    print(f"Modules found: {modules}")
+
+    for module in modules:
+        print(f"Module: {module.module_name}")
+        module_tests = Test.objects.filter(object_id=module.id, content_type=ContentType.objects.get_for_model(Module))
+        print(f"Tests for module {module.module_name}: {module_tests}")
+
+        lessons = module.lessons.all()
+        for lesson in lessons:
+            print(f"Lesson: {lesson.lesson_name}")
+            lesson_tests = Test.objects.filter(object_id=lesson.id,
+                                               content_type=ContentType.objects.get_for_model(Lesson))
+            print(f"Tests for lesson {lesson.lesson_name}: {lesson_tests}")
+
+            literatures = lesson.literatures.all()
+            print(f"Literatures for lesson {lesson.lesson_name}: {literatures}")
+
+            homeworks = lesson.homeworks.all()
+            print(f"Homeworks for lesson {lesson.lesson_name}: {homeworks}")
+
+    # Тесты курса
+    course_tests = Test.objects.filter(object_id=course_id, content_type=ContentType.objects.get_for_model(Course))
+    print(f"Course tests: {course_tests}")
+
+    # Тесты уроков
+    lesson_tests = Test.objects.filter(
+        object_id__in=Lesson.objects.filter(module__course_id=course_id).values_list('id', flat=True))
+    print(f"Lesson tests: {lesson_tests}")
+
+    # Сдачи тестов
+    sub_test_lesson = TestSubmission.objects.filter(user=student, test__in=lesson_tests)
+    print(f"Test submissions for lessons: {sub_test_lesson}")
+
+    sub_test_module = TestSubmission.objects.filter(user=student, test__in=Test.objects.filter(
+        object_id__in=modules.values_list('id', flat=True)))
+    print(f"Test submissions for modules: {sub_test_module}")
+
+    sub_test_course = TestSubmission.objects.filter(user=student, test__in=course_tests)
+    print(f"Test submissions for course: {sub_test_course}")
+
+    # Домашние задания
+    homework_submissions = StudentHomework.objects.filter(student=student)
+    print(f"Homework submissions: {homework_submissions}")
+
+    context = {
+        'student': student,
+        'course': course,
+        'modules': modules,
+        'sub_test_lesson': sub_test_lesson,
+        'sub_test_module': sub_test_module,
+        'sub_test_course': sub_test_course,
+        'homework_submissions': homework_submissions,
+    }
+
     return render(request, 'courses/student_results.html', context)
 
 

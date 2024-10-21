@@ -8,28 +8,22 @@
     {% include "core/components/navbar-main-without-links.html" %}
 
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] text-black-main pt-14">
-
         <section class="pt-[42px]">
             <div class="px-10 pt-9 pb-10 rounded-[10px] flex items-center gap-[36px] container-test mb-5 bg-cover bg-center"
                  style="background-image: url('{% static 'core/images/gasyr-accent-red-background.png' %}')">
                 <div class="w-[210px] h-[210px] rounded-[100px] overflow-hidden">
                     <img src="{% if student.profile_picture %}
-                            /{{ student.profile_picture }}
+                                /{{ student.profile_picture }}
                             {% else %}
-                            {% static "core/images/default-user.svg" %}
-                        {% endif %}"
-                         alt="avatar"
-                         class="w-full h-full object-cover rounded-full"/>
+                                {% static "core/images/default-user.svg" %}
+                            {% endif %}"
+                         alt="avatar" class="w-full h-full object-cover rounded-full"/>
                 </div>
                 <div>
-                    <h1 class="mb-[16px] text-[56px] font-[600] text-white">
-                        {{ student.full_name }}
-                    </h1>
-                    <p class="mb-[20px] text-[24px] text-[18px] text-white">
-                        Ученик
-                    </p>
-                    <div class="flex gap-[12px] text-white  ">
-                        <p class=""><img src="{% static 'core/icons/kz.png' %}" alt=""></p>
+                    <h1 class="mb-[16px] text-[56px] font-[600] text-white">{{ student.full_name }}</h1>
+                    <p class="mb-[20px] text-[24px] text-white">Ученик</p>
+                    <div class="flex gap-[12px] text-white">
+                        <p><img src="{% static 'core/icons/kz.png' %}" alt=""></p>
                         <p class="mr-[20px]">{{ student.phone_number|format_phone_number }}</p>
                         <p>г. {{ student.city }}</p>
                     </div>
@@ -37,46 +31,114 @@
             </div>
 
             <div class="px-10 pt-9 pb-10 rounded-[10px] bg-white container-test mb-5">
-                {% for module in course.modules.all %}
+                {% for module in modules %}
                     <table class="mb-8 w-full">
                         <thead class="border-b border-[#CDCDCD]">
                         <tr class="text-[16px] text-black-main font-[700]">
-                            <th class="pb-4 text-[24px] w-[30%] text-left">
-                                Модуль {{ forloop.counter }}: {{ module.module_name }}</th>
+                            <th class="pb-4 text-[24px] w-[30%] text-left">Модуль {{ forloop.counter }}: {{ module.module_name }}</th>
                             <th class="pb-4 text-center w-[15%]">Дата прохождения</th>
+                            <th class="pb-4 text-center w-[15%]">Домашка</th>
                             <th class="pb-4 text-right">Результат</th>
                         </tr>
                         </thead>
-                        <tbody class="">
+                        <tbody>
                         {% for lesson in module.lessons.all %}
                             <tr class="border-b border-[#CDCDCD] text-[16px] text-black-main font-[700]">
                                 <th class="py-4 text-left">Тестирование за урок: {{ lesson.lesson_name }}</th>
-                                {% if lesson.tests.count > 0 %}
-                                    {% with submission=sub_test_lesson|get_lesson_submission:lesson.id %}
-                                        {% if submission %}
-                                            <th class="">{{ submission.completed|date:"d.m.Y" }}</th>
-                                            <th class="text-right">
-                                                <a class="text-blue-ielts underline hover:text-blue-700"
-                                                   href="{% url 'courses:student_test_results' course_id=course.id student_login_code=student.login_code submission_id=submission.id %}">Результат</a>
-                                            </th>
-                                        {% else %}
-                                            <th class=""></th>
-                                            <th class="text-right">
-                                                <p>Не пройден</p>
-                                            </th>
-                                        {% endif %}
-                                    {% endwith %}
-                                {% else %}
-                                    <th class=""></th>
-                                    <th class="text-right">
-                                        <p>No test</p>
-                                    </th>
-                                {% endif %}
+                                {% with submission=sub_test_lesson|get_lesson_submission:lesson %}
+                                    {% if submission %}
+                                        <th class="">{{ submission.completed|date:"d.m.Y" }}</th>
+                                        <th class="text-center">
+                                            {% with homework=homework_submissions|get_homework_submission:lesson %}
+                                                {% if homework %}
+                                                    <a href="{{ homework.file.url }}" class="text-blue-ielts underline hover:text-blue-700">Скачать</a>
+                                                {% else %}
+                                                    <p>Не выполнено</p>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </th>
+                                        <th class="text-right">
+                                            <a class="text-blue-ielts underline hover:text-blue-700"
+                                               href="{% url 'courses:student_test_results' course_id=course.id student_login_code=student.login_code submission_id=submission.id %}">
+                                                Результат
+                                            </a>
+                                        </th>
+                                    {% else %}
+                                        <th class=""></th>
+                                        <th class="text-center"><p>Не выполнено</p></th>
+                                        <th class="text-right"><p>Не пройден</p></th>
+                                    {% endif %}
+                                {% endwith %}
                             </tr>
                         {% endfor %}
                         </tbody>
                     </table>
                 {% endfor %}
+
+                <!-- Модульные тесты -->
+                <h2 class="text-[24px] text-black-main font-[700]">Модульные тесты</h2>
+                <table class="mb-8 w-full">
+                    <thead class="border-b border-[#CDCDCD]">
+                    <tr class="text-[16px] text-black-main font-[700]">
+                        <th class="pb-4 text-left w-[50%]">Название модуля</th>
+                        <th class="pb-4 text-center w-[25%]">Дата прохождения</th>
+                        <th class="pb-4 text-right w-[25%]">Результат</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for module in modules %}
+                        {% with submission=sub_test_module|get_module_submission:module %}
+                            <tr class="border-b border-[#CDCDCD] text-[16px] text-black-main font-[700]">
+                                <th class="py-4 text-left">{{ module.module_name }}</th>
+                                {% if submission %}
+                                    <th class="text-center">{{ submission.completed|date:"d.m.Y" }}</th>
+                                    <th class="text-right">
+                                        <a class="text-blue-ielts underline hover:text-blue-700"
+                                           href="{% url 'courses:student_test_results' course_id=course.id student_login_code=student.login_code submission_id=submission.id %}">
+                                            Результат
+                                        </a>
+                                    </th>
+                                {% else %}
+                                    <th class="text-center">---</th>
+                                    <th class="text-right">---</th>
+                                {% endif %}
+                            </tr>
+                        {% endwith %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Финальный тест курса, если он существует -->
+                {% if sub_test_course %}
+                    <h2 class="text-[24px] text-black-main font-[700]">Финальный тест курса</h2>
+                    <table class="mb-8 w-full">
+                        <thead class="border-b border-[#CDCDCD]">
+                        <tr class="text-[16px] text-black-main font-[700]">
+                            <th class="pb-4 text-left w-[50%]">Тест</th>
+                            <th class="pb-4 text-center w-[25%]">Дата прохождения</th>
+                            <th class="pb-4 text-right w-[25%]">Результат</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for submission in sub_test_course %}
+                            <tr class="border-b border-[#CDCDCD] text-[16px] text-black-main font-[700]">
+                                <th class="py-4 text-left">Финальный тест курса</th>
+                                <th class="text-center">{{ submission.completed|date:"d.m.Y" }}</th>
+                                <th class="text-right">
+                                    <a class="text-blue-ielts underline hover:text-blue-700"
+                                       href="{% url 'courses:student_test_results' course_id=course.id student_login_code=student.login_code submission_id=submission.id %}">
+                                        Результат
+                                    </a>
+                                </th>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <h2 class="text-[24px] text-black-main font-[700]">Финальный тест курса</h2>
+                    <p>Финальный тест не пройден.</p>
+                {% endif %}
+
             </div>
         </section>
     </div>
