@@ -642,7 +642,6 @@ class LiteratureDetailView(DetailView):
                                 lesson_id=next_lesson.id)
 
         # Fallback if no more steps exist
-        return redirect('courses:course_final', course_id=course.id)
 
 class HomeworkDetailView(DetailView):
     model = Lesson
@@ -738,7 +737,6 @@ class HomeworkDetailView(DetailView):
                                 lesson_id=next_lesson.id)
 
         # Fallback if no more steps exist
-        return redirect('courses:course_final', course_id=course.id)
 
 class ModuleDeleteViewAPI(APIView):
     def delete(self, request, module_id):
