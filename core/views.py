@@ -325,7 +325,6 @@ class CourseStudentLecturePageView(LoginRequiredMixin, DetailView):
                 })
 
         # Fallback: No further steps, return to final course page
-        return reverse('courses:course_final', kwargs={'course_id': course.id})
 
     def get_accessible_modules(self, user, modules):
         """Determine which modules are accessible based on test completion."""
