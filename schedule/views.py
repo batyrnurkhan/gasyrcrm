@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
+
+from users.models import CustomUser
 from .models import Shift, ShiftTime
 from subjects.models import Lesson_crm2
 
@@ -63,4 +65,5 @@ def shifts_view(request):
         'times',
     ).all()
 
-    return render(request, 'schedule/shifts.html', {'shifts': shifts})
+    return render(request, 'schedule/shifts.html',
+                  {'shifts': shifts, 'page': 'schedule', 'students': CustomUser.objects.filter(role="Student")})
