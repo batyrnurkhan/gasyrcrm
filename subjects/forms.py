@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
+from schedule.models import ShiftTime
 from .models import VolunteerChannel, Grade, Achievement, StudentAchievement, Subject
 from users.models import CustomUser
 from .models import Task, Lesson_crm2, GroupTemplate
@@ -157,3 +158,76 @@ class StudentAchievementForm(forms.ModelForm):
             'student': forms.HiddenInput(),
             'achievement': forms.HiddenInput(),
         }
+
+
+class LessonEditForm(forms.ModelForm):
+    teacher = forms.ChoiceField()
+    subject = forms.ChoiceField()
+    group_template = forms.ChoiceField(required=False)
+    students = forms.ModelMultipleChoiceField(
+        queryset=CustomUser.objects.filter(role='Student'),
+        widget=forms.SelectMultiple(attrs={'id': 'id_students'}),
+        required=False
+    )
+    time_slot = forms.IntegerField(widget=forms.HiddenInput())
+
+    class Meta:
+        model = Lesson_crm2
+        fields = ['group_name', 'subject', 'group_template', 'teacher', 'students', 'time_slot', 'google_meet_link']
+        widgets = {
+            'time_slot': forms.HiddenInput()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(LessonEditForm, self).__init__(*args, **kwargs)
+        self.teachers_info = [(teacher.id, teacher.full_name, teacher.profile_picture.url if teacher.profile_picture else '')
+                              for teacher in CustomUser.objects.filter(role="Teacher")]
+        self.subjects_info = [(subject.id, subject.name, subject.image.url if subject.image else '')
+                              for subject in Subject.objects.all()]
+        self.group_templates_info = [(0, 'Пустой шаблон', {})] + [
+            (template.id, template.name, {student.id: student.full_name for student in template.students.all()})
+            for template in GroupTemplate.objects.all()
+        ]
+
+        self.fields['teacher'].choices = [(teacher.id, teacher.full_name) for teacher in CustomUser.objects.filter(role="Teacher")]
+        self.fields['subject'].choices = [(subject.id, subject.name) for subject in Subject.objects.all()]
+        self.fields['group_template'].choices = [(0, 'Пустой шаблон')] + [(template.id, template.name) for template in GroupTemplate.objects.all()]
+
+        if self.instance:
+            self.fields['teacher'].initial = self.instance.teacher.id if self.instance.teacher else None
+            self.fields['subject'].initial = self.instance.subject.id if self.instance.subject else None
+            self.fields['group_template'].initial = self.instance.group_template.id if self.instance.group_template else 0
+            self.fields['students'].initial = self.instance.students.all()
+            self.fields['time_slot'].initial = self.instance.time_slot.id if self.instance.time_slot else None
+
+    def clean(self):
+        cleaned_data = super().clean()
+        teacher = cleaned_data.get('teacher')
+        subject = cleaned_data.get('subject')
+        group_template = cleaned_data.get('group_template')
+        time_slot_id = cleaned_data.get('time_slot')
+
+        if teacher:
+            cleaned_data['teacher'] = CustomUser.objects.get(id=teacher)
+        else:
+            cleaned_data['teacher'] = None
+
+        if subject:
+            cleaned_data['subject'] = Subject.objects.get(id=subject)
+        else:
+            cleaned_data['subject'] = None
+
+        if group_template and int(group_template) != 0:
+            try:
+                cleaned_data['group_template'] = GroupTemplate.objects.get(id=group_template)
+            except GroupTemplate.DoesNotExist:
+                cleaned_data['group_template'] = None
+        else:
+            cleaned_data['group_template'] = None
+
+        if time_slot_id:
+            cleaned_data['time_slot'] = ShiftTime.objects.get(id=time_slot_id)
+        else:
+            cleaned_data['time_slot'] = self.instance.time_slot
+
+        return cleaned_data

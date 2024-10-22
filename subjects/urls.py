@@ -4,7 +4,7 @@ from .views import SubjectListView, group_template_list, LessonCreateView, Lesso
     tasks_view, weekly_schedule_view, psy_appointment_view, group_templates_view, EditGroupTemplateView, search_users, \
     mini_schedule_view, update_google_meet_link, student_tasks_view, upload_task_view, download_task_file, \
     download_submission_file, download_grade_file, create_achievement, achievements_list, task_submissions_view, \
-    ori_appointment_view
+    ori_appointment_view, LessonEditView
 
 app_name = 'subjects'
 
@@ -23,7 +23,6 @@ urlpatterns = [
     path('edit-group-template/<int:pk>/', EditGroupTemplateView.as_view(), name='edit_template_url'),
 
     path('lessons/', LessonListView.as_view(), name='lesson-list'),
-    path('lessons-create/<int:time_id>/', LessonCreateView.as_view(), name='lesson-create'),
 
     path('set-achievement/', create_achievement, name='set_achievement'),
     path('achievements/', achievements_list, name='achievements_list'),
@@ -46,4 +45,7 @@ urlpatterns = [
     path('download_task_file/<int:task_id>/', download_task_file, name='download_task_file'),
     path('download-grade-file/<int:grade_id>/', download_grade_file, name='download_grade_file'),
     path('download_submission_file/<int:submission_id>/', download_submission_file, name='download_submission_file'),
+    path('lessons-edit/<int:pk>/<int:time_id>/', LessonEditView.as_view(), name='lesson-edit'),
+    path('lessons-create/<int:time_id>/', LessonCreateView.as_view(), name='lesson-create'),
+
 ]

@@ -7,47 +7,48 @@
     {% include 'core/components/navbar-main.html' %}
     <div class="container content bg-no-repeat bg-top mx-auto font-[Qanelas] px-5 md:px-0 pt-14 text-black-main">
         {% if user.is_authenticated %}
-        {% if last_opened_content_id %}
-            <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
-            <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-col-reverse md:flex-row mb-12"
-                 style="background-image: url('{% static "core/images/gasyr-red-row.png" %}')">
-                <div class="md:p-3 text-start md:mr-auto">
-                    <h4 class="text-2xl font-semibold text-center md:text-start">Вы остановились!</h4>
-                    <h2 class="text-[32px] font-bold mb-[20px] text-center md:text-start">{{ course_name }}</h2>
-                    <a class="inline-block text-white font-semibold py-5 w-full text-center md:w-fit px-5 md:px-16 border-white border-2 rounded-lg"
-                       href="#">Продолжить курс
-                    </a>
-                </div>
-                <div class="relative h-full">
-                    <svg class="w-[182px] h-[182px] m-auto z-0" viewBox="0 0 100 100">
-                        <!-- Background circle -->
-                         {% comment %} TODO: подключить к реальному прогрессу {% endcomment %}
-                        <circle
-                                class="text-gray-200 stroke-white"
-                                stroke-width="10"
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                fill="transparent"
-                        ></circle>
-                        <!-- Progress circle -->
-                        <circle
-                                class="text-indigo-500 progress-ring__circle stroke-math"
-                                stroke-width="10"
-                                stroke-linecap="round"
-                                cx="50"
-                                cy="50"
-                                r="40"
-                                fill="transparent"
-                                stroke-dasharray="251.2"
-                                transform="rotate(90, 50, 50)"
-                                stroke-dashoffset="calc(251.2 - (251.2 * {{ test_completion_percentage|floatformat:0 }}) / 100)"
-                        ></circle>
-                    </svg>
-                    <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">{{ test_completion_percentage|floatformat:0 }}%</h2>
-                </div>
-            </div>
-        {% endif %}
+        {% if last_opened_content_id and test_completion_percentage != 100 %}
+    <h1 class="text-[42px] font-bold mb-3">Продолжить обучение</h1>
+    <div class="min-h-60 bg-cover bg-center rounded-lg p-8 text-white flex flex-col-reverse md:flex-row mb-12"
+         style="background-image: url('{% static "core/images/gasyr-red-row.png" %}')">
+        <div class="md:p-3 text-start md:mr-auto">
+            <h4 class="text-2xl font-semibold text-center md:text-start">Вы остановились!</h4>
+            <h2 class="text-[32px] font-bold mb-[20px] text-center md:text-start">{{ course_name }}</h2>
+            <a class="inline-block text-white font-semibold py-5 w-full text-center md:w-fit px-5 md:px-16 border-white border-2 rounded-lg"
+               href="#">Продолжить курс
+            </a>
+        </div>
+        <div class="relative h-full">
+            <svg class="w-[182px] h-[182px] m-auto z-0" viewBox="0 0 100 100">
+                <!-- Background circle -->
+                {% comment %} TODO: подключить к реальному прогрессу {% endcomment %}
+                <circle
+                        class="text-gray-200 stroke-white"
+                        stroke-width="10"
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="transparent"
+                ></circle>
+                <!-- Progress circle -->
+                <circle
+                        class="text-indigo-500 progress-ring__circle stroke-math"
+                        stroke-width="10"
+                        stroke-linecap="round"
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="transparent"
+                        stroke-dasharray="251.2"
+                        transform="rotate(90, 50, 50)"
+                        stroke-dashoffset="calc(251.2 - (251.2 * {{ test_completion_percentage|floatformat:0 }}) / 100)"
+                ></circle>
+            </svg>
+            <h2 class="absolute top-1/2 -translate-y-1/2 left-0 right-0 text-white text-[42px] font-bold leading-[58.8px] text-center">{{ test_completion_percentage|floatformat:0 }}%</h2>
+        </div>
+    </div>
+{% endif %}
+
         <h1 class="hidden md:block text-[42px] font-bold mb-3">Все курсы</h1>
         {% endif %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-5 mb-10">

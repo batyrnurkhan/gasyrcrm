@@ -23,7 +23,7 @@ from core.decorators import role_required
 from schedule.models import ShiftTime, Shift
 from users.models import CustomUser
 from .forms import TaskForm, LessonForm, GroupTemplateForm, UserSearchForm, VolunteerChannelForm, GradeForm, \
-    FileUploadForm, AchievementForm, StudentAchievementForm
+    FileUploadForm, AchievementForm, StudentAchievementForm, LessonEditForm
 from .models import Subject, GroupTemplate, Lesson_crm2, Task, VolunteerChannel, Grade, TaskSubmission, \
     StudentAchievement, Achievement
 from .serializers import FileUploadSerializer, TaskSubmissionSerializer
@@ -808,3 +808,36 @@ def achievements_list(request):
         'achievement_percentage': achievement_percentage
     }
     return render(request, 'subjects/achievements_list.html', context)
+
+
+class LessonEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Lesson_crm2
+    form_class = LessonEditForm
+    template_name = 'subjects/lesson_edit.html'
+
+    def test_func(self):
+        return self.request.user.is_authenticated and self.request.user.role == 'Mentor'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['lesson'] = self.get_object()
+        context['time_id'] = self.kwargs['time_id']
+        return context
+
+    def form_valid(self, form):
+        try:
+            time_slot = ShiftTime.objects.get(pk=self.kwargs['time_id'])
+        except ShiftTime.DoesNotExist:
+            raise Http404("Time slot does not exist")
+        form.instance.time_slot = time_slot
+        form.instance.mentor = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('schedule:shifts')
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please correct the errors below.")
+        return super().form_invalid(form)
+
+

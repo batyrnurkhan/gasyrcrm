@@ -42,7 +42,7 @@
                                         <div class="flex items-center gap-[17px] w-webkit-fill overflow-scroll">
                                             {% if time.lessons.all %}
                                                 {% for lesson in time.lessons.all %}
-                                                    <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA]">
+                                                    <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA] lesson-block" data-lesson-id="{{ lesson.id }}" data-time-id="{{ time.id }}">
                                                         <div class="flex items-center gap-[8px]">
                                                             <p class="font-semibold text-[16px] leading-20px text-black-main">{{ lesson.teacher.full_name }}</p>
                                                         </div>
@@ -79,6 +79,54 @@
             </div>
         </div>
     </div>
+
+<div id="lessonModaledit"
+     class="fixed z-50 left-0 top-0 w-full h-full overflow-auto bg-black bg-opacity-40 hidden font-[Qanelas] text-black-main">
+    <div class="bg-white p-5 m-auto mt-32 rounded shadow-lg w-1/2">
+        <span class="close float-right text-3xl font-bold cursor-pointer">&times;</span>
+        <h1 class="text-[25px] font-semibold mb-4">Редактировать урок</h1>
+        <div id="lessonFormContaineredit">
+            <!-- The form will be loaded here via AJAX -->
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var editModal = document.getElementById("lessonModaledit");
+    var editCloseBtn = document.querySelector("#lessonModaledit .close");
+
+    editCloseBtn.onclick = function () {
+        editModal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target == editModal) {
+            editModal.style.display = "none";
+        }
+    };
+
+    // Event delegation for clicking the lesson block (edit lesson)
+    document.body.addEventListener('click', function (event) {
+        var lessonElement = event.target.closest('.lesson-block');
+        if (lessonElement) {
+            const lessonId = lessonElement.getAttribute("data-lesson-id");
+            const timeId = lessonElement.getAttribute("data-time-id");
+            if (lessonId && timeId) {
+                const urlTemplate = `{% url 'subjects:lesson-edit' '999' '888' %}`;
+                const url = urlTemplate.replace('999', lessonId).replace('888', timeId);
+                fetch(url)
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('lessonFormContaineredit').innerHTML = html;
+                        editModal.style.display = "block";
+                    });
+            }
+        }
+    });
+});
+
+</script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var modal = document.getElementById("lessonModal");
