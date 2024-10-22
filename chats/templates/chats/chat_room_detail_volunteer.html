@@ -11,15 +11,15 @@
     {% endif %}
     <main class="main flex-1 w-3/4 font-[Qanelas]">
         {% include "subjects/components/crm2-header.html" %}
-        <div class="pt-[50px] ml-[40px] mr-[78px]">
-            <div class="course w-full h-chat flex bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-lg">
+        <div class="pt-[30px] ml-[40px] mr-[78px]">
+            <div class="course w-full h-fit mb-20 flex bg-white shadow-[0px_4px_20px_0px_#00000014] rounded-[10px]">
                 <div class="course__info min-w-[280px] text-center items-center flex flex-col p-[14px] pt-[40px] border-r border-[#E5E5E5]">
                     <div class="course__info-img mb-[20px]">
                         {% if volunteer_channel.image %}
-                            <img class="object-cover w-[160px] h-[160px] rounded-lg"
+                            <img class="object-cover w-[180px] h-[180px] rounded-lg"
                                  src="{{ volunteer_channel.image.url }}" alt=""/>
                         {% else %}
-                            <img class="object-cover w-[160px] h-[160px] rounded-lg"
+                            <img class="object-cover w-[180px] h-[180px] rounded-lg"
                                  src="{% static 'path/to/default/image.jpg' %}" alt="Default Image"/>
                         {% endif %}
                     </div>
@@ -43,7 +43,7 @@
                             </div>
                         {% endif %}
                     </div>
-                    <div class="w-full h-full bg-[#FAFAFA] rounded-lg px-[14px] pt-[24px] text-[#a4a4a4] text-left">
+                    <div class="w-full h-fit mt-6 bg-[#FAFAFA] rounded-lg px-[14px] pt-[24px] text-[#a4a4a4] text-left">
                         <h1 class="font-bold text-[16px] uppercase">участники</h1>
                         <div class="h-webkit-fill max-h-[365px] overflow-hidden overflow-y-scroll py-[12px] space-y-3">
                             {% for participant in room.participants.all %}
@@ -134,7 +134,7 @@
                                                 <img src="{% static 'core/images/crm2/attachment.svg' %}" alt="">
                                                 <input hidden type="file" name="file" id="id_file">
                                             </label>
-                                            <input required class="w-full pl-[24px] placeholder-black-main"
+                                            <input required class="w-full focus:outline-none pl-[24px] placeholder-black-main"
                                                    placeholder="Введите ваше сообщение" type="text" name="message"
                                                    id="id_message">
                                             <button class="my-[8px] mr-[14px] p-[10px] rounded-full bg-accent-red"

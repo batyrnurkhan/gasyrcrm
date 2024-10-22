@@ -39,7 +39,7 @@
                                     <div class="item p-[16px] flex item-start min-w-max flex-grow {% if not forloop.last %}border-b border-[#CACACA]{% endif %}">
                                         <p class="font-semibold text-[16px] leading-[20px] text-accent-red mr-[24px] min-w-[100px]">{{ time.start_time|time:"H:i" }}
                                             - {{ time.end_time|time:"H:i" }}</p>
-                                        <div class="flex items-center gap-[17px] w-webkit-fill overflow-scroll">
+                                        <div class="flex items-stretch gap-[17px] w-webkit-fill overflow-x-scroll">
                                             {% if time.lessons.all %}
                                                 {% for lesson in time.lessons.all %}
                                                     <div class="border-t-[10px] border-t-[{{ lesson.subject.color_code }}] min-w-[245px] grid gap-[12px] rounded-lg p-[14px] bg-[#FAFAFA] lesson-block" data-lesson-id="{{ lesson.id }}" data-time-id="{{ time.id }}">
