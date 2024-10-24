@@ -8,7 +8,7 @@
 {% block flex-content %}
     {% include "subjects/components/crm2-student-sidebar.html" %}
     <main class="main flex-1 pb-[100px] md:w-3/4 font-[Qanelas] relative">   
-        <div class="md:mr-[60px] relative pr-5">
+        <div class="md:mr-[60px] relative md:pr-5">
             {% include "subjects/components/crm2-header.html" %}
             <div class=" md:ml-[40px] mt-5 px-5">
 
@@ -93,9 +93,9 @@
     
                 </div>
     
-                <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-[10px] p-[32px]">
-                    <div class="lessons__texts flex justify-between mb-[18px] items-center">
-                        <h1 class="lessons__title font-bold text-black-main text-[24px] leading-[30px]">
+                <div class="lessons__today mt-[20px] bg-white shadow-[0px_4px_20px_0px_#0000000A] rounded-[10px] p-2 md:p-[32px]">
+                    <div class="lessons__texts flex justify-between mb-[18px] items-center pt-6 md:pt-0 px-2 md:px-0">
+                        <h1 class="lessons__title flex flex-row items-center font-bold text-black-main text-[24px] leading-[30px]">
                             Уроки сегодня
                         </h1>
                         <p class="lessons__date flex gap-[10px] items-center font-medium text-[16px] leading-[20px] text-[#9D9E9E]">
@@ -129,7 +129,7 @@
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <ul class="lessons__items bg-[#FAFAFA] py-[24px] px-[24px] flex flex-col md:flex-row items-center justify-center gap-[48px]">
+                        <ul class="lessons__items bg-[#FAFAFA] py-[24px] px-2 md:px-[24px] flex flex-col md:flex-row items-center justify-center gap-[48px]">
                             <img src="{% static 'core/images/cats/papers.png' %}" alt=""
                                  class="max-w-[215px] max-h-[215px]">
                             <p class="empty-text max-w-[310px] font-bold text-center md:text-start text-[24px] leading-[36px] text-black-main">

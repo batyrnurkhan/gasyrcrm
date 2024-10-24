@@ -1,24 +1,24 @@
 {% load static %}
 
-<div class='md:hidden fixed bottom-0 left-0 w-full flex flex-row gap-9 justify-center bg-[#FFFFFF] pt-3 pb-4 shadow-2xl'>
-    <a href="{% url 'subjects:weekly-schedule' %}" class="lastAchieve__item text-center items-center flex flex-col">
+<div class='md:hidden fixed bottom-0 left-0 w-full flex flex-row gap-9 justify-center bg-[#FFFFFF] pt-3 pb-3 shadow-3xl'>
+    <a href="{% url 'subjects:weekly-schedule' %}" class="lastAchieve__item text-center gap-2 items-center flex flex-col">
         <img src="{% static 'core/images/footer-nav/schedue.svg' %}"
-             class="w-[32px] md:w-[45px] h-[24px] md:h-[35px]" alt="">
+             class="w-[20px] md:w-[45px] h-[20px] md:h-[35px]" alt="">
         <p class="font-semibold text-xs leading-[22px] text-[#C7C7C7]">Расписание</p>
     </a>
-    <a href="{% url 'subjects:grades-by-day' %}" class="lastAchieve__item text-center items-center flex flex-col">
+    <a href="{% url 'subjects:grades-by-day' %}" class="lastAchieve__item text-center gap-2 items-center flex flex-col">
         <img src="{% static 'core/images/footer-nav/Book.svg' %}"
-             class="w-[32px] md:w-[45px] h-[24px] md:h-[35px]" alt="">
+             class="w-[20px] md:w-[45px] h-[20px] md:h-[35px]" alt="">
         <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Дневник</p>
     </a>
-    <a href="{% url 'subjects:student_tasks_view' %}" class="lastAchieve__item text-center items-center flex flex-col">
+    <a href="{% url 'subjects:student_tasks_view' %}" class="lastAchieve__item text-center gap-2 items-center flex flex-col">
         <img src="{% static 'core/images/footer-nav/Hat.svg' %}"
-             class="w-[32px] md:w-[45px] h-[24px] md:h-[35px]" alt="">
+             class="w-[20px] md:w-[45px] h-[20px] md:h-[35px]" alt="">
         <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Задания</p>
     </a>
-    <a href="{% url 'subjects:subject-list' %}" class="lastAchieve__item text-center items-center flex flex-col">
+    <a href="{% url 'subjects:subject-list' %}" class="lastAchieve__item text-center gap-2 items-center flex flex-col">
         <img src="{% static 'core/images/footer-nav/Globus.svg' %}"
-             class="w-[32px] md:w-[45px] h-[24px] md:h-[35px]" alt="">
+             class="w-[20px] md:w-[45px] h-[20px] md:h-[35px]" alt="">
         <p class="font-normal text-xs leading-[22px] text-[#C7C7C7]">Онлайн</p>
     </a>
 </div>

@@ -85,9 +85,9 @@
                         </div>
                     </div>
                     {% endfor %}
-                    <div class="relative overflow-hidden">
+                    <div class="relative overflow-hidden bg-white rounded-lg p-6 w-full font-bold">
                         <a href="{% if all_tests_passed %}{% url 'courses:course_student_test_course' pk=course.id %}{% else %}#{% endif %}"
-                           class="bg-white rounded-lg text-start font-bold px-6">
+                           class="w-full text-start font-bold">
                             {% if all_tests_passed %}
                                 <img class="inline-block mr-3"
                                      src="{% static 'core/icons/trophy-fill-accent-red.svg' %}" alt="">
@@ -95,7 +95,7 @@
                                 <img class="inline-block mr-3"
                                      src="{% static 'core/icons/trophy-fill-gray.svg' %}" alt="">
                             {% endif %}
-                            <span class="{% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
+                            <span class="w-full {% if all_tests_passed %}text-accent-red{% else %}text-gray{% endif %}">Финал</span>
                         </a>
                     </div>
                 </div>

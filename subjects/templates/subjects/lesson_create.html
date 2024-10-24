@@ -4,11 +4,11 @@
         {% csrf_token %}
         {{ form.errors }}
         <input id="id_teacher" name="teacher" type="number" hidden>
-        <div onclick="dropDown('teachers')" class="dropdown relative px-[16px] py-[22px] border border-[#CDCDCD] rounded-lg flex flex-row">
-            <img class="inline-block my-[3px]" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+        <div onclick="dropDown('teachers')" class="dropdown focus:outline-none relative px-[16px] py-[22px] border border-[#CDCDCD] rounded-lg flex flex-row">
+            <img class="inline-block my-[3px] mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
             <div id="selectedTeacher" class="w-full align-middle"><p class="text-[16px] my-[3px]">Выберите учителя</p></div>
             <ul id="teachers"
-                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 ">
                 {% for key, name, img in form.teachers_info %}
                     <li onclick="selectTeacher({{ key }}, '{{ name }}', '{{ img }}')"
                         class="flex flex-row gap-[8px] items-center cursor-pointer hover:bg-gray">
@@ -24,15 +24,15 @@
                 {% endfor %}
             </ul>
         </div>
-        <input placeholder="Введите название группы" class="px-[22px] py-[27px] border border-[#CDCDCD] rounded-lg"
+        <input placeholder="Введите название группы" class="px-[22px] py-[27px] border border-[#CDCDCD] rounded-lg focus:outline-none"
                id="id_group_name" name="group_name" type="text">
         <input id="id_subject" name="subject" type="number" hidden>
         <div class="relative px-[16px] py-[11px] border border-[#CDCDCD] rounded-lg flex flex-row"
              onclick="dropDown('subjects')">
-            <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+            <img class="inline-block mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
             <div id="selectedSubject" class="w-full align-middle"><p class="text-[16px] my-[14px]">Выберите предмет</p></div>
             <ul id="subjects"
-                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10">
                 {% for key, name, img in form.subjects_info %}
                     <li onclick="selectSubject({{ key }}, '{{ name }}', '{{ img }}')"
                         class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
@@ -46,10 +46,10 @@
         <input id="id_group_template" name="group_template" type="number" hidden>
         <div class="relative px-[16px] py-[25px] border border-[#CDCDCD] rounded-lg flex flex-row"
              onclick="dropDown('group_templates')">
-            <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+            <img class="inline-block mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
             <div id="selectedGroupTemplate" class="w-full align-middle"><p class="text-[16px]">Выберите шаблон группы</p></div>
             <ul id="group_templates"
-                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 ">
                 {% for key, name, stus in form.group_templates_info %}
                     <li onclick="selectGroupTemplate('{{ key }}', '{{ name }}', {{ stus }})"
                         class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">

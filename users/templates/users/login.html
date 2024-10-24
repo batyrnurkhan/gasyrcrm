@@ -18,7 +18,7 @@
      </div> {% endcomment %}
 
      
-     <div class="container content mx-auto relative flex justify-end flex-col md:flex-row px-5 md:px-0 ">
+     <div class="container md:content h-screen md:h-none mx-auto relative flex md:justify-end flex-col md:flex-row px-5 md:px-0 ">
 
         
         <div class="md:mb-20 flex md:ml-auto w-full flex-row justify-end items-center md:items-start">
@@ -61,15 +61,15 @@
         </div>
 
         <div class="relative md:absolute md:left-20 md:-top-[50px] md:-bottom-10 md:-z-10">
-            <img class="h-full" src="{% static "core/images/login-guy.png" %}" alt="">
+            <img class="h-full hidden md:block" src="{% static "core/images/login-guy.png" %}" alt="">
             <div class="absolute hidden md:block bottom-0 left-auto right-auto z-20  bg-white rounded-lg py-6 px-8 text-center mxmx-auto mb-16 md:bottom-36 md:left-36">
                 <h2 class="text-lg md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
                 <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
             </div>
-            <div class="absolute md:hidden -bottom-6 left-5 right-5 z-50 bg-white rounded-lg py-6 px-5 text-center">
+            {% comment %} <div class="absolute md:hidden -bottom-6 left-5 right-5 z-50 bg-white rounded-lg py-6 px-5 text-center">
                 <h2 class="text-[26px] md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
                 <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
-            </div>
+            </div> {% endcomment %}
         </div>
 
     </div>

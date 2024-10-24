@@ -9,11 +9,11 @@
                 Тут вы сможете сдавать свое домашнее задание
             </p>
         </div>
-        <a href="{% url 'subjects:home' %}" class="md:hidden block"><img
+        <a href="{% url 'subjects:home' %}" class="md:hidden block max-w-[100px]"><img
             src="{% static 'core/images/logo.svg' %}" alt=""/>
         </a>
         <div class="header__author">
-            <div class="md:border-l-2 md:border-gray py-4 pl-5 md:pr-10 flex flex-row items-center">
+            <div class="md:border-l-2 md:border-gray py-4 md:pl-5 md:pr-10 flex flex-row items-center">
                 <img class="w-[42px] h-[42px] md:w-[60px] md:h-[60px] object-cover rounded-full"
                     src="{% if user.profile_picture %}
                         /media/{{ user.profile_picture }}
@@ -40,7 +40,7 @@
                     </div>
                 </div>
 
-                <div id="mobile-menu-toggle" class='w-8 h-7 gap-1 flex flex-col justify-between rounded-md ml-4 md:hidden'>
+                <div id="mobile-menu-toggle" class='w-8 h-6 gap-1 flex flex-col justify-between rounded-md ml-4 md:hidden'>
                     <div class='w-8 h-1 bg-[#4F4F4F]'></div>
                     <div class='w-8 h-1 bg-[#4F4F4F]'></div>
                     <div class='w-8 h-1 bg-[#4F4F4F]'></div>
@@ -65,7 +65,7 @@
                         <span class="font-semibold text-5 leading-[24px]">Новости</span>
                     </a>
                 </li>
-                <li class="text-[#9D9E9E]">
+                {% comment %} <li class="text-[#9D9E9E]">
                     <a href="{% url 'subjects:achievements_list' %}"
                        class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center
                               {% if page == 'achievements' %}bg-accent-red text-white fill-white{% endif %}">
@@ -83,7 +83,7 @@
                         </svg>
                         <span class="font-semibold text-5 leading-[24px]">Достижения</span>
                     </a>
-                </li>
+                </li> {% endcomment %}
                 <li class="text-[#9D9E9E]">
                     <a href="{% url 'home' %} " target="_blank"
                        class="mr-[35px] pl-[30px] flex gap-[14px] width-[210px] py-4 rounded-lg items-center

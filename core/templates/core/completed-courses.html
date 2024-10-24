@@ -7,7 +7,7 @@
     <div class="container px-5 content bg-no-repeat bg-top mx-auto font-[Qanelas] pt-[32px] md:pt-14 text-black-main">
         <h1 class="text-[24px] md:text-[42px] font-bold mb-3">Пройденные курсы</h1>
         {% if completed_courses %}
-            <div class="grid grid-cols-2 gap-5 mb-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
                 {% for course in completed_courses %}
                 {% include 'core/components/course-card-completed.html' with course=course %}
                 {% endfor %}

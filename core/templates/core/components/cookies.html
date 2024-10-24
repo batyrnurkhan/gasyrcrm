@@ -1,13 +1,16 @@
 {% load static %}
-<div id="consent-popup" class="fixed bottom-10 opacity-0 w-full ease-linear transition-opacity z-50">
+<div id="consent-popup" class="fixed bottom-10 opacity-0 w-full px-5 md:px-0 ease-linear transition-opacity z-50">
     <div class="
-        relative container p-2.5 mx-auto flex flex-row items-center
+        relative container p-4 md:p-2.5 mx-auto flex flex-col md:flex-row items-center
         bg-gradient-to-r from-[#DA9A39] to-[#E2A344]
         text-white rounded-lg font-semibold
     ">
-        <img class="absolute left-3 bottom-0" src="{% static 'core/images/cats/cookie.png' %}" alt="">
-        <div class="ml-[214px] text-2xl mr-auto h-full">Мы используем cookies для вашего удобного пользования</div>
-        <a class="inline-block py-[26px] px-16 border border-white rounded-lg text-xl" id="accept" href="#">Окей</a>
+        <img class="hidden md:block md:absolute md:left-3 md:bottom-0" src="{% static 'core/images/cats/cookie.png' %}" alt="">
+        <div class="md:ml-[214px] text-base md:text-2xl mr-auto text-center md:text-start h-full">Мы используем cookies для вашего удобного пользования</div>
+        <a class="flex flex-row items-center mt-5 md:mt-0 justify-center gap-5 py-1 md:py-[26px] px-16 w-full md:w-fit border border-white rounded-lg text-xl" id="accept" href="#">
+            <img class="w-16 h-16 block md:hidden" src="{% static 'core/images/cats/cookie.png' %}" alt="">
+            Окей
+        </a>
     </div>
 </div>
 <script>

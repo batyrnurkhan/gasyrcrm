@@ -6,7 +6,8 @@
     {% include 'core/components/navbar-light-transparent.html' %}
 
 
-    <div class="container content mx-auto relative flex justify-end flex-col md:flex-row px-5 md:px-0 ">
+    <div class="container md:content min-h-screen mx-auto relative flex md:justify-end flex-col md:flex-row px-5 md:px-0 ">
+    {% comment %} <div class="container    content          mx-auto relative flex    justify-end flex-col md:flex-row px-5 md:px-0 "> {% endcomment %}
 
         <div class="md:mb-20 flex md:ml-auto md:w-full  md:flex-row justify-center md:justify-end items-center md:items-start">
             <div class="bg-light-gray w-full md:min-w-[410px] md:w-fit rounded-lg text-center px-4 pb-7 pt-7 md:pb-7 md:pt-14 md:max-w-none">
@@ -75,12 +76,12 @@
 
         
         <div class="relative md:absolute md:left-24 md:-top-[50px] md:-bottom-10 md:-z-10">
-            <img class="h-full" src="{% static "core/images/signup-guy.png" %}" alt="">
+            <img class="h-full hidden md:block" src="{% static "core/images/signup-guy.png" %}" alt="">
             <div class="absolute hidden md:block bottom-0 left-auto right-auto z-20  bg-white rounded-lg py-6 px-8 text-center mxmx-auto mb-16 md:bottom-36 md:left-36">
                 <h2 class="text-lg md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
                 <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
             </div>
-            <div class="absolute md:hidden -bottom-6 left-5 right-5 z-50 bg-white rounded-lg py-6 px-5 text-center">
+            <div class="absolute hidden -bottom-6 left-5 right-5 z-50 bg-white rounded-lg py-6 px-5 text-center">
                 <h2 class="text-[26px] md:text-2xl text-black-main font-bold">Халыкбердиев Якуб</h2>
                 <p class="text-xs md:text-sm text-black-main font-medium">Основатель школы</p>
             </div>

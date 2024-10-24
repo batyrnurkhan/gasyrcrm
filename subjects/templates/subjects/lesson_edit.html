@@ -12,13 +12,13 @@
             {{ form.time_slot }}
 
             <!-- Group Name Field -->
-            <input placeholder="Введите название группы" class="px-[22px] py-[27px] border border-[#CDCDCD] rounded-lg"
+            <input placeholder="Введите название группы" class="px-[22px] py-[27px] border border-[#CDCDCD] rounded-lg  focus:outline-none"
                    id="id_group_name" name="group_name" type="text" value="{{ form.instance.group_name }}">
 
             <!-- Teacher Dropdown -->
             <input id="id_teacher" name="teacher" type="number" hidden value="{% if form.instance.teacher %}{{ form.instance.teacher.id }}{% endif %}">
             <div onclick="dropDown('teachers')" class="dropdown relative px-[16px] py-[22px] border border-[#CDCDCD] rounded-lg flex flex-row">
-                <img class="inline-block my-[3px]" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+                <img class="inline-block my-[3px] mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
                 <div id="selectedTeacher" class="w-full align-middle">
                     {% if form.instance.teacher %}
                         <li class="relative flex flex-row items-center justify-between">
@@ -37,7 +37,7 @@
                     {% endif %}
                 </div>
                 <ul id="teachers"
-                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10">
                     {% for key, name, img in form.teachers_info %}
                         <li onclick="selectTeacher({{ key }}, '{{ name }}', '{{ img }}')"
                             class="flex flex-row gap-[8px] items-center cursor-pointer hover:bg-gray">
@@ -55,7 +55,7 @@
             <!-- Subject Dropdown -->
             <input id="id_subject" name="subject" type="number" hidden value="{% if form.instance.subject %}{{ form.instance.subject.id }}{% endif %}">
             <div class="relative px-[16px] py-[11px] border border-[#CDCDCD] rounded-lg flex flex-row" onclick="dropDown('subjects')">
-                <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+                <img class="inline-block mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
                 <div id="selectedSubject" class="w-full align-middle">
                     {% if form.instance.subject %}
                         <li class="flex flex-row items-center justify-between">
@@ -74,7 +74,7 @@
                     {% endif %}
                 </div>
                 <ul id="subjects"
-                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10">
                     {% for key, name, img in form.subjects_info %}
                         <li onclick="selectSubject({{ key }}, '{{ name }}', '{{ img }}')"
                             class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
@@ -92,7 +92,7 @@
             <!-- Group Template Dropdown -->
             <input id="id_group_template" name="group_template" type="number" hidden value="{% if form.instance.group_template %}{{ form.instance.group_template.id }}{% else %}0{% endif %}">
             <div class="relative px-[16px] py-[25px] border border-[#CDCDCD] rounded-lg flex flex-row" onclick="dropDown('group_templates')">
-                <img class="inline-block" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
+                <img class="inline-block mr-4" src="{% static 'core/images/crm2/arrow-down-gray.svg' %}" alt="">
                 <div id="selectedGroupTemplate" class="w-full align-middle">
                     {% if form.instance.group_template %}
                         <li class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
@@ -103,7 +103,7 @@
                     {% endif %}
                 </div>
                 <ul id="group_templates"
-                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 hidden">
+                    class="absolute top-[110%] left-0 flex flex-col bg-white border border-[#CDCDCD] rounded-lg w-full p-[24px] gap-[12px] z-10 ">
                     {% for key, name, stus in form.group_templates_info %}
                         <li onclick="selectGroupTemplate('{{ key }}', '{{ name }}', {{ stus|safe }})"
                             class="flex flex-row gap-[16px] items-center hover:bg-gray cursor-pointer">
@@ -118,8 +118,11 @@
                 <label for="id_students">Выберите студентов:</label>
                 {{ form.students }}
             </div>
+            <div class="flex flex-row gap-2 items-center"> 
+                <button class="block w-fit font-semibold bg-accent-red text-white rounded-[5px] px-14 py-6 mt-[28px]" type="submit">Сохранить изменения</button>
+                <button class="block w-fit font-semibold border border-accent-red text-accent-red rounded-[5px] px-14 py-6 mt-[28px]" type="submit">Удалить из расписания</button>
 
-            <button class="block w-fit bg-accent-red text-white rounded-[5px] px-[64px] py-[26px] mt-[28px]" type="submit">Сохранить изменения</button>
+            </div>
         </form>
 
         <!-- Include jQuery and Select2 JS -->
